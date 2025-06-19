@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Viewer</title>
+    <style>
+        body { font-family: sans-serif; padding: 2rem; }
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        th, td { border: 1px solid #ccc; padding: 0.5rem; text-align: left; }
+        th { background-color: #f4f4f4; }
+    </style>
+</head>
+<body>
+    <h1>Emission Vouchers</h1>
+    <p>Total Vouchers: {{ total_count }}</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Voucher ID</th>
+                <th>Supplier</th>
+                <th>Status</th>
+                <th>Score</th>
+                <th>Last Validated</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for v in vouchers %}
+            <tr>
+                <td>{{ v.voucher_id }}</td>
+                <td>{{ v.supplier_name }}</td>
+                <td>{{ v.compliance_status }}</td>
+                <td>{{ v.completeness_score }}</td>
+                <td>{{ v.last_validated }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

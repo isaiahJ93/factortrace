@@ -1,0 +1,84 @@
+2025-06-11 11:59:29,251 - __main__ - INFO - Starting batch processing of data/supplier_emissions.csv
+2025-06-11 11:59:29,251 - __main__ - ERROR - Batch processing failed: [Errno 2] No such file or directory: 'data/supplier_emissions.csv'
+2025-06-11 11:59:29,251 - __main__ - ERROR - Batch processing failed: [Errno 2] No such file or directory: 'data/supplier_emissions.csv'
+2025-06-11 12:06:16,393 - __main__ - INFO - Starting batch processing of data/supplier_emissions.csv
+2025-06-11 12:06:16,395 - __main__ - ERROR - Batch processing failed: CSV file is empty or invalid
+2025-06-11 12:06:16,395 - __main__ - ERROR - Batch processing failed: CSV file is empty or invalid
+2025-06-11 12:47:14,498 - __main__ - INFO - Starting batch processing of data/supplier_emissions.csv
+2025-06-11 12:47:14,499 - __main__ - INFO - Loaded 1 valid rows from CSV
+2025-06-11 12:47:14,500 - __main__ - INFO - Processed 549300EXAMPLE12345 - Status: failed
+2025-06-11 12:47:14,500 - __main__ - INFO - Generated summary report: output/report_log.csv
+2025-06-11 12:47:14,501 - __main__ - INFO - Created ZIP archive: csrd_reports_20250611_031714.zip
+2025-06-11 12:47:14,501 - __main__ - INFO - Batch processing complete. 0/1 reports validated successfully in 0.00s
+2025-06-11 12:50:15,342 - __main__ - INFO - Starting batch processing of data/supplier_emissions.csv
+2025-06-11 12:50:15,343 - __main__ - INFO - Loaded 1 valid rows from CSV
+2025-06-11 12:50:15,344 - __main__ - INFO - Processed 549300EXAMPLE12345 - Status: failed
+2025-06-11 12:50:15,344 - __main__ - INFO - Generated summary report: output/report_log.csv
+2025-06-11 12:50:15,346 - __main__ - INFO - Created ZIP archive: csrd_reports_20250611_032015.zip
+2025-06-11 12:50:15,346 - __main__ - INFO - Batch processing complete. 0/1 reports validated successfully in 0.00s
+2025-06-11 12:50:38,013 - __main__ - INFO - Starting batch processing of data/supplier_emissions.csv
+2025-06-11 12:50:38,013 - __main__ - INFO - Loaded 1 valid rows from CSV
+2025-06-11 12:50:38,014 - __main__ - INFO - Processed 549300EXAMPLE12345 - Status: failed
+2025-06-11 12:50:38,015 - __main__ - INFO - Generated summary report: output/report_log.csv
+2025-06-11 12:50:38,016 - __main__ - INFO - Created ZIP archive: csrd_reports_20250611_032038.zip
+2025-06-11 12:50:38,016 - __main__ - INFO - Batch processing complete. 0/1 reports validated successfully in 0.00s
+2025-06-11 13:03:33,651 - __main__ - INFO - Starting batch processing of data/supplier_emissions.csv
+2025-06-11 13:03:33,651 - __main__ - INFO - Loaded 1 valid rows from CSV
+2025-06-11 13:03:33,653 - __main__ - INFO - Processed 549300EXAMPLE12345 - Status: failed
+2025-06-11 13:03:33,653 - __main__ - INFO - Generated summary report: output/report_log.csv
+2025-06-11 13:03:33,654 - __main__ - INFO - Created ZIP archive: csrd_reports_20250611_033333.zip
+2025-06-11 13:03:33,654 - __main__ - INFO - Batch processing complete. 0/1 reports validated successfully in 0.00s
+2025-06-11 13:05:54,516 - __main__ - INFO - Starting batch processing of data/supplier_emissions.csv
+2025-06-11 13:05:54,517 - __main__ - INFO - Loaded 1 valid rows from CSV
+2025-06-11 13:05:54,518 - __main__ - INFO - Processed 549300EXAMPLE12345 - Status: failed
+2025-06-11 13:05:54,518 - __main__ - INFO - Generated summary report: output/report_log.csv
+2025-06-11 13:05:54,520 - __main__ - INFO - Created ZIP archive: csrd_reports_20250611_033554.zip
+2025-06-11 13:05:54,520 - __main__ - INFO - Batch processing complete. 0/1 reports validated successfully in 0.00s
+2025-06-11 13:06:56,477 - __main__ - INFO - Starting batch processing of data/supplier_emissions.csv
+2025-06-11 13:06:56,477 - __main__ - ERROR - Batch processing failed: 'utf-8' codec can't decode byte 0x8d in position 10: invalid start byte
+2025-06-11 13:06:56,477 - __main__ - ERROR - Batch processing failed: 'utf-8' codec can't decode byte 0x8d in position 10: invalid start byte
+2025-06-11 13:07:40,062 - __main__ - INFO - Starting batch processing of data/supplier_emissions.csv
+2025-06-11 13:07:40,062 - __main__ - ERROR - Batch processing failed: 'utf-8' codec can't decode byte 0x8d in position 10: invalid start byte
+2025-06-11 13:07:40,062 - __main__ - ERROR - Batch processing failed: 'utf-8' codec can't decode byte 0x8d in position 10: invalid start byte
+2025-06-11 13:08:55,675 - __main__ - INFO - Starting batch processing of data/supplier_emissions.csv
+2025-06-11 13:08:55,675 - __main__ - ERROR - Batch processing failed: 'utf-8' codec can't decode byte 0x8d in position 10: invalid start byte
+2025-06-11 13:08:55,675 - __main__ - ERROR - Batch processing failed: 'utf-8' codec can't decode byte 0x8d in position 10: invalid start byte
+2025-06-11 13:10:25,284 - __main__ - INFO - Starting batch processing of data/supplier_emissions.csv
+2025-06-11 13:10:25,284 - __main__ - ERROR - Batch processing failed: Missing required columns: {'water_withdrawal', 'waste_recycled', 'total_emissions', 'waste_generated', 'scope2_emissions_market', 'water_consumption', 'scope1_emissions', 'scope2_emissions_location', 'scope3_emissions', 'lei'}
+2025-06-11 13:10:25,284 - __main__ - ERROR - Batch processing failed: Missing required columns: {'water_withdrawal', 'waste_recycled', 'total_emissions', 'waste_generated', 'scope2_emissions_market', 'water_consumption', 'scope1_emissions', 'scope2_emissions_location', 'scope3_emissions', 'lei'}
+2025-06-11 13:12:11,809 - __main__ - INFO - Starting batch processing of data/supplier_emissions.csv
+2025-06-11 13:12:11,810 - __main__ - ERROR - Batch processing failed: Missing required columns: {'scope2_emissions_location', 'water_withdrawal', 'scope1_emissions', 'lei', 'scope3_emissions', 'waste_generated', 'scope2_emissions_market', 'waste_recycled', 'water_consumption', 'total_emissions'}
+2025-06-11 13:12:11,810 - __main__ - ERROR - Batch processing failed: Missing required columns: {'scope2_emissions_location', 'water_withdrawal', 'scope1_emissions', 'lei', 'scope3_emissions', 'waste_generated', 'scope2_emissions_market', 'waste_recycled', 'water_consumption', 'total_emissions'}
+2025-06-11 13:14:15,552 - __main__ - INFO - Starting batch processing of data/cleaned_emissions.csv
+2025-06-11 13:14:15,552 - __main__ - ERROR - Batch processing failed: [Errno 2] No such file or directory: 'data/cleaned_emissions.csv'
+2025-06-11 13:14:15,552 - __main__ - ERROR - Batch processing failed: [Errno 2] No such file or directory: 'data/cleaned_emissions.csv'
+2025-06-11 13:23:33,979 - __main__ - INFO - Starting batch processing of src/data/supplier_emissions.csv
+2025-06-11 13:23:33,979 - __main__ - ERROR - Batch processing failed: [Errno 2] No such file or directory: 'src/data/supplier_emissions.csv'
+2025-06-11 13:23:33,979 - __main__ - ERROR - Batch processing failed: [Errno 2] No such file or directory: 'src/data/supplier_emissions.csv'
+2025-06-11 13:24:41,797 - __main__ - INFO - Starting batch processing of data/supplier_emissions.csv
+2025-06-11 13:24:41,798 - __main__ - ERROR - Batch processing failed: Missing required columns: {'scope3_emissions', 'scope2_emissions_location', 'scope1_emissions', 'lei', 'water_withdrawal', 'waste_recycled', 'water_consumption', 'total_emissions', 'scope2_emissions_market', 'waste_generated'}
+2025-06-11 13:24:41,798 - __main__ - ERROR - Batch processing failed: Missing required columns: {'scope3_emissions', 'scope2_emissions_location', 'scope1_emissions', 'lei', 'water_withdrawal', 'waste_recycled', 'water_consumption', 'total_emissions', 'scope2_emissions_market', 'waste_generated'}
+2025-06-11 13:27:12,854 - __main__ - INFO - Starting batch processing of data/supplier_emissions.csv
+2025-06-11 13:27:12,854 - __main__ - ERROR - Batch processing failed: Missing required columns: {'total_emissions', 'scope2_emissions_location', 'lei', 'scope1_emissions', 'waste_generated', 'water_consumption', 'water_withdrawal', 'scope2_emissions_market', 'scope3_emissions', 'waste_recycled'}
+2025-06-11 13:27:12,854 - __main__ - ERROR - Batch processing failed: Missing required columns: {'total_emissions', 'scope2_emissions_location', 'lei', 'scope1_emissions', 'waste_generated', 'water_consumption', 'water_withdrawal', 'scope2_emissions_market', 'scope3_emissions', 'waste_recycled'}
+2025-06-11 13:32:39,575 - __main__ - INFO - Starting batch processing of data/supplier_emissions.csv
+2025-06-11 13:32:39,575 - __main__ - ERROR - Batch processing failed: [Errno 2] No such file or directory: 'data/supplier_emissions.csv'
+2025-06-11 13:32:39,575 - __main__ - ERROR - Batch processing failed: [Errno 2] No such file or directory: 'data/supplier_emissions.csv'
+2025-06-11 13:33:00,639 - __main__ - INFO - Starting batch processing of ./data/supplier_emissions.csv
+2025-06-11 13:33:00,639 - __main__ - ERROR - Batch processing failed: [Errno 2] No such file or directory: './data/supplier_emissions.csv'
+2025-06-11 13:33:00,640 - __main__ - ERROR - Batch processing failed: [Errno 2] No such file or directory: './data/supplier_emissions.csv'
+2025-06-11 13:33:07,327 - __main__ - INFO - Starting batch processing of /Users/isaiah/Documents/Scope 3 Tool/data/supplier_emissions.csv
+2025-06-11 13:33:07,328 - __main__ - ERROR - Batch processing failed: [Errno 2] No such file or directory: '/Users/isaiah/Documents/Scope 3 Tool/data/supplier_emissions.csv'
+2025-06-11 13:33:07,328 - __main__ - ERROR - Batch processing failed: [Errno 2] No such file or directory: '/Users/isaiah/Documents/Scope 3 Tool/data/supplier_emissions.csv'
+2025-06-11 13:33:49,046 - __main__ - INFO - Starting batch processing of src/data/supplier_emissions.csv
+2025-06-11 13:33:49,046 - __main__ - INFO - Loaded 1 valid rows from CSV
+2025-06-11 13:33:49,048 - __main__ - INFO - Processed 5493001KJTIIGC8Y1R12 - Status: failed
+2025-06-11 13:33:49,048 - __main__ - INFO - Generated summary report: output/report_log.csv
+2025-06-11 13:33:49,049 - __main__ - INFO - Created ZIP archive: csrd_reports_20250611_040349.zip
+2025-06-11 13:33:49,049 - __main__ - INFO - Batch processing complete. 0/1 reports validated successfully in 0.00s
+2025-06-11 13:36:25,807 - __main__ - INFO - Starting batch processing of src/data/supplier_emissions.csv
+2025-06-11 13:36:25,808 - __main__ - INFO - Loaded 1 valid rows from CSV
+2025-06-11 13:36:25,809 - __main__ - INFO - Processed 5493001KJTIIGC8Y1R12 - Status: success
+2025-06-11 13:36:25,809 - __main__ - INFO - Generated summary report: output/report_log.csv
+2025-06-11 13:36:25,811 - __main__ - INFO - Created ZIP archive: csrd_reports_20250611_040625.zip
+2025-06-11 13:36:25,811 - __main__ - INFO - Batch processing complete. 1/1 reports validated successfully in 0.00s

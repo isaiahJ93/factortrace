@@ -1,0 +1,26 @@
+import subprocess
+from pathlib import Path
+
+def validate_with_arelle(xhtml_path: str):
+    xhtml_path = Path(xhtml_path)
+    if not xhtml_path.exists():
+        raise FileNotFoundError(f"{xhtml_path} does not exist.")
+
+    cmd = [
+        "python",
+        "-m",
+        "arelle.CntlrCmdLine",
+        "--file",
+        str(xhtml_path),
+        "--validate"
+    ]
+    result = subprocess.run(cmd, capture_output=True, text=True)
+    print(result.stdout)
+    if result.returncode != 0:
+        print("❌ Validation failed")
+        print(result.stderr)
+    else:
+        print("✅ Validation passed — no issues found.")
+
+if __name__ == "__main__":
+    validate_with_arelle("output/compliance_report.xhtml")

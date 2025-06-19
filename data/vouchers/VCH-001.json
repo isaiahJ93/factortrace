@@ -1,0 +1,31 @@
+
+{
+  "id": "VCH-001",
+  "reporting_entity_lei": "5493001KTIIGC8YR1234",
+  "reporting_period_start": "2024-01-01",
+  "reporting_period_end": "2024-12-31",
+  "company": "Acme Corp",
+  "scope1_emissions": [
+    {
+      "gas_type": "CO2",
+      "amount": 200.0,
+      "method": "measured"
+    }
+  ],
+  "total_scope1": 200.0,
+  "scope3_categories": [
+    {
+      "number": "1",
+      "description": "Purchased goods and services",
+      "amount": 123.45
+    }
+  ],
+  "product_cn_code": "7208",
+  "installation_id": "INST-9876",
+  "embedded_emissions": 90.2,
+  "carbon_price_paid": 100.0,
+  "data_quality_score": "4",
+  "primary_data_pct": 75.0,
+  "assurance_level": "limited",
+  "taxonomy_version": "2025-draft"
+}

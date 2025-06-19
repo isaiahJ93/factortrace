@@ -1,0 +1,2 @@
+assert EmissionVoucher.model_validate_json(golden_json)
+

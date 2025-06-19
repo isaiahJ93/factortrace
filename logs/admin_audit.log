@@ -1,0 +1,15 @@
+2025-06-07 09:11:11,267 - INFO - USER:admin - ACTION:LOGIN_SUCCESS - DETAILS:User authenticated
+2025-06-07 09:16:23,720 - INFO - USER:admin - ACTION:LOGIN_SUCCESS - DETAILS:User authenticated
+2025-06-07 09:16:23,720 - INFO - USER:admin - ACTION:BATCH_IMPORT - DETAILS:Batch import completed - Imported: 0, Errors: 0
+2025-06-07 09:16:40,570 - INFO - USER:admin - ACTION:LOGIN_SUCCESS - DETAILS:User authenticated
+2025-06-07 09:16:40,571 - INFO - USER:admin - ACTION:BATCH_IMPORT - DETAILS:Batch import completed - Imported: 0, Errors: 0
+2025-06-07 09:18:27,545 - INFO - USER:admin - ACTION:LOGIN_SUCCESS - DETAILS:User authenticated
+2025-06-07 09:18:27,546 - INFO - USER:admin - ACTION:BATCH_IMPORT - DETAILS:Batch import completed - Imported: 0, Errors: 0
+2025-06-07 09:18:31,219 - INFO - USER:admin - ACTION:LOGIN_SUCCESS - DETAILS:User authenticated
+2025-06-07 09:18:31,219 - INFO - USER:admin - ACTION:BATCH_IMPORT - DETAILS:Batch import completed - Imported: 0, Errors: 0
+2025-06-07 09:24:49,883 - INFO - USER:admin - ACTION:LOGIN_SUCCESS - DETAILS:User authenticated
+2025-06-07 09:24:49,884 - INFO - USER:admin - ACTION:BATCH_IMPORT - DETAILS:Batch import completed - Imported: 0, Errors: 0
+2025-06-07 09:27:53,004 - INFO - USER:admin - ACTION:LOGIN_SUCCESS - DETAILS:User authenticated
+2025-06-07 09:27:53,004 - INFO - USER:admin - ACTION:BATCH_IMPORT - DETAILS:Batch import completed - Imported: 0, Errors: 0
+2025-06-07 09:30:07,938 - INFO - USER:admin - ACTION:LOGIN_SUCCESS - DETAILS:User authenticated
+2025-06-07 09:30:07,939 - INFO - USER:admin - ACTION:BATCH_IMPORT - DETAILS:Batch import completed - Imported: 0, Errors: 0

@@ -1,0 +1,226 @@
+# .github/workflows/ixbrl-validation.yml
+# CI/CD Pipeline for iXBRL Voucher Validation
+
+name: iXBRL Compliance Validation
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  validate-ixbrl:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Cache dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        # Install Arelle for XBRL validation
+        pip install arelle-release
+        # Install additional XML tools
+        sudo apt-get update
+        sudo apt-get install -y libxml2-utils xmlstarlet
+    
+    - name: Download ESRS Taxonomy
+      run: |
+        mkdir -p taxonomies/esrs
+        # Download EFRAG ESRS taxonomy files
+        wget -q https://xbrl.efrag.org/taxonomy/2025/esrs-all.xsd -O taxonomies/esrs/esrs-all.xsd
+        wget -q https://xbrl.efrag.org/taxonomy/2025/esrs-pre.xml -O taxonomies/esrs/esrs-pre.xml
+        wget -q https://xbrl.efrag.org/taxonomy/2025/esrs-cal.xml -O taxonomies/esrs/esrs-cal.xml
+        wget -q https://xbrl.efrag.org/taxonomy/2025/esrs-def.xml -O taxonomies/esrs/esrs-def.xml
+    
+    - name: Run Unit Tests
+      run: |
+        python -m pytest tests/test_voucher_renderer.py -v --cov=src --cov-report=xml
+    
+    - name: Generate Sample Reports
+      run: |
+        python src/generate_test_reports.py
+        echo "Generated test reports:"
+        ls -la output/*.xhtml
+    
+    - name: XML Well-formedness Check
+      run: |
+        echo "🔍 Checking XML well-formedness..."
+        for file in output/*.xhtml; do
+          echo "Validating: $file"
+          xmllint --noout "$file" || exit 1
+        done
+        echo "✅ All files are well-formed XML"
+    
+    - name: XHTML DTD Validation
+      run: |
+        echo "🔍 Validating against XHTML 1.1 DTD..."
+        for file in output/*.xhtml; do
+          xmllint --noout --dtdvalid http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd "$file" || exit 1
+        done
+        echo "✅ All files are valid XHTML 1.1"
+    
+    - name: iXBRL Structure Validation
+      run: |
+        echo "🔍 Checking iXBRL structure..."
+        python scripts/validate_ixbrl_structure.py output/*.xhtml
+    
+    - name: Arelle XBRL Validation
+      run: |
+        echo "🔍 Running Arelle validation..."
+        for file in output/*.xhtml; do
+          echo "Validating: $file"
+          arelle --validate \
+                 --disclosureSystem efrag \
+                 --formulaAction=run \
+                 --logFile="${file}.log" \
+                 --logLevel=warning \
+                 "$file"
+          
+          # Check for errors in log
+          if grep -q "ERROR" "${file}.log"; then
+            echo "❌ Validation errors found in $file:"
+            grep "ERROR" "${file}.log"
+            exit 1
+          fi
+        done
+        echo "✅ Arelle validation passed"
+    
+    - name: Check Namespace Declarations
+      run: |
+        echo "🔍 Verifying required namespaces..."
+        for file in output/*.xhtml; do
+          # Check for required namespaces
+          grep -q 'xmlns:ix="http://www.xbrl.org/2013/inlineXBRL"' "$file" || \
+            (echo "Missing ix namespace in $file" && exit 1)
+          grep -q 'xmlns:xbrli="http://www.xbrl.org/2003/instance"' "$file" || \
+            (echo "Missing xbrli namespace in $file" && exit 1)
+          grep -q 'xmlns:esrs="http://xbrl.efrag.org/taxonomy/2025/esrs"' "$file" || \
+            (echo "Missing esrs namespace in $file" && exit 1)
+        done
+        echo "✅ All required namespaces present"
+    
+    - name: Validate Numeric Precision
+      run: |
+        echo "🔍 Checking numeric precision..."
+        python scripts/validate_numeric_precision.py output/*.xhtml
+    
+    - name: CBAM Compliance Check
+      run: |
+        echo "🔍 Checking CBAM-specific requirements..."
+        python scripts/validate_cbam_compliance.py output/*.xhtml
+    
+    - name: Calculate Coverage Metrics
+      run: |
+        echo "📊 Calculating ESRS coverage..."
+        python scripts/calculate_esrs_coverage.py output/*.xhtml > coverage_report.txt
+        cat coverage_report.txt
+    
+    - name: Security Scan
+      run: |
+        echo "🔒 Running security checks..."
+        # Check for potential XSS in templates
+        grep -r "autoescape=False" templates/ && echo "⚠️ Warning: autoescape disabled" || echo "✅ Autoescape enabled"
+        # Check for hardcoded secrets
+        grep -r -i "password\|secret\|key" output/*.xhtml && echo "⚠️ Warning: Potential secrets found" || echo "✅ No secrets detected"
+    
+    - name: Performance Test
+      run: |
+        echo "⚡ Running performance tests..."
+        python scripts/performance_test.py
+    
+    - name: Upload Validation Reports
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: validation-reports
+        path: |
+          output/*.xhtml
+          output/*.log
+          coverage_report.txt
+          performance_report.json
+    
+    - name: Upload Coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage.xml
+        flags: unittests
+        name: codecov-umbrella
+    
+    - name: Comment PR with Results
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const fs = require('fs');
+          const coverage = fs.readFileSync('coverage_report.txt', 'utf8');
+          
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: `## iXBRL Validation Results ✅
+            
+            All validation checks passed!
+            
+            ### ESRS Coverage Report
+            \`\`\`
+            ${coverage}
+            \`\`\`
+            
+            ### Checks Performed
+            - ✅ XML Well-formedness
+            - ✅ XHTML 1.1 DTD Validation
+            - ✅ iXBRL Structure Validation
+            - ✅ Arelle XBRL Validation
+            - ✅ Namespace Declarations
+            - ✅ Numeric Precision
+            - ✅ CBAM Compliance
+            - ✅ Security Scan
+            
+            View full reports in the [Actions artifacts](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}).`
+          })
+
+# Additional workflow for nightly taxonomy updates
+---
+name: Taxonomy Update Check
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Daily at midnight
+  workflow_dispatch:
+
+jobs:
+  check-taxonomy-updates:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Check for EFRAG Taxonomy Updates
+      run: |
+        echo "🔍 Checking for EFRAG taxonomy updates..."
+        # Compare checksums with stored versions
+        wget -q https://xbrl.efrag.org/taxonomy/2025/checksums.txt -O new_checksums.txt
+        if ! diff -q taxonomies/checksums.txt new_checksums.txt; then
+          echo "⚠️ Taxonomy updates available!"
+          # Create issue or PR to update taxonomies
+        else
+          echo "✅ Taxonomies are up to date"
+        fi

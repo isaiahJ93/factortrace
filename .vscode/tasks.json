@@ -1,0 +1,11 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "pytest-single",
+      "type": "shell",
+      "command": "poetry run pytest -q --last-failed",
+      "problemMatcher": []
+    }
+  ]
+}

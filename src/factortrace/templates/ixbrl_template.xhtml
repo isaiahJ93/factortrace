@@ -1,0 +1,19 @@
+from jinja2 import Environment, FileSystemLoader
+
+def generate_ixbrl(voucher_data, output_path="output/compliance_report.xhtml"):
+    env = Environment(loader=FileSystemLoader("src/factortrace/templates"))
+    template = env.get_template("ixbrl_template.xhtml")
+
+    rendered = template.render(
+        entity_lei=voucher_data["entity_lei"],
+        emissions=voucher_data["total_emissions"],
+        # etc...
+    )
+
+    with open(output_path, "w", encoding="utf-8") as f:
+        f.write(rendered)
+    print(f"✅ XHTML report generated at: {output_path}")
+
+    <xbrli:identifier scheme="http://www.efrag.org/esrs">{{ entity_lei }}</xbrli:identifier>
+
+    

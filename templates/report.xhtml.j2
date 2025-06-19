@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ix="http://www.xbrl.org/2013/inlineXBRL"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:xbrli="http://www.xbrl.org/2003/instance"
+      xmlns:iso4217="http://www.xbrl.org/2003/iso4217"
+      xmlns:esrs="http://www.efrag.org/taxonomy/2025/esrs"
+      xmlns:cbam="http://www.efrag.org/taxonomy/2025/cbam"
+      xmlns:link="http://www.xbrl.org/2003/linkbase">
+
+<head>
+    <title>CSRD-Compliant Emission Voucher Report</title>
+    <meta charset="UTF-8"/>
+    
+    <!-- iXBRL Hidden Section -->
+    <ix:header>
+        <ix:hidden>
+            <xbrli:context id="c-instant">
+                <xbrli:entity>
+                    <xbrli:identifier scheme="http://www.lei-worldwide.com/lei">
+                        {{ voucher.reporting_entity_lei }}
+                    </xbrli:identifier>
+                </xbrli:entity>
+                <xbrli:period>
+                    <xbrli:instant>{{ voucher.reporting_period_end }}</xbrli:instant>
+                </xbrli:period>
+            </xbrli:context>
+            
+            <xbrli:context id="c-duration">
+                <xbrli:entity>
+                    <xbrli:identifier scheme="http://www.lei-worldwide.com/lei">
+                        {{ voucher.reporting_entity_lei }}
+                    </xbrli:identifier>
+                </xbrli:entity>
+                <xbrli:period>
+                    <xbrli:startDate>{{ voucher.reporting_period_start }}</xbrli:startDate>
+                    <xbrli:endDate>{{ voucher.reporting_period_end }}</xbrli:endDate>
+                </xbrli:period>
+            </xbrli:context>
+            
+            <!-- Units -->
+            <xbrli:unit id="tco2e">
+                <xbrli:measure>esrs:tonnesCO2e</xbrli:measure>
+            </xbrli:unit>
+            <xbrli:unit id="mwh">
+                <xbrli:measure>esrs:MWh</xbrli:measure>
+            </xbrli:unit>
+            <xbrli:unit id="euro">
+                <xbrli:measure>iso4217:EUR</xbrli:measure>
+            </xbrli:unit>
+        </ix:hidden>
+    </ix:header>
+</head>
+
+<body>
+    <header>
+        <h1>Sustainability Statement – GHG Emissions Voucher</h1>
+        <p>Prepared in accordance with CSRD (EU) 2022/2464 and ESRS E1</p>
+    </header>
+
+    <!-- ESRS 2 General Disclosures -->
+    <section id="general-information">
+        <h2>1. Reporting Entity</h2>
+        <table class="disclosure-table">
+            <tr>
+                <td>Legal Entity Identifier (LEI):</td>
+                <td><ix:nonNumeric name="esrs:LegalEntityIdentifier" 
+                    contextRef="c-instant">{{ voucher.reporting_entity_lei }}</ix:nonNumeric></td>
+            </tr>
+            <tr>
+                <td>Reporting Period:</td>
+                <td>
+                    <ix:nonNumeric name="esrs:ReportingPeriodStartDate" 
+                        contextRef="c-duration">{{ voucher.reporting_period_start }}</ix:nonNumeric> to
+                    <ix:nonNumeric name="esrs:ReportingPeriodEndDate" 
+                        contextRef="c-duration">{{ voucher.reporting_period_end }}</ix:nonNumeric>
+                </td>
+            </tr>
+        </table>
+    </section>
+
+    <!-- ESRS E1-6 GHG Emissions -->
+    <section id="ghg-emissions">
+        <h2>2. Gross GHG Emissions (ESRS E1-6)</h2>
+        
+        <!-- Scope 1 -->
+        <h3>2.1 Direct (Scope 1) GHG Emissions</h3>
+        <table class="emissions-table">
+            <thead>
+                <tr>
+                    <th>GHG Type</th>
+                    <th>Amount (tCO₂e)</th>
+                    <th>Calculation Method</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for emission in voucher.scope1_emissions %}
+                <tr>
+                    <td><ix:nonNumeric name="esrs:GHGType" 
+                        contextRef="c-duration">{{ emission.gas_type }}</ix:nonNumeric></td>
+                    <td><ix:nonFraction name="esrs:Scope1GHGEmissions" 
+                        contextRef="c-duration" unitRef="tco2e" 
+                        decimals="3">{{ emission.amount }}</ix:nonFraction></td>
+                    <td><ix:nonNumeric name="esrs:EmissionCalculationMethod" 
+                        contextRef="c-duration">{{ emission.method }}</ix:nonNumeric></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td><strong>Total Scope 1</strong></td>
+                    <td><strong><ix:nonFraction name="esrs:TotalScope1Emissions" 
+                        contextRef="c-duration" unitRef="tco2e" 
+                        decimals="3">{{ voucher.total_scope1 }}</ix:nonFraction></strong></td>
+                    <td>-</td>
+                </tr>
+            </tfoot>
+        </table>
+
+        <!-- Scope 3 with Categories -->
+        <h3>2.3 Other Indirect (Scope 3) GHG Emissions</h3>
+        <table class="emissions-table">
+            <thead>
+                <tr>
+                    <th>Category</th>
+                    <th>Description</th>
+                    <th>Amount (tCO₂e)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for category in voucher.scope3_categories %}
+                <tr>
+                    <td><ix:nonNumeric name="esrs:Scope3Category" 
+                        contextRef="c-duration">{{ category.number }}</ix:nonNumeric></td>
+                    <td>{{ category.description }}</td>
+                    <td><ix:nonFraction name="esrs:Scope3CategoryEmissions" 
+                        contextRef="c-duration" unitRef="tco2e" 
+                        decimals="3">{{ category.amount }}</ix:nonFraction></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+
+    <!-- CBAM Specific Disclosures -->
+    <section id="cbam-disclosures">
+        <h2>3. CBAM Product Carbon Content</h2>
+        <table class="cbam-table">
+            <tr>
+                <td>CN Code:</td>
+                <td><ix:nonNumeric name="cbam:CombinedNomenclatureCode" 
+                    contextRef="c-instant">{{ voucher.product_cn_code }}</ix:nonNumeric></td>
+            </tr>
+            <tr>
+                <td>Installation ID:</td>
+                <td><ix:nonNumeric name="cbam:InstallationIdentifier" 
+                    contextRef="c-instant">{{ voucher.installation_id }}</ix:nonNumeric></td>
+            </tr>
+            <tr>
+                <td>Specific Embedded Emissions:</td>
+                <td><ix:nonFraction name="cbam:SpecificEmbeddedEmissions" 
+                    contextRef="c-duration" unitRef="tco2e" 
+                    decimals="3">{{ voucher.embedded_emissions }}</ix:nonFraction></td>
+            </tr>
+            <tr>
+                <td>Carbon Price Paid:</td>
+                <td><ix:nonFraction name="cbam:CarbonPricePaid" 
+                    contextRef="c-duration" unitRef="euro" 
+                    decimals="2">{{ voucher.carbon_price_paid }}</ix:nonFraction></td>
+            </tr>
+        </table>
+    </section>
+
+    <!-- Data Quality (ESRS 1) -->
+    <section id="data-quality">
+        <h2>4. Data Quality Assessment</h2>
+        <p>Data Quality Score (1-5): 
+            <ix:nonNumeric name="esrs:DataQualityRating" 
+                contextRef="c-instant">{{ voucher.data_quality_score }}</ix:nonNumeric>
+        </p>
+        <p>Primary Data Percentage: 
+            <ix:nonFraction name="esrs:PrimaryDataPercentage" 
+                contextRef="c-duration" decimals="1">{{ voucher.primary_data_pct }}</ix:nonFraction>%
+        </p>
+    </section>
+
+    <!-- Assurance -->
+    <section id="assurance">
+        <h2>5. Assurance</h2>
+        <p>This report has been subject to 
+            <ix:nonNumeric name="esrs:AssuranceLevel" 
+                contextRef="c-instant">{{ voucher.assurance_level }}</ix:nonNumeric> assurance.
+        </p>
+    </section>
+
+    <footer>
+        <p class="disclaimer">
+            This document contains Inline XBRL tags in accordance with ESEF Regulation 
+            and EFRAG XBRL Taxonomy {{ taxonomy_version }}.
+        </p>
+    </footer>
+</body>
+</html>
+

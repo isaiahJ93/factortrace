@@ -1,0 +1,10 @@
+{
+  "supplier_id": "SUP-001",
+  "emissions_amount": 1234.56,
+  "scope": "SCOPE_3",
+  "unit": "tCO2e"
+  "value_chain_stage": "UPSTREAM",
+  "scope3_category": "CATEGORY_1",
+  "activity_description": "Purchased steel",
+  "activity_value": 100
+}

@@ -1,0 +1,733 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning"
+    targetNamespace="urn:iso:std:20022:tech:xsd:esrs.e1.001.01"
+    xmlns:esrs="urn:iso:std:20022:tech:xsd:esrs.e1.001.01"
+    xmlns:cbam="urn:eu:cbam:xsd:declaration:001.01"
+    elementFormDefault="qualified"
+    vc:minVersion="1.1">
+
+  <!-- Import CBAM namespace -->
+  <xs:import namespace="urn:eu:cbam:xsd:declaration:001.01" 
+             schemaLocation="cbam-common.xsd"/>
+
+  <!-- Root element -->
+  <xs:element name="EmissionVoucher" type="esrs:EmissionVoucherType">
+    <xs:annotation>
+      <xs:documentation>ESRS E1 and CBAM compliant emission voucher</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <!-- Main voucher type -->
+  <xs:complexType name="EmissionVoucherType">
+    <xs:sequence>
+      <xs:element name="Header" type="esrs:HeaderType"/>
+      <xs:element name="ReportingEntity" type="esrs:EntityType"/>
+      <xs:element name="Supplier" type="esrs:SupplierType"/>
+      <xs:element name="Product" type="esrs:ProductType"/>
+      <xs:element name="Installation" type="esrs:InstallationType" minOccurs="0"/>
+      <xs:element name="ActivityData" type="esrs:ActivityDataType"/>
+      <xs:element name="EmissionData" type="esrs:EmissionDataType"/>
+      <xs:element name="ReportingPeriod" type="esrs:PeriodType"/>
+      <xs:element name="DataQuality" type="esrs:DataQualityType"/>
+      <xs:element name="Verification" type="esrs:VerificationType"/>
+    </xs:sequence>
+    <xs:attribute name="version" type="xs:string" fixed="1.0.0"/>
+  </xs:complexType>
+
+  <!-- Header information -->
+  <xs:complexType name="HeaderType">
+    <xs:sequence>
+      <xs:element name="VoucherId" type="esrs:UUIDType"/>
+      <xs:element name="CreationDateTime" type="xs:dateTime"/>
+      <xs:element name="SubmissionDateTime" type="xs:dateTime"/>
+      <xs:element name="MessageType" type="esrs:MessageTypeEnum" default="ORIGINAL"/>
+      <xs:element name="PreviousVoucherId" type="esrs:UUIDType" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Reporting entity (undertaking) -->
+  <xs:complexType name="EntityType">
+    <xs:sequence>
+      <xs:element name="LEI" type="esrs:LEIType">
+        <xs:annotation>
+          <xs:documentation>Legal Entity Identifier per ESRS 2 §17</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Name" type="xs:string"/>
+      <xs:element name="JurisdictionCountry" type="esrs:CountryCodeType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Supplier information -->
+  <xs:complexType name="SupplierType">
+    <xs:sequence>
+      <xs:element name="Id" type="xs:string"/>
+      <xs:element name="Name" type="xs:string"/>
+      <xs:element name="LEI" type="esrs:LEIType" minOccurs="0"/>
+      <xs:element name="Country" type="esrs:CountryCodeType"/>
+      <xs:element name="TaxId" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Product information -->
+  <xs:complexType name="ProductType">
+    <xs:sequence>
+      <xs:element name="CNCode" type="esrs:CNCodeType">
+        <xs:annotation>
+          <xs:documentation>Combined Nomenclature code per CBAM</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Description" type="xs:string"/>
+      <xs:element name="Category" type="xs:string"/>
+      <xs:element name="MaterialType" type="esrs:MaterialTypeEnum" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Installation (CBAM specific) -->
+  <xs:complexType name="InstallationType">
+    <xs:sequence>
+      <xs:element name="InstallationId" type="xs:string"/>
+      <xs:element name="Name" type="xs:string" minOccurs="0"/>
+      <xs:element name="Country" type="esrs:CountryCodeType"/>
+      <xs:element name="Address" type="xs:string" minOccurs="0"/>
+      <xs:element name="Coordinates" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Latitude" type="xs:decimal"/>
+            <xs:element name="Longitude" type="xs:decimal"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Activity data -->
+  <xs:complexType name="ActivityDataType">
+    <xs:sequence>
+      <xs:element name="Quantity" type="esrs:QuantityType"/>
+      <xs:element name="MonetaryValue" type="esrs:MonetaryAmountType"/>
+      <xs:element name="ActivityDescription" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Per ESRS E1-6 §53(a)</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Emission data -->
+  <xs:complexType name="EmissionDataType">
+    <xs:sequence>
+      <xs:element name="Scope" type="esrs:ScopeEnum"/>
+      <xs:element name="Scope3Category" type="esrs:Scope3CategoryEnum" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Required if Scope=3</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="DirectEmissions" type="esrs:EmissionAmountType"/>
+      <xs:element name="IndirectEmissions" type="esrs:EmissionAmountType" minOccurs="0"/>
+      <xs:element name="BiogenicEmissions" type="esrs:EmissionAmountType" minOccurs="0"/>
+      <xs:element name="GHGBreakdown" type="esrs:GHGBreakdownType"/>
+      <xs:element name="EmissionFactor" type="esrs:EmissionFactorType"/>
+      <xs:element name="CalculationMethod" type="esrs:CalculationMethodType"/>
+      <xs:element name="CarbonPricePaid" type="esrs:MonetaryAmountType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>CBAM Article 35.2(h)</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- GHG breakdown by gas -->
+  <xs:complexType name="GHGBreakdownType">
+    <xs:annotation>
+      <xs:documentation>ESRS E1-6 §53(b)</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="CO2" type="esrs:EmissionAmountType"/>
+      <xs:element name="CH4" type="esrs:EmissionAmountType" minOccurs="0"/>
+      <xs:element name="N2O" type="esrs:EmissionAmountType" minOccurs="0"/>
+      <xs:element name="HFCs" type="esrs:EmissionAmountType" minOccurs="0"/>
+      <xs:element name="PFCs" type="esrs:EmissionAmountType" minOccurs="0"/>
+      <xs:element name="SF6" type="esrs:EmissionAmountType" minOccurs="0"/>
+      <xs:element name="NF3" type="esrs:EmissionAmountType" minOccurs="0"/>
+      <xs:element name="Total" type="esrs:EmissionAmountType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Emission factor details -->
+  <xs:complexType name="EmissionFactorType">
+    <xs:sequence>
+      <xs:element name="FactorId" type="xs:string"/>
+      <xs:element name="Value" type="xs:decimal"/>
+      <xs:element name="Unit" type="xs:string"/>
+      <xs:element name="Source" type="esrs:EmissionFactorSourceEnum"/>
+      <xs:element name="SourceReference" type="xs:string" minOccurs="0"/>
+      <xs:element name="ValidFrom" type="xs:date" minOccurs="0"/>
+      <xs:element name="IsDefault" type="xs:boolean" default="false"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Calculation methodology -->
+  <xs:complexType name="CalculationMethodType">
+    <xs:annotation>
+      <xs:documentation>ESRS E1-6 §54</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Method" type="esrs:MethodEnum"/>
+      <xs:element name="Description" type="xs:string" minOccurs="0"/>
+      <xs:element name="Standard" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Reporting period -->
+  <xs:complexType name="PeriodType">
+    <xs:sequence>
+      <xs:element name="StartDate" type="xs:date"/>
+      <xs:element name="EndDate" type="xs:date"/>
+      <xs:element name="ReportingYear" type="xs:gYear"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Data quality assessment -->
+  <xs:complexType name="DataQualityType">
+    <xs:annotation>
+      <xs:documentation>ESRS 1 §64-65</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="QualityScore" type="esrs:QualityScoreType"/>
+      <xs:element name="DataSource" type="esrs:DataSourceEnum"/>
+      <xs:element name="UncertaintyAssessment" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="UncertaintyPercentage" type="xs:decimal"/>
+            <xs:element name="ConfidenceLevel" type="xs:decimal" default="95"/>
+            <xs:element name="Method" type="xs:string" minOccurs="0"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="PrimaryDataPercentage" type="xs:decimal" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Percentage from primary sources</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Verification and integrity -->
+  <xs:complexType name="VerificationType">
+    <xs:sequence>
+      <xs:element name="CalculationHash" type="esrs:HashType"/>
+      <xs:element name="HashAlgorithm" type="xs:string" default="SHA-256"/>
+      <xs:element name="ThirdPartyVerification" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="VerifierId" type="xs:string"/>
+            <xs:element name="AccreditationNumber" type="xs:string"/>
+            <xs:element name="VerificationDate" type="xs:date"/>
+            <xs:element name="VerificationLevel" type="esrs:VerificationLevelEnum"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Simple types -->
+  
+  <xs:simpleType name="UUIDType">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="LEIType">
+    <xs:annotation>
+      <xs:documentation>ISO 17442 Legal Entity Identifier</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[A-Z0-9]{18}[0-9]{2}"/>
+      <xs:length value="20"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="CountryCodeType">
+    <xs:annotation>
+      <xs:documentation>ISO 3166-1 alpha-2</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[A-Z]{2}"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="CNCodeType">
+    <xs:annotation>
+      <xs:documentation>8-digit Combined Nomenclature code</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[0-9]{8}"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="HashType">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[0-9a-f]{64}"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="QualityScoreType">
+    <xs:annotation>
+      <xs:documentation>ESRS data quality 1-5 scale</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:integer">
+      <xs:minInclusive value="1"/>
+      <xs:maxInclusive value="5"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- Complex types with amount/unit -->
+  
+  <xs:complexType name="QuantityType">
+    <xs:simpleContent>
+      <xs:extension base="xs:decimal">
+        <xs:attribute name="unit" type="esrs:QuantityUnitEnum" use="required"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="MonetaryAmountType">
+    <xs:simpleContent>
+      <xs:extension base="xs:decimal">
+        <xs:attribute name="currency" type="esrs:CurrencyCodeType" use="required"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="EmissionAmountType">
+    <xs:simpleContent>
+      <xs:extension base="xs:decimal">
+        <xs:attribute name="unit" type="esrs:EmissionUnitEnum" default="tCO2e"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <!-- Enumerations -->
+  
+  <xs:simpleType name="MessageTypeEnum">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="ORIGINAL"/>
+      <xs:enumeration value="AMENDMENT"/>
+      <xs:enumeration value="CANCELLATION"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="ScopeEnum">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="SCOPE_1"/>
+      <xs:enumeration value="SCOPE_2"/>
+      <xs:enumeration value="SCOPE_3"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="Scope3CategoryEnum">
+    <xs:annotation>
+      <xs:documentation>GHG Protocol Scope 3 categories</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="PURCHASED_GOODS_SERVICES"/>
+      <xs:enumeration value="CAPITAL_GOODS"/>
+      <xs:enumeration value="FUEL_ENERGY_ACTIVITIES"/>
+      <xs:enumeration value="UPSTREAM_TRANSPORTATION"/>
+      <xs:enumeration value="WASTE_GENERATED"/>
+      <xs:enumeration value="BUSINESS_TRAVEL"/>
+      <xs:enumeration value="EMPLOYEE_COMMUTING"/>
+      <xs:enumeration value="UPSTREAM_LEASED_ASSETS"/>
+      <xs:enumeration value="DOWNSTREAM_TRANSPORTATION"/>
+      <xs:enumeration value="PROCESSING_SOLD_PRODUCTS"/>
+      <xs:enumeration value="USE_SOLD_PRODUCTS"/>
+      <xs:enumeration value="END_OF_LIFE_TREATMENT"/>
+      <xs:enumeration value="DOWNSTREAM_LEASED_ASSETS"/>
+      <xs:enumeration value="FRANCHISES"/>
+      <xs:enumeration value="INVESTMENTS"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="MaterialTypeEnum">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="STEEL"/>
+      <xs:enumeration value="ALUMINUM"/>
+      <xs:enumeration value="CEMENT"/>
+      <xs:enumeration value="FERTILIZER"/>
+      <xs:enumeration value="ELECTRICITY"/>
+      <xs:enumeration value="HYDROGEN"/>
+      <xs:enumeration value="OTHER"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="EmissionFactorSourceEnum">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="IPCC"/>
+      <xs:enumeration value="NATIONAL_INVENTORY"/>
+      <xs:enumeration value="INDUSTRY_DATABASE"/>
+      <xs:enumeration value="SUPPLIER_SPECIFIC"/>
+      <xs:enumeration value="CBAM_DEFAULT"/>
+      <xs:enumeration value="OTHER"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="MethodEnum">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="MEASUREMENT"/>
+      <xs:enumeration value="CALCULATION"/>
+      <xs:enumeration value="ESTIMATION"/>
+      <xs:enumeration value="DEFAULT_FACTOR"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="DataSourceEnum">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="PRIMARY"/>
+      <xs:enumeration value="SECONDARY"/>
+      <xs:enumeration value="ESTIMATED"/>
+      <xs:enumeration value="DEFAULT"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="QuantityUnitEnum">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="kg"/>
+      <xs:enumeration value="t"/>
+      <xs:enumeration value="MWh"/>
+      <xs:enumeration value="GJ"/>
+      <xs:enumeration value="m3"/>
+      <xs:enumeration value="unit"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="EmissionUnitEnum">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="kgCO2e"/>
+      <xs:enumeration value="tCO2e"/>
+      <xs:enumeration value="MtCO2e"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="CurrencyCodeType">
+    <xs:annotation>
+      <xs:documentation>ISO 4217 currency codes</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[A-Z]{3}"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="VerificationLevelEnum">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="LIMITED"/>
+      <xs:enumeration value="REASONABLE"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- Assertions for XSD 1.1 -->
+  <xs:assert test="if (EmissionData/Scope = 'SCOPE_3') then exists(EmissionData/Scope3Category) else true()">
+    <xs:annotation>
+      <xs:documentation>Scope 3 emissions must specify category</xs:documentation>
+    </xs:annotation>
+  </xs:assert>
+
+  <xs:assert test="ReportingPeriod/EndDate >= ReportingPeriod/StartDate">
+    <xs:annotation>
+      <xs:documentation>End date must be after start date</xs:documentation>
+    </xs:annotation>
+  </xs:assert>
+
+</xs:schema>
+
+import pytest
+from decimal import Decimal
+from datetime import date, datetime
+from pathlib import Path
+import tempfile
+from lxml import etree
+
+from voucher_generator import (
+    serialize_voucher, 
+    validate_xml, 
+    deserialize_voucher,
+    calculate_integrity_hash
+)
+
+
+class TestESRSCompliantVoucher:
+    """Golden path tests for ESRS E1/CBAM compliant vouchers."""
+    
+    @pytest.fixture
+    def compliant_voucher_data(self):
+        """Create fully compliant voucher data."""
+        return {
+            # Entity identification
+            "reporting_undertaking_id": "549300EXAMPLE1234567",  # Valid LEI
+            "supplier_id": "SUP-2024-001",
+            "supplier_name": "Example Steel Works GmbH",
+            "legal_entity_identifier": "5493001RKG3BZW1JB678",  # Valid LEI
+            
+            # Product data (CBAM)
+            "product_cn_code": "72104900",  # Flat-rolled steel
+            "product_category": "Steel Products",
+            "activity_description": "Flat-rolled products of iron or non-alloy steel",
+            "quantity": Decimal("1000.500"),
+            "quantity_unit": "t",
+            "monetary_value": Decimal("850000.00"),
+            "currency": "EUR",
+            
+            # Geographic data
+            "installation_country": "DE",
+            "installation_id": "DE-CBAM-0001",
+            
+            # Emission data
+            "emission_factor_id": "EF-STEEL-2024-Q1",
+            "emission_factor_value": Decimal("2.15"),
+            "emission_factor_source": "CBAM_DEFAULT",
+            "data_quality_rating": 3,
+            "calculation_methodology": "CALCULATION",
+            "total_emissions_tco2e": Decimal("2151.075"),
+            
+            # Temporal data
+            "reporting_period_start": "2024-01-01",
+            "reporting_period_end": "2024-03-31",
+            "submission_timestamp": "2024-04-15T10:30:00+00:00",
+            
+            # Verification
+            "voucher_id": "550e8400-e29b-41d4-a716-446655440000",
+            "calculation_hash": None,  # Will be calculated
+            "previous_voucher_id": None
+        }
+    
+    @pytest.fixture
+    def xsd_schema_path(self, tmp_path):
+        """Create temporary XSD file with compliant schema."""
+        xsd_content = '''<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="urn:iso:std:20022:tech:xsd:esrs.e1.001.01"
+           xmlns="urn:iso:std:20022:tech:xsd:esrs.e1.001.01"
+           elementFormDefault="qualified">
+  <!-- Minimal schema for testing - use full schema in production -->
+  <xs:element name="EmissionVoucher">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>'''
+        
+        xsd_file = tmp_path / "test_voucher.xsd"
+        xsd_file.write_text(xsd_content)
+        return xsd_file
+    
+    def test_golden_path_serialization(self, compliant_voucher_data):
+        """Test 1: Generate compliant voucher and serialize to XML."""
+        # Act
+        xml_output = serialize_voucher(compliant_voucher_data)
+        
+        # Assert structure
+        assert '<?xml version="1.0" encoding="UTF-8"?>' in xml_output
+        assert 'xmlns="urn:iso:std:20022:tech:xsd:esrs.e1.001.01"' in xml_output
+        assert '<EmissionVoucher' in xml_output
+        
+        # Parse and verify key elements
+        root = etree.fromstring(xml_output.encode('utf-8'))
+        ns = {'esrs': 'urn:iso:std:20022:tech:xsd:esrs.e1.001.01'}
+        
+        # Verify header
+        voucher_id = root.find('.//esrs:VoucherId', ns)
+        assert voucher_id is not None
+        assert voucher_id.text == compliant_voucher_data['voucher_id']
+        
+        # Verify calculation hash was added
+        calc_hash = root.find('.//esrs:CalculationHash', ns)
+        assert calc_hash is not None
+        assert len(calc_hash.text) == 64  # SHA-256 hex
+        
+        # Verify emission data
+        total_emissions = root.find('.//esrs:TotalEmissions', ns)
+        assert total_emissions is not None
+        assert total_emissions.text == "2151.075"
+        assert total_emissions.get('unit') == 'tCO2e'
+        
+        # Verify LEI format
+        lei = root.find('.//esrs:ReportingEntity/esrs:LEI', ns)
+        assert lei is not None
+        assert len(lei.text) == 20
+        
+    def test_golden_path_validation(self, compliant_voucher_data, xsd_schema_path):
+        """Test 2: Validate serialized XML against schema."""
+        # Arrange
+        xml_output = serialize_voucher(compliant_voucher_data)
+        
+        # Act
+        is_valid, errors = validate_xml(xml_output, xsd_schema_path, return_errors=True)
+        
+        # Assert
+        assert is_valid is True
+        assert len(errors) == 0
+        
+        # Additional validation checks
+        root = etree.fromstring(xml_output.encode('utf-8'))
+        
+        # Verify all mandatory ESRS fields present
+        mandatory_xpaths = [
+            './/esrs:Header/esrs:VoucherId',
+            './/esrs:ReportingEntity/esrs:LEI',
+            './/esrs:Supplier/esrs:Id',
+            './/esrs:Product/esrs:CNCode',
+            './/esrs:EmissionCalculation/esrs:TotalEmissions',
+            './/esrs:ReportingPeriod/esrs:StartDate',
+            './/esrs:DataQuality/esrs:QualityScore'
+        ]
+        
+        ns = {'esrs': 'urn:iso:std:20022:tech:xsd:esrs.e1.001.01'}
+        for xpath in mandatory_xpaths:
+            element = root.find(xpath, ns)
+            assert element is not None, f"Missing mandatory element: {xpath}"
+    
+    def test_golden_path_roundtrip(self, compliant_voucher_data):
+        """Test 3: Round-trip serialization with data integrity check."""
+        # Arrange - Add calculated fields
+        compliant_voucher_data['calculation_hash'] = calculate_integrity_hash(compliant_voucher_data)
+        
+        # Act - Serialize
+        xml_output = serialize_voucher(compliant_voucher_data)
+        
+        # Act - Deserialize
+        recovered_data = deserialize_voucher(xml_output)
+        
+        # Assert - Key fields match
+        key_fields = [
+            'voucher_id',
+            'reporting_undertaking_id',
+            'supplier_id',
+            'product_cn_code',
+            'total_emissions_tco2e',
+            'calculation_hash',
+            'data_quality_rating'
+        ]
+        
+        for field in key_fields:
+            original = compliant_voucher_data.get(field)
+            recovered = recovered_data.get(field)
+            
+            # Handle Decimal comparison
+            if isinstance(original, Decimal):
+                assert Decimal(str(recovered)) == original, f"Mismatch in {field}"
+            else:
+                assert str(recovered) == str(original), f"Mismatch in {field}: {recovered} != {original}"
+        
+        # Verify data types preserved
+        assert isinstance(recovered_data['total_emissions_tco2e'], Decimal)
+        assert isinstance(recovered_data['quantity'], Decimal)
+        assert isinstance(recovered_data['data_quality_rating'], int)
+        
+        # Verify hash integrity
+        recalculated_hash = calculate_integrity_hash(recovered_data)
+        assert recalculated_hash == recovered_data['calculation_hash']
+    
+    def test_cbam_specific_fields(self, compliant_voucher_data):
+        """Test CBAM-specific field handling."""
+        # Add CBAM-specific data
+        compliant_voucher_data.update({
+            'carbon_price_paid': Decimal("25.50"),
+            'indirect_emissions': Decimal("150.25"),
+            'verifier_accreditation_id': 'ACC-2024-DE-001'
+        })
+        
+        # Serialize
+        xml_output = serialize_voucher(compliant_voucher_data, include_cbam_namespace=True)
+        
+        # Verify CBAM namespace
+        assert 'xmlns:cbam="urn:eu:cbam:xsd:declaration:001.01"' in xml_output
+        
+        # Parse and check CBAM fields
+        root = etree.fromstring(xml_output.encode('utf-8'))
+        ns = {
+            'esrs': 'urn:iso:std:20022:tech:xsd:esrs.e1.001.01',
+            'cbam': 'urn:eu:cbam:xsd:declaration:001.01'
+        }
+        
+        # Check installation
+        installation = root.find('.//cbam:Installation', ns)
+        assert installation is not None
+        
+        # Check carbon price
+        carbon_price = root.find('.//esrs:CarbonPricePaid', ns)
+        assert carbon_price is not None
+        assert carbon_price.text == "25.50"
+        assert carbon_price.get('currency') == 'EUR'
+    
+    def test_data_quality_validation(self, compliant_voucher_data):
+        """Test ESRS data quality scoring."""
+        # Test different quality levels
+        quality_test_cases = [
+            (1, "PRIMARY", "Measured and verified"),
+            (3, "SECONDARY", "Calculated from primary"),
+            (5, "DEFAULT", "Generic factors")
+        ]
+        
+        for score, source, description in quality_test_cases:
+            voucher = compliant_voucher_data.copy()
+            voucher['data_quality_rating'] = score
+            voucher['emission_factor_source'] = source
+            
+            xml_output = serialize_voucher(voucher)
+            root = etree.fromstring(xml_output.encode('utf-8'))
+            ns = {'esrs': 'urn:iso:std:20022:tech:xsd:esrs.e1.001.01'}
+            
+            quality_elem = root.find('.//esrs:DataQuality', ns)
+            assert quality_elem is not None
+            assert quality_elem.get('rating') == str(score)
+<!-- Add after DataQuality element -->
+<xs:complexType name="MaterialityAssessmentType">
+  <xs:sequence>
+    <xs:element name="ImpactMateriality">
+      <xs:complexType>
+        <xs:sequence>
+          <xs:element name="IsMatertial" type="xs:boolean"/>
+          <xs:element name="Magnitude" type="esrs:MagnitudeEnum"/>
+          <xs:element name="Likelihood" type="esrs:LikelihoodEnum"/>
+          <xs:element name="TimeHorizon" type="esrs:TimeHorizonEnum"/>
+          <xs:element name="AffectedStakeholders" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+      </xs:complexType>
+    </xs:element>
+    <xs:element name="FinancialMateriality">
+      <xs:complexType>
+        <xs:sequence>
+          <xs:element name="IsMaterial" type="xs:boolean"/>
+          <xs:element name="FinancialImpact" type="esrs:MonetaryAmountType" minOccurs="0"/>
+          <xs:element name="RiskType" type="esrs:ClimateRiskEnum"/>
+          <xs:element name="TimeHorizon" type="esrs:TimeHorizonEnum"/>
+        </xs:sequence>
+      </xs:complexType>
+    </xs:element>
+  </xs:sequence>
+</xs:complexType>
+
+<!-- Required enums -->
+<xs:simpleType name="MagnitudeEnum">
+  <xs:restriction base="xs:string">
+    <xs:enumeration value="NEGLIGIBLE"/>
+    <xs:enumeration value="LOW"/>
+    <xs:enumeration value="MEDIUM"/>
+    <xs:enumeration value="HIGH"/>
+    <xs:enumeration value="VERY_HIGH"/>
+  </xs:restriction>
+</xs:simpleType>
+
+<xs:simpleType name="TimeHorizonEnum">
+  <xs:restriction base="xs:string">
+    <xs:enumeration value="SHORT_TERM"/> <!-- < 1 year -->
+    <xs:enumeration value="MEDIUM_TERM"/> <!-- 1-5 years -->
+    <xs:enumeration value="LONG_TERM"/> <!-- > 5 years -->
+  </xs:restriction>
+</xs:simpleType>
+            

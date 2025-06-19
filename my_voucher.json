@@ -1,0 +1,15 @@
+{
+  "supplier_id": "SUP-001",
+  "supplier_name": "Acme Metals",
+  "legal_entity_identifier": "5493001KTIIIGC8YR12",
+  "product_category": "Materials",
+  "cost": 1200.0,
+  "material_type": "Steel",
+  "origin_country": "DE",
+  "emission_factor": 2.5,
+  "fallback_factor_used": false,
+  "total_co2e": 3000.0,
+  "submission_date": "2025-06-03T21:52:00Z",
+  "voucher_uuid": "a30e63ed-74d6-4a0d-b53b-60ea7f1ed504",
+  "hash": "abc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc1"
+}
