@@ -42,13 +42,13 @@ jobs:
     
     - name: Download ESRS Taxonomy
       run: |
-        if [ -f taxonomies ]; then rm taxonomies; fi
+        if [ -d taxonomies ]; then rm -rf taxonomies; fi
         mkdir -p taxonomies/esrs
         wget -q https://xbrl.efrag.org/taxonomy/2025/esrs-all.xsd -O taxonomies/esrs/esrs-all.xsd
         wget -q https://xbrl.efrag.org/taxonomy/2025/esrs-pre.xml -O taxonomies/esrs/esrs-pre.xml
         wget -q https://xbrl.efrag.org/taxonomy/2025/esrs-cal.xml -O taxonomies/esrs/esrs-cal.xml
         wget -q https://xbrl.efrag.org/taxonomy/2025/esrs-def.xml -O taxonomies/esrs/esrs-def.xml
-    
+
     - name: Run Unit Tests
       run: |
         python -m pytest tests/test_voucher_renderer.py -v --cov=src --cov-report=xml
