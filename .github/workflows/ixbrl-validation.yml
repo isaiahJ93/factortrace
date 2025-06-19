@@ -42,8 +42,8 @@ jobs:
     
     - name: Download ESRS Taxonomy
       run: |
+        if [ -f taxonomies ]; then rm taxonomies; fi
         mkdir -p taxonomies/esrs
-        # Download EFRAG ESRS taxonomy files
         wget -q https://xbrl.efrag.org/taxonomy/2025/esrs-all.xsd -O taxonomies/esrs/esrs-all.xsd
         wget -q https://xbrl.efrag.org/taxonomy/2025/esrs-pre.xml -O taxonomies/esrs/esrs-pre.xml
         wget -q https://xbrl.efrag.org/taxonomy/2025/esrs-cal.xml -O taxonomies/esrs/esrs-cal.xml
