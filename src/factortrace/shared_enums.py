@@ -1,6 +1,6 @@
 from enum import Enum
 
-# ────────────────────── Enum Definitions ────────────────────── #
+# ─────────────────── Core Enums ─────────────────── #
 
 class TierLevelEnum(str, Enum):
     tier_1 = "tier_1"
@@ -21,6 +21,8 @@ class Scope3CategoryEnum(str, Enum):
     purchased_goods = "purchased_goods"
     capital_goods = "capital_goods"
     upstream_transport = "upstream_transport"
+    downstream_transport = "downstream_transport"
+    business_travel = "business_travel"
 
 class VerificationLevelEnum(str, Enum):
     unverified = "unverified"
@@ -32,12 +34,46 @@ class GWPVersionEnum(str, Enum):
     ar5 = "ar5"
     ar6 = "ar6"
 
-class ScopeLevelEnum(str, Enum):  # 👈 this is the one you just added
+class ScopeLevelEnum(str, Enum):
     scope1 = "scope1"
     scope2 = "scope2"
     scope3 = "scope3"
 
-# ───────────── Lowercase-tolerant missing() hook ───────────── #
+class ValueChainStageEnum(str, Enum):
+    upstream = "upstream"
+    operations = "operations"
+    downstream = "downstream"
+
+class UncertaintyDistributionEnum(str, Enum):
+    triangular = "triangular"
+    normal = "normal"
+    uniform = "uniform"
+
+class TargetTypeEnum(str, Enum):
+    absolute = "absolute"
+    intensity = "intensity"
+
+class AuditActionEnum(str, Enum):
+    created = "created"
+    updated = "updated"
+    deleted = "deleted"
+
+class MaterialityTypeEnum(str, Enum):
+    quantitative = "quantitative"
+    qualitative = "qualitative"
+
+class GasTypeEnum(str, Enum):
+    co2 = "co2"
+    ch4 = "ch4"
+    n2o = "n2o"
+    sf6 = "sf6"
+
+class ScopeEnum(str, Enum):
+    scope1 = "scope1"
+    scope2 = "scope2"
+    scope3 = "scope3"
+
+# ───────────── Optional: lowercase _missing_ patch ───────────── #
 
 def _ci_missing(cls, value):
     if isinstance(value, str):
@@ -51,7 +87,14 @@ for _name in (
     "Scope3CategoryEnum",
     "VerificationLevelEnum",
     "GWPVersionEnum",
-    "ScopeLevelEnum",  # ✅ include this
+    "ScopeLevelEnum",
+    "ValueChainStageEnum",
+    "UncertaintyDistributionEnum",
+    "TargetTypeEnum",
+    "AuditActionEnum",
+    "MaterialityTypeEnum",
+    "GasTypeEnum",
+    "ScopeEnum",
 ):
     if _name in globals():
         setattr(globals()[_name], "_missing_", classmethod(_ci_missing))
