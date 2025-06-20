@@ -1,100 +1,96 @@
 from enum import Enum
 
-# ─────────────────── Core Enums ─────────────────── #
-
-class TierLevelEnum(str, Enum):
-    tier_1 = "tier_1"
-    tier_2 = "tier_2"
-    tier_3 = "tier_3"
-
-class DataQualityTierEnum(str, Enum):
-    low = "low"
-    medium = "medium"
-    high = "high"
-
-class ConsolidationMethodEnum(str, Enum):
-    operational_control = "operational_control"
-    financial_control = "financial_control"
-    equity_share = "equity_share"
-
-class Scope3CategoryEnum(str, Enum):
-    purchased_goods = "purchased_goods"
-    capital_goods = "capital_goods"
-    upstream_transport = "upstream_transport"
-    downstream_transport = "downstream_transport"
-    business_travel = "business_travel"
-
-class VerificationLevelEnum(str, Enum):
-    unverified = "unverified"
-    limited = "limited"
-    reasonable = "reasonable"
+# ---------------------
+# 🔢 ENUM DEFINITIONS
+# ---------------------
 
 class GWPVersionEnum(str, Enum):
-    ar4 = "ar4"
-    ar5 = "ar5"
-    ar6 = "ar6"
+    AR4 = "AR4"
+    AR5 = "AR5"
+    AR6 = "AR6"
+    AR6_100 = "AR6_100"
+
+class TierLevelEnum(str, Enum):
+    TIER_1 = "TIER_1"
+    TIER_2 = "TIER_2"
+    TIER_3 = "TIER_3"
+
+class Scope3CategoryEnum(str, Enum):
+    CATEGORY_1 = "Category 1"
+    CATEGORY_2 = "Category 2"
+    CATEGORY_3 = "Category 3"
+    CATEGORY_4 = "Category 4"
+    CATEGORY_5 = "Category 5"
+    CATEGORY_6 = "Category 6"
+    CATEGORY_7 = "Category 7"
+    CATEGORY_8 = "Category 8"
+    CATEGORY_9 = "Category 9"
+    CATEGORY_10 = "Category 10"
+    CATEGORY_11 = "Category 11"
+    CATEGORY_12 = "Category 12"
+    CATEGORY_13 = "Category 13"
+    CATEGORY_14 = "Category 14"
+    CATEGORY_15 = "Category 15"
 
 class ScopeLevelEnum(str, Enum):
-    scope1 = "scope1"
-    scope2 = "scope2"
-    scope3 = "scope3"
+    ORGANIZATION = "organization"
+    PRODUCT = "product"
+
+class VerificationLevelEnum(str, Enum):
+    LIMITED = "limited"
+    REASONABLE = "reasonable"
+    NONE = "none"
+
+class ConsolidationMethodEnum(str, Enum):
+    EQUITY_SHARE = "equity_share"
+    OPERATIONAL_CONTROL = "operational_control"
+    FINANCIAL_CONTROL = "financial_control"
+
+class DataQualityTierEnum(str, Enum):
+    HIGH = "high"
+    MEDIUM = "medium"
+    LOW = "low"
 
 class ValueChainStageEnum(str, Enum):
-    upstream = "upstream"
-    operations = "operations"
-    downstream = "downstream"
+    UPSTREAM = "upstream"
+    DOWNSTREAM = "downstream"
+    OTHER = "other"
 
 class UncertaintyDistributionEnum(str, Enum):
-    triangular = "triangular"
-    normal = "normal"
-    uniform = "uniform"
+    NORMAL = "normal"
+    TRIANGULAR = "triangular"
+    UNIFORM = "uniform"
+    LOGNORMAL = "lognormal"
 
-class TargetTypeEnum(str, Enum):
-    absolute = "absolute"
-    intensity = "intensity"
+class TemporalGranularityEnum(str, Enum):
+    MONTHLY = "monthly"
+    QUARTERLY = "quarterly"
+    YEARLY = "yearly"
 
-class AuditActionEnum(str, Enum):
-    created = "created"
-    updated = "updated"
-    deleted = "deleted"
+# ---------------------
+# 🔄 CASE-INSENSITIVE FALLBACKS
+# ---------------------
 
-class MaterialityTypeEnum(str, Enum):
-    quantitative = "quantitative"
-    qualitative = "qualitative"
+def _ci_missing_(cls, value):
+    for member in cls:
+        if member.value.lower() == str(value).lower():
+            return member
+    raise ValueError(f"{value} is not a valid {cls.__name__}")
 
-class GasTypeEnum(str, Enum):
-    co2 = "co2"
-    ch4 = "ch4"
-    n2o = "n2o"
-    sf6 = "sf6"
+# Attach _missing_ fallback to all enums above
+for _name in list(globals().keys()):
+    if _name.endswith("Enum") and isinstance(globals()[_name], type) and issubclass(globals()[_name], Enum):
+        setattr(globals()[_name], "_missing_", classmethod(_ci_missing_))
 
-class ScopeEnum(str, Enum):
-    scope1 = "scope1"
-    scope2 = "scope2"
-    scope3 = "scope3"
-
-# ───────────── Optional: lowercase _missing_ patch ───────────── #
-
-def _ci_missing(cls, value):
-    if isinstance(value, str):
-        return cls._value2member_map_.get(value.lower())
-    return None
-
-for _name in (
-    "TierLevelEnum",
-    "DataQualityTierEnum",
-    "ConsolidationMethodEnum",
-    "Scope3CategoryEnum",
-    "VerificationLevelEnum",
-    "GWPVersionEnum",
-    "ScopeLevelEnum",
-    "ValueChainStageEnum",
-    "UncertaintyDistributionEnum",
-    "TargetTypeEnum",
-    "AuditActionEnum",
-    "MaterialityTypeEnum",
-    "GasTypeEnum",
-    "ScopeEnum",
-):
-    if _name in globals():
-        setattr(globals()[_name], "_missing_", classmethod(_ci_missing))
+from factortrace.shared_enums import (
+    GWPVersionEnum,
+    TierLevelEnum,
+    Scope3CategoryEnum,
+    ScopeLevelEnum,
+    VerificationLevelEnum,
+    ConsolidationMethodEnum,
+    DataQualityTierEnum,
+    ValueChainStageEnum,
+    UncertaintyDistributionEnum,
+    TemporalGranularityEnum,
+)
