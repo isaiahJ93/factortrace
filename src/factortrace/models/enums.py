@@ -6,7 +6,7 @@ Adds `_missing_` on each Enum so tests can pass sloppy strings
 """
 from enum import Enum
 from __future__ import annotations
-from factortrace.enums import TierLevelEnum
+from factortrace.shared_enums import TierLevelEnum
 from typing import Optional
 
 # --------------------------------------------------------------------------- #

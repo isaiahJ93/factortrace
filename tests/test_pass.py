@@ -7,7 +7,7 @@ from generator.voucher_generator import generate_voucher
 from factortrace.models.materiality import MaterialityAssessment, MaterialityType
 from factortrace.models.emissions import UncertaintyAssessment
 from factortrace.models.emissions_voucher import EmissionVoucher, EmissionsRecord, GHGBreakdown
-from factortrace.enums import (
+from factortrace.shared_enums import (
     ScopeLevelEnum as ScopeEnum,
     ValueChainStageEnum,
     TierLevelEnum,

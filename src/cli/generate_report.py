@@ -3,12 +3,12 @@ from factortrace.emissions_voucher import generate_voucher
 from factortrace.emissions_calculator import calculate_emissions
 from factortrace.compliance_engine import generate_ixbrl_report
 from factortrace.factor_loader import load_factors
-from factortrace.enums import ScopeLevelEnum
+from factortrace.shared_enums import ScopeLevelEnum
 # src/cli/generate_report.py
 import json
 from decimal import Decimal
 
-from factortrace.enums import (
+from factortrace.shared_enums import (
     ScopeLevelEnum,
     ValueChainStageEnum,
     Scope3CategoryEnum,

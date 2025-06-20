@@ -1,5 +1,10 @@
 from enum import Enum
 
+class VerificationLevelEnum(str, Enum):
+    unverified = "unverified"
+    limited = "limited"
+    reasonable = "reasonable"
+
 def _ci_missing(cls, value):
     if isinstance(value, str):
         return cls._value2member_map_.get(value.lower())

@@ -17,7 +17,7 @@ import hashlib
 import logging
 from enum import Enum
 import uuid
-from factortrace.models.common_enums import TierLevelEnum
+from factortrace.shared_enums import TierLevelEnum
 from dataclasses import asdict, dataclass, field, is_dataclass
 from datetime import date, datetime, timezone
 from decimal import Decimal
@@ -1186,7 +1186,7 @@ if __name__ == "__main__":
     print(json.dumps(voucher_data, indent=2, default=str))  # Serialize Decimals as strings
 
 from factortrace.services.audit import create_audit_entry
-from factortrace.enums import AuditActionEnum
+from factortrace.shared_enums import AuditActionEnum
 from factortrace.models.emissions_voucher import EmissionVoucher, AuditTrail
 
 async def create_voucher(file):  # or however you're receiving input

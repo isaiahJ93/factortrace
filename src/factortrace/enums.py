@@ -1,4 +1,4 @@
-from factortrace.models.common_enums import (
+from factortrace.shared_enums import (
     Scope3CategoryEnum,
     VerificationLevelEnum,
     AuditActionEnum,

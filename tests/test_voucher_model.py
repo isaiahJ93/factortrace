@@ -9,7 +9,7 @@ from factortrace.models.emissions_voucher import (
     DataQuality,
 )
 
-from factortrace.enums import (
+from factortrace.shared_enums import (
     ScopeLevelEnum,
     ValueChainStageEnum,
     Scope3CategoryEnum,

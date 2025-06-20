@@ -1,2 +1,2 @@
-from factortrace.models.common_enums import TierLevelEnum
+from factortrace.shared_enums import TierLevelEnum
 import redis

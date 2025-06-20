@@ -10,7 +10,7 @@ from enum import Enum, auto
 from decimal import Decimal
 from datetime import datetime, date
 from uuid import UUID
-from factortrace.enums import TierLevelEnum 
+from factortrace.shared_enums import TierLevelEnum 
 
 from pydantic import BaseModel, Field, ConfigDict
 

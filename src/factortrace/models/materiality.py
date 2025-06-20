@@ -1,5 +1,5 @@
 from datetime import date
-from factortrace.models.common_enums import (
+from factortrace.shared_enums import (
     TierLevelEnum,
     ConsolidationMethodEnum,
     UncertaintyDistributionEnum,

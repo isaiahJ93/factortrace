@@ -2,7 +2,7 @@ from pydantic import BaseModel, Field
 from decimal import Decimal
 from typing import Optional
 
-from factortrace.models.common_enums import (
+from factortrace.shared_enums import (
     GasTypeEnum,
     TierLevelEnum,
     UncertaintyDistributionEnum,

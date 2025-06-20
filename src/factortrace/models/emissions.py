@@ -27,7 +27,7 @@ from pydantic import BaseModel, Field
 from factortrace.models.types import EmissionFactor
 from factortrace.models.climate import TargetTypeEnum
 from factortrace.models.uncertainty_model import UncertaintyAssessment  # single source of truth
-from factortrace.enums import (
+from factortrace.shared_enums import (
     ScopeLevelEnum,  # ✅ correct
     Scope3CategoryEnum,
     ValueChainStageEnum,

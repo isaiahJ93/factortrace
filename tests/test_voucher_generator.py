@@ -6,7 +6,7 @@ from factortrace.models import (
     GHGBreakdown,
     DataQuality,
 )
-from factortrace.enums import (
+from factortrace.shared_enums import (
     ScopeLevelEnum,
     ValueChainStageEnum,
     Scope3CategoryEnum,  # ✅ Correct place

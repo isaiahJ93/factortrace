@@ -1,4 +1,4 @@
-from factortrace.enums import GWPVersionEnum
+from factortrace.shared_enums import GWPVersionEnum
 
 """Emission Voucher Model for Scope 3 Compliance Engine
 
@@ -17,8 +17,8 @@ from enum import Enum
 from typing import Optional, Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field, field_validator, model_validator, ConfigDict, constr
 from decimal import Decimal
-from factortrace.models.common_enums import UncertaintyDistributionEnum
-from factortrace.enums import ScopeLevelEnum, ValueChainStageEnum, Scope3CategoryEnum, TierLevelEnum, UncertaintyDistributionEnum
+from factortrace.shared_enums import UncertaintyDistributionEnum
+from factortrace.shared_enums import ScopeLevelEnum, ValueChainStageEnum, Scope3CategoryEnum, TierLevelEnum, UncertaintyDistributionEnum
 from factortrace.utils.coerce import _coerce 
 import re
 
@@ -609,7 +609,7 @@ class MaterialityType(str, Enum):
 
     import json
 from factortrace.models.emissions_voucher import EmissionVoucher, EmissionsRecord
-from factortrace.enums import (
+from factortrace.shared_enums import (
     ScopeLevelEnum,
     ValueChainStageEnum,
     Scope3CategoryEnum,
