@@ -42,18 +42,19 @@ jobs:
     
     - name: Download ESRS Taxonomy
       run: |
-        echo "Cleaning any existing taxonomy dir..."
-        if [ -d taxonomies ]; then rm -rf taxonomies; fi
+        echo "🧹 Cleaning any existing taxonomy dir..."
+        rm -rf taxonomies
+        echo "📁 Creating new taxonomy dir..."
+        mkdir -p taxonomies/esrs
+        echo "🌐 Downloading ESRS taxonomy files..."
 
-        echo "Creating new taxonomy dir..."
-        mkdir -p taxonomies/esrs || exit 1
+        wget https://xbrl.efrag.org/taxonomy/2025/esrs-all.xsd -O taxonomies/esrs/esrs-all.xsd
+        wget https://xbrl.efrag.org/taxonomy/2025/esrs-pre.xml -O taxonomies/esrs/esrs-pre.xml
+        wget https://xbrl.efrag.org/taxonomy/2025/esrs-cal.xml -O taxonomies/esrs/esrs-cal.xml
+        wget https://xbrl.efrag.org/taxonomy/2025/esrs-def.xml -O taxonomies/esrs/esrs-def.xml
 
-        echo "Downloading ESRS taxonomy files..."
-        wget -q https://xbrl.efrag.org/taxonomy/2025/esrs-all.xsd -O taxonomies/esrs/esrs-all.xsd || exit 1
-        wget -q https://xbrl.efrag.org/taxonomy/2025/esrs-pre.xml -O taxonomies/esrs/esrs-pre.xml || exit 1
-        wget -q https://xbrl.efrag.org/taxonomy/2025/esrs-cal.xml -O taxonomies/esrs/esrs-cal.xml || exit 1
-        wget -q https://xbrl.efrag.org/taxonomy/2025/esrs-def.xml -O taxonomies/esrs/esrs-def.xml || exit 1
-        
+        echo "✅ Download complete."
+
     - name: Run Unit Tests
       run: |
         python -m pytest tests/test_voucher_renderer.py -v --cov=src --cov-report=xml
