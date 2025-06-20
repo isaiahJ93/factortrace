@@ -1,3 +1,18 @@
+from __future__ import annotations
+from factortrace.shared_enums import (
+    GWPVersionEnum,
+    TierLevelEnum,
+    Scope3CategoryEnum,
+    ScopeLevelEnum,
+    VerificationLevelEnum,
+    ConsolidationMethodEnum,
+    DataQualityTierEnum,
+    ValueChainStageEnum,
+    UncertaintyDistributionEnum,
+    TemporalGranularityEnum,
+    GasTypeEnum,
+
+
 """
 CSRD/ESRS E1 and CBAM-compliant Scope 3 emission voucher generator.
 
@@ -11,13 +26,11 @@ Version: 2.0.0
 Requires: lxml, Python 3.11+
 """
 
-from __future__ import annotations
 
 import hashlib
 import logging
 from enum import Enum
 import uuid
-from factortrace.shared_enums import TierLevelEnum
 from dataclasses import asdict, dataclass, field, is_dataclass
 from datetime import date, datetime, timezone
 from decimal import Decimal
@@ -25,7 +38,6 @@ from factortrace.models.uncertainty_model import (
     TierLevelEnum,
     ConsolidationMethodEnum,
     UncertaintyDistributionEnum,
-)
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Union
 from functools import lru_cache
@@ -281,7 +293,6 @@ class EmissionCalculator:
         activity_data: Decimal,
         emission_factor: EmissionFactorData,
         gas_composition: Optional[Dict[str, Decimal]] = None
-    ) -> Tuple[Decimal, Dict[str, Any]]:
         """
         Calculate total CO2e emissions with uncertainty propagation.
         
@@ -349,7 +360,6 @@ class EmissionFactorRepository:
                 quality_tier=DataQualityTier.tie_1,
                 source="TEST",
                 source_year=2024,
-            )
         }
         
     
@@ -367,7 +377,6 @@ class EmissionFactorRepository:
                 distribution="lognormal",
                 country_code="DE",
                 technology="dry kiln"
-        )
 
 
     def get_factor(
@@ -376,7 +385,6 @@ class EmissionFactorRepository:
         product_code: Optional[str],
         country: Optional[str],
         use_fallback: bool = False
-    ) -> EmissionFactorData:
         """
         Retrieve the appropriate emission factor with support for:
         1. Direct lookup by specific factor_id (Tier 3)
@@ -398,7 +406,6 @@ class EmissionFactorRepository:
         raise ValueError(
             f"No emission factor found. "
             f"Inputs — factor_id: {factor_id}, product_code: {product_code}, country: {country}, use_fallback: {use_fallback}"
-        )
 
     def _get_cbam_fallback(self, product_code: str, country: Optional[str]) -> EmissionFactorData:
         """Mocked fallback logic for CBAM alignment (replace with real logic)"""
@@ -427,7 +434,6 @@ def _load_default_factors(self):
         quality_tier=DataQualityTier.tier_2,
         uncertainty_percent=Decimal("5"),
         country_code="EU"
-    )
 
     self.factors["EF_CEMENT_DE_2024"] = EmissionFactorData(
         factor_id="EF_CEMENT_DE_2024",
@@ -438,7 +444,6 @@ def _load_default_factors(self):
         quality_tier=DataQualityTier.tier_2,
         uncertainty_percent=Decimal("7.5"),
         country_code="DE"
-    )
 
     
 def get_factor(
@@ -447,7 +452,6 @@ def get_factor(
     product_code: Optional[str],
     country: Optional[str],
     use_fallback: bool = False
-) -> EmissionFactorData:
     """
     Retrieve the appropriate emission factor with support for:
     1. Direct lookup by specific factor_id (Tier 3)
@@ -473,7 +477,6 @@ def get_factor(
     raise ValueError(
         f"No emission factor found. "
         f"Inputs — factor_id: {factor_id}, product_code: {product_code}, country: {country}, use_fallback: {use_fallback}"
-    )
 
     def _get_cbam_fallback(self, product_code: str, country: Optional[str]) -> EmissionFactorData:
         """Apply CBAM fallback hierarchy"""
@@ -497,7 +500,6 @@ def get_factor(
                     quality_tier=DataQualityTier.tier_2,
                     uncertainty_percent=Decimal("10"),
                     country_code=country
-                )
         
         # Default to Tier 1 global average
         return EmissionFactorData(
@@ -508,7 +510,6 @@ def get_factor(
             source_year=2024,
             quality_tier=DataQualityTier.tier_1,
             uncertainty_percent=Decimal("15")
-        )
 
 
 # --------------------------------------------------------------------------- #
@@ -525,7 +526,6 @@ class DataQualityScorer:
         geographical_match: bool,
         technology_match: bool,
         verification_level: Optional[str] = None
-    ) -> Tuple[int, DataQualityTier]:
         """
         Calculate data quality score (1-5) and determine tier.
         
@@ -571,7 +571,6 @@ def generate_voucher(
     input_data: VoucherInput,
     factor_repository: Optional[EmissionFactorRepository] = None,
     calculator: Optional[EmissionCalculator] = None
-) -> Dict[str, Any]:
     """
     Generate CSRD/CBAM compliant emission voucher.
     
@@ -596,13 +595,11 @@ def generate_voucher(
         product_code=input_data.product_cn_code,
         country=input_data.installation_country,
         use_fallback=input_data.use_fallback_factor
-    )
     
     # Calculate emissions
     total_co2e, calculation_details = calculator.calculate_emissions(
         activity_data=input_data.quantity,
         emission_factor=emission_factor
-    )
     
     # Calculate data quality score
     temporal_gap = datetime.now().year - emission_factor.source_year
@@ -612,7 +609,6 @@ def generate_voucher(
         geographical_match=(emission_factor.country_code == input_data.installation_country),
         technology_match=bool(emission_factor.technology),
         verification_level=input_data.verifier_accreditation_id
-    )
     
     # Build voucher data structure
     voucher_data = {
@@ -719,7 +715,6 @@ def serialize_voucher(
     voucher: Union[Dict[str, Any], Any],
     validate_mandatory: bool = True,
     include_cbam_namespace: bool = True
-) -> str:
     """
     Serialize emission voucher to ESRS/CBAM-compliant XML.
     Enhanced with AR6 GWP and full regulatory compliance.
@@ -738,7 +733,6 @@ def serialize_voucher(
     root = Element(
         QName(NAMESPACE, "EmissionVoucher"),
         nsmap=NSMAP if include_cbam_namespace else {None: NAMESPACE}
-    )
     
     # Set schema location and version
     root.set(QName(XSI_NAMESPACE, "schemaLocation"), f"{NAMESPACE} emission-voucher-v2.xsd")
@@ -871,7 +865,6 @@ def serialize_voucher(
         xml_declaration=True,
         encoding="UTF-8",
         standalone=False
-    )
     
     logger.info(f"Successfully serialized voucher {data['voucher_id']}")
     
@@ -911,7 +904,6 @@ def validate_xml(
     xml: Union[str, bytes],
     xsd_path: Union[str, Path],
     return_errors: bool = False
-) -> Union[bool, Tuple[bool, List[str]]]:
     """Validate XML against XSD schema"""
     logger.info(f"Validating XML against schema: {xsd_path}")
     
@@ -1017,7 +1009,6 @@ def validate_xml(
         reporting_period_end=input_data["reporting_period_end"],
         embedded_emissions_direct=Decimal(str(input_data["embedded_emissions_direct"])) if input_data.get("embedded_emissions_direct") else None,
         carbon_price_paid=Decimal(str(input_data["carbon_price_paid"])) if input_data.get("carbon_price_paid") else None
-    )
     
     # Generate voucher
     voucher_data = generate_voucher(voucher_input)
@@ -1045,7 +1036,6 @@ from concurrent.futures import ProcessPoolExecutor
 async def generate_voucher_batch(
     inputs: List[VoucherInput],
     max_workers: int = 4
-) -> List[Dict[str, Any]]:
     """Process vouchers in parallel for 100k+ daily volume"""
     with ProcessPoolExecutor(max_workers=max_workers) as executor:
         loop = asyncio.get_event_loop()
@@ -1078,14 +1068,12 @@ class CachedEmissionFactorRepository(EmissionFactorRepository):
             f"ef:{factor_id}",
             86400,
             json.dumps(asdict(factor), default=str)
-        )
         return factor
     
 def assess_materiality(
     total_emissions: Decimal,
     monetary_value: Optional[Decimal],
     company_total_emissions: Decimal
-) -> Dict[str, Any]:
 
     def calculate_materiality_emissions(company_total_emissions: Decimal, total_emissions: Decimal) -> Decimal:
         """ESRS double materiality assessment"""
@@ -1099,7 +1087,6 @@ def assess_materiality(
         financial_material = (
             monetary_value > 100000 and 
             emission_percentage > Decimal("5.0")
-        )
     
     return {
         "impact_material": impact_material,
@@ -1142,7 +1129,6 @@ CREATE TABLE emission_vouchers (
 
     -- Audit
     calculation_hash VARCHAR(64) NOT NULL
-);
 """
 
 sql_indexes_and_partitions = """
@@ -1178,7 +1164,6 @@ if __name__ == "__main__":
         reporting_period_end=date(2024, 12, 31),
         emission_factor_id="EF_CEMENT_DE_2024",
         use_fallback_factor=True
-    )
 
     # Print as JSON (convert Decimal to string for serialization)
     print(json.dumps(voucher_input.__dict__, default=str, indent=2))
@@ -1186,7 +1171,6 @@ if __name__ == "__main__":
     print(json.dumps(voucher_data, indent=2, default=str))  # Serialize Decimals as strings
 
 from factortrace.services.audit import create_audit_entry
-from factortrace.shared_enums import AuditActionEnum
 from factortrace.models.emissions_voucher import EmissionVoucher, AuditTrail
 
 async def create_voucher(file):  # or however you're receiving input
@@ -1198,7 +1182,6 @@ async def create_voucher(file):  # or however you're receiving input
         user_id="system",  # or get from JWT/session if auth in place
         action=AuditActionEnum.CREATED,
         ip_address="127.0.0.1"
-    )
     voucher_data["audit_trail"] = {"audit_entries": [audit_entry.dict()]}
 
     voucher = EmissionVoucher(
@@ -1212,5 +1195,5 @@ async def create_voucher(file):  # or however you're receiving input
         consolidation_method="operational_control",
         emissions_records=[{"source": "scope1", "amount": 100.0, "unit": "tCO2e"}],  # ✅ must not be empty
         total_emissions_tco2e=100.0
-    )
-    return voucher
+)
+    return voucher)

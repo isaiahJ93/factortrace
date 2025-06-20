@@ -1,3 +1,4 @@
+from __future__ import annotations
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, Any, Optional, List
@@ -144,7 +145,6 @@ def render_html(calc_result: Dict[str, Any]) -> str:
             "confidence-high" if item["confidence"] >= 0.8 else
             "confidence-medium" if item["confidence"] >= 0.5 else
             "confidence-low"
-        )
         
         # Apply fallback styling
         fallback_text = "Yes" if item["is_fallback"] else "No"

@@ -9,7 +9,6 @@ from factortrace.models import (
     TierLevelEnum,
     GasTypeEnum,
     UncertaintyDistributionEnum,
-)
 
 SAMPLE_DATA: dict = {
     "supplier_lei": "5493001KTIIGC8YR12A2",

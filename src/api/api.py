@@ -1,3 +1,4 @@
+from __future__ import annotations
 from fastapi import FastAPI, APIRouter, HTTPException
 from pydantic import BaseModel, Field
 from typing import Optional
@@ -69,7 +70,6 @@ def export_voucher_xml():
             content=f"❌ Schema validation failed:\n" + "\n".join(errors),
             media_type="text/plain",
             status_code=400
-        )
 
     return Response(content=xml, media_type="application/xml")
 

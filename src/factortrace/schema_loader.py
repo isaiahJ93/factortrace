@@ -1,3 +1,4 @@
+from __future__ import annotations
 schema = {
     "type": "object",
     "properties": {

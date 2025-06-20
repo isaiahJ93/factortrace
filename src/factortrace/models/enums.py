@@ -1,18 +1,26 @@
+from __future__ import annotations
+
 """
 Canonical enums and light helper models shared across FactorTrace.
 
 Adds `_missing_` on each Enum so tests can pass sloppy strings
 (e.g. "scope 1", "Upstream", "TIER_1") without touching fixtures.
 """
+
 from enum import Enum
-from __future__ import annotations
-from factortrace.shared_enums import TierLevelEnum
 from typing import Optional
-
-# --------------------------------------------------------------------------- #
-# Helper
-# --------------------------------------------------------------------------- #
-
+from factortrace.shared_enums import (
+    GWPVersionEnum,
+    TierLevelEnum,
+    Scope3CategoryEnum,
+    ScopeLevelEnum,
+    VerificationLevelEnum,
+    ConsolidationMethodEnum,
+    DataQualityTierEnum,
+    ValueChainStageEnum,
+    UncertaintyDistributionEnum,
+    TemporalGranularityEnum,
+    GasTypeEnum,
 
 def _coerce(cls: type[Enum], value: object) -> Optional[Enum]:
     """
@@ -201,4 +209,5 @@ class UncertaintyDistributionEnum(str, Enum):
     normal = "normal"
     lognormal = "lognormal"
     triangular = "triangular"
-    uniform = "uniform"
+)
+    uniform = "uniform")

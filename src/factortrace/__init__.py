@@ -1,9 +1,16 @@
+from __future__ import annotations
 from factortrace.shared_enums import (
-    ScopeLevelEnum,
-    ValueChainStageEnum,
-    Scope3CategoryEnum,
     GWPVersionEnum,
+    TierLevelEnum,
+    Scope3CategoryEnum,
+    ScopeLevelEnum,
+    VerificationLevelEnum,
     ConsolidationMethodEnum,
+    DataQualityTierEnum,
+    ValueChainStageEnum,
+    UncertaintyDistributionEnum,
+    TemporalGranularityEnum,
+    GasTypeEnum,
 )
 
 from factortrace.models.emissions_voucher import (

@@ -1,9 +1,9 @@
+from __future__ import annotations
 """
 Serialize a Scope-3 voucher (dict or dataclass) to XML and validate
 it against resources/schema/voucher.xsd.  Only lxml is required.
 """
 
-from __future__ import annotations
 
 from dataclasses import asdict, is_dataclass
 from pathlib import Path
@@ -65,7 +65,6 @@ def serialize_voucher(voucher: Any) -> str:
 
     xml_bytes = tostring(
         root, pretty_print=True, xml_declaration=True, encoding="UTF-8"
-    )
     return xml_bytes.decode()
 
 
@@ -100,7 +99,6 @@ if __name__ == "__main__":  # pragma: no cover
         / "resources"
         / "schema"
         / "voucher.xsd"
-    )
 
     ok = validate_xml(xml_out, xsd_file)
     print("✔ valid" if ok else "✖ invalid")

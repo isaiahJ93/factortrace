@@ -1,3 +1,4 @@
+from __future__ import annotations
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 from fastapi.exceptions import RequestValidationError
@@ -64,4 +65,3 @@ from generator.xhtml_generator import generate_ixbrl
 generate_ixbrl(
     voucher_data={"lei": "LEI:898998123ABC456"},
     output_path="output/compliance_report.xhtml"
-)

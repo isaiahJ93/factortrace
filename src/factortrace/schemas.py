@@ -1,3 +1,4 @@
+from __future__ import annotations
 from typing import List
 from pydantic import BaseModel
 from factortrace.models.emissions_voucher import EmissionVoucher  # adjust path as needed

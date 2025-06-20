@@ -1,3 +1,4 @@
+from __future__ import annotations
 from fastapi import APIRouter, UploadFile, File
 from factortrace.services import generator, validator, xbrl_exporter
 from factortrace.models.emissions_voucher import EmissionVoucher

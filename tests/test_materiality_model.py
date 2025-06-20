@@ -20,5 +20,4 @@ def test_materiality_parsing():
         affected_stakeholders=["investors", "NGOs"],
         risk_type="PHYSICAL",
         reporting_period="2025"
-    )
     assert m.is_material is True

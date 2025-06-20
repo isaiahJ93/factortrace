@@ -1,3 +1,4 @@
+from __future__ import annotations
 import importlib
 importlib.import_module("generator")
 
@@ -9,7 +10,6 @@ def __getattr__(name: str):
     raise AttributeError(
         f"module {__name__!r} has no attribute {name!r} "
         "(did you mean 'voucher_generator'?)"
-    )
 
 # Optional (nice to have): re-export at package level so callers can do
 #     from generator import generate_voucher

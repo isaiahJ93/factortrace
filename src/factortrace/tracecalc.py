@@ -1,3 +1,4 @@
+from __future__ import annotations
 from dataclasses import dataclass, field, asdict
 from datetime import datetime, timezone
 from typing import Any, Dict, List
@@ -61,8 +62,6 @@ class TraceCalc:
                     co2e=co2e,
                     confidence=factor_record.confidence,
                     is_fallback=factor_record.is_fallback,
-                )
-            )
             total += co2e
 
         return CalcResult(
@@ -72,7 +71,6 @@ class TraceCalc:
             line_items=results,
             fallback_used=fallback_flag,
             factor_dataset_version=self.factor_loader.version,
-        )
 
 # ─────────────────────────────────────────────────────────────
 # CLI / Test Runner
@@ -129,8 +127,6 @@ class TraceCalc:
                     co2e=co2e,
                     confidence=factor_record.confidence,
                     is_fallback=factor_record.is_fallback,
-                )
-            )
             total += co2e
 
         return CalcResult(
@@ -140,7 +136,6 @@ class TraceCalc:
             line_items=results,
             fallback_used=fallback_flag,
             factor_dataset_version=self.factor_loader.version,
-        )
 
 if __name__ == "__main__":
     from factor_loader import EmissionFactorLoader

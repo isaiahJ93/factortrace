@@ -1,4 +1,17 @@
 from __future__ import annotations
+from factortrace.shared_enums import (
+    GWPVersionEnum,
+    TierLevelEnum,
+    Scope3CategoryEnum,
+    ScopeLevelEnum,
+    VerificationLevelEnum,
+    ConsolidationMethodEnum,
+    DataQualityTierEnum,
+    ValueChainStageEnum,
+    UncertaintyDistributionEnum,
+    TemporalGranularityEnum,
+    GasTypeEnum,
+
 
 """Core emissions utilities & data models.
 
@@ -27,13 +40,6 @@ from pydantic import BaseModel, Field
 from factortrace.models.types import EmissionFactor
 from factortrace.models.climate import TargetTypeEnum
 from factortrace.models.uncertainty_model import UncertaintyAssessment  # single source of truth
-from factortrace.shared_enums import (
-    ScopeLevelEnum,  # ✅ correct
-    Scope3CategoryEnum,
-    ValueChainStageEnum,
-    GWPVersionEnum,
-    ConsolidationMethodEnum,
-)
 
 # ──────────────────────────────────────────────────────────────
 # Constants / simple enums
@@ -58,7 +64,6 @@ def lookup_factor(
     country: str,
     material_type: str,
     category: ProductCategory,
-) -> EmissionFactor:
     """Return an :class:`EmissionFactor` for the given key tuple.
 
     Falls back to a default factor + quality score if no specific
@@ -69,7 +74,6 @@ def lookup_factor(
         "SELECT factor, quality_score \n"
         "  FROM emission_factors \n"
         " WHERE country = ? AND material_type = ? AND category = ?"
-    )
 
     with sqlite3.connect(DB_PATH) as conn:
         cursor = conn.execute(query, (country, material_type, category.value))
@@ -87,7 +91,6 @@ def lookup_factor(
         category=category,
         factor=factor,
         quality_score=quality_score,
-    )
 
 
 # ──────────────────────────────────────────────────────────────
@@ -137,7 +140,6 @@ class EmissionData(BaseModel):
 
     embedded_emissions_intensity: Optional[Decimal] = Field(
         default=None, description="Unit: tCO2e/t"
-    )
 
     # methodology
     ghg_breakdown: Optional[dict[str, Decimal]] = None
@@ -166,3 +168,4 @@ class TargetReference(BaseModel):
 
 class ClimateTargets(BaseModel):
     target_reference: List[TargetReference]
+)

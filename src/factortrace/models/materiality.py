@@ -1,12 +1,24 @@
+from __future__ import annotations
+
 from datetime import date
-from factortrace.shared_enums import (
-    TierLevelEnum,
-    ConsolidationMethodEnum,
-    UncertaintyDistributionEnum,
-)
+from enum import Enum
 from typing import List, Optional
-from enum import Enum 
+
 from pydantic import BaseModel, Field, ConfigDict
+
+from factortrace.shared_enums import (
+    GWPVersionEnum,
+    TierLevelEnum,
+    Scope3CategoryEnum,
+    ScopeLevelEnum,
+    VerificationLevelEnum,
+    ConsolidationMethodEnum,
+    DataQualityTierEnum,
+    ValueChainStageEnum,
+    UncertaintyDistributionEnum,
+    TemporalGranularityEnum,
+    GasTypeEnum,
+)
 
 # ── enums ───────────────────────────────────────────────────────
 class MaterialityType(str, Enum):

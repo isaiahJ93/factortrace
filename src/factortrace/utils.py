@@ -1,3 +1,4 @@
+from __future__ import annotations
 import uuid
 from datetime import datetime
 import hashlib
@@ -49,7 +50,6 @@ def add_to_xml_method(EmissionVoucherClass):
                 None: "urn:iso:std:20022:tech:xsd:esrs.e1.001.01",
                 "cbam": "urn:eu:cbam:xsd:declaration:001.01"
             } if LXML_AVAILABLE else None
-        )
         
         if not LXML_AVAILABLE:
             # ElementTree fallback: set namespace manually
@@ -202,7 +202,6 @@ def add_to_xml_method(EmissionVoucherClass):
                 pretty_print=True, 
                 xml_declaration=True, 
                 encoding='UTF-8'
-            ).decode('utf-8')
         else:
             # ElementTree fallback
             etree.indent(root, space='  ')
@@ -210,7 +209,6 @@ def add_to_xml_method(EmissionVoucherClass):
                 root, 
                 encoding='unicode', 
                 xml_declaration=True
-            )
     
     # Attach method to class
     EmissionVoucherClass.to_xml = to_xml
@@ -301,4 +299,3 @@ def validate_against_xsd(xml_string: str, xsd_path: str) -> tuple[bool, List[str
 # is_valid, errors = validate_against_xsd(xml_str, "voucher.xsd")
 # if not is_valid:
 #     print("Validation errors:", errors)
-```

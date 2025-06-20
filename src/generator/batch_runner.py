@@ -1,3 +1,4 @@
+from __future__ import annotations
 #!/usr/bin/env python3
 """
 Batch XHTML/iXBRL Report Generator for CSRD/ESRS Compliance
@@ -32,7 +33,6 @@ logging.basicConfig(
         logging.FileHandler('batch_processing.log'),
         logging.StreamHandler(sys.stdout)
     ]
-)
 logger = logging.getLogger(__name__)
 
 
@@ -117,7 +117,6 @@ class AIDataQualityAnalyzer:
                     issue='Total GHG emissions is zero or missing',
                     recommendation='Calculate total emissions as sum of Scope 1, 2, and 3. This is mandatory under ESRS E1-6.',
                     compliance_impact='Non-compliant with ESRS E1 mandatory disclosure requirements'
-                ))
             
             # Check scope consistency
             calculated_total = scope1 + scope2_location + scope3
@@ -128,7 +127,6 @@ class AIDataQualityAnalyzer:
                     issue=f'Total emissions ({total}) does not match sum of scopes ({calculated_total:.1f})',
                     recommendation='Verify calculation methodology. Total should equal Scope 1 + Scope 2 (location-based) + Scope 3.',
                     compliance_impact='May trigger auditor questions during limited assurance'
-                ))
             
             # Check Scope 3 presence and magnitude
             if scope3 == 0 and total > 0:
@@ -138,7 +136,6 @@ class AIDataQualityAnalyzer:
                     issue='Scope 3 emissions reported as zero',
                     recommendation='Scope 3 is mandatory under CSRD. Consider: (1) Supplier-specific data collection, (2) Spend-based estimation using EEIO factors, (3) Average-data method for key categories. Start with Categories 1 (Purchased goods) and 11 (Use of sold products).',
                     compliance_impact='Non-compliant with ESRS E1-9 requiring Scope 3 disclosure'
-                ))
             elif total > 0:
                 scope3_ratio = scope3 / total if total > 0 else 0
                 if scope3_ratio < self.benchmarks['scope3_to_total_ratio']['min']:
@@ -148,7 +145,6 @@ class AIDataQualityAnalyzer:
                         issue=f'Scope 3 represents only {scope3_ratio*100:.1f}% of total emissions',
                         recommendation='Scope 3 typically represents 70-90% of total emissions. Review calculation methodology, especially Categories 1, 3, 4, and 11. Consider using GHG Protocol Scope 3 Evaluator tool.',
                         compliance_impact='May indicate incomplete Scope 3 assessment'
-                    ))
             
             # Check market-based vs location-based
             if scope2_market > scope2_location * 1.5:
@@ -158,7 +154,6 @@ class AIDataQualityAnalyzer:
                     issue='Market-based emissions significantly higher than location-based',
                     recommendation='Verify renewable energy certificates (RECs) and power purchase agreements (PPAs). Market-based should typically be lower than location-based if using renewable energy.',
                     compliance_impact='May indicate data quality issues'
-                ))
             
             # Check for suspiciously round numbers
             if total > 1000 and total % 1000 == 0:
@@ -168,7 +163,6 @@ class AIDataQualityAnalyzer:
                     issue='Emissions value appears to be rounded to nearest thousand',
                     recommendation='Consider reporting with appropriate precision (1-2 decimal places) to demonstrate calculation rigor.',
                     compliance_impact='May raise questions about data quality during assurance'
-                ))
                 
         except (ValueError, TypeError) as e:
             feedback.append(DataQualityFeedback(
@@ -177,7 +171,6 @@ class AIDataQualityAnalyzer:
                 issue=f'Invalid numeric data: {str(e)}',
                 recommendation='Ensure all emissions values are valid numbers',
                 compliance_impact='Invalid data format prevents XBRL validation'
-            ))
         
         return feedback
     
@@ -196,7 +189,6 @@ class AIDataQualityAnalyzer:
                     issue='Water consumption exceeds withdrawal',
                     recommendation='Consumption cannot exceed withdrawal. Consumption = Withdrawal - Discharge. Review water balance calculations.',
                     compliance_impact='Violates basic water accounting principles under ESRS E3'
-                ))
             
             if withdrawal > 0:
                 efficiency = consumption / withdrawal
@@ -207,7 +199,6 @@ class AIDataQualityAnalyzer:
                         issue=f'Low water consumption ratio ({efficiency*100:.1f}%)',
                         recommendation='High discharge rate may indicate opportunities for water recycling. Consider closed-loop systems or treatment for reuse.',
                         compliance_impact='May indicate incomplete water efficiency measures'
-                    ))
             
             if withdrawal == 0 and consumption == 0:
                 feedback.append(DataQualityFeedback(
@@ -216,7 +207,6 @@ class AIDataQualityAnalyzer:
                     issue='No water data reported',
                     recommendation='If operations use water, report withdrawal and consumption. If truly zero (e.g., office-only operations), add explanatory note.',
                     compliance_impact='Missing data may require explanation under ESRS E3'
-                ))
                 
         except (ValueError, TypeError):
             feedback.append(DataQualityFeedback(
@@ -225,7 +215,6 @@ class AIDataQualityAnalyzer:
                 issue='Invalid water data format',
                 recommendation='Ensure water values are valid numbers in cubic meters (m³)',
                 compliance_impact='Invalid data prevents proper XBRL tagging'
-            ))
         
         return feedback
     
@@ -244,7 +233,6 @@ class AIDataQualityAnalyzer:
                     issue='Recycled waste exceeds total generated',
                     recommendation='Recycled amount cannot exceed total waste generated. Review waste tracking methodology.',
                     compliance_impact='Data inconsistency violates ESRS E5 requirements'
-                ))
             
             if generated > 0:
                 recycling_rate = recycled / generated
@@ -255,7 +243,6 @@ class AIDataQualityAnalyzer:
                         issue=f'Low recycling rate ({recycling_rate*100:.1f}%)',
                         recommendation='Consider waste segregation improvements, partnership with recycling facilities, or circular design principles. EU targets 65% recycling by 2035.',
                         compliance_impact='May not meet future regulatory expectations'
-                    ))
             
             if generated == 0:
                 feedback.append(DataQualityFeedback(
@@ -264,7 +251,6 @@ class AIDataQualityAnalyzer:
                     issue='No waste generation reported',
                     recommendation='All operations generate some waste. Include all waste streams: hazardous, non-hazardous, e-waste. If truly zero, provide explanation.',
                     compliance_impact='Zero waste claims require substantiation under ESRS E5'
-                ))
                 
         except (ValueError, TypeError):
             feedback.append(DataQualityFeedback(
@@ -273,7 +259,6 @@ class AIDataQualityAnalyzer:
                 issue='Invalid waste data format',
                 recommendation='Ensure waste values are valid numbers in tonnes',
                 compliance_impact='Invalid data prevents XBRL compliance'
-            ))
         
         return feedback
     
@@ -292,7 +277,6 @@ class AIDataQualityAnalyzer:
                 issue='Invalid LEI format',
                 recommendation='LEI must be exactly 20 alphanumeric characters. Verify with GLEIF database. Format: XXXXXXXXXXXXXXXXXXXX (no spaces or prefixes in data).',
                 compliance_impact='Invalid LEI prevents regulatory submission'
-            ))
         
         return feedback
     
@@ -307,7 +291,6 @@ class AIDataQualityAnalyzer:
                 issue='Multiple critical data quality issues detected',
                 recommendation='Implement comprehensive ESG data management system. Consider: (1) Automated data collection from source systems, (2) Third-party data validation, (3) Internal audit of calculation methodologies, (4) Staff training on CSRD requirements.',
                 compliance_impact='Current data quality insufficient for limited assurance'
-            ))
         
         # Check for narrative data
         if 'narratives' not in data or not data.get('narratives'):
@@ -317,7 +300,6 @@ class AIDataQualityAnalyzer:
                 issue='No narrative disclosures provided',
                 recommendation='CSRD requires extensive narrative disclosures. Prepare descriptions for: transition plans, governance, strategy integration, stakeholder engagement, and double materiality assessment process.',
                 compliance_impact='Missing mandatory narrative disclosures under ESRS'
-            ))
         
         return all_feedback
     
@@ -399,7 +381,6 @@ class BatchReportGenerator:
                             output_path='',
                             validation_status='error',
                             validation_errors=[str(e)]
-                        ))
             
             # Generate summary report
             summary_path = self._generate_summary_report()
@@ -525,7 +506,6 @@ class BatchReportGenerator:
                 validation_errors=validation_errors,
                 data_quality_feedback=data_quality_feedback,
                 processing_time_seconds=processing_time
-            )
             
         except Exception as e:
             logger.error(f"Error processing {lei}: {str(e)}")
@@ -539,7 +519,6 @@ class BatchReportGenerator:
                 validation_errors=[f"Processing error: {str(e)}"],
                 data_quality_feedback=data_quality_feedback if 'data_quality_feedback' in locals() else [],
                 processing_time_seconds=(datetime.utcnow() - start_time).total_seconds()
-            )
     
     def _construct_voucher_data(self, row: Dict[str, str], quality_feedback: List[DataQualityFeedback]) -> Dict[str, Any]:
         """Construct voucher_data dictionary from CSV row with AI enhancements"""

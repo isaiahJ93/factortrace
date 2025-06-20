@@ -1,12 +1,20 @@
+from __future__ import annotations
+from factortrace.shared_enums import (
+    GWPVersionEnum,
+    TierLevelEnum,
+    Scope3CategoryEnum,
+    ScopeLevelEnum,
+    VerificationLevelEnum,
+    ConsolidationMethodEnum,
+    DataQualityTierEnum,
+    ValueChainStageEnum,
+    UncertaintyDistributionEnum,
+    TemporalGranularityEnum,
+    GasTypeEnum,
+
 from pydantic import BaseModel, Field
 from decimal import Decimal
 from typing import Optional
-
-from factortrace.shared_enums import (
-    GasTypeEnum,
-    TierLevelEnum,
-    UncertaintyDistributionEnum,
-)
 
 class EmissionFactor(BaseModel):
     gas: GasTypeEnum
@@ -21,4 +29,5 @@ class EmissionsRecord(BaseModel):
     activity_value: Decimal
     activity_unit: str
     emission_factor: EmissionFactor
-    emissions_tco2e: Decimal
+)
+    emissions_tco2e: Decimal)

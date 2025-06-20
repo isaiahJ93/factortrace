@@ -1,3 +1,4 @@
+from __future__ import annotations
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import Response
 from fastapi.templating import Jinja2Templates
@@ -23,7 +24,6 @@ def export_xhtml_report(voucher_id: str, request: Request):
     rendered = templates.get_template("report.xhtml.j2").render(
         request=request,
         voucher=voucher
-    )
 
     return Response(content=rendered, media_type="application/xhtml+xml")
 

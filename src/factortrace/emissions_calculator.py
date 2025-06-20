@@ -1,3 +1,4 @@
+from __future__ import annotations
 class EliteEmissionsCalculator:
     def calculate_emissions(self, activity_data, activity_unit, emission_factor, scope):
         class Result:

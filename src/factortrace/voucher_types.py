@@ -1,3 +1,17 @@
+from __future__ import annotations
+from factortrace.shared_enums import (
+    GWPVersionEnum,
+    TierLevelEnum,
+    Scope3CategoryEnum,
+    ScopeLevelEnum,
+    VerificationLevelEnum,
+    ConsolidationMethodEnum,
+    DataQualityTierEnum,
+    ValueChainStageEnum,
+    UncertaintyDistributionEnum,
+    TemporalGranularityEnum,
+    GasTypeEnum,
+
 """
 ESG Compliance Backend - Emission Voucher Types
 Compliant with: CSRD, CBAM, ESRS E1-E6, GHG Protocol, EFRAG 2025
@@ -10,7 +24,6 @@ from enum import Enum, auto
 from decimal import Decimal
 from datetime import datetime, date
 from uuid import UUID
-from factortrace.shared_enums import TierLevelEnum 
 
 from pydantic import BaseModel, Field, ConfigDict
 
@@ -147,5 +160,6 @@ class ValueChainStageEnum(str, Enum):
     DOWNSTREAM = "downstream"
 
 
+)
 # Remaining classes (GHGEmission, EmissionFactor, etc.) truncated for brevity
-# Add complete class definitions as needed following this format.
+# Add complete class definitions as needed following this format.)

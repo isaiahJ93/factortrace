@@ -1,3 +1,4 @@
+from __future__ import annotations
 from enum import Enum
 
 # ---------------------
@@ -67,6 +68,16 @@ class TemporalGranularityEnum(str, Enum):
     QUARTERLY = "quarterly"
     YEARLY = "yearly"
 
+class GasTypeEnum(str, Enum):
+    CO2 = "CO2"
+    CH4 = "CH4"
+    N2O = "N2O"
+    SF6 = "SF6"
+    HFCs = "HFCs"
+    PFCs = "PFCs"
+    NF3 = "NF3"
+    OTHER = "other"
+
 # ---------------------
 # 🔄 CASE-INSENSITIVE FALLBACKS
 # ---------------------
@@ -82,15 +93,3 @@ for _name in list(globals().keys()):
     if _name.endswith("Enum") and isinstance(globals()[_name], type) and issubclass(globals()[_name], Enum):
         setattr(globals()[_name], "_missing_", classmethod(_ci_missing_))
 
-from factortrace.shared_enums import (
-    GWPVersionEnum,
-    TierLevelEnum,
-    Scope3CategoryEnum,
-    ScopeLevelEnum,
-    VerificationLevelEnum,
-    ConsolidationMethodEnum,
-    DataQualityTierEnum,
-    ValueChainStageEnum,
-    UncertaintyDistributionEnum,
-    TemporalGranularityEnum,
-)

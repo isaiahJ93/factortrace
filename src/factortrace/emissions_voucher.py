@@ -1,3 +1,4 @@
+from __future__ import annotations
 
 """Emission Voucher Model for Scope 3 Compliance Engine
 
@@ -10,23 +11,33 @@ Compliance: ESRS 2025.1, CBAM Regulation (EU) 2023/1773, GHG Protocol Rev. 2024
 
 import hashlib
 import uuid
+from factortrace.shared_enums import (
+    GWPVersionEnum,
+    TierLevelEnum,
+    Scope3CategoryEnum,
+    ScopeLevelEnum,
+    VerificationLevelEnum,
+    ConsolidationMethodEnum,
+    DataQualityTierEnum,
+    ValueChainStageEnum,
+    UncertaintyDistributionEnum,
+    TemporalGranularityEnum,
+    GasTypeEnum,
 from datetime import datetime, timezone
 from decimal import Decimal
 from factortrace.models.uncertainty_model import (
     TierLevelEnum,
     ConsolidationMethodEnum,
     UncertaintyDistributionEnum,
-)
+from datetime import datetime, timezone
+from decimal import Decimal
 from typing import Any, Dict, List, Optional, Union
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from typing import ClassVar
-from .models.emissions_voucher import EmissionVoucher, EmissionsRecord
-from .models.emissions_voucher import EmissionFactor  # etc. as needed
-from factortrace.models.emissions_voucher import TierLevelEnum
-from factortrace.models.emissions_voucher import DataQuality, TierLevelEnum
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from factortrace.utils.xml_export import add_to_xml_method
+from .models.emissions_voucher import EmissionVoucher, EmissionsRecord
+from .models.emissions_voucher import EmissionFactor  # if needed
 from enum import Enum
-from my_pkg.enums import TierLevelEnum 
 import re
 _LEI_RE = re.compile(r"^[A-Z0-9]{20}$")
 
@@ -40,7 +51,6 @@ data_quality = DataQuality(
     uncertainty_percent=5,
     confidence_level=95,
     distribution="normal", 
-)
 
 
 def generate_voucher(supplier_id: str) -> EmissionVoucher:
@@ -62,7 +72,6 @@ def generate_voucher(supplier_id: str) -> EmissionVoucher:
         source="DEFRA_2024",
         source_year=2024,
         tier=TierLevelEnum.tier_1,
-    ),
         ghg_breakdown=[],
         total_emissions_tco2e=200,
         data_quality=DataQuality(
@@ -75,11 +84,9 @@ def generate_voucher(supplier_id: str) -> EmissionVoucher:
         uncertainty_percent=5,
         confidence_level=95,
         distribution="normal",
-    ),
         calculation_method="invoice_factor",
         emission_date_start="2024-01-01",
         emission_date_end="2024-12-31"
-)
 
     return EmissionVoucher(
         supplier_lei=supplier_id,
@@ -92,7 +99,6 @@ def generate_voucher(supplier_id: str) -> EmissionVoucher:
         consolidation_method="OPERATIONAL_CONTROL",
         emissions_records=[record],
         total_emissions_tco2e=200
-    )
 # ==============================================================================
 # ENUMERATIONS - Regulatory Taxonomies
 # ==============================================================================
@@ -233,7 +239,6 @@ class AuditTrail(BaseModel):
         new_value: Optional[Any] = None,
         ip_address: Optional[str] = None,
         justification: Optional[str] = None,
-    ) -> None:
         """Add new audit entry to trail"""
         if self.sealed:
             raise ValueError("Cannot modify sealed audit trail")
@@ -246,7 +251,6 @@ class AuditTrail(BaseModel):
             new_value=new_value,
             ip_address=ip_address,
             justification=justification,
-        )
         self.entries.append(entry)
 
     def generate_hash(self) -> str:
@@ -438,7 +442,6 @@ class EmissionVoucher(BaseModel):
     voucher_id: str = Field(
         default_factory=lambda: str(uuid.uuid4()),
         description="Unique voucher identifier (UUID v4)",
-    )
     schema_version: str = Field("1.0.0", pattern="^\\d+\\.\\d+\\.\\d+$")
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: Optional[datetime] = None
@@ -448,7 +451,6 @@ class EmissionVoucher(BaseModel):
     supplier_lei: str = Field(
         pattern="^[A-Z0-9]{4}[A-Z0-9]{2}[A-Z0-9]{12}[0-9]{2}$",
         description="Legal Entity Identifier per ESRS 2 §17",
-    )
     supplier_name: str = Field(..., max_length=200)
     supplier_country: str = Field(..., pattern="^[A-Z]{2}$")
     supplier_sector: str = Field(..., description="NACE Rev.2 code")
@@ -485,7 +487,6 @@ class EmissionVoucher(BaseModel):
     extension_data: Dict[str, Any] = Field(
         default_factory=dict,
         description="xs:any equivalent for future EFRAG extensions",
-    )
 
     @model_validator(mode="after")
     def calculate_totals(self) -> "EmissionVoucher":
@@ -534,7 +535,6 @@ class EmissionVoucher(BaseModel):
         for i, record in enumerate(self.emissions_records):
             record_hash = hashlib.sha256(
                 f"{record.scope}|{record.activity_value}|{record.emission_factor.value}|{record.total_emissions_tco2e}".encode()
-            ).hexdigest()
             calc_data[f"record_{i}_hash"] = record_hash
         
         # Generate final hash
@@ -617,4 +617,4 @@ class EmissionVoucher(BaseModel):
                 }
             ],
         },
-    )
+)

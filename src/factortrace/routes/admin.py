@@ -1,3 +1,4 @@
+from __future__ import annotations
 """
 FactorTrace Admin Viewer  
 ESRS/CBAM-Compliant Dashboard for Emission Vouchers  
@@ -26,7 +27,6 @@ import pandas as pd
 from pydantic import BaseModel, Field
 from fastapi import (
     APIRouter, Depends, HTTPException, Request, status, Query, BackgroundTasks
-)
 from fastapi.responses import HTMLResponse, JSONResponse, StreamingResponse
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.templating import Jinja2Templates
@@ -55,7 +55,6 @@ from sqlalchemy import (
     Boolean,
     JSON,
     Text,
-)
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import Session, sessionmaker
 router = APIRouter(tags=["admin"])
@@ -80,7 +79,6 @@ def authenticate_user(credentials: HTTPBasicCredentials = Depends(security)):
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Basic"},
-        )
     return credentials.username
 
 # ───────────────────────────────────────────────────────────────
@@ -111,7 +109,6 @@ audit_logger = logging.getLogger("audit")
 audit_handler = logging.FileHandler(LOGS_DIR / "admin_audit.log")
 audit_handler.setFormatter(
     logging.Formatter('%(asctime)s - %(levelname)s - USER:%(user)s - ACTION:%(action)s - DETAILS:%(message)s')
-)
 audit_logger.addHandler(audit_handler)
 audit_logger.setLevel(logging.INFO)
 
@@ -129,7 +126,6 @@ def authenticate_user(credentials: HTTPBasicCredentials = Depends(security)):
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Basic"},
-        )
     return credentials.username
 
 # ───────────────────────────────────────────────────────────────
@@ -278,7 +274,6 @@ class VoucherValidator:
                     status=False,
                     message=f"Missing mandatory ESRS field: {field}",
                     severity="error"
-                ))
                 self.missing_fields.add(field)
             else:
                 self.validation_results.append(ValidationFlag(
@@ -287,7 +282,6 @@ class VoucherValidator:
                     status=True,
                     message=f"Field present: {field}",
                     severity="info"
-                ))
         
         # Check CBAM requirements if applicable
         if self._is_cbam_product(voucher_data.get("product_cn_code", "")):
@@ -299,7 +293,6 @@ class VoucherValidator:
                         status=False,
                         message=f"Missing CBAM mandatory field: {field}",
                         severity="error"
-                    ))
                     self.missing_fields.add(field)
         
         # Validate data quality
@@ -355,7 +348,6 @@ class VoucherValidator:
                 status=False,
                 message="Data quality rating missing",
                 severity="error"
-            ))
         elif not isinstance(quality, int) or quality < 1 or quality > 5:
             self.validation_results.append(ValidationFlag(
                 field="data_quality_rating",
@@ -363,7 +355,6 @@ class VoucherValidator:
                 status=False,
                 message=f"Invalid data quality rating: {quality} (must be 1-5)",
                 severity="error"
-            ))
     
     def _validate_ghg_breakdown(self, data: Dict[str, Any]):
         """Check GHG breakdown per ESRS E1-6 §53(b)"""
@@ -375,7 +366,6 @@ class VoucherValidator:
                 status=False,
                 message="Missing GHG breakdown by gas type",
                 severity="warning"
-            ))
         else:
             # Check if total matches sum of components
             total = data.get("total_emissions_tco2e", 0)
@@ -387,7 +377,6 @@ class VoucherValidator:
                     status=False,
                     message=f"GHG breakdown sum ({sum_components}) doesn't match total ({total})",
                     severity="error"
-                ))
     
     def _validate_temporal_data(self, data: Dict[str, Any]):
         """Validate temporal consistency"""
@@ -406,7 +395,6 @@ class VoucherValidator:
                         status=False,
                         message="End date before start date",
                         severity="error"
-                    ))
                 
                 # Check if period is reasonable (not more than 1 year)
                 if (end_date - start_date).days > 366:
@@ -416,7 +404,6 @@ class VoucherValidator:
                         status=False,
                         message="Reporting period exceeds one year",
                         severity="warning"
-                    ))
             except ValueError:
                 self.validation_results.append(ValidationFlag(
                     field="reporting_period",
@@ -424,7 +411,6 @@ class VoucherValidator:
                     status=False,
                     message="Invalid date format (use YYYY-MM-DD)",
                     severity="error"
-                ))
     
     def _validate_lei_format(self, data: Dict[str, Any]):
         """Validate LEI format per ISO 17442"""
@@ -437,7 +423,6 @@ class VoucherValidator:
                     status=False,
                     message=f"Invalid LEI format: {lei}",
                     severity="warning"
-                ))
 
 
 # ============================================================================
@@ -485,12 +470,10 @@ def authenticate_user(credentials: HTTPBasicCredentials = Depends(security)) -> 
             status_code=401,
             detail="Invalid credentials",
             headers={"WWW-Authenticate": "Basic"},
-        )
 
     audit_logger.info(
         "User authenticated",
         extra={"user": credentials.username, "action": "LOGIN_SUCCESS"}
-    )
 
     return {"username": credentials.username, **user}
 
@@ -511,7 +494,6 @@ async def render_admin_dashboard(
     filter_status: Optional[str] = Query(None),
     filter_supplier: Optional[str] = Query(None),
     show_missing: bool = Query(False)
-):
     return templates.TemplateResponse("admin_dashboard.html", {
         "request": request,
         "user": current_user,
@@ -532,7 +514,6 @@ async def render_admin_dashboard(
     audit_logger.info(
         f"Dashboard accessed - Page: {page}, Filter: {filter_status}",
         extra={"user": current_user["username"], "action": "VIEW_DASHBOARD"}
-    )
     
     # Build query
     query = db.query(VoucherRecord)
@@ -564,13 +545,10 @@ async def render_admin_dashboard(
         "total_vouchers": total_count,
         "compliant": db.query(VoucherRecord).filter(
             VoucherRecord.compliance_status == ComplianceStatus.COMPLIANT
-        ).count(),
         "non_compliant": db.query(VoucherRecord).filter(
             VoucherRecord.compliance_status == ComplianceStatus.NON_COMPLIANT
-        ).count(),
         "average_completeness": db.query(VoucherRecord).with_entities(
             VoucherRecord.completeness_score
-        ).all()
     }
     
     if stats["average_completeness"]:
@@ -605,7 +583,6 @@ async def view_voucher_detail(
     request: Request,
     db: Session = Depends(get_db),
     current_user: Dict = Depends(authenticate_user)
-):
     """
     Detailed view of individual voucher with validation results
     Shows all ESRS E1 and CBAM compliance flags
@@ -619,7 +596,6 @@ async def view_voucher_detail(
     audit_logger.info(
         f"Voucher viewed: {voucher_id}",
         extra={"user": current_user["username"], "action": "VIEW_VOUCHER"}
-    )
     
     # Group validation flags by severity
     flags_by_severity = {
@@ -645,7 +621,6 @@ async def revalidate_voucher(
     background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
     current_user: Dict = Depends(authenticate_user)
-):
     """
     Trigger revalidation of a voucher
     Updates compliance status and validation flags
@@ -661,7 +636,6 @@ async def revalidate_voucher(
     audit_logger.info(
         f"Revalidation triggered for: {voucher_id}",
         extra={"user": current_user["username"], "action": "REVALIDATE_VOUCHER"}
-    )
     
     # Run validation
     validator = VoucherValidator()
@@ -690,7 +664,6 @@ async def export_compliance_report(
     format: str = Query("xlsx", regex="^(xlsx|csv|json)$"),
     db: Session = Depends(get_db),
     current_user: Dict = Depends(authenticate_user)
-):
     """
     Export compliance report for external audit
     Includes all vouchers with validation status
@@ -699,7 +672,6 @@ async def export_compliance_report(
     audit_logger.info(
         f"Compliance report exported - Format: {format}",
         extra={"user": current_user["username"], "action": "EXPORT_REPORT"}
-    )
     
     # Get all vouchers
     vouchers = db.query(VoucherRecord).all()
@@ -735,7 +707,6 @@ async def export_compliance_report(
             iter([output]),
             media_type="text/csv",
             headers={"Content-Disposition": "attachment; filename=compliance_report.csv"}
-        )
     
     else:  # xlsx
         output = io.BytesIO()
@@ -764,7 +735,6 @@ async def export_compliance_report(
             io.BytesIO(output.read()),
             media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             headers={"Content-Disposition": "attachment; filename=compliance_report.xlsx"}
-        )
 
 
 @router.post("/import/vouchers")
@@ -772,7 +742,6 @@ async def import_vouchers_batch(
     background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
     current_user: Dict = Depends(authenticate_user)
-):
     """
     Import vouchers from filesystem and validate
     Supports both JSON and XML formats
@@ -799,7 +768,6 @@ async def import_vouchers_batch(
                 # Check if already exists
                 existing = db.query(VoucherRecord).filter(
                     VoucherRecord.voucher_id == data.get("voucher_id")
-                ).first()
                 
                 if existing:
                     continue
@@ -827,7 +795,6 @@ async def import_vouchers_batch(
                     completeness_score=validation_result["completeness_score"],
                     calculation_hash=data.get("calculation_hash"),
                     raw_data=data
-                )
                 
                 db.add(voucher)
                 imported_count += 1
@@ -841,7 +808,6 @@ async def import_vouchers_batch(
     audit_logger.info(
         f"Batch import completed - Imported: {imported_count}, Errors: {len(errors)}",
         extra={"user": current_user["username"], "action": "BATCH_IMPORT"}
-    )
     
     return {
         "status": "success",
@@ -931,7 +897,6 @@ async def admin_home(
     request: Request,
     db: Session = Depends(get_db),
     current_user: Dict = Depends(authenticate_user)
-):
     vouchers = db.query(VoucherRecord).order_by(VoucherRecord.submission_timestamp.desc()).limit(50).all()
     return templates.TemplateResponse("admin_dashboard.html", {
         "request": request,

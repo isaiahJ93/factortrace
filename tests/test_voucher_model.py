@@ -1,24 +1,33 @@
+from factortrace.shared_enums import (
+    GWPVersionEnum,
+    TierLevelEnum,
+    Scope3CategoryEnum,
+    ScopeLevelEnum,
+    VerificationLevelEnum,
+    ConsolidationMethodEnum,
+    DataQualityTierEnum,
+    ValueChainStageEnum,
+    UncertaintyDistributionEnum,
+    TemporalGranularityEnum,
+    GasTypeEnum,
+
 from datetime import datetime
 
 from decimal import Decimal
-from factortrace.models.emissions_voucher import (
-    EmissionVoucher,
-    EmissionsRecord,
-    EmissionFactor,
-    GHGBreakdown,
-    DataQuality,
-)
-
 from factortrace.shared_enums import (
-    ScopeLevelEnum,
-    ValueChainStageEnum,
-    Scope3CategoryEnum,
-    TierLevelEnum,
     GWPVersionEnum,
+    TierLevelEnum,
+    Scope3CategoryEnum,
+    ScopeLevelEnum,
+    VerificationLevelEnum,
     ConsolidationMethodEnum,
-)
+    DataQualityTierEnum,
+    ValueChainStageEnum,
+    UncertaintyDistributionEnum,
+    TemporalGranularityEnum,
+    GasTypeEnum,
 
-scope_enum = ScopeLevelEnum.scope_3
+ScopeLevelEnum.ORGANIZATION  # or .ORGANIZATION — whichever makes sense
 stage_enum = ValueChainStageEnum.UPSTREAM
 
 def _sample_record() -> dict:
@@ -36,14 +45,12 @@ def _sample_record() -> dict:
             source="DEFRA_2024",
             source_year=2024,
             tier="tier_1"
-        ).model_dump(),
         "ghg_breakdown": [
             GHGBreakdown(
                 gas_type="CO2",
                 amount=Decimal("210"),
                 gwp_factor=Decimal("1"),
                 gwp_version="AR6_100"
-            ).model_dump()
         ],
         "total_emissions_tco2e": Decimal("210"),
 
@@ -57,7 +64,6 @@ def _sample_record() -> dict:
             uncertainty_percent=Decimal("5"),
             confidence_level=Decimal("95"),
             distribution="lognormal",
-        ).model_dump(),
         
         "calculation_method": "invoice_factor",
         "emission_date_start": datetime(2024, 1, 1),
@@ -77,7 +83,6 @@ def test_valid_voucher():
         consolidation_method=ConsolidationMethodEnum.OPERATIONAL_CONTROL,
         emissions_records=[EmissionsRecord(**_sample_record())],
         total_emissions_tco2e=Decimal("210"),
-    )
 
     assert voucher.total_emissions_tco2e == Decimal("210")
-    
+    )

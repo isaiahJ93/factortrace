@@ -1,4 +1,17 @@
+from __future__ import annotations
 from factortrace.shared_enums import (
+    GWPVersionEnum,
+    TierLevelEnum,
+    Scope3CategoryEnum,
+    ScopeLevelEnum,
+    VerificationLevelEnum,
+    ConsolidationMethodEnum,
+    DataQualityTierEnum,
+    ValueChainStageEnum,
+    UncertaintyDistributionEnum,
+    TemporalGranularityEnum,
+    GasTypeEnum,
+
     Scope3CategoryEnum,
     VerificationLevelEnum,
     AuditActionEnum,
@@ -6,7 +19,6 @@ from factortrace.shared_enums import (
     TargetTypeEnum,
     GWPVersionEnum,
 )
-
 from enum import Enum
 
 class MaterialityTypeEnum(str, Enum):

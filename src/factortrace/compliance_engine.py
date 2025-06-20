@@ -1,3 +1,4 @@
+from __future__ import annotations
 # factortrace/enums/__init__.py
 from .voucher_types import EmissionScope as ScopeEnum
 from .enums import UncertaintyDistributionEnum
@@ -22,7 +23,6 @@ def main():
         activity_unit="kWh",
         emission_factor="EF_GRID_EU_2024",
         scope="2"
-    )
 
     print(f"CO2e: {result.get_central_estimate()} kg")
 

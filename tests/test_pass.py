@@ -1,3 +1,16 @@
+from factortrace.shared_enums import (
+    GWPVersionEnum,
+    TierLevelEnum,
+    Scope3CategoryEnum,
+    ScopeLevelEnum,
+    VerificationLevelEnum,
+    ConsolidationMethodEnum,
+    DataQualityTierEnum,
+    ValueChainStageEnum,
+    UncertaintyDistributionEnum,
+    TemporalGranularityEnum,
+    GasTypeEnum,
+
 from enum import Enum
 from decimal import Decimal
 from datetime import datetime, date
@@ -6,13 +19,18 @@ from enum import Enum
 from generator.voucher_generator import generate_voucher
 from factortrace.models.materiality import MaterialityAssessment, MaterialityType
 from factortrace.models.emissions import UncertaintyAssessment
-from factortrace.models.emissions_voucher import EmissionVoucher, EmissionsRecord, GHGBreakdown
 from factortrace.shared_enums import (
-    ScopeLevelEnum as ScopeEnum,
-    ValueChainStageEnum,
-    TierLevelEnum,
     GWPVersionEnum,
-)
+    TierLevelEnum,
+    Scope3CategoryEnum,
+    ScopeLevelEnum,
+    VerificationLevelEnum,
+    ConsolidationMethodEnum,
+    DataQualityTierEnum,
+    ValueChainStageEnum,
+    UncertaintyDistributionEnum,
+    TemporalGranularityEnum,
+    GasTypeEnum,
 
 from factortrace.voucher_types import EmissionFactor, DataQuality
 
@@ -78,7 +96,6 @@ def test_materiality_full_parsing():
         affected_stakeholders=["investors", "NGOs"],
         risk_type="PHYSICAL",
         reporting_period="2025"
-    )
     assert m.is_material is True
 
 def test_materiality_partial_parsing():
@@ -100,7 +117,6 @@ def test_materiality_partial_parsing():
         materiality_threshold=0.7,
         is_material=True,
         justification="Meets EU sustainability threshold"
-    )
     assert example.impact_magnitude == 3.5
 
 def test_uncertainty_distribution():
@@ -111,7 +127,6 @@ def test_uncertainty_distribution():
         confidence_level=95.0,
         distribution="LOGNORMAL",
         method="Monte Carlo"
-    )
     assert u.distribution == "LOGNORMAL"
     assert u.confidence_level == 95.0
     assert u.uncertainty_percentage == 10.0
@@ -128,7 +143,6 @@ def test_valid_voucher():
         consolidation_method="operational_control",
         emissions_records=[EmissionsRecord(**_sample_record())],
         total_emissions_tco2e=100.0
-    )
     assert voucher.total_emissions_tco2e == 100.0
 
 def test_invalid_scope():
@@ -163,6 +177,5 @@ def test_valid_emission_voucher():
             amount=Decimal("210"),
             gwp_factor=Decimal("1"),
             gwp_version=GWPVersionEnum.AR6_100,
-        )
-    )
-    assert example.voucher_id == "ABC123"
+)
+    assert example.voucher_id == "ABC123")

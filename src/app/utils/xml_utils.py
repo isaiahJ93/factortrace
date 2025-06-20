@@ -1,3 +1,4 @@
+from __future__ import annotations
 # src/app/utils/xml_utils.py
 
 from pathlib import Path

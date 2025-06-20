@@ -1,3 +1,4 @@
+from __future__ import annotations
 import csv
 import logging
 import re
@@ -120,7 +121,6 @@ class EmissionFactorLoader:
         logger.info(
             "Indexed %d activities across multiple regions and methods",
             len(self.factors)
-        )
 
     # ───────────────────────────────────────────────────────────────
     # Helpers
@@ -261,7 +261,6 @@ class EmissionFactorLoader:
             activity_id=activity,
             region=factor_data['region'],
             fallback_reason=fallback_reason
-        )
 
     @property
     def version(self) -> str:

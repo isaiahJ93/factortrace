@@ -1,3 +1,4 @@
+from __future__ import annotations
 from typing import Optional, Any, Dict
 from enum import Enum
 
@@ -21,11 +22,9 @@ class EmissionRequest(BaseModel):
     emission_factor: str = Field(
         ...,
         description="Factor ID or numeric value; ID preferred (e.g. 'EF_GRID_EU_2024')"
-    )
     scope: str = Field("3", pattern="^[123]$", description="GHG Protocol scope: 1, 2, or 3")
     scope3_category: Optional[str] = Field(
         ..., description="Scope 3 category (if applicable)"
-    )
 
 class VoucherInput(BaseModel):
     supplier_id: str

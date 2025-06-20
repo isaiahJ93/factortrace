@@ -1,3 +1,4 @@
+from __future__ import annotations
 from enum import Enum
 
 class VerificationLevelEnum(str, Enum):
@@ -16,7 +17,6 @@ for _name in (
     "DataQualityTierEnum",
     "ConsolidationMethodEnum",
     "Scope3CategoryEnum",
-):
     if _name in globals():                      # safe if some enums don’t exist
         setattr(globals()[_name], "_missing_", classmethod(_ci_missing))
 

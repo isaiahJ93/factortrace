@@ -1,3 +1,4 @@
+from __future__ import annotations
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from factortrace.routes.admin import admin_router

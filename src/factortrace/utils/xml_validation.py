@@ -1,3 +1,4 @@
+from __future__ import annotations
 from xmlschema import XMLSchema
 from typing import Tuple, List
 def validate_vsme_xml(xml_string: str):
