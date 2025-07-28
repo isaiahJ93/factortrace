@@ -10,7 +10,7 @@ from factortrace.shared_enums import (
     ValueChainStageEnum,
     UncertaintyDistributionEnum,
     TemporalGranularityEnum,
-    GasTypeEnum,
+    GasTypeEnum,)
 
 from pydantic import BaseModel, Field
 from decimal import Decimal
@@ -30,4 +30,4 @@ class EmissionsRecord(BaseModel):
     activity_unit: str
     emission_factor: EmissionFactor
 
-    emissions_tco2e: Decimal)
+    emissions_tco2e: Decimal
