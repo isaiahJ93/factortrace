@@ -29,5 +29,5 @@ class EmissionsRecord(BaseModel):
     activity_value: Decimal
     activity_unit: str
     emission_factor: EmissionFactor
-)
+
     emissions_tco2e: Decimal)
