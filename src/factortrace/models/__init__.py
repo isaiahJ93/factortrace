@@ -12,7 +12,6 @@ from factortrace.shared_enums import (
     TemporalGranularityEnum,
     GasTypeEnum,
 )
-
 from .types import EmissionFactor, EmissionsRecord
 from .emissions_voucher import EmissionVoucher
 from factortrace.models.emissions_voucher import GHGBreakdown
