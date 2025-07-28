@@ -11,6 +11,7 @@ from factortrace.shared_enums import (
     UncertaintyDistributionEnum,
     TemporalGranularityEnum,
     GasTypeEnum,
+)
 
 from .types import EmissionFactor, EmissionsRecord
 from .emissions_voucher import EmissionVoucher
