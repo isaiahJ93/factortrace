@@ -10,7 +10,7 @@ from factortrace.shared_enums import (
     ValueChainStageEnum,
     UncertaintyDistributionEnum,
     TemporalGranularityEnum,
-    GasTypeEnum,
+    GasTypeEnum,)
 
 
 """Emission Voucher Model for Scope 3 Compliance Engine
