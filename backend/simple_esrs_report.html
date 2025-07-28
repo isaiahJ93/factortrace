@@ -1,0 +1,75 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ESRS E1 Climate Report</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        h1 { color: #2c3e50; }
+        .section { margin: 20px 0; padding: 20px; border: 1px solid #ddd; }
+        .metric { display: inline-block; margin: 10px; padding: 10px; background: #f0f0f0; }
+    </style>
+</head>
+<body>
+    <h1>ESRS E1 Climate Disclosure Report</h1>
+    
+    <div class="section">
+        <h2>Organization Information</h2>
+        <p><strong>Name:</strong> Test Company Ltd</p>
+        <p><strong>LEI:</strong> 5493000KJTIIGC8Y1R12</p>
+        <p><strong>Reporting Period:</strong> 2024</p>
+    </div>
+    
+    <div class="section">
+        <h2>GHG Emissions Summary</h2>
+        <div class="metric">
+            <strong>Scope 1:</strong> 1,000 tCO₂e
+        </div>
+        <div class="metric">
+            <strong>Scope 2 (Location):</strong> 500 tCO₂e
+        </div>
+        <div class="metric">
+            <strong>Scope 2 (Market):</strong> 400 tCO₂e
+        </div>
+        <div class="metric">
+            <strong>Scope 3 Total:</strong> 12,000 tCO₂e
+        </div>
+    </div>
+    
+    <div class="section">
+        <h2>Scope 3 Categories</h2>
+        <table border="1" style="width: 100%; border-collapse: collapse;">
+            <tr>
+                <th>Category</th>
+                <th>Emissions (tCO₂e)</th>
+            </tr>
+            <tr><td>Category 1: Purchased goods and services</td><td>100</td></tr>
+            <tr><td>Category 2: Capital goods</td><td>200</td></tr>
+            <tr><td>Category 3: Fuel- and energy-related activities</td><td>300</td></tr>
+            <tr><td>Category 4: Upstream transportation</td><td>400</td></tr>
+            <tr><td>Category 5: Waste generated</td><td>500</td></tr>
+            <tr><td>Category 6: Business travel</td><td>600</td></tr>
+            <tr><td>Category 7: Employee commuting</td><td>700</td></tr>
+            <tr><td>Category 8: Upstream leased assets</td><td>800</td></tr>
+            <tr><td>Category 9: Downstream transportation</td><td>900</td></tr>
+            <tr><td>Category 10: Processing of sold products</td><td>1000</td></tr>
+            <tr><td>Category 11: Use of sold products</td><td>1100</td></tr>
+            <tr><td>Category 12: End-of-life treatment</td><td>1200</td></tr>
+            <tr><td>Category 13: Downstream leased assets</td><td>1300</td></tr>
+            <tr><td>Category 14: Franchises</td><td>1400</td></tr>
+            <tr><td>Category 15: Investments</td><td>1500</td></tr>
+        </table>
+    </div>
+    
+    <div class="section">
+        <h2>Climate Governance</h2>
+        <p>✓ Board oversight of climate-related risks and opportunities</p>
+        <p>✓ Climate targets aligned with Paris Agreement</p>
+        <p>✓ Net Zero target: 2050</p>
+    </div>
+    
+    <p style="margin-top: 40px; font-style: italic;">
+        Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+    </p>
+</body>
+</html>

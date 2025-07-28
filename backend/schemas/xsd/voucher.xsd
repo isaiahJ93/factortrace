@@ -1,0 +1,942 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning"
+    xmlns:link="http://www.xbrl.org/2003/linkbase"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xbrli="http://www.xbrl.org/2003/instance"
+    targetNamespace="https://scope3.dev/voucher/2025-06"
+    xmlns="https://scope3.dev/voucher/2025-06"
+    elementFormDefault="qualified"
+    attributeFormDefault="unqualified"
+    vc:minVersion="1.1"
+    version="1.0.0">
+
+  <!-- ============================================================================= -->
+  <!-- Schema Documentation & Linkbase References                                    -->
+  <!-- ============================================================================= -->
+  <xs:annotation>
+    <xs:documentation>
+      Scope 3 Emissions Voucher Schema v1.0.0
+      Billion-euro grade schema for ESRS E1, CSRD, and CBAM compliance
+      
+      Purpose: Validates supplier emission vouchers for Scope 3 reporting
+      Compliance: ESRS E1-6, CSRD Article 29b, GHG Protocol, CBAM Regulation
+      
+      Copyright (c) 2025 FactorTrace
+      License: MIT
+      
+      Instance Document Style:
+      - Numeric values use element content (not @value attributes)
+      - Units and currencies as attributes
+      - Example: <cost currency="EUR">1000.00</cost>
+      
+      Calculation Tolerances:
+      - Mathematical assertions use 0.01 absolute tolerance
+      - This accounts for rounding in financial calculations
+      - Tolerance = 0.01 units of the target measure
+      
+      External References:
+      - ISO 3166-1: https://www.iso.org/iso-3166-country-codes.html
+      - ISO 4217: https://www.iso.org/iso-4217-currency-codes.html
+      - CN Codes: https://ec.europa.eu/taxation_customs/dds2/taric/
+      - UN/CEFACT Units: https://www.unece.org/trade/uncefact/
+    </xs:documentation>
+    <xs:appinfo>
+      <!-- XBRL Linkbase References - ensure these files exist in your deployment -->
+      <link:linkbaseRef 
+        xlink:type="simple"
+        xlink:href="voucher-label.xml"
+        xlink:role="http://www.xbrl.org/2003/role/labelLinkbaseRef"
+        xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase"/>
+      <link:linkbaseRef 
+        xlink:type="simple"
+        xlink:href="voucher-calculation.xml"
+        xlink:role="http://www.xbrl.org/2003/role/calculationLinkbaseRef"
+        xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase"/>
+      <link:linkbaseRef 
+        xlink:type="simple"
+        xlink:href="voucher-reference.xml"
+        xlink:role="http://www.xbrl.org/2003/role/referenceLinkbaseRef"
+        xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase"/>
+    </xs:appinfo>
+  </xs:annotation>
+
+  <!-- ============================================================================= -->
+  <!-- Global Attributes for Tolerance Configuration                                 -->
+  <!-- ============================================================================= -->
+  <xs:attribute name="calculationTolerance" type="xs:decimal" default="0.01">
+    <xs:annotation>
+      <xs:documentation>
+        Absolute tolerance for calculation assertions (default: 0.01)
+        Can be overridden at instance level if needed
+      </xs:documentation>
+    </xs:annotation>
+  </xs:attribute>
+
+  <!-- ============================================================================= -->
+  <!-- Root Element with XBRL Substitution Group Support                            -->
+  <!-- ============================================================================= -->
+  <xs:element name="voucher" type="VoucherType" substitutionGroup="xbrli:item">
+    <xs:annotation>
+      <xs:documentation>
+        Root element representing a single emission voucher from a supplier
+        Can be used standalone or within XBRL instance documents
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <!-- ============================================================================= -->
+  <!-- Primary Complex Type: VoucherType                                             -->
+  <!-- ============================================================================= -->
+  <xs:complexType name="VoucherType">
+    <xs:annotation>
+      <xs:documentation>
+        Complete voucher structure with comprehensive business rule validation
+      </xs:documentation>
+    </xs:annotation>
+    
+    <!-- Content Model -->
+    <xs:sequence>
+      <!-- Voucher Metadata -->
+      <xs:element name="voucher_id" type="UUIDType">
+        <xs:annotation>
+          <xs:documentation>Unique voucher identifier (UUID v4)</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      
+      <!-- Context and Period Information -->
+      <xs:element name="context" type="ContextType">
+        <xs:annotation>
+          <xs:documentation>XBRL-compatible context with period and entity</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      
+      <!-- Supplier Information -->
+      <xs:element name="supplier_id" type="NonEmptyStringType">
+        <xs:annotation>
+          <xs:documentation>Supplier's unique identifier in the system</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      
+      <xs:element name="supplier_name" type="NonEmptyStringType">
+        <xs:annotation>
+          <xs:documentation>Legal name of the supplier entity</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      
+      <xs:element name="legal_entity_identifier" type="LEIType">
+        <xs:annotation>
+          <xs:documentation>ISO 17442 Legal Entity Identifier (20 characters)</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      
+      <!-- Supply Chain Position -->
+      <xs:element name="tier" type="TierLevelType">
+        <xs:annotation>
+          <xs:documentation>Supply chain tier level</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      
+      <!-- Product/Service Information -->
+      <xs:element name="product_category" type="NonEmptyStringType">
+        <xs:annotation>
+          <xs:documentation>Category of product or service provided</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      
+      <xs:element name="material_type" type="NonEmptyStringType">
+        <xs:annotation>
+          <xs:documentation>Primary material or service type</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      
+      <!-- Activity Data -->
+      <xs:element name="quantity" type="QuantityType">
+        <xs:annotation>
+          <xs:documentation>Quantity of goods/services with unit</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      
+      <xs:element name="unit_price" type="MonetaryAmountType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Price per unit in specified currency</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      
+      <xs:element name="cost" type="MonetaryAmountType">
+        <xs:annotation>
+          <xs:documentation>Total cost (quantity × unit_price if provided)</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      
+      <!-- Geographic Information -->
+      <xs:element name="origin_country" type="CountryCodeType">
+        <xs:annotation>
+          <xs:documentation>ISO 3166-1 alpha-2 country code of origin</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      
+      <!-- Emission Calculation Data -->
+      <xs:element name="emission_factor" type="EmissionFactorType">
+        <xs:annotation>
+          <xs:documentation>Emission factor with unit and source</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      
+      <xs:element name="fallback_factor_used" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>True if default/fallback factor was used</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      
+      <xs:element name="total_co2e" type="EmissionAmountType">
+        <xs:annotation>
+          <xs:documentation>Total emissions (quantity × emission_factor)</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      
+      <!-- Temporal Information -->
+      <xs:element name="submission_date" type="xs:date">
+        <xs:annotation>
+          <xs:documentation>Date voucher was submitted</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      
+      <!-- Verification -->
+      <xs:element name="hash" type="SHA256Type">
+        <xs:annotation>
+          <xs:documentation>SHA-256 hash for integrity verification</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      
+      <!-- Optional Elements -->
+      <xs:element name="installation_country" type="CountryCodeType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Country where production occurred (CBAM)</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      
+      <xs:element name="calculation_methodology" type="CalculationMethodType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Method used for emissions calculation</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      
+      <xs:element name="reporting_undertaking_id" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>ID of the entity requesting the voucher</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      
+      <xs:element name="product_cn_code" type="CNCodeType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>8-digit Combined Nomenclature code</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      
+      <xs:element name="gwp_version" type="GWPVersionType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>IPCC GWP version used</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      
+      <xs:element name="emission_scope" type="EmissionScopeType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>GHG Protocol scope</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      
+      <!-- Extended Details -->
+      <xs:element name="details" type="VoucherDetailsType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Additional voucher details</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      
+      <!-- Extension Point for Future Requirements -->
+      <xs:element name="extensions" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Extension point for additional data</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+    
+    <!-- Attributes -->
+    <xs:attribute name="version" type="xs:string" use="required" fixed="1.0">
+      <xs:annotation>
+        <xs:documentation>Voucher format version</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    
+    <xs:attribute name="created" type="xs:dateTime" use="optional">
+      <xs:annotation>
+        <xs:documentation>Timestamp when voucher was created</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    
+    <xs:attribute name="contextRef" type="xs:IDREF" use="optional">
+      <xs:annotation>
+        <xs:documentation>Reference to XBRL context when used inline</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    
+    <!-- Comprehensive XSD 1.1 Assertions with Documented Tolerance -->
+    
+    <!-- Core value assertions -->
+    <xs:assert test="number(total_co2e) >= 0">
+      <xs:annotation>
+        <xs:documentation>Total emissions must be non-negative</xs:documentation>
+      </xs:annotation>
+    </xs:assert>
+    
+    <xs:assert test="number(cost) > 0">
+      <xs:annotation>
+        <xs:documentation>Cost must be positive</xs:documentation>
+      </xs:annotation>
+    </xs:assert>
+    
+    <xs:assert test="number(emission_factor) > 0">
+      <xs:annotation>
+        <xs:documentation>Emission factor must be positive</xs:documentation>
+      </xs:annotation>
+    </xs:assert>
+    
+    <xs:assert test="number(quantity) > 0">
+      <xs:annotation>
+        <xs:documentation>Quantity must be positive</xs:documentation>
+      </xs:annotation>
+    </xs:assert>
+    
+    <!-- Cross-field calculation assertions with 0.01 tolerance -->
+    <xs:assert test="abs(number(total_co2e) - (number(quantity) * number(emission_factor))) &lt; 0.01">
+      <xs:annotation>
+        <xs:documentation>
+          Total CO2e must equal quantity × emission factor
+          Tolerance: ±0.01 tCO2e to account for rounding
+        </xs:documentation>
+      </xs:annotation>
+    </xs:assert>
+    
+    <xs:assert test="not(unit_price) or abs(number(cost) - (number(quantity) * number(unit_price))) &lt; 0.01">
+      <xs:annotation>
+        <xs:documentation>
+          If unit price exists, cost must equal quantity × unit price
+          Tolerance: ±0.01 currency units to account for rounding
+        </xs:documentation>
+      </xs:annotation>
+    </xs:assert>
+    
+    <!-- Business logic assertions -->
+    <xs:assert test="not(fallback_factor_used = true()) or not(calculation_methodology) or calculation_methodology = 'default_factor'">
+      <xs:annotation>
+        <xs:documentation>If fallback factor is used, methodology must be 'default_factor'</xs:documentation>
+      </xs:annotation>
+    </xs:assert>
+    
+    <!-- Period validation -->
+    <xs:assert test="xs:date(context/period/end_date) >= xs:date(context/period/start_date)">
+      <xs:annotation>
+        <xs:documentation>Period end date must be after or equal to start date</xs:documentation>
+      </xs:annotation>
+    </xs:assert>
+    
+    <!-- Currency consistency -->
+    <xs:assert test="not(unit_price) or cost/@currency = unit_price/@currency">
+      <xs:annotation>
+        <xs:documentation>Unit price and total cost must use same currency</xs:documentation>
+      </xs:annotation>
+    </xs:assert>
+  </xs:complexType>
+
+  <!-- ============================================================================= -->
+  <!-- Complex Type: ContextType (XBRL-aligned)                                     -->
+  <!-- ============================================================================= -->
+  <xs:complexType name="ContextType">
+    <xs:annotation>
+      <xs:documentation>
+        XBRL-compatible context for period and entity identification
+        Can reference standard XBRL contexts when used inline
+      </xs:documentation>
+    </xs:annotation>
+    
+    <xs:sequence>
+      <xs:element name="entity_lei" type="LEIType">
+        <xs:annotation>
+          <xs:documentation>Reporting entity LEI</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      
+      <xs:element name="period" type="PeriodType">
+        <xs:annotation>
+          <xs:documentation>Reporting period</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+    
+    <xs:attribute name="id" type="xs:NCName" use="required"/>
+  </xs:complexType>
+
+  <!-- ============================================================================= -->
+  <!-- Complex Type: PeriodType                                                      -->
+  <!-- ============================================================================= -->
+  <xs:complexType name="PeriodType">
+    <xs:annotation>
+      <xs:documentation>
+        Reporting period with start and end dates
+      </xs:documentation>
+    </xs:annotation>
+    
+    <xs:sequence>
+      <xs:element name="start_date" type="xs:date">
+        <xs:annotation>
+          <xs:documentation>Period start date</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      
+      <xs:element name="end_date" type="xs:date">
+        <xs:annotation>
+          <xs:documentation>Period end date</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      
+      <xs:element name="reporting_year" type="xs:gYear" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Fiscal/reporting year</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- ============================================================================= -->
+  <!-- Complex Type: QuantityType (with precision)                                   -->
+  <!-- ============================================================================= -->
+  <xs:complexType name="QuantityType">
+    <xs:annotation>
+      <xs:documentation>
+        Quantity with unit of measure
+        Example: <quantity unit="t">1000.5</quantity>
+      </xs:documentation>
+    </xs:annotation>
+    
+    <xs:simpleContent>
+      <xs:extension base="QuantityValueType">
+        <xs:attribute name="unit" type="QuantityUnitType" use="required"/>
+        <xs:attribute name="unitExtension" type="xs:string" use="optional">
+          <xs:annotation>
+            <xs:documentation>
+              Extension point for units not in enumeration
+              Should follow UN/CEFACT common codes
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <!-- ============================================================================= -->
+  <!-- Complex Type: MonetaryAmountType (with precision)                             -->
+  <!-- ============================================================================= -->
+  <xs:complexType name="MonetaryAmountType">
+    <xs:annotation>
+      <xs:documentation>
+        Monetary amount with currency
+        Example: <cost currency="EUR">10000.00</cost>
+      </xs:documentation>
+    </xs:annotation>
+    
+    <xs:simpleContent>
+      <xs:extension base="MonetaryValueType">
+        <xs:attribute name="currency" type="CurrencyCodeType" use="required"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <!-- ============================================================================= -->
+  <!-- Complex Type: EmissionFactorType (with precision)                             -->
+  <!-- ============================================================================= -->
+  <xs:complexType name="EmissionFactorType">
+    <xs:annotation>
+      <xs:documentation>
+        Emission factor with unit and source
+        Example: <emission_factor unit="kgCO2e/kg" source="DEFRA">2.45</emission_factor>
+      </xs:documentation>
+    </xs:annotation>
+    
+    <xs:simpleContent>
+      <xs:extension base="EmissionFactorValueType">
+        <xs:attribute name="unit" type="EmissionFactorUnitType" use="required"/>
+        <xs:attribute name="unitExtension" type="xs:string" use="optional">
+          <xs:annotation>
+            <xs:documentation>Extension for complex units</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="source" type="xs:string" use="optional"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <!-- ============================================================================= -->
+  <!-- Complex Type: EmissionAmountType (with precision)                             -->
+  <!-- ============================================================================= -->
+  <xs:complexType name="EmissionAmountType">
+    <xs:annotation>
+      <xs:documentation>
+        Emission amount with unit
+        Example: <total_co2e unit="tCO2e">2450.75</total_co2e>
+      </xs:documentation>
+    </xs:annotation>
+    
+    <xs:simpleContent>
+      <xs:extension base="EmissionValueType">
+        <xs:attribute name="unit" type="EmissionUnitType" use="required" default="tCO2e"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <!-- ============================================================================= -->
+  <!-- Complex Type: VoucherDetailsType                                              -->
+  <!-- ============================================================================= -->
+  <xs:complexType name="VoucherDetailsType">
+    <xs:annotation>
+      <xs:documentation>
+        Extended details for voucher
+      </xs:documentation>
+    </xs:annotation>
+    
+    <xs:sequence>
+      <xs:element name="Source" type="NonEmptyStringType">
+        <xs:annotation>
+          <xs:documentation>Data source</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      
+      <xs:element name="Value" type="PositiveDecimalType">
+        <xs:annotation>
+          <xs:documentation>Associated value</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      
+      <xs:element name="Unit" type="UnitType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Unit of measurement</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      
+      <xs:element name="DataQuality" type="DataQualityType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Data quality assessment</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+    
+    <xs:assert test="number(Value) > 0">
+      <xs:annotation>
+        <xs:documentation>Value must be positive</xs:documentation>
+      </xs:annotation>
+    </xs:assert>
+  </xs:complexType>
+
+  <!-- ============================================================================= -->
+  <!-- Complex Type: DataQualityType                                                 -->
+  <!-- ============================================================================= -->
+  <xs:complexType name="DataQualityType">
+    <xs:annotation>
+      <xs:documentation>
+        Data quality indicators per ESRS 1 §64-65
+      </xs:documentation>
+    </xs:annotation>
+    
+    <xs:sequence>
+      <xs:element name="Score" type="QualityScoreType"/>
+      <xs:element name="Method" type="xs:string" minOccurs="0"/>
+      <xs:element name="Uncertainty" type="PercentageType" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- ============================================================================= -->
+  <!-- Simple Types with Precision Constraints                                       -->
+  <!-- ============================================================================= -->
+  
+  <!-- Monetary Value Type (with precision) -->
+  <xs:simpleType name="MonetaryValueType">
+    <xs:annotation>
+      <xs:documentation>
+        Positive monetary amount with 2 decimal places
+        Max 13 integer digits + 2 decimals = 15 total
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:decimal">
+      <xs:minExclusive value="0"/>
+      <xs:totalDigits value="15"/>
+      <xs:fractionDigits value="2"/>
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <!-- Quantity Value Type (with precision) -->
+  <xs:simpleType name="QuantityValueType">
+    <xs:annotation>
+      <xs:documentation>
+        Positive quantity with up to 4 decimal places
+        Suitable for most physical measurements
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:decimal">
+      <xs:minExclusive value="0"/>
+      <xs:totalDigits value="15"/>
+      <xs:fractionDigits value="4"/>
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <!-- Emission Factor Value Type (with precision) -->
+  <xs:simpleType name="EmissionFactorValueType">
+    <xs:annotation>
+      <xs:documentation>
+        Emission factor with up to 6 decimal places
+        High precision for accurate calculations
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:decimal">
+      <xs:minExclusive value="0"/>
+      <xs:totalDigits value="12"/>
+      <xs:fractionDigits value="6"/>
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <!-- Emission Value Type (with precision) -->
+  <xs:simpleType name="EmissionValueType">
+    <xs:annotation>
+      <xs:documentation>
+        Emission amount with up to 4 decimal places
+        Suitable for tCO2e reporting
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:decimal">
+      <xs:minInclusive value="0"/>
+      <xs:totalDigits value="15"/>
+      <xs:fractionDigits value="4"/>
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <!-- UUID Type -->
+  <xs:simpleType name="UUIDType">
+    <xs:annotation>
+      <xs:documentation>UUID v4 format</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}"/>
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <!-- LEI Type -->
+  <xs:simpleType name="LEIType">
+    <xs:annotation>
+      <xs:documentation>ISO 17442 Legal Entity Identifier</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[A-Z0-9]{18}[0-9]{2}"/>
+      <xs:length value="20"/>
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <!-- Country Code Type -->
+  <xs:simpleType name="CountryCodeType">
+    <xs:annotation>
+      <xs:documentation>
+        ISO 3166-1 alpha-2 country codes
+        For full list validation, import official ISO schema
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[A-Z]{2}"/>
+      <xs:length value="2"/>
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <!-- Currency Code Type (Common currencies) -->
+  <xs:simpleType name="CurrencyCodeType">
+    <xs:annotation>
+      <xs:documentation>
+        ISO 4217 currency codes (common subset)
+        For full list, import official ISO 4217 schema
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="EUR"/>
+      <xs:enumeration value="USD"/>
+      <xs:enumeration value="GBP"/>
+      <xs:enumeration value="CHF"/>
+      <xs:enumeration value="JPY"/>
+      <xs:enumeration value="CNY"/>
+      <xs:enumeration value="AUD"/>
+      <xs:enumeration value="CAD"/>
+      <xs:enumeration value="SEK"/>
+      <xs:enumeration value="NOK"/>
+      <xs:enumeration value="DKK"/>
+      <xs:enumeration value="PLN"/>
+      <xs:enumeration value="CZK"/>
+      <xs:enumeration value="HUF"/>
+      <xs:enumeration value="RON"/>
+      <xs:enumeration value="BGN"/>
+      <xs:enumeration value="HRK"/>
+      <xs:enumeration value="RUB"/>
+      <xs:enumeration value="TRY"/>
+      <xs:enumeration value="BRL"/>
+      <xs:enumeration value="MXN"/>
+      <xs:enumeration value="INR"/>
+      <xs:enumeration value="KRW"/>
+      <xs:enumeration value="ZAR"/>
+      <xs:enumeration value="SGD"/>
+      <xs:enumeration value="HKD"/>
+      <xs:enumeration value="NZD"/>
+      <xs:enumeration value="THB"/>
+      <xs:enumeration value="MYR"/>
+      <xs:enumeration value="IDR"/>
+      <xs:enumeration value="PHP"/>
+      <xs:enumeration value="AED"/>
+      <xs:enumeration value="SAR"/>
+      <xs:enumeration value="QAR"/>
+      <xs:enumeration value="KWD"/>
+      <xs:enumeration value="BHD"/>
+      <xs:enumeration value="OMR"/>
+      <xs:enumeration value="JOD"/>
+      <xs:enumeration value="ILS"/>
+      <xs:enumeration value="EGP"/>
+      <xs:enumeration value="MAD"/>
+      <xs:enumeration value="KES"/>
+      <xs:enumeration value="NGN"/>
+      <xs:enumeration value="UAH"/>
+      <xs:enumeration value="PKR"/>
+      <xs:enumeration value="VND"/>
+      <xs:enumeration value="TWD"/>
+      <xs:enumeration value="ARS"/>
+      <xs:enumeration value="CLP"/>
+      <xs:enumeration value="COP"/>
+      <xs:enumeration value="PEN"/>
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <!-- CN Code Type -->
+  <xs:simpleType name="CNCodeType">
+    <xs:annotation>
+      <xs:documentation>
+        EU Combined Nomenclature (8 digits)
+        Reference: https://ec.europa.eu/taxation_customs/dds2/taric/
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[0-9]{8}"/>
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <!-- SHA256 Type -->
+  <xs:simpleType name="SHA256Type">
+    <xs:annotation>
+      <xs:documentation>SHA-256 hash (64 hex characters)</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[0-9a-f]{64}"/>
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <!-- Non-Empty String Type -->
+  <xs:simpleType name="NonEmptyStringType">
+    <xs:annotation>
+      <xs:documentation>String with at least one non-whitespace character</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:minLength value="1"/>
+      <xs:pattern value=".*\S.*"/>
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <!-- Positive Decimal Type -->
+  <xs:simpleType name="PositiveDecimalType">
+    <xs:annotation>
+      <xs:documentation>Positive decimal number</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:decimal">
+      <xs:minExclusive value="0"/>
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <!-- Non-Negative Decimal Type -->
+  <xs:simpleType name="NonNegativeDecimalType">
+    <xs:annotation>
+      <xs:documentation>Non-negative decimal number</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:decimal">
+      <xs:minInclusive value="0"/>
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <!-- Percentage Type -->
+  <xs:simpleType name="PercentageType">
+    <xs:annotation>
+      <xs:documentation>Percentage value (0-100)</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:decimal">
+      <xs:minInclusive value="0"/>
+      <xs:maxInclusive value="100"/>
+      <xs:fractionDigits value="2"/>
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <!-- Quality Score Type -->
+  <xs:simpleType name="QualityScoreType">
+    <xs:annotation>
+      <xs:documentation>Data quality score (1-5)</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:integer">
+      <xs:minInclusive value="1"/>
+      <xs:maxInclusive value="5"/>
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <!-- ============================================================================= -->
+  <!-- Enumeration Types                                                             -->
+  <!-- ============================================================================= -->
+  
+  <!-- Tier Level Type -->
+  <xs:simpleType name="TierLevelType">
+    <xs:annotation>
+      <xs:documentation>Supply chain tier classification</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="tier_1"/>
+      <xs:enumeration value="tier_2"/>
+      <xs:enumeration value="tier_3"/>
+      <xs:enumeration value="tier_n"/>
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <!-- Calculation Method Type -->
+  <xs:simpleType name="CalculationMethodType">
+    <xs:annotation>
+      <xs:documentation>Emission calculation methodology</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="measurement"/>
+      <xs:enumeration value="calculation"/>
+      <xs:enumeration value="estimation"/>
+      <xs:enumeration value="default_factor"/>
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <!-- GWP Version Type -->
+  <xs:simpleType name="GWPVersionType">
+    <xs:annotation>
+      <xs:documentation>IPCC GWP version</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="AR4"/>
+      <xs:enumeration value="AR5"/>
+      <xs:enumeration value="AR6"/>
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <!-- Emission Scope Type -->
+  <xs:simpleType name="EmissionScopeType">
+    <xs:annotation>
+      <xs:documentation>GHG Protocol scope</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="scope_1"/>
+      <xs:enumeration value="scope_2"/>
+      <xs:enumeration value="scope_3"/>
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <!-- Unit Type (Generic) -->
+  <xs:simpleType name="UnitType">
+    <xs:annotation>
+      <xs:documentation>Common measurement units</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="tCO2e"/>
+      <xs:enumeration value="kgCO2e"/>
+      <xs:enumeration value="MtCO2e"/>
+      <xs:enumeration value="kWh"/>
+      <xs:enumeration value="MWh"/>
+      <xs:enumeration value="GJ"/>
+      <xs:enumeration value="kg"/>
+      <xs:enumeration value="t"/>
+      <xs:enumeration value="m3"/>
+      <xs:enumeration value="km"/>
+      <xs:enumeration value="unit"/>
+      <xs:enumeration value="L"/>
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <!-- Quantity Unit Type (Extensible) -->
+  <xs:simpleType name="QuantityUnitType">
+    <xs:annotation>
+      <xs:documentation>
+        Units for quantity measurements
+        Use unitExtension attribute for units not listed
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="kg"/>
+      <xs:enumeration value="t"/>
+      <xs:enumeration value="mt"/>
+      <xs:enumeration value="L"/>
+      <xs:enumeration value="m3"/>
+      <xs:enumeration value="kWh"/>
+      <xs:enumeration value="MWh"/>
+      <xs:enumeration value="GJ"/>
+      <xs:enumeration value="km"/>
+      <xs:enumeration value="unit"/>
+      <xs:enumeration value="hour"/>
+      <xs:enumeration value="kg-km"/>
+      <xs:enumeration value="t-km"/>
+      <xs:enumeration value="passenger-km"/>
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <!-- Emission Unit Type -->
+  <xs:simpleType name="EmissionUnitType">
+    <xs:annotation>
+      <xs:documentation>Units for emissions</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="kgCO2e"/>
+      <xs:enumeration value="tCO2e"/>
+      <xs:enumeration value="MtCO2e"/>
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <!-- Emission Factor Unit Type (Extensible) -->
+  <xs:simpleType name="EmissionFactorUnitType">
+    <xs:annotation>
+      <xs:documentation>
+        Units for emission factors
+        Use unitExtension attribute for complex units
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="kgCO2e/kg"/>
+      <xs:enumeration value="kgCO2e/t"/>
+      <xs:enumeration value="kgCO2e/L"/>
+      <xs:enumeration value="kgCO2e/m3"/>
+      <xs:enumeration value="kgCO2e/kWh"/>
+      <xs:enumeration value="kgCO2e/MWh"/>
+      <xs:enumeration value="kgCO2e/GJ"/>
+      <xs:enumeration value="kgCO2e/km"/>
+      <xs:enumeration value="kgCO2e/unit"/>
+      <xs:enumeration value="kgCO2e/hour"/>
+      <xs:enumeration value="kgCO2e/kg-km"/>
+      <xs:enumeration value="kgCO2e/t-km"/>
+      <xs:enumeration value="kgCO2e/passenger-km"/>
+      <xs:enumeration value="tCO2e/t"/>
+      <xs:enumeration value="tCO2e/MWh"/>
+      <xs:enumeration value="tCO2e/GJ"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+</xs:schema>

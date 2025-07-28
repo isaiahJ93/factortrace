@@ -1,0 +1,30 @@
+# Namespace & Versioning Policy v1.0
+
+## Schema: https://scope3.dev/voucher/2025-06/v1.0
+
+### Version Strategy
+- **Major versions** (v1.0, v2.0): Breaking changes requiring migration
+- **Minor versions** (v1.1, v1.2): Backward-compatible additions
+- **Patch versions** (v1.0.1): Documentation/annotation fixes only
+
+### Deprecation Policy
+1. **24-month notice** before deprecating any major version
+2. **Parallel support** for 12 months after new major version release
+3. **Migration tools** provided for all breaking changes
+4. **Announcement channels**: https://scope3.dev/schemas/updates
+
+### Namespace Evolution
+- v1.0: Initial release (2025-06)
+- v1.1: Planned Q4 2025 - ISSB alignment
+- v2.0: Target 2027 - Post-CSRD implementation review
+
+### Backward Compatibility Commitments
+- No removal of mandatory elements within major version
+- New optional elements via minor version increments
+- Assertion additions allowed in minor versions
+- Unit/currency expansions via external schema updates
+
+### Governance Board
+- Technical Lead: Schema Architecture Team
+- Regulatory Advisor: ESG Compliance Unit
+- External Reviewer: Big 4 Assurance Partner

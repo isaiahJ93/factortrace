@@ -1,0 +1,21 @@
+=== ./src/app/test/page.tsx ===
+'use client';
+
+import { useEffect, useState } from 'react';
+
+export default function TestPage() {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetch('http://localhost:8001/api/v1/emissions/summary')
+      .then(res => res.json())
+      .then(data => {
+        setData(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        setError(err.message);
+        setLoading(false);
+      });

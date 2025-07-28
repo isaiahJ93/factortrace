@@ -1,0 +1,19 @@
+# EFRAG/CSRD Auto-tagging Patterns
+# Use: grep -E -f efrag_patterns.txt input_file.txt
+
+# Governance patterns
+(governance|board|management).{0,20}(structure|composition|bodies)
+(female|women|gender).{0,20}(board|diversity|percentage)
+(independent|non-executive).{0,20}(directors?|members?)
+
+# Climate (E1) patterns
+scope.?[123].{0,20}emissions?
+(renewable|green).{0,20}energy.{0,20}(percentage|%)
+total.{0,20}(GHG|greenhouse.gas|emissions)
+
+# Social (S1) patterns
+(total.)?employees?|headcount|workforce.size
+(gender|diversity).{0,20}(balance|percentage)
+
+# Governance (G1) patterns
+(corruption|bribery).{0,20}(incidents?|cases?)

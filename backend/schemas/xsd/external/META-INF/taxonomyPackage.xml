@@ -1,0 +1,60 @@
+<taxonomyPackage xmlns="http://www.xbrl.org/2008/taxonomy-package">
+  <!-- Existing metadata... -->
+  
+  <versioning>
+    <majorVersion>1</majorVersion>
+    <minorVersion>0</minorVersion>
+    <patchVersion>0</patchVersion>
+    <strategy>Breaking changes require new major version. Optional additions allowed in minor releases.</strategy>
+    <deprecationPolicy>
+      <noticePeriod unit="months">24</noticePeriod>
+      <parallelSupport unit="months">12</parallelSupport>
+      <migrationTools>Provided for all breaking changes</migrationTools>
+      <announcementURL>https://scope3.dev/schemas/updates</announcementURL>
+    </deprecationPolicy>
+  </versioning>
+  
+  <governance>
+    <board>
+      <technicalLead>Schema Architecture Team</technicalLead>
+      <regulatoryAdvisor>ESG Compliance Unit</regulatoryAdvisor>
+      <externalReviewer>Big 4 Assurance Partner</externalReviewer>
+    </board>
+    <namespaceEvolution>
+      <version releaseDate="2025-06">v1.0</version>
+      <version planned="true" targetQuarter="Q4 2025">v1.1</version>
+      <version planned="true" targetYear="2027">v2.0</version>
+    </namespaceEvolution>
+  </governance>
+</taxonomyPackage>
+
+# Namespace & Versioning Policy v1.0
+
+## Schema: https://scope3.dev/voucher/2025-06/v1.0
+
+### Version Strategy
+- **Major versions** (v1.0, v2.0): Breaking changes requiring migration
+- **Minor versions** (v1.1, v1.2): Backward-compatible additions
+- **Patch versions** (v1.0.1): Documentation/annotation fixes only
+
+### Deprecation Policy
+1. **24-month notice** before deprecating any major version
+2. **Parallel support** for 12 months after new major version release
+3. **Migration tools** provided for all breaking changes
+4. **Announcement channels**: https://scope3.dev/schemas/updates
+
+### Namespace Evolution
+- v1.0: Initial release (2025-06)
+- v1.1: Planned Q4 2025 - ISSB alignment
+- v2.0: Target 2027 - Post-CSRD implementation review
+
+### Backward Compatibility Commitments
+- No removal of mandatory elements within major version
+- New optional elements via minor version increments
+- Assertion additions allowed in minor versions
+- Unit/currency expansions via external schema updates
+
+### Governance Board
+- Technical Lead: Schema Architecture Team
+- Regulatory Advisor: ESG Compliance Unit
+- External Reviewer: Big 4 Assurance Partner

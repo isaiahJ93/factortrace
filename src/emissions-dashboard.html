@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scope 3 Emissions Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+    <div class="container mx-auto p-8 max-w-6xl">
+        <h1 class="text-4xl font-bold text-gray-800 mb-8">Scope 3 Emissions Dashboard</h1>
+        
+        <!-- API Status -->
+        <div id="status" class="mb-6 p-4 rounded-lg bg-green-100 text-green-800">
+            ✅ API Connected at http://localhost:8000
+        </div>
+
+        <!-- Quick Test -->
+        <div class="bg-white p-6 rounded-lg shadow mb-6">
+            <h2 class="text-2xl font-semibold mb-4">Quick Test</h2>
+            <button onclick="testAPI()" class="bg-blue-500 text-white px-6 py-3 rounded hover:bg-blue-600">
+                Test API Connection
+            </button>
+            <div id="test-result" class="mt-4"></div>
+        </div>
+
+        <!-- Emissions Summary -->
+        <div class="bg-white p-6 rounded-lg shadow">
+            <h2 class="text-2xl font-semibold mb-4">Current Emissions</h2>
+            <div id="emissions-summary" class="grid grid-cols-3 gap-4">
+                <div class="bg-blue-50 p-4 rounded">
+                    <h3 class="font-semibold text-blue-800">Scope 1</h3>
+                    <p class="text-2xl font-bold" id="scope1">234.5 tCO₂e</p>
+                </div>
+                <div class="bg-purple-50 p-4 rounded">
+                    <h3 class="font-semibold text-purple-800">Scope 2</h3>
+                    <p class="text-2xl font-bold" id="scope2">156.2 tCO₂e</p>
+                </div>
+                <div class="bg-green-50 p-4 rounded">
+                    <h3 class="font-semibold text-green-800">Scope 3</h3>
+                    <p class="text-2xl font-bold" id="scope3">856.6 tCO₂e</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function testAPI() {
+            try {
+                const response = await fetch('http://localhost:8000/api/emissions/summary');
+                const data = await response.json();
+                document.getElementById('test-result').innerHTML = 
+                    '<div class="bg-green-100 p-4 rounded"><pre>' + 
+                    JSON.stringify(data, null, 2) + '</pre></div>';
+                
+                // Update the display
+                document.getElementById('scope1').textContent = data.scope1 + ' tCO₂e';
+                document.getElementById('scope2').textContent = data.scope2 + ' tCO₂e';
+                document.getElementById('scope3').textContent = data.scope3 + ' tCO₂e';
+            } catch (error) {
+                document.getElementById('test-result').innerHTML = 
+                    '<div class="bg-red-100 p-4 rounded">Error: ' + error + '</div>';
+            }
+        }
+        
+        // Test on load
+        testAPI();
+    </script>
+</body>
+</html>

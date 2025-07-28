@@ -1,0 +1,24 @@
+from fastapi import APIRouter
+from app.api.v1.endpoints import emissions, emission_factors
+
+api_router = APIRouter()
+
+api_router.include_router(emissions.router, prefix="/emissions", tags=["emissions"])
+api_router.include_router(emission_factors.router, prefix="/emission-factors", tags=["emission-factors"])
+api_router.include_router(
+#     scope3.router,
+    prefix="/scope3",
+    tags=["scope3"]
+)
+
+# Add enhanced emission factors
+try:
+    from app.api.v1.endpoints import emission_factors_enhanced
+    api_router.include_router(
+        emission_factors_enhanced.router, 
+        prefix="/emission-factors-enhanced", 
+        tags=["emission-factors-enhanced"]
+    )
+    print("✅ Enhanced emission factors endpoints loaded")
+except ImportError as e:
+    print(f"❌ Could not load enhanced emission factors: {e}")

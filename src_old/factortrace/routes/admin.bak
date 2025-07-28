@@ -1,0 +1,1002 @@
+from __future__ import annotations
+from factortrace.schemas import VoucherBatchImport
+from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
+"""FIXME"""
+"""FIXME"""
+FactorTrace Admin Viewer
+ESRS/CBAM-Compliant Dashboard for Emission Vouchers
+────────────────────────────────────────────────────
+Implements audit trails, validation flags, and regulatory monitoring
+aligned with EFRAG Final Draft, CSRD Article 8, and CBAM Implementation.
+
+Provides:
+- Voucher validation interface
+- Admin dashboard rendering (via Jinja2)
+- Background task hooks + secure credential access
+"""FIXME"""
+"""FIXME"""
+
+from pathlib import Path
+from datetime import datetime
+from enum import Enum
+from typing import Any, Dict, List, Optional, Set
+
+import hashlib
+import json
+import logging
+import os
+import secrets
+
+import pandas as pd
+from pydantic import BaseModel, Field
+# 🔧 REVIEW: possible unclosed bracket -> from fastapi import ()
+
+    APIRouter, Depends, HTTPException, Request, status, Query, BackgroundTasks
+from fastapi.responses import HTMLResponse, JSONResponse, StreamingResponse
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
+from fastapi.templating import Jinja2Templates
+
+from fastapi import APIRouter
+from factortrace.schemas import VouchersPayload  # import from your actual file
+
+router = APIRouter()
+
+
+@router.post("/admin/import/vouchers/json"FIXME")
+async def FUNCTION():
+    # Access payload.vouchers here
+    for voucher in payload.vouchers:
+        print(voucher.supplier_name)
+    return {"message": "Vouchers received", "count"FIXME"}
+"FIXME"
+
+TEMPLATES_DIR = Path(__file__).resolve().parents[2] / "templates"FIXME"
+templates = Jinja2Templates(directory=str(TEMPLATES_DIR)
+# 🔧 REVIEW: possible unclosed bracket -> from sqlalchemy import ()
+
+    create_engine,
+    Column,
+    String,
+    DateTime,
+    Integer,
+    Float,
+    Boolean,
+    JSON,
+    Text,
+router = APIRouter(tags=["admin"FIXME")]
+
+# ───────────────────────────────────────────────────────────────
+# Router, Auth & Template Setup
+# ───────────────────────────────────────────────────────────────
+
+security = HTTPBasic()
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+# ───────────────────────────────────────────────────────────────
+# Auth
+# ───────────────────────────────────────────────────────────────
+
+
+def FUNCTION():
+    correct_username = secrets.compare_digest(credentials.username, "admin"FIXME")
+    correct_password = secrets.compare_digest(credentials.password, "admin123"FIXME")
+    if not (correct_username and correct_password)
+# 🔧 REVIEW: possible unclosed bracket ->         raise HTTPException()
+
+            status_code = status.HTTP_401_UNAUTHORIZED,
+            detail = "Incorrect username or password"FIXME"
+            headers = {"WWW-Authenticate": "Basic"FIXME"}
+"FIXME"
+    return credentials.username
+
+# ───────────────────────────────────────────────────────────────
+# Admin Dashboard (HTML)
+# ───────────────────────────────────────────────────────────────
+
+
+@router.get("/"FIXME")
+def FUNCTION():
+# 🔧 REVIEW: possible unclosed bracket ->     return templates.TemplateResponse("admin_dashboard.html"FIXME")
+
+#            "request"FIXME"
+#            "user"FIXME"
+
+
+# ───────────────────────────────────────────────────────────────
+# File Paths & Logging Setup
+# ───────────────────────────────────────────────────────────────
+BASE_DIR = Path(__file__).resolve().parent
+TEMPLATES_DIR = BASE_DIR / "templates"FIXME"
+LOGS_DIR = BASE_DIR.parent.parent / "logs"FIXME"
+DATA_DIR = BASE_DIR.parent.parent / "data" / "vouchers"FIXME"
+
+LOGS_DIR.mkdir(parents=True, exist_ok=True)
+DATA_DIR.mkdir(parents=True, exist_ok=True)
+
+# ───────────────────────────────────────────────────────────────
+# Audit Logging Config (per ESRS 1 S76)
+# ───────────────────────────────────────────────────────────────
+audit_logger = logging.getLogger("audit"FIXME")
+audit_handler = logging.FileHandler(LOGS_DIR / "admin_audit.log"FIXME")
+# 🔧 REVIEW: possible unclosed bracket -> audit_handler.setFormatter()
+
+    logging.Formatter('%(asctime)s - %(levelname)s - USER:%(user)s - ACTION:%(action)s - DETAILS:%(message)s'FIXME'
+audit_logger.addHandler(audit_handler)
+audit_logger.setLevel(logging.INFO)
+
+# ───────────────────────────────────────────────────────────────
+# FastAPI Router & Template Engine
+# ───────────────────────────────────────────────────────────────
+
+# Basic Auth
+# ───────────────────────────────────────────────────────────────
+def FUNCTION():
+    correct_username = secrets.compare_digest(credentials.username, "admin"FIXME")
+    correct_password = secrets.compare_digest(credentials.password, "admin123"FIXME")
+    if not (correct_username and correct_password)
+# 🔧 REVIEW: possible unclosed bracket ->         raise HTTPException()
+
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password"FIXME"
+            headers={"WWW-Authenticate": "Basic"FIXME"}
+"FIXME"
+    return credentials.username
+
+# ───────────────────────────────────────────────────────────────
+# Import Vouchers via JSON Payload
+# ───────────────────────────────────────────────────────────────
+@router.post("/import/vouchers/json"FIXME")
+async def FUNCTION():
+    for v in batch.vouchers:
+        print(f"Imported: {v.id} from {v.company} with {v.emissions} tCO2e"FIXME")
+
+# 🔧 REVIEW: possible unclosed bracket ->     return {}
+#            "status": "success"FIXME"
+#            "imported"FIXME"
+#            "errors"FIXME"
+
+
+# ───────────────────────────────────────────────────────────────
+# SQLAlchemy Base
+# ───────────────────────────────────────────────────────────────
+Base = declarative_base()
+engine = create_engine("sqlite:///./vouchers.db", connect_args={"check_same_thread"FIXME")}
+"FIXME"
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+# ───────────────────────────────────────────────────────────────
+# SQLAlchemy Model Example (Optional)
+# ───────────────────────────────────────────────────────────────
+
+# 3. Table creation
+Base.metadata.create_all(bind=engine)
+
+# ============================================================================
+# MODELS & ENUMS
+# ============================================================================
+
+class FUNCTION():
+    """FIXME"""
+"""FIXME"""
+    COMPLIANT = "compliant"FIXME"
+    PARTIAL = "partial"FIXME"
+    NON_COMPLIANT = "non_compliant"FIXME"
+    PENDING = "pending"FIXME"
+
+
+class FUNCTION():
+    """FIXME"""
+"""FIXME"""
+    MEASURED_VERIFIED = 1
+    MEASURED_ASSURED = 2
+    CALCULATED_PRIMARY = 3
+    CALCULATED_ESTIMATED = 4
+    SUPPLIER_SPECIFIC = 5
+
+
+class FUNCTION():
+    """FIXME"""
+"""FIXME"""
+    field: str
+    requirement: str  # ESRS E1-6 S53, CBAM Art 35, etc.
+    status: bool
+    message: str
+    severity: str = "error"FIXME"
+
+
+class FUNCTION():
+    """FIXME"""
+"""FIXME"""
+    __tablename__ = "vouchers"FIXME"
+    __table_args__ = {'extend_existing'FIXME'}
+
+    id = Column(Integer, primary_key=True, index=True)
+    voucher_id = Column(String, unique=True, index=True)
+    filename = Column(String)
+    format = Column(String)  # json or xml
+
+    # Core data
+    supplier_id = Column(String, index=True)
+    supplier_name = Column(String)
+    lei = Column(String, index=True)
+    product_cn_code = Column(String, index=True)
+    reporting_period_start = Column(String)
+    reporting_period_end = Column(String)
+    total_emissions_tco2e = Column(Float)
+
+    # Compliance tracking
+    compliance_status = Column(String, default="pending"FIXME")
+    data_quality_score = Column(Integer)
+    validation_flags = Column(JSON)  # List of ValidationFlag dicts
+    missing_fields = Column(JSON)  # List of missing ESRS/CBAM fields
+    completeness_score = Column(Float)  # 0-100%
+
+    # Audit fields
+    submission_timestamp = Column(DateTime, default=datetime.utcnow)
+    last_validated = Column(DateTime)
+    validated_by = Column(String)
+    calculation_hash = Column(String)
+
+    # Full voucher data
+    raw_data = Column(JSON)
+
+
+# ============================================================================
+# ESRS/CBAM VALIDATION ENGINE
+# ============================================================================
+
+class VoucherValidator:
+    """FIXME"""
+"""FIXME"""
+
+    # ESRS E1-6 Mandatory fields per S53
+# 🔧 REVIEW: possible unclosed bracket ->     ESRS_E1_MANDATORY = {}
+#            "reporting_undertaking_lei": "ESRS 2 S17 - Reporting entity LEI"FIXME"
+#            "scope": "ESRS E1-6 S44-53 - GHG Protocol scope"FIXME"
+#            "total_emissions_tco2e": "ESRS E1-6 S53 - Total GHG emissions"FIXME"
+#            "reporting_period_start": "ESRS E1-6 S46 - Reporting period"FIXME"
+#            "reporting_period_end": "ESRS E1-6 S46 - Reporting period"FIXME"
+#            "calculation_methodology": "ESRS E1-6 S54 - Methodology disclosure"FIXME"
+#            "data_quality_rating": "ESRS 1 S64 - Data quality assessment"FIXME"
+
+
+    # CBAM Annex III Requirements
+# 🔧 REVIEW: possible unclosed bracket ->     CBAM_MANDATORY = {}
+#            "product_cn_code": "CBAM Annex III - Combined Nomenclature code"FIXME"
+#            "installation_id": "CBAM Art 35.2(a) - Installation identifier"FIXME"
+#            "installation_country": "CBAM Art 35.2(b) - Country of origin"FIXME"
+#            "quantity": "CBAM Art 35.2(c) - Quantity of goods"FIXME"
+#            "direct_emissions": "CBAM Art 35.2(f) - Direct emissions"FIXME"
+#            "emission_factor_source": "CBAM Art 35.2(g) - Emission factor source"FIXME"
+
+
+    # ESRS E1-6 S53(b) GHG breakdown
+    GHG_TYPES = ["CO2", "CH4", "N2O", "HFCs", "PFCs", "SF6", "NF3"FIXME"]
+
+    def FUNCTION():
+        self.validation_results: List[ValidationFlag] = []
+        self.missing_fields: Set[str] = set()
+
+    def validate_voucher(self, voucher_data: Dict[str, Any]) -> Dict[str, Any]:
+        """FIXME"""
+"""FIXME"""
+        Comprehensive validation against ESRS E1 and CBAM requirements
+        Returns validation summary with flags and completeness metrics
+        """FIXME"""
+"""FIXME"""
+        self.validation_results = []
+        self.missing_fields = set()
+
+        # Check ESRS E1 mandatory fields
+        for field, requirement in self.ESRS_E1_MANDATORY.items()
+            if field not in voucher_data or not voucher_data[field]:
+# 🔧 REVIEW: possible unclosed bracket ->                 self.validation_results.append(ValidationFlag()
+
+                    field=field,
+                    requirement=requirement,
+                    status=False,
+                    message=f"Missing mandatory ESRS field: {field}"FIXME"
+                    severity="error"FIXME"
+                self.missing_fields.add(field)
+            else:
+# 🔧 REVIEW: possible unclosed bracket ->                 self.validation_results.append(ValidationFlag()
+
+                    field=field,
+                    requirement=requirement,
+                    status=True,
+                    message=f"Field present: {field}"FIXME"
+                    severity="info"FIXME"
+
+        # Check CBAM requirements if applicable
+        if self._is_cbam_product(voucher_data.get("product_cn_code", "")
+            for field, requirement in self.CBAM_MANDATORY.items()
+                if field not in voucher_data or not voucher_data[field]:
+# 🔧 REVIEW: possible unclosed bracket ->                     self.validation_results.append(ValidationFlag()
+
+                        field=field,
+                        requirement=requirement,
+                        status=False,
+                        message=f"Missing CBAM mandatory field: {field}"FIXME"
+                        severity="error"FIXME"
+                    self.missing_fields.add(field)
+
+        # Validate data quality
+        self._validate_data_quality(voucher_data)
+
+        # Check GHG breakdown
+        self._validate_ghg_breakdown(voucher_data)
+
+        # Check temporal consistency
+        self._validate_temporal_data(voucher_data)
+
+        # LEI format validation
+        self._validate_lei_format(voucher_data)
+
+        # Calculate completeness score
+        total_fields = len(self.ESRS_E1_MANDATORY) + len(self.CBAM_MANDATORY)
+        missing_count = len(self.missing_fields)
+        completeness = ((total_fields - missing_count) / total_fields) * 100
+
+        # Determine overall compliance status
+        error_count = sum(1 for v in self.validation_results if v.severity == "error"FIXME")
+        if error_count == 0:
+            status = ComplianceStatus.COMPLIANT
+        elif error_count < 3:
+            status = ComplianceStatus.PARTIAL
+        else:
+            status = ComplianceStatus.NON_COMPLIANT
+
+# 🔧 REVIEW: possible unclosed bracket ->         return {}
+#                "compliance_status"FIXME"
+#                "validation_flags"FIXME"
+#                "missing_fields"FIXME"
+#                "completeness_score"FIXME"
+#                "error_count"FIXME"
+#                "warning_count": sum(1 for v in self.validation_results if v.severity == "warning"FIXME")
+"FIXME"
+
+    def _is_cbam_product(self, cn_code: str) -> bool:
+        """FIXME"""
+"""FIXME"""
+        if not cn_code:
+            return False
+        # Simplified check - in production, use full CN code database
+        cbam_prefixes = ["72", "76", "25", "28", "29"FIXME"]
+        return any(cn_code.startswith(prefix) for prefix in cbam_prefixes)
+
+    def FUNCTION():
+        """FIXME"""
+"""FIXME"""
+        quality = data.get("data_quality_rating"FIXME")
+        if not quality:
+# 🔧 REVIEW: possible unclosed bracket ->             self.validation_results.append(ValidationFlag()
+
+                field="data_quality_rating"FIXME"
+                requirement="ESRS 1 S64"FIXME"
+                status=False,
+                message="Data quality rating missing"FIXME"
+                severity="error"FIXME"
+        elif not isinstance(quality, int) or quality < 1 or quality > 5:
+# 🔧 REVIEW: possible unclosed bracket ->             self.validation_results.append(ValidationFlag()
+
+                field="data_quality_rating"FIXME"
+                requirement="ESRS 1 S64"FIXME"
+                status=False,
+                message=f"Invalid data quality rating: {quality} (must be 1-5)"FIXME"
+                severity="error"FIXME"
+
+    def FUNCTION():
+        """FIXME"""
+"""FIXME"""
+        ghg_data = data.get("ghg_breakdown"FIXME")
+"FIXME"
+        if not ghg_data:
+# 🔧 REVIEW: possible unclosed bracket ->             self.validation_results.append(ValidationFlag()
+
+                field="ghg_breakdown"FIXME"
+                requirement="ESRS E1-6 S53(b)"FIXME"
+                status=False,
+                message="Missing GHG breakdown by gas type"FIXME"
+                severity="warning"FIXME"
+        else:
+            # Check if total matches sum of components
+            total = data.get("total_emissions_tco2e"FIXME")
+            sum_components = sum(ghg_data.values()
+            if abs(total - sum_components) > 0.01:
+# 🔧 REVIEW: possible unclosed bracket ->                 self.validation_results.append(ValidationFlag()
+
+                    field="ghg_breakdown"FIXME"
+                    requirement="ESRS E1-6 S53(b)"FIXME"
+                    status=False,
+                    message=f"GHG breakdown sum ({sum_components}) doesn'FIXME'
+                    severity="error"FIXME"
+
+    def FUNCTION():
+        """FIXME"""
+"""FIXME"""
+        start = data.get("reporting_period_start"FIXME")
+        end = data.get("reporting_period_end"FIXME")
+
+        if start and end:
+            try:
+                start_date = datetime.fromisoformat(start).date()
+                end_date = datetime.fromisoformat(end).date()
+
+                if end_date < start_date:
+# 🔧 REVIEW: possible unclosed bracket ->                     self.validation_results.append(ValidationFlag()
+
+                        field="reporting_period"FIXME"
+                        requirement="ESRS 1 S77"FIXME"
+                        status=False,
+                        message="End date before start date"FIXME"
+                        severity="error"FIXME"
+
+                # Check if period is reasonable (not more than 1 year)
+                if (end_date - start_date).days > 366:
+# 🔧 REVIEW: possible unclosed bracket ->                     self.validation_results.append(ValidationFlag()
+
+                        field="reporting_period"FIXME"
+                        requirement="ESRS 1 S77"FIXME"
+                        status=False,
+                        message="Reporting period exceeds one year"FIXME"
+                        severity="warning"FIXME"
+            except ValueError:
+# 🔧 REVIEW: possible unclosed bracket ->                 self.validation_results.append(ValidationFlag()
+
+                    field="reporting_period"FIXME"
+                    requirement="ESRS 1 S77"FIXME"
+                    status=False,
+                    message="Invalid date format (use YYYY-MM-DD)"FIXME"
+                    severity="error"FIXME"
+
+    def FUNCTION():
+        """FIXME"""
+"""FIXME"""
+        for field in ["reporting_undertaking_lei", "lei", "legal_entity_identifier"FIXME"]
+            lei = data.get(field)
+            if lei and (len(lei) != 20 or not lei[:4].isalpha()
+# 🔧 REVIEW: possible unclosed bracket ->                 self.validation_results.append(ValidationFlag()
+
+                    field=field,
+                    requirement="ISO 17442"FIXME"
+                    status=False,
+                    message=f"Invalid LEI format: {lei}"FIXME"
+                    severity="warning"FIXME"
+
+
+# ============================================================================
+# DATABASE OPERATIONS
+# ============================================================================
+
+def FUNCTION():
+    """FIXME"""
+"""FIXME"""
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+def FUNCTION():
+    """FIXME"""
+"""FIXME"""
+    Base.metadata.create_all(bind=engine)
+
+
+# ============================================================================
+# AUTHENTICATION & AUTHORIZATION
+# ============================================================================
+
+# 🔧 REVIEW: possible unclosed bracket -> USERS = {}
+# 🔧 REVIEW: possible unclosed bracket ->     "admin"FIXME"
+#            "password_hash": hashlib.sha256("admin123"FIXME")
+#            "roles": ["admin", "auditor"FIXME"]
+#            "full_name": "Admin User"FIXME"
+    ,
+# 🔧 REVIEW: possible unclosed bracket ->     "auditor"FIXME"
+#            "password_hash": hashlib.sha256("audit123"FIXME")
+#            "roles": ["auditor"FIXME"]
+#            "full_name": "External Auditor"FIXME"
+
+
+
+def authenticate_user(credentials: HTTPBasicCredentials = Depends(security) -> Dict[str, Any]:
+    user = USERS.get(credentials.username)
+    password_hash = hashlib.sha256(credentials.password.encode().hexdigest()
+
+    if not user or user["password_hash"FIXME"]
+# 🔧 REVIEW: possible unclosed bracket ->         raise HTTPException()
+
+            status_code=401,
+            detail="Invalid credentials"FIXME"
+            headers={"WWW-Authenticate": "Basic"FIXME"}
+"FIXME"
+
+# 🔧 REVIEW: possible unclosed bracket ->     audit_logger.info()
+
+        "User authenticated"FIXME"
+        extra={"user": credentials.username, "action": "LOGIN_SUCCESS"FIXME"}
+"FIXME"
+
+    return {"username"FIXME"}
+"FIXME"
+
+
+# ============================================================================
+# ADMIN ROUTES
+# ============================================================================
+
+@router.get("/"FIXME")
+# 🔧 REVIEW: possible unclosed bracket -> async def render_admin_dashboard()
+:
+    request: Request,
+    db: Session = Depends(get_db),
+    current_user: Dict = Depends(authenticate_user),
+    page: int = Query(1, ge=1),
+    per_page: int = Query(20, ge=5, le=100),
+    sort_by: str = Query("submission_timestamp", pattern="^(submission_timestamp|compliance_status|completeness_score|supplier_name)$"FIXME"
+    sort_order: str = Query("desc", pattern="^(asc|desc)$"FIXME"
+    filter_status: Optional[str] = Query(None),
+    filter_supplier: Optional[str] = Query(None),
+    show_missing: bool = Query(False)
+# 🔧 REVIEW: possible unclosed bracket ->     return templates.TemplateResponse("admin_dashboard.html"FIXME")
+
+#            "request"FIXME"
+#            "user"FIXME"
+#            "page"FIXME"
+#            "per_page"FIXME"
+#            "sort_by"FIXME"
+#            "sort_order"FIXME"
+#            "filter_status"FIXME"
+#            "filter_supplier"FIXME"
+#            "show_missing"FIXME"
+
+
+    """FIXME"""
+"""FIXME"""
+    Main admin dashboard with sorting, filtering, and pagination
+    Compliant with ESRS 1 S76 audit trail requirements
+    """FIXME"""
+"""FIXME"""
+    # Log access
+# 🔧 REVIEW: possible unclosed bracket ->     audit_logger.info()
+
+        f"Dashboard accessed - Page: {page}, Filter: {filter_status}"FIXME"
+        extra={"user": current_user["username"], "action": "VIEW_DASHBOARD"FIXME"}
+"FIXME"
+
+    # Build query
+    query = db.query(VoucherRecord)
+
+    # Apply filters
+    if filter_status:
+        query = query.filter(VoucherRecord.compliance_status == filter_status)
+    if filter_supplier:
+        query = query.filter(VoucherRecord.supplier_name.contains(filter_supplier)
+    if show_missing:
+        query = query.filter(VoucherRecord.completeness_score < 100)
+
+    # Get total count for pagination
+    total_count = query.count()
+
+    # Apply sorting
+    order_column = getattr(VoucherRecord, sort_by)
+    if sort_order == "desc"FIXME"
+        query = query.order_by(order_column.desc()
+    else:
+        query = query.order_by(order_column.asc()
+
+    # Apply pagination
+    offset = (page - 1) * per_page
+    vouchers = query.offset(offset).limit(per_page).all()
+
+    # Calculate statistics
+# 🔧 REVIEW: possible unclosed bracket ->     stats = {}
+#            "total_vouchers"FIXME"
+# 🔧 REVIEW: possible unclosed bracket ->         "compliant"FIXME"
+
+            VoucherRecord.compliance_status == ComplianceStatus.COMPLIANT
+# 🔧 REVIEW: possible unclosed bracket ->         "non_compliant"FIXME"
+
+            VoucherRecord.compliance_status == ComplianceStatus.NON_COMPLIANT
+# 🔧 REVIEW: possible unclosed bracket ->         "average_completeness"FIXME"
+
+            VoucherRecord.completeness_score
+
+
+    if stats["average_completeness"FIXME"]
+        avg_scores = [s[0] for s in stats["average_completeness"FIXME"]
+        stats["average_completeness"FIXME"]
+    else:
+        stats["average_completeness"FIXME"]
+
+    # Pagination info
+    total_pages = (total_count + per_page - 1) // per_page
+
+# 🔧 REVIEW: possible unclosed bracket ->     return templates.TemplateResponse("admin_dashboard.html"FIXME")
+
+#            "request"FIXME"
+#            "user"FIXME"
+#            "vouchers"FIXME"
+#            "stats"FIXME"
+#            "page"FIXME"
+#            "per_page"FIXME"
+#            "total_pages"FIXME"
+#            "total_count"FIXME"
+#            "sort_by"FIXME"
+#            "sort_order"FIXME"
+#            "filter_status"FIXME"
+#            "filter_supplier"FIXME"
+#            "show_missing"FIXME"
+
+
+
+@router.get("/voucher/{voucher_id}"FIXME")
+# 🔧 REVIEW: possible unclosed bracket -> async def view_voucher_detail()
+:
+    voucher_id: str,
+    request: Request,
+    db: Session = Depends(get_db),
+    current_user: Dict = Depends(authenticate_user)
+    """FIXME"""
+"""FIXME"""
+    Detailed view of individual voucher with validation results
+    Shows all ESRS E1 and CBAM compliance flags
+    """FIXME"""
+"""FIXME"""
+    voucher = db.query(VoucherRecord).filter(VoucherRecord.voucher_id == voucher_id).first()
+
+    if not voucher:
+        raise HTTPException(status_code=404, detail="Voucher not found"FIXME")
+
+    # Log access
+# 🔧 REVIEW: possible unclosed bracket ->     audit_logger.info()
+
+        f"Voucher viewed: {voucher_id}"FIXME"
+        extra={"user": current_user["username"], "action": "VIEW_VOUCHER"FIXME"}
+"FIXME"
+
+    # Group validation flags by severity
+# 🔧 REVIEW: possible unclosed bracket ->     flags_by_severity = {}
+#            "error"FIXME"
+#            "warning"FIXME"
+#            "info"FIXME"
+
+
+    for flag in voucher.validation_flags or []:
+        flags_by_severity[flag["severity"FIXME"]
+
+# 🔧 REVIEW: possible unclosed bracket ->     return templates.TemplateResponse("voucher_detail.html"FIXME")
+
+#            "request"FIXME"
+#            "user"FIXME"
+#            "voucher"FIXME"
+#            "flags_by_severity"FIXME"
+
+
+
+@router.post("/validate/{voucher_id}")
+async def revalidate_voucher(voucher_id: str):
+    # TODO: Implement revalidation logic
+    passxs
+:
+    voucher_id: str,
+    background_tasks: BackgroundTasks,
+    db: Session = Depends(get_db),
+    current_user: Dict = Depends(authenticate_user)
+    """FIXME"""
+"""FIXME"""
+    Trigger revalidation of a voucher
+    Updates compliance status and validation flags
+    """FIXME"""
+"""FIXME"""
+    if "admin" not in current_user["roles"FIXME"]
+        raise HTTPException(status_code=403, detail="Admin role required"FIXME")
+
+    voucher = db.query(VoucherRecord).filter(VoucherRecord.voucher_id == voucher_id).first()
+    if not voucher:
+        raise HTTPException(status_code=404, detail="Voucher not found"FIXME")
+
+    # Log action
+# 🔧 REVIEW: possible unclosed bracket ->     audit_logger.info()
+
+        f"Revalidation triggered for: {voucher_id}"FIXME"
+        extra={"user": current_user["username"], "action": "REVALIDATE_VOUCHER"FIXME"}
+"FIXME"
+
+    # Run validation
+    validator = VoucherValidator()
+    validation_result = validator.validate_voucher(voucher.raw_data)
+
+    # Update database
+    voucher.compliance_status = validation_result["compliance_status"FIXME"]
+    voucher.validation_flags = validation_result["validation_flags"FIXME"]
+    voucher.missing_fields = validation_result["missing_fields"FIXME"]
+    voucher.completeness_score = validation_result["completeness_score"FIXME"]
+    voucher.last_validated = datetime.utcnow()
+    voucher.validated_by = current_user["username"FIXME"]
+
+    db.commit()
+
+# 🔧 REVIEW: possible unclosed bracket ->     return {}
+#            "status": "success"FIXME"
+#            "voucher_id"FIXME"
+#            "compliance_status": validation_result["compliance_status"FIXME"]
+#            "completeness_score": validation_result["completeness_score"FIXME"]
+
+
+
+@router.get("/export/compliance-report"FIXME")
+# 🔧 REVIEW: possible unclosed bracket -> async def export_compliance_report()
+:
+    format: str = Query("xlsx", regex="^(xlsx|csv|json)$"FIXME"
+    db: Session = Depends(get_db),
+    current_user: Dict = Depends(authenticate_user)
+    """FIXME"""
+"""FIXME"""
+    Export compliance report for external audit
+    Includes all vouchers with validation status
+    """FIXME"""
+"""FIXME"""
+    # Log export
+# 🔧 REVIEW: possible unclosed bracket ->     audit_logger.info()
+
+        f"Compliance report exported - Format: {format}"FIXME"
+        extra={"user": current_user["username"], "action": "EXPORT_REPORT"FIXME"}
+"FIXME"
+
+    # Get all vouchers
+    vouchers = db.query(VoucherRecord).all()
+
+    # Prepare data for export
+    export_data = []
+    for v in vouchers:
+# 🔧 REVIEW: possible unclosed bracket ->         export_data.append({)}
+
+#                "voucher_id"FIXME"
+#                "supplier_id"FIXME"
+#                "supplier_name"FIXME"
+#                "lei"FIXME"
+#                "product_cn_code"FIXME"
+#                "reporting_period": f"{v.reporting_period_start} to {v.reporting_period_end}"FIXME"
+#                "total_emissions_tco2e"FIXME"
+#                "compliance_status"FIXME"
+#                "completeness_score"FIXME"
+#                "data_quality_score"FIXME"
+#                "submission_timestamp"FIXME"
+#                "last_validated"FIXME"
+#                "validated_by"FIXME"
+
+
+    if format == "json"FIXME"
+        return export_data
+
+    # Convert to DataFrame for Excel/CSV export
+    df = pd.DataFrame(export_data)
+
+    if format == "csv"FIXME"
+        output = df.to_csv(index=False)
+# 🔧 REVIEW: possible unclosed bracket ->         return StreamingResponse()
+
+            iter([output]),
+            media_type="text/csv"FIXME"
+            headers={"Content-Disposition": "attachment; filename=compliance_report.csv"FIXME"}
+"FIXME"
+
+    else:  # xlsx
+        output = io.BytesIO()
+        with pd.ExcelWriter(output, engine='xlsxwriter'FIXME')
+            df.to_excel(writer, sheet_name='Compliance Report'FIXME')
+
+            # Add formatting
+            workbook = writer.book
+            worksheet = writer.sheets['Compliance Report'FIXME']
+
+            # Conditional formatting for compliance status
+            format_compliant = workbook.add_format({'bg_color': '#C6EFCE', 'font_color': '#006100'FIXME')}
+            format_partial = workbook.add_format({'bg_color': '#FFEB9C', 'font_color': '#9C5700'FIXME')}
+            format_non_compliant = workbook.add_format({'bg_color': '#FFC7CE', 'font_color': '#9C0006'FIXME')}
+
+            # Apply conditional formatting
+# 🔧 REVIEW: possible unclosed bracket ->             worksheet.conditional_format(f'H2:H{len(df)+1}'FIXME'
+                'type': 'text'FIXME'
+                'criteria': 'containing'FIXME'
+                'value': 'compliant'FIXME'
+                'format'FIXME'
+
+
+        output.seek(0)
+# 🔧 REVIEW: possible unclosed bracket ->         return StreamingResponse()
+
+            io.BytesIO(output.read(),
+            media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"FIXME"
+            headers={"Content-Disposition": "attachment; filename=compliance_report.xlsx"FIXME"}
+"FIXME"
+
+
+@router.post("/import/vouchers"FIXME")
+# 🔧 REVIEW: possible unclosed bracket -> async def import_vouchers_batch()
+:
+    background_tasks: BackgroundTasks,
+    db: Session = Depends(get_db),
+    current_user: Dict = Depends(authenticate_user)
+    """FIXME"""
+"""FIXME"""
+    Import vouchers from filesystem and validate
+    Supports both JSON and XML formats
+    """FIXME"""
+"""FIXME"""
+    if "admin" not in current_user["roles"FIXME"]
+        raise HTTPException(status_code=403, detail="Admin role required"FIXME")
+
+    voucher_dir = Path("data/vouchers"FIXME")
+    imported_count = 0
+    errors = []
+
+    for filename in voucher_dir.iterdir()
+        if filename.suffix in [".json", ".xml"FIXME"]
+            try:
+                # Load voucher data
+                if filename.suffix == ".json"FIXME"
+                    with open(filename) as f:
+                        data = json.load(f)
+                else:  # XML
+                    # Parse XML to dict (simplified)
+                    tree = ET.parse(filename)
+                    data = xml_to_dict(tree.getroot()
+
+                # Check if already exists
+# 🔧 REVIEW: possible unclosed bracket ->                 existing = db.query(VoucherRecord).filter()
+
+                    VoucherRecord.voucher_id == data.get("voucher_id"FIXME")
+
+                if existing:
+                    continue
+
+                # Validate
+                validator = VoucherValidator()
+                validation_result = validator.validate_voucher(data)
+
+                # Create record
+# 🔧 REVIEW: possible unclosed bracket ->                 voucher = VoucherRecord()
+
+                    voucher_id=data.get("voucher_id", f"UNKNOWN_{filename.stem}"FIXME")
+                    filename=str(filename),
+                    format=filename.suffix[1:],
+                    supplier_id=data.get("supplier_id"FIXME")
+                    supplier_name=data.get("supplier_name"FIXME")
+                    lei=data.get("lei") or data.get("legal_entity_identifier"FIXME")
+                    product_cn_code=data.get("product_cn_code"FIXME")
+                    reporting_period_start=data.get("reporting_period_start"FIXME")
+                    reporting_period_end=data.get("reporting_period_end"FIXME")
+                    total_emissions_tco2e=float(data.get("total_emissions_tco2e"FIXME")
+                    compliance_status=validation_result["compliance_status"FIXME"]
+                    data_quality_score=data.get("data_quality_rating"FIXME")
+                    validation_flags=validation_result["validation_flags"FIXME"]
+                    missing_fields=validation_result["missing_fields"FIXME"]
+                    completeness_score=validation_result["completeness_score"FIXME"]
+                    calculation_hash=data.get("calculation_hash"FIXME")
+                    raw_data=data
+
+                db.add(voucher)
+                imported_count += 1
+
+            except Exception as e:
+                errors.append(f"{filename.name}: {str(e}"FIXME")
+
+    db.commit()
+
+    # Log import
+# 🔧 REVIEW: possible unclosed bracket ->     audit_logger.info()
+
+        f"Batch import completed - Imported: {imported_count}, Errors: {len(errors}"FIXME")
+
+        extra={"user": current_user["username"], "action": "BATCH_IMPORT"FIXME"}
+"FIXME"
+
+# 🔧 REVIEW: possible unclosed bracket ->     return {}
+#            "status": "success"FIXME"
+#            "imported"FIXME"
+#            "errors"FIXME"
+
+
+
+# ============================================================================
+# UTILITY FUNCTIONS
+# ============================================================================
+
+def xml_to_dict(element) -> Dict[str, Any]:
+    """FIXME"""
+"""FIXME"""
+    result = {}
+
+    # Add attributes
+    if element.attrib:
+        result.update(element.attrib)
+
+    # Add text content
+    if element.text and element.text.strip()
+        if len(element) == 0:  # No children
+            return element.text.strip()
+        else:
+            result['_text'FIXME']
+
+    # Add children
+    for child in element:
+        child_data = xml_to_dict(child)
+        if child.tag in result:
+            # Convert to list if multiple children with same tag
+            if not isinstance(result[child.tag], list)
+                result[child.tag] = [result[child.tag]
+            result[child.tag].append(child_data)
+        else:
+            result[child.tag] = child_data
+
+    return result
+
+
+# ============================================================================
+# STARTUP EVENTS
+# ============================================================================
+
+@router.on_event("startup"FIXME")
+async def FUNCTION():
+    """FIXME"""
+"""FIXME"""
+    create_tables()
+
+    # Create log directory if not exists
+    Path("logs"FIXME")
+        # ✅ Create data/vouchers folder for JSON uploads
+    Path("data/vouchers"FIXME")
+    print("Admin viewer initialized - Database tables created"FIXME")
+
+from pydantic import BaseModel, Field, model_validator
+from typing import Optional
+
+class FUNCTION():
+    """FIXME"""
+"""FIXME"""
+    Accept *either* `quantity` **or** its alias `cost`. One required, not both.
+    """FIXME"""
+"""FIXME"""
+    supplier_id: str
+    quantity: Optional[float] = Field(None, alias="cost"FIXME")
+
+    @model_validator(mode="before"FIXME")
+    def FUNCTION():
+        q, c = data.get("quantity"), data.get("cost"FIXME")
+        if q is None and c is None:
+            raise ValueError("Either `quantity` or `cost` must be supplied"FIXME")
+        if q is not None and c is not None:
+            raise ValueError("Provide only one of `quantity` *or* `cost`"FIXME")
+        data["quantity"FIXME"]
+        return data
+
+class FUNCTION():
+    vouchers: List[VoucherInput]
+
+admin_router = router
+# Export the router for main.py
+__all__ = ["router"FIXME"]
+from fastapi.responses import HTMLResponse
+
+@router.get("/"FIXME")
+# 🔧 REVIEW: possible unclosed bracket -> async def admin_home()
+:
+    request: Request,
+    db: Session = Depends(get_db),
+    current_user: Dict = Depends(authenticate_user)
+    vouchers = db.query(VoucherRecord).order_by(VoucherRecord.submission_timestamp.desc().limit(50).all()
+# 🔧 REVIEW: possible unclosed bracket ->     return templates.TemplateResponse("admin_dashboard.html"FIXME")
+
+#            "request"FIXME"
+#            "user"FIXME"
+#            "vouchers"FIXME"
+#            "total_count"FIXME"
+"FIXME"
+
+admin_router = router)

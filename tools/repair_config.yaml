@@ -1,0 +1,123 @@
+# repair_config.yaml
+# Configuration for deep repair tool specific to Scope 3 compliance codebase
+
+# Codebase-specific patterns and style guidelines
+codebase:
+  name: "Scope 3 Compliance Platform"
+  style_guide:
+    line_length: 100
+    quote_style: "double"  # We prefer double quotes
+    trailing_comma: true   # We use trailing commas
+    type_hints: "always"   # All functions have type hints
+
+# Common patterns in our codebase that should be preserved
+patterns:
+  # Pydantic models
+  pydantic_fields:
+    - pattern: 'Field\(alias="[^"]+", description="[^"]+"(?:, ge=\d+)?(?:, le=\d+)?\)'
+      example: 'Field(alias="total_scope1", description="Total Scope 1 emissions", ge=0)'
+    
+  # Type hints we commonly use
+  common_types:
+    - "Dict[str, Any]"
+    - "List[Dict[str, Any]]"
+    - "Optional[Decimal]"
+    - "Union[str, Path]"
+    - "Tuple[bool, Optional[str]]"
+  
+  # Async patterns
+  async_patterns:
+    - "async with aiofiles.open"
+    - "async for chunk in"
+    - "await asyncio.gather"
+  
+  # Import groups (in order)
+  import_order:
+    - "__future__"
+    - "standard_library"
+    - "third_party"
+    - "local"
+
+# Regex patterns specific to our codebase
+repair_rules:
+  # We occasionally use these emojis in logging/comments
+  allowed_emojis_in_comments:
+    - "✅"  # Success indicators
+    - "❌"  # Error indicators
+    - "🔍"  # Search/check operations
+    - "📊"  # Data/metrics
+    - "🚀"  # Performance/launch
+    - "⚠️"  # Warnings
+  
+  # Field patterns specific to our emission models
+  emission_field_patterns:
+    - name: "decimal_field"
+      pattern: '(\w+): Decimal = Field\(alias="([^"]+)", description="([^"]+)", ge=0\)'
+      repair: '\1: Decimal = Field(alias="\2", description="\3", ge=0)'
+    
+    - name: "optional_string"
+      pattern: '(\w+): Optional\[str\] = Field\(alias="([^"]+)", description="([^"]+)"\)'
+      repair: '\1: Optional[str] = Field(alias="\2", description="\3")'
+  
+  # Common docstring patterns
+  docstring_patterns:
+    - name: "class_docstring"
+      pattern: '^class (\w+).*:\s*\n\s*"'
+      repair: 'class \1(BaseModel):\n    """'
+    
+    - name: "function_docstring"
+      pattern: '^(\s*)def (\w+).*:\s*\n\s*"'
+      repair: '\1def \2(...):\n\1    """'
+
+# Files that should never be modified
+exclude_patterns:
+  - "*.bak*"
+  - "*.pyc"
+  - "__pycache__/*"
+  - ".git/*"
+  - ".venv/*"
+  - "venv/*"
+  - "*.egg-info/*"
+  - "build/*"
+  - "dist/*"
+
+# Validation rules
+validation:
+  # These imports must exist in certain files
+  required_imports:
+    models:
+      - "from pydantic import BaseModel, Field"
+      - "from decimal import Decimal"
+      - "from typing import"
+    
+    renderers:
+      - "from jinja2 import"
+      - "from pathlib import Path"
+    
+    validators:
+      - "import re"
+      - "from typing import List, Dict, Any"
+
+# Safety checks
+safety:
+  max_changes_per_file: 50  # Suspicious if more changes needed
+  backup_suffix: ".bak2"
+  require_ast_valid: true
+  require_black_format: true
+  
+# Project structure expectations
+structure:
+  src_modules:
+    - "models/"      # Pydantic models
+    - "renderers/"   # Template renderers
+    - "validators/"  # Data validators
+    - "exporters/"   # iXBRL exporters
+    - "pipelines/"   # Processing pipelines
+    - "api/"         # FastAPI endpoints
+  
+  test_modules:
+    - "test_models/"
+    - "test_renderers/"
+    - "test_validators/"
+    - "test_integration/"
+    

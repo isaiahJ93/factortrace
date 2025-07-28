@@ -1,0 +1,118 @@
+# EFRAG/CSRD Taxonomy Configuration
+# Complete mapping for all ESRS standards
+
+taxonomy:
+  namespace: "https://xbrl.efrag.org/taxonomy/2023-12-31/esrs"
+  prefix: "esrs"
+  version: "2023.1"
+  
+standards:
+  # ESRS 2 - General Disclosures
+  ESRS_2:
+    GOV-1:
+      - concept: "esrs:GovernanceStructureComposition"
+        patterns:
+          - "governance.*structure"
+          - "board.*composition"
+          - "management.*bodies"
+        datatype: "xbrli:textBlockItemType"
+        
+      - concept: "esrs:BoardGenderDiversity"
+        patterns:
+          - "(?:female|women).*board.*(?:members?|directors?)"
+          - "gender.*diversity.*(?:percentage|%)"
+          - "board.*diversity.*gender"
+        datatype: "xbrli:percentItemType"
+        
+      - concept: "esrs:BoardIndependence"
+        patterns:
+          - "independent.*(?:directors?|members?)"
+          - "board.*independence"
+          - "non-executive.*directors?"
+        datatype: "xbrli:percentItemType"
+        
+  # ESRS E1 - Climate Change
+  ESRS_E1:
+    E1-1:
+      - concept: "esrs:TransitionPlanClimateChangeMitigation"
+        patterns:
+          - "(?:climate.*)?transition.*plan"
+          - "net.*zero.*(?:plan|roadmap|strategy)"
+          - "decarboni[sz]ation.*(?:plan|strategy)"
+        datatype: "xbrli:textBlockItemType"
+        
+      - concept: "esrs:GHGReductionTarget"
+        patterns:
+          - "GHG.*reduction.*target"
+          - "emissions.*reduction.*target"
+          - "(?:scope.*[123].*)?reduction.*target"
+        datatype: "xbrli:percentItemType"
+        
+    E1-6:
+      - concept: "esrs:GrossScope1Emissions"
+        patterns:
+          - "(?:gross.*)?scope.*1.*emissions?"
+          - "direct.*(?:GHG.*)?emissions?"
+          - "stationary.*combustion.*emissions?"
+        datatype: "xbrli:decimalItemType"
+        unit: "tCO2e"
+        
+      - concept: "esrs:GrossScope2MarketBased"
+        patterns:
+          - "scope.*2.*market.*based"
+          - "market.*based.*(?:scope.*2.*)?emissions?"
+          - "contractual.*emissions?"
+        datatype: "xbrli:decimalItemType"
+        unit: "tCO2e"
+        
+      - concept: "esrs:GrossScope3Emissions"
+        patterns:
+          - "(?:gross.*)?scope.*3.*emissions?"
+          - "value.*chain.*emissions?"
+          - "indirect.*emissions?"
+        datatype: "xbrli:decimalItemType"
+        unit: "tCO2e"
+        
+      - concept: "esrs:TotalGHGEmissions"
+        patterns:
+          - "total.*(?:GHG.*)?emissions?"
+          - "(?:scope.*)?1.*2.*3.*emissions?"
+          - "carbon.*footprint"
+        datatype: "xbrli:decimalItemType"
+        unit: "tCO2e"
+        
+    E1-5:
+      - concept: "esrs:RenewableEnergyPercentage"
+        patterns:
+          - "renewable.*energy.*(?:percentage|%)"
+          - "renewable.*electricity.*(?:percentage|%)"
+          - "green.*energy.*share"
+        datatype: "xbrli:percentItemType"
+        
+  # ESRS S1 - Own Workforce
+  ESRS_S1:
+    S1-4:
+      - concept: "esrs:TotalEmployees"
+        patterns:
+          - "(?:total.*)?(?:number.*of.*)?employees?"
+          - "headcount"
+          - "workforce.*size"
+        datatype: "xbrli:integerItemType"
+        
+    S1-5:
+      - concept: "esrs:GenderDiversity"
+        patterns:
+          - "gender.*diversity"
+          - "(?:female|women).*employees.*(?:percentage|%)"
+          - "gender.*balance"
+        datatype: "xbrli:percentItemType"
+        
+  # ESRS G1 - Business Conduct
+  ESRS_G1:
+    G1-4:
+      - concept: "esrs:ConfirmedCorruptionIncidents"
+        patterns:
+          - "corruption.*incidents?"
+          - "bribery.*cases?"
+          - "ethics.*violations?"
+        datatype: "xbrli:integerItemType"

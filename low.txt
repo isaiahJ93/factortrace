@@ -1,0 +1,24 @@
+./src/factortrace/factor_loader.py.bak:114:# 🔧 REVIEW: possible unclosed bracket ->         logger.info()
+./src/factortrace/factor_loader.py:128:        # 🔧 REVIEW: possible unclosed bracket -> logger.info()
+./src/factortrace/factor_loader.bak:137:# 🔧 REVIEW: possible unclosed bracket ->         logger.info()
+./src/factortrace/routes/admin.py.bak:110:audit_logger = logging.getLogger("audit)audit_handler = logging.FileHandler(LOGS_DIR / "admin_audit.log)# 🔧 REVIEW: possible unclosed bracket -> audit_handler.setFormatter()
+./src/factortrace/routes/admin.py.bak:452:# 🔧 REVIEW: possible unclosed bracket ->     audit_logger.info()
+./src/factortrace/routes/admin.py.bak:491:# 🔧 REVIEW: possible unclosed bracket ->     audit_logger.info()
+./src/factortrace/routes/admin.py.bak:574:# 🔧 REVIEW: possible unclosed bracket ->     audit_logger.info()
+./src/factortrace/routes/admin.py.bak:611:# 🔧 REVIEW: possible unclosed bracket ->     audit_logger.info()
+./src/factortrace/routes/admin.py.bak:646:# 🔧 REVIEW: possible unclosed bracket ->     audit_logger.info()
+./src/factortrace/routes/admin.py.bak:703:# 🔧 REVIEW: possible unclosed bracket ->             worksheet.conditional_format(f'H2:H{len(df)+1}'
+./src/factortrace/routes/admin.py.bak:772:# 🔧 REVIEW: possible unclosed bracket ->     audit_logger.info()
+./src/factortrace/routes/admin.bak:123:# 🔧 REVIEW: possible unclosed bracket -> audit_handler.setFormatter()
+./src/factortrace/routes/admin.bak:518:# 🔧 REVIEW: possible unclosed bracket ->     audit_logger.info()
+./src/factortrace/routes/admin.bak:565:# 🔧 REVIEW: possible unclosed bracket ->     audit_logger.info()
+./src/factortrace/routes/admin.bak:656:# 🔧 REVIEW: possible unclosed bracket ->     audit_logger.info()
+./src/factortrace/routes/admin.bak:702:# 🔧 REVIEW: possible unclosed bracket ->     audit_logger.info()
+./src/factortrace/routes/admin.bak:743:# 🔧 REVIEW: possible unclosed bracket ->     audit_logger.info()
+./src/factortrace/routes/admin.bak:802:# 🔧 REVIEW: possible unclosed bracket ->             worksheet.conditional_format(f'H2:H{len(df)+1}'FIXME'
+./src/factortrace/routes/admin.bak:891:# 🔧 REVIEW: possible unclosed bracket ->     audit_logger.info()
+./src/generator/batch_runner.py:27:# 🔧 REVIEW: possible unclosed bracket -> logging.basicConfig()
+./src/generator/batch_runner.py.bak:27:# 🔧 REVIEW: possible unclosed bracket -> logging.basicConfig()
+./src/generator/batch_runner.bak:31:# 🔧 REVIEW: possible unclosed bracket -> logging.basicConfig()
+./src/export/tracecalc_reporter.py.bak:95:# 🔧 REVIEW: possible unclosed bracket ->             .logo {{}
+./src/export/tracecalc_reporter.bak:101:# 🔧 REVIEW: possible unclosed bracket ->             .logo {{}

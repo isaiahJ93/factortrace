@@ -1,0 +1,430 @@
+{
+  "organization": "Example Corporation Ltd",
+  "lei": "5493000KJTIIGC8Y1R12",
+  "reporting_period": 2024,
+  "consolidation_scope": "Group",
+  "headquarters_location": "EU",
+  "company_size": "large",
+  "emissions": {
+    "scope1": 15000,
+    "scope2_location": 8000,
+    "scope2_market": 6500,
+    "scope3": 120000,
+    "ghg_intensity": 45.2
+  },
+  "previous_year_emissions": {
+    "scope1": 16500,
+    "scope2_location": 8800,
+    "scope2_market": 7000,
+    "scope3": 125000
+  },
+  "scope3_detailed": {
+    "category_1": {
+      "emissions_tco2e": 30000,
+      "excluded": false,
+      "exclusion_reason": null,
+      "data_quality_tier": "Tier 1",
+      "data_quality_score": 85,
+      "calculation_method": "Supplier-specific",
+      "coverage_percent": 95,
+      "uncertainty_range": {
+        "low": -10,
+        "high": 10
+      }
+    },
+    "category_2": {
+      "emissions_tco2e": 9600,
+      "excluded": false,
+      "exclusion_reason": null,
+      "data_quality_tier": "Tier 1",
+      "data_quality_score": 85,
+      "calculation_method": "Supplier-specific",
+      "coverage_percent": 95,
+      "uncertainty_range": {
+        "low": -10,
+        "high": 10
+      }
+    },
+    "category_3": {
+      "emissions_tco2e": 6000,
+      "excluded": false,
+      "exclusion_reason": null,
+      "data_quality_tier": "Tier 2",
+      "data_quality_score": 70,
+      "calculation_method": "Spend-based",
+      "coverage_percent": 80,
+      "uncertainty_range": {
+        "low": -10,
+        "high": 10
+      }
+    },
+    "category_4": {
+      "emissions_tco2e": 4800,
+      "excluded": false,
+      "exclusion_reason": null,
+      "data_quality_tier": "Tier 2",
+      "data_quality_score": 70,
+      "calculation_method": "Spend-based",
+      "coverage_percent": 80,
+      "uncertainty_range": {
+        "low": -10,
+        "high": 10
+      }
+    },
+    "category_5": {
+      "emissions_tco2e": 2400,
+      "excluded": false,
+      "exclusion_reason": null,
+      "data_quality_tier": "Tier 2",
+      "data_quality_score": 70,
+      "calculation_method": "Spend-based",
+      "coverage_percent": 80,
+      "uncertainty_range": {
+        "low": -10,
+        "high": 10
+      }
+    },
+    "category_6": {
+      "emissions_tco2e": 3600,
+      "excluded": false,
+      "exclusion_reason": null,
+      "data_quality_tier": "Tier 2",
+      "data_quality_score": 70,
+      "calculation_method": "Spend-based",
+      "coverage_percent": 80,
+      "uncertainty_range": {
+        "low": -10,
+        "high": 10
+      }
+    },
+    "category_7": {
+      "emissions_tco2e": 2400,
+      "excluded": false,
+      "exclusion_reason": null,
+      "data_quality_tier": "Tier 2",
+      "data_quality_score": 70,
+      "calculation_method": "Spend-based",
+      "coverage_percent": 80,
+      "uncertainty_range": {
+        "low": -10,
+        "high": 10
+      }
+    },
+    "category_8": {
+      "emissions_tco2e": 0,
+      "excluded": true,
+      "exclusion_reason": "Not applicable",
+      "data_quality_tier": "Tier 2",
+      "data_quality_score": 70,
+      "calculation_method": "Spend-based",
+      "coverage_percent": 80,
+      "uncertainty_range": {
+        "low": -10,
+        "high": 10
+      }
+    },
+    "category_9": {
+      "emissions_tco2e": 7200,
+      "excluded": false,
+      "exclusion_reason": null,
+      "data_quality_tier": "Tier 2",
+      "data_quality_score": 70,
+      "calculation_method": "Spend-based",
+      "coverage_percent": 80,
+      "uncertainty_range": {
+        "low": -10,
+        "high": 10
+      }
+    },
+    "category_10": {
+      "emissions_tco2e": 12000,
+      "excluded": false,
+      "exclusion_reason": null,
+      "data_quality_tier": "Tier 2",
+      "data_quality_score": 70,
+      "calculation_method": "Spend-based",
+      "coverage_percent": 80,
+      "uncertainty_range": {
+        "low": -10,
+        "high": 10
+      }
+    },
+    "category_11": {
+      "emissions_tco2e": 36000,
+      "excluded": false,
+      "exclusion_reason": null,
+      "data_quality_tier": "Tier 1",
+      "data_quality_score": 85,
+      "calculation_method": "Spend-based",
+      "coverage_percent": 95,
+      "uncertainty_range": {
+        "low": -10,
+        "high": 10
+      }
+    },
+    "category_12": {
+      "emissions_tco2e": 3600,
+      "excluded": false,
+      "exclusion_reason": null,
+      "data_quality_tier": "Tier 2",
+      "data_quality_score": 70,
+      "calculation_method": "Spend-based",
+      "coverage_percent": 80,
+      "uncertainty_range": {
+        "low": -10,
+        "high": 10
+      }
+    },
+    "category_13": {
+      "emissions_tco2e": 0,
+      "excluded": true,
+      "exclusion_reason": "Not applicable",
+      "data_quality_tier": "Tier 2",
+      "data_quality_score": 70,
+      "calculation_method": "Spend-based",
+      "coverage_percent": 80,
+      "uncertainty_range": {
+        "low": -10,
+        "high": 10
+      }
+    },
+    "category_14": {
+      "emissions_tco2e": 0,
+      "excluded": true,
+      "exclusion_reason": "Not applicable",
+      "data_quality_tier": "Tier 2",
+      "data_quality_score": 70,
+      "calculation_method": "Spend-based",
+      "coverage_percent": 80,
+      "uncertainty_range": {
+        "low": -10,
+        "high": 10
+      }
+    },
+    "category_15": {
+      "emissions_tco2e": 2400,
+      "excluded": false,
+      "exclusion_reason": null,
+      "data_quality_tier": "Tier 2",
+      "data_quality_score": 70,
+      "calculation_method": "Spend-based",
+      "coverage_percent": 80,
+      "uncertainty_range": {
+        "low": -10,
+        "high": 10
+      }
+    }
+  },
+  "transition_plan": {
+    "adopted": true,
+    "adoption_date": "2024-01-01",
+    "net_zero_target": true,
+    "net_zero_target_year": 2050,
+    "milestones": [
+      {
+        "year": 2030,
+        "target": "50% reduction",
+        "description": "Interim target aligned with SBTi"
+      },
+      {
+        "year": 2040,
+        "target": "80% reduction",
+        "description": "Near-term deep decarbonization"
+      }
+    ],
+    "decarbonization_levers": [
+      "Renewable energy",
+      "Energy efficiency",
+      "Electrification"
+    ],
+    "financial_planning": {
+      "capex_allocated": 100000000,
+      "investment_period": "2024-2030"
+    },
+    "locked_in_emissions": "Analysis shows 20% of current emissions locked-in until 2035",
+    "just_transition": "Comprehensive reskilling program for affected workers"
+  },
+  "governance": {
+    "board_oversight": true,
+    "board_meetings_climate": 6,
+    "management_responsibility": true,
+    "climate_expertise": "Two board members with climate science PhDs",
+    "climate_linked_compensation": true,
+    "governance_integration": "Climate KPIs in all executive scorecards"
+  },
+  "climate_policy": {
+    "has_climate_policy": true,
+    "policy_description": "Net-zero aligned climate policy",
+    "policy_adoption_date": "2023-01-01",
+    "covers_own_operations": true,
+    "covers_value_chain": true,
+    "covers_products_services": true,
+    "integrated_with_strategy": true,
+    "governance_integration": "Board review quarterly"
+  },
+  "climate_actions": {
+    "actions": [
+      {
+        "description": "Install 50MW solar capacity",
+        "type": "Mitigation",
+        "timeline": "2024-2025",
+        "investment_meur": 50,
+        "expected_impact": "Reduce Scope 2 by 30%"
+      },
+      {
+        "description": "Fleet electrification",
+        "type": "Mitigation",
+        "timeline": "2024-2027",
+        "investment_meur": 30,
+        "expected_impact": "Reduce Scope 1 by 15%"
+      }
+    ],
+    "capex": 100,
+    "opex": 20,
+    "fte": 25,
+    "capex_climate_eur": 100000000,
+    "opex_climate_eur": 20000000,
+    "fte_dedicated": 25
+  },
+  "targets": {
+    "base_year": 2020,
+    "progress": 25,
+    "base_year_emissions": 150000,
+    "targets": [
+      {
+        "description": "Reduce absolute emissions 50% by 2030",
+        "scope": "Scope 1, 2 & 3",
+        "target_year": 2030,
+        "reduction_percent": 50,
+        "progress_percent": 25,
+        "status": "On track"
+      }
+    ],
+    "sbti_validated": true,
+    "sbti_ambition": "1.5\u00b0C aligned"
+  },
+  "energy_consumption": {
+    "total": 100000,
+    "electricity_mwh": 50000,
+    "renewable_electricity_mwh": 20000,
+    "heating_cooling_mwh": 20000,
+    "renewable_heating_cooling_mwh": 5000,
+    "steam_mwh": 10000,
+    "renewable_steam_mwh": 1000,
+    "fuel_combustion_mwh": 20000,
+    "renewable_fuels_mwh": 2000,
+    "renewable_percentage": 28,
+    "energy_intensity_value": 0.5,
+    "energy_intensity_unit": 45.2
+  },
+  "removals": {
+    "total": 0,
+    "own_removals": null,
+    "nil_explanation": "No removal projects operational yet"
+  },
+  "carbon_pricing": {
+    "implemented": false,
+    "not_implemented_reason": "Internal carbon price planned for 2025"
+  },
+  "climate_risks": [
+    {
+      "type": "Physical",
+      "description": "Flood risk to coastal facilities",
+      "time_horizon": "Medium-term",
+      "likelihood": "Likely",
+      "magnitude": "Medium",
+      "financial_impact": 10000000
+    },
+    {
+      "type": "Transition",
+      "description": "Carbon pricing exposure",
+      "time_horizon": "Short-term",
+      "likelihood": "Very likely",
+      "magnitude": "High",
+      "financial_impact": 25000000
+    }
+  ],
+  "opportunities": [
+    {
+      "type": "Products and services",
+      "description": "Low-carbon product line",
+      "time_horizon": "Short-term",
+      "likelihood": "Likely",
+      "magnitude": "High",
+      "potential_value": 50000000
+    }
+  ],
+  "financial_impacts": {
+    "climate_related_costs": 35000000,
+    "climate_related_investments": 100000000,
+    "climate_related_revenue": 200000000,
+    "climate_var_1_year": 5000000,
+    "climate_var_10_year": 50000000
+  },
+  "eu_taxonomy_data": {
+    "revenue_aligned_percent": 35,
+    "capex_aligned_percent": 45,
+    "opex_aligned_percent": 30,
+    "aligned_activities": null,
+    "nil_alignment_reason": "Full taxonomy assessment in progress",
+    "eligible_activities": [
+      {
+        "name": "Solar energy generation",
+        "nace_code": "D35.11",
+        "revenue_percent": 20,
+        "capex_percent": 30,
+        "aligned": true,
+        "dnsh_compliant": true,
+        "minimum_safeguards": true
+      }
+    ]
+  },
+  "value_chain": {
+    "upstream": {
+      "suppliers_with_targets_percent": 60,
+      "engagement_program": "Supplier Climate Action Program launched 2023"
+    },
+    "downstream": {
+      "product_carbon_footprints": [
+        {
+          "product_name": "Main Product Line",
+          "carbon_footprint_kg": 10.5,
+          "lca_standard": "ISO 14067",
+          "coverage": "Cradle-to-gate"
+        }
+      ]
+    }
+  },
+  "methodology": {
+    "ghg_standard": "GHG Protocol Corporate Standard",
+    "consolidation_approach": "Operational control",
+    "emission_factor_sources": [
+      "DEFRA 2024",
+      "IEA 2024",
+      "EPA Hub"
+    ],
+    "uncertainty_range": {
+      "low": -15,
+      "high": 15
+    },
+    "recalculation_threshold": 5
+  },
+  "data_quality_score": 82,
+  "emissions_change_percent": -8.5,
+  "intensity": {
+    "revenue": 45.2,
+    "unit": "tCO2e/million EUR"
+  },
+  "uncertainty_assessment": "Monte Carlo analysis shows 95% CI of \u00b115%",
+  "recalculation_policy": "Recalculate if changes exceed 5% threshold",
+  "assurance": {
+    "level": "Limited assurance",
+    "provider": "PwC",
+    "standard": "ISAE 3410",
+    "scope": [
+      "Scope 1",
+      "Scope 2",
+      "Material Scope 3 categories"
+    ]
+  }
+}

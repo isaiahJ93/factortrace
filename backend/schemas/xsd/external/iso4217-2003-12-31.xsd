@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="http://www.xbrl.org/2003/iso4217"
+           xmlns="http://www.xbrl.org/2003/iso4217"
+           elementFormDefault="qualified"
+           attributeFormDefault="unqualified">
+    <xs:annotation>
+        <xs:documentation>
+            ISO 4217 Currency Codes schema for use in XBRL instances.
+        </xs:documentation>
+    </xs:annotation>
+
+    <xs:simpleType name="currencyItemType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="USD"/>
+            <xs:enumeration value="EUR"/>
+            <xs:enumeration value="GBP"/>
+            <xs:enumeration value="JPY"/>
+            <xs:enumeration value="AUD"/>
+            <xs:enumeration value="CAD"/>
+            <xs:enumeration value="CHF"/>
+            <xs:enumeration value="CNY"/>
+            <xs:enumeration value="SEK"/>
+            <xs:enumeration value="NZD"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:element name="currency" type="currencyItemType"/>
+</xs:schema>

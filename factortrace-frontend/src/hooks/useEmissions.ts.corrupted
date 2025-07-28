@@ -1,0 +1,265 @@
+// frontend/src/hooks/useEmissions.ts
+/**
+ * React Hook for GHG Emissions Calculator
+ * Provides a clean interface for emissions calculations
+ */
+import { useState, useCallback } from 'react';
+import { EmissionsAPI, CalculateEmissionsRequest, CalculateEmissionsResponse } from '@/lib/api/emissions';
+
+export function useEmissions() {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [result, setResult] = useState<CalculateEmissionsResponse | null>(null);
+  
+  const api = new EmissionsAPI();
+
+  const calculateEmissions = useCallback(async (data: CalculateEmissionsRequest) => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const response = await api.calculateEmissions(data);
+      setResult(response);
+      return response;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to calculate emissions';
+      setError(errorMessage);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const reset = useCallback(() => {
+    setResult(null);
+    setError(null);
+  }, []);
+
+  return {
+    calculateEmissions,
+    loading,
+    error,
+    result,
+    reset,
+  };
+}
+
+// frontend/src/app/emissions-calculator/EmissionsCalculator.tsx
+/**
+ * Emissions Calculator Component
+ * A working example that connects to your backend
+ */
+import React, { useState, useEffect } from 'react';
+import { useEmissions } from '@/hooks/useEmissions';
+import { EmissionsAPI, ActivityType, EmissionInput } from '@/lib/api/emissions';
+
+export default function EmissionsCalculator() {
+  const { calculateEmissions, loading, error, result } = useEmissions();
+  const [activityTypes, setActivityTypes] = useState<Record<string, ActivityType[]>>({});
+  const [emissions, setEmissions] = useState<EmissionInput[]>([
+    { activity_type: 'electricity', amount: 0, unit: 'kWh' }
+  ]);
+  const [reportingPeriod, setReportingPeriod] = useState('2024-Q1');
+
+  // Load activity types on mount
+  useEffect(() => {
+    const api = new EmissionsAPI();
+    api.getActivityTypes().then(setActivityTypes).catch(console.error);
+  }, []);
+
+  const handleAddEmission = () => {
+    setEmissions([...emissions, { activity_type: 'electricity', amount: 0, unit: 'kWh' }]);
+  };
+
+  const handleUpdateEmission = (index: number, field: keyof EmissionInput, value: any) => {
+    const updated = [...emissions];
+    updated[index] = { ...updated[index], [field]: value };
+    
+    // Update unit when activity type changes
+    if (field === 'activity_type') {
+      const allTypes = Object.values(activityTypes).flat();
+      const activityType = allTypes.find(t => t.value === value);
+      if (activityType) {
+        updated[index].unit = activityType.unit;
+      }
+    }
+    
+    setEmissions(updated);
+  };
+
+  const handleRemoveEmission = (index: number) => {
+    setEmissions(emissions.filter((_, i) => i !== index));
+  };
+
+  const handleCalculate = async () => {
+    try {
+      await calculateEmissions({
+        reporting_period: reportingPeriod,
+        emissions_data: emissions.filter(e => e.amount > 0)
+      });
+    } catch (err) {
+      console.error('Calculation failed:', err);
+    }
+  };
+
+  return (
+    <div className="max-w-4xl mx-auto p-6">
+      <h1 className="text-3xl font-bold mb-6">GHG Emissions Calculator</h1>
+      
+      {/* Reporting Period */}
+      <div className="mb-6">
+        <label className="block text-sm font-medium mb-2">
+          Reporting Period
+        </label>
+        <input
+          type="text"
+          value={reportingPeriod}
+          onChange={(e) => setReportingPeriod(e.target.value)}
+          className="w-full px-3 py-2 border rounded-md"
+          placeholder="e.g., 2024-Q1"
+        />
+      </div>
+
+      {/* Emissions Inputs */}
+      <div className="space-y-4 mb-6">
+        <h2 className="text-xl font-semibold">Activity Data</h2>
+        
+        {emissions.map((emission, index) => (
+          <div key={index} className="flex gap-4 items-end">
+            <div className="flex-1">
+              <label className="block text-sm font-medium mb-1">Activity Type</label>
+              <select
+                value={emission.activity_type}
+                onChange={(e) => handleUpdateEmission(index, 'activity_type', e.target.value)}
+                className="w-full px-3 py-2 border rounded-md"
+              >
+                {Object.entries(activityTypes).map(([scope, types]) => (
+                  <optgroup key={scope} label={scope.replace('_', ' ').toUpperCase()}>
+                    {types.map(type => (
+                      <option key={type.value} value={type.value}>
+                        {type.label}
+                      </option>
+                    ))}
+                  </optgroup>
+                ))}
+              </select>
+            </div>
+            
+            <div className="flex-1">
+              <label className="block text-sm font-medium mb-1">Amount</label>
+              <input
+                type="number"
+                value={emission.amount}
+                onChange={(e) => handleUpdateEmission(index, 'amount', parseFloat(e.target.value) || 0)}
+                className="w-full px-3 py-2 border rounded-md"
+                min="0"
+                step="0.01"
+              />
+            </div>
+            
+            <div className="w-24">
+              <label className="block text-sm font-medium mb-1">Unit</label>
+              <input
+                type="text"
+                value={emission.unit}
+                disabled
+                className="w-full px-3 py-2 border rounded-md bg-gray-100"
+              />
+            </div>
+            
+            <button
+              onClick={() => handleRemoveEmission(index)}
+              className="px-3 py-2 text-red-600 hover:text-red-800"
+            >
+              Remove
+            </button>
+          </div>
+        ))}
+        
+        <button
+          onClick={handleAddEmission}
+          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+        >
+          Add Activity
+        </button>
+      </div>
+
+      {/* Calculate Button */}
+      <button
+        onClick={handleCalculate}
+        disabled={loading || emissions.every(e => e.amount === 0)}
+        className="w-full px-6 py-3 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:bg-gray-400"
+      >
+        {loading ? 'Calculating...' : 'Calculate Emissions'}
+      </button>
+
+      {/* Error Display */}
+      {error && (
+        <div className="mt-4 p-4 bg-red-100 text-red-700 rounded-md">
+          {error}
+        </div>
+      )}
+
+      {/* Results Display */}
+      {result && (
+        <div className="mt-8 space-y-6">
+          <div className="bg-gray-100 p-6 rounded-lg">
+            <h2 className="text-2xl font-bold mb-4">Results Summary</h2>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-sm text-gray-600">Total Emissions</p>
+                <p className="text-3xl font-bold">{result.total_emissions_tons_co2e.toFixed(2)} tCO2e</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">Reporting Period</p>
+                <p className="text-xl">{result.reporting_period}</p>
+              </div>
+            </div>
+            
+            <div className="mt-6 grid grid-cols-3 gap-4">
+              <div className="bg-white p-4 rounded">
+                <p className="text-sm text-gray-600">Scope 1</p>
+                <p className="text-xl font-semibold">{(result.scope1_emissions / 1000).toFixed(2)} tCO2e</p>
+              </div>
+              <div className="bg-white p-4 rounded">
+                <p className="text-sm text-gray-600">Scope 2</p>
+                <p className="text-xl font-semibold">{(result.scope2_emissions / 1000).toFixed(2)} tCO2e</p>
+              </div>
+              <div className="bg-white p-4 rounded">
+                <p className="text-sm text-gray-600">Scope 3</p>
+                <p className="text-xl font-semibold">{(result.scope3_emissions / 1000).toFixed(2)} tCO2e</p>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h3 className="text-xl font-semibold mb-4">Emissions Breakdown</h3>
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="bg-gray-200">
+                    <th className="border p-2 text-left">Activity</th>
+                    <th className="border p-2 text-left">Scope</th>
+                    <th className="border p-2 text-right">Emissions (kgCO2e)</th>
+                    <th className="border p-2 text-right">Emissions (tCO2e)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {result.breakdown.map((item, index) => (
+                    <tr key={index}>
+                      <td className="border p-2">{item.activity_type.replace('_', ' ')}</td>
+                      <td className="border p-2">{item.scope.replace('_', ' ').toUpperCase()}</td>
+                      <td className="border p-2 text-right">{item.emissions_kg_co2e.toFixed(2)}</td>
+                      <td className="border p-2 text-right">{(item.emissions_kg_co2e / 1000).toFixed(3)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

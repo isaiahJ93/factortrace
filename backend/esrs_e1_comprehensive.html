@@ -1,0 +1,507 @@
+<?xml version="1.0" ?>
+<html xmlns:ns0="http://www.xbrl.org/2013/inlineXBRL" xmlns="http://www.w3.org/1999/xhtml" xmlns:ix="http://www.xbrl.org/2013/inlineXBRL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xbrli="http://www.xbrl.org/2003/instance" xmlns:iso4217="http://www.xbrl.org/2003/iso4217" xmlns:esrs-e1="http://www.efrag.org/esrs/2023/e1" xmlns:esrs="http://www.efrag.org/esrs/2023/common" xmlns:ghg="http://www.ghgprotocol.org/standards/scope3" xmlns:lei="http://www.lei-worldwide.com/lei" xml:lang="en">
+  <head>
+    <title>ESRS E1 Climate Change Disclosure - Your Company Name - 2024</title>
+    <meta name="description" content="ESRS E1 Climate-related disclosures with GHG Protocol Scope 3 compliance"/>
+    <meta name="generator" content="ESRS E1 iXBRL Generator v2.0"/>
+    <ns0:header>
+      <ns0:hidden>
+        <ns0:references>
+          <xbrli:context id="c-period">
+            <xbrli:entity>
+              <xbrli:identifier scheme="http://www.lei-worldwide.com">529900HNOAA1KXQJUQ27</xbrli:identifier>
+            </xbrli:entity>
+            <xbrli:period>
+              <xbrli:startDate>2024-01-01</xbrli:startDate>
+              <xbrli:endDate>2024-12-31</xbrli:endDate>
+            </xbrli:period>
+          </xbrli:context>
+        </ns0:references>
+        <ns0:resources>
+          <xbrli:unit id="u-tCO2e">
+            <xbrli:measure>esrs:tonnesCO2e</xbrli:measure>
+          </xbrli:unit>
+          <xbrli:unit id="u-MWh">
+            <xbrli:measure>esrs:megawattHour</xbrli:measure>
+          </xbrli:unit>
+          <xbrli:unit id="u-EUR">
+            <xbrli:measure>iso4217:EUR</xbrli:measure>
+          </xbrli:unit>
+          <xbrli:unit id="u-pure">
+            <xbrli:measure>xbrli:pure</xbrli:measure>
+          </xbrli:unit>
+          <xbrli:unit id="u-percent">
+            <xbrli:measure>xbrli:percent</xbrli:measure>
+          </xbrli:unit>
+        </ns0:resources>
+      </ns0:hidden>
+    </ns0:header>
+    <style>
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, sans-serif; 
+            margin: 40px auto; 
+            max-width: 1200px; 
+            color: #333; 
+            line-height: 1.6;
+        }
+        h1 { 
+            color: #1a472a; 
+            border-bottom: 4px solid #2d5f3f; 
+            padding-bottom: 15px; 
+            margin-bottom: 30px;
+        }
+        h2 { 
+            color: #2d5f3f; 
+            margin-top: 40px; 
+            border-bottom: 2px solid #e0e0e0; 
+            padding-bottom: 10px;
+        }
+        h3 { 
+            color: #3e7e5e; 
+            margin-top: 25px;
+        }
+        h4 {
+            color: #4a9b7b;
+            margin-top: 20px;
+        }
+        table { 
+            border-collapse: collapse; 
+            width: 100%; 
+            margin: 20px 0; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        th { 
+            background-color: #2d5f3f; 
+            color: white; 
+            padding: 12px; 
+            text-align: left; 
+            font-weight: 600;
+        }
+        td { 
+            padding: 10px; 
+            border: 1px solid #ddd; 
+            background-color: #fff;
+        }
+        tr.scope-header td { 
+            background-color: #e8f5e9; 
+            font-weight: bold; 
+            color: #1a472a;
+        }
+        tr.subcategory td:first-child { 
+            padding-left: 30px; 
+        }
+        tr.total td { 
+            background-color: #c8e6c9; 
+            font-weight: bold; 
+        }
+        tr.grand-total td { 
+            background-color: #1a472a; 
+            color: white; 
+            font-size: 1.1em;
+        }
+        .disclosure { 
+            margin: 25px 0; 
+            padding: 20px; 
+            background-color: #f8f9fa; 
+            border-left: 5px solid #2d5f3f; 
+            border-radius: 0 5px 5px 0;
+        }
+        .metadata {
+            background-color: #f0f7f4;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .metadata p {
+            margin: 5px 0;
+        }
+        ix\:nonFraction, ix\:nonNumeric { 
+            color: #c62828; 
+            font-weight: bold; 
+            text-decoration: underline;
+            text-decoration-style: dotted;
+        }
+        .warnings {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 5px;
+            padding: 10px 10px 10px 30px;
+            margin-top: 15px;
+        }
+        .warnings li {
+            color: #856404;
+        }
+        @media print {
+            body { margin: 20px; }
+            .disclosure { break-inside: avoid; }
+            table { break-inside: avoid; }
+        }
+    </style>
+  </head>
+  <body>
+    <h1>Your Company Name - ESRS E1 Climate-related Disclosures</h1>
+    <section class="report-metadata">
+      <h2>Report Information</h2>
+      <div class="metadata">
+        <p>Reporting Period: 2024</p>
+        <p>Publication Date: 2025-07-11</p>
+        <p>Standards Applied: ESRS E1, GHG Protocol Corporate Value Chain (Scope 3) Standard</p>
+      </div>
+    </section>
+    <section class="esrs-2-general">
+      <h2>ESRS 2 - General Disclosures</h2>
+      <div class="disclosure">
+        <h3>GOV-1: The role of governance bodies</h3>
+        <p>
+          Board oversight of climate-related issues: 
+          <ns0:nonNumeric contextRef="c-period" name="esrs:BoardOversightClimateIssues" format="ixt:booleantrue">true</ns0:nonNumeric>
+        </p>
+        <p>
+          Frequency of board climate discussions: 
+          <ns0:nonNumeric contextRef="c-period" name="esrs:BoardClimateDiscussionFrequency">Quarterly</ns0:nonNumeric>
+        </p>
+      </div>
+    </section>
+    <section class="esrs-e1-climate">
+      <h2>ESRS E1 - Climate Change</h2>
+      <div class="disclosure">
+        <h3>E1-1: Transition plan for climate change mitigation</h3>
+        <p>
+          Transition plan adopted: 
+          <ns0:nonNumeric contextRef="c-period" name="esrs-e1:TransitionPlanAdopted" format="ixt:booleantrue">true</ns0:nonNumeric>
+        </p>
+        <p>
+          Aligned with 1.5°C pathway: 
+          <ns0:nonNumeric contextRef="c-period" name="esrs-e1:TransitionPlanAligned15C" format="ixt:booleantrue">true</ns0:nonNumeric>
+        </p>
+      </div>
+      <div class="disclosure">
+        <h3>E1-4: GHG emission reduction targets</h3>
+        <table class="targets">
+          <thead>
+            <tr>
+              <th>Target Type</th>
+              <th>Scope</th>
+              <th>Base Year</th>
+              <th>Target Year</th>
+              <th>Reduction %</th>
+              <th>Progress %</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Absolute reduction</td>
+              <td>Scopes 1, 2 &amp; 3</td>
+              <td>
+                <ns0:nonNumeric contextRef="c-period" name="esrs-e1:TargetBaseYear">2019</ns0:nonNumeric>
+              </td>
+              <td>
+                <ns0:nonNumeric contextRef="c-period" name="esrs-e1:TargetYear">2030</ns0:nonNumeric>
+              </td>
+              <td>
+                <ns0:nonFraction contextRef="c-period" unitRef="u-percent" decimals="1" name="esrs-e1:TargetReductionPercentage">50</ns0:nonFraction>
+              </td>
+              <td>
+                <ns0:nonFraction contextRef="c-period" unitRef="u-percent" decimals="1" name="esrs-e1:TargetProgressPercentage">25</ns0:nonFraction>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="disclosure">
+        <h3>E1-6: Gross Scopes 1, 2, 3 and Total GHG emissions</h3>
+        <table class="ghg-emissions">
+          <thead>
+            <tr>
+              <th>GHG Emissions</th>
+              <th>Value (tCO2e)</th>
+              <th>Data Quality</th>
+              <th>Calculation Method</th>
+              <th>ESRS Reference</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="scope-header">
+              <td colspan="5">Scope 1 - Direct emissions</td>
+            </tr>
+            <tr class="total">
+              <td>Scope 1 Total</td>
+              <td>
+                <ns0:nonFraction contextRef="c-period" unitRef="u-tCO2e" decimals="2" name="esrs-e1:GrossScope1Emissions">100.5</ns0:nonFraction>
+              </td>
+              <td>High</td>
+              <td>Direct measurement</td>
+              <td>E1-6.53</td>
+            </tr>
+            <tr class="scope-header">
+              <td colspan="5">Scope 2 - Indirect emissions from purchased energy</td>
+            </tr>
+            <tr class="subcategory">
+              <td>  Location-based</td>
+              <td>
+                <ns0:nonFraction contextRef="c-period" unitRef="u-tCO2e" decimals="2" name="esrs-e1:GrossScope2LocationBased">50.3</ns0:nonFraction>
+              </td>
+              <td>High</td>
+              <td>Grid average factors</td>
+              <td>E1-6.54</td>
+            </tr>
+            <tr class="subcategory">
+              <td>  Market-based</td>
+              <td>
+                <ns0:nonFraction contextRef="c-period" unitRef="u-tCO2e" decimals="2" name="esrs-e1:GrossScope2MarketBased">45.2</ns0:nonFraction>
+              </td>
+              <td>High</td>
+              <td>Supplier-specific factors</td>
+              <td>E1-6.54</td>
+            </tr>
+            <tr class="scope-header">
+              <td colspan="5">Scope 3 - Other indirect emissions (GHG Protocol Categories)</td>
+            </tr>
+            <tr class="subcategory">
+              <td>  1. Purchased goods and services</td>
+              <td>
+                <ns0:nonFraction contextRef="c-period" unitRef="u-tCO2e" decimals="2" name="esrs-e1:Scope3Category1">15.5</ns0:nonFraction>
+              </td>
+              <td>Medium</td>
+              <td>Spend-based</td>
+              <td>E1-6.55</td>
+            </tr>
+            <tr class="subcategory">
+              <td>  2. Capital goods</td>
+              <td>
+                <ns0:nonFraction contextRef="c-period" unitRef="u-tCO2e" decimals="2" name="esrs-e1:Scope3Category2">5.2</ns0:nonFraction>
+              </td>
+              <td>Medium</td>
+              <td>Average-data</td>
+              <td>E1-6.55</td>
+            </tr>
+            <tr class="subcategory">
+              <td>  3. Fuel- and energy-related activities</td>
+              <td>
+                <ns0:nonFraction contextRef="c-period" unitRef="u-tCO2e" decimals="2" name="esrs-e1:Scope3Category3">3.8</ns0:nonFraction>
+              </td>
+              <td>High</td>
+              <td>Average-data</td>
+              <td>E1-6.55</td>
+            </tr>
+            <tr class="subcategory">
+              <td>  4. Upstream transportation and distribution</td>
+              <td>
+                <ns0:nonFraction contextRef="c-period" unitRef="u-tCO2e" decimals="2" name="esrs-e1:Scope3Category4">4.1</ns0:nonFraction>
+              </td>
+              <td>High</td>
+              <td>Distance-based</td>
+              <td>E1-6.55</td>
+            </tr>
+            <tr class="subcategory">
+              <td>  5. Waste generated in operations</td>
+              <td>
+                <ns0:nonFraction contextRef="c-period" unitRef="u-tCO2e" decimals="2" name="esrs-e1:Scope3Category5">0.8</ns0:nonFraction>
+              </td>
+              <td>High</td>
+              <td>Waste-type-specific</td>
+              <td>E1-6.55</td>
+            </tr>
+            <tr class="subcategory">
+              <td>  6. Business travel</td>
+              <td>
+                <ns0:nonFraction contextRef="c-period" unitRef="u-tCO2e" decimals="2" name="esrs-e1:Scope3Category6">7.2</ns0:nonFraction>
+              </td>
+              <td>High</td>
+              <td>Distance-based</td>
+              <td>E1-6.55</td>
+            </tr>
+            <tr class="subcategory">
+              <td>  7. Employee commuting</td>
+              <td>
+                <ns0:nonFraction contextRef="c-period" unitRef="u-tCO2e" decimals="2" name="esrs-e1:Scope3Category7">0.55</ns0:nonFraction>
+              </td>
+              <td>Medium</td>
+              <td>Average-data</td>
+              <td>E1-6.55</td>
+            </tr>
+            <tr class="subcategory">
+              <td>  8. Upstream leased assets (Excluded)</td>
+              <td>N/A</td>
+              <td>-</td>
+              <td>No upstream leased assets</td>
+              <td>E1-6.55</td>
+            </tr>
+            <tr class="subcategory">
+              <td>  9. Downstream transportation and distribution (Excluded)</td>
+              <td>N/A</td>
+              <td>-</td>
+              <td>Not applicable - B2B services</td>
+              <td>E1-6.55</td>
+            </tr>
+            <tr class="subcategory">
+              <td>  10. Processing of sold products (Excluded)</td>
+              <td>N/A</td>
+              <td>-</td>
+              <td>Not applicable - services company</td>
+              <td>E1-6.55</td>
+            </tr>
+            <tr class="subcategory">
+              <td>  11. Use of sold products (Excluded)</td>
+              <td>N/A</td>
+              <td>-</td>
+              <td>Not applicable - services only</td>
+              <td>E1-6.55</td>
+            </tr>
+            <tr class="subcategory">
+              <td>  12. End-of-life treatment of sold products (Excluded)</td>
+              <td>N/A</td>
+              <td>-</td>
+              <td>Not applicable - no physical products</td>
+              <td>E1-6.55</td>
+            </tr>
+            <tr class="subcategory">
+              <td>  13. Downstream leased assets (Excluded)</td>
+              <td>N/A</td>
+              <td>-</td>
+              <td>No downstream leased assets</td>
+              <td>E1-6.55</td>
+            </tr>
+            <tr class="subcategory">
+              <td>  14. Franchises (Excluded)</td>
+              <td>N/A</td>
+              <td>-</td>
+              <td>No franchises</td>
+              <td>E1-6.55</td>
+            </tr>
+            <tr class="subcategory">
+              <td>  15. Investments (Excluded)</td>
+              <td>N/A</td>
+              <td>-</td>
+              <td>De minimis (&lt;1% of total)</td>
+              <td>E1-6.55</td>
+            </tr>
+            <tr class="total">
+              <td>Scope 3 Total</td>
+              <td>
+                <ns0:nonFraction contextRef="c-period" unitRef="u-tCO2e" decimals="2" name="esrs-e1:GrossScope3Emissions">37.15</ns0:nonFraction>
+              </td>
+              <td colspan="2">See categories above</td>
+              <td>E1-6.55</td>
+            </tr>
+            <tr class="grand-total">
+              <td>
+                <strong>Total GHG emissions</strong>
+              </td>
+              <td>
+                <strong>
+                  <ns0:nonFraction contextRef="c-period" unitRef="u-tCO2e" decimals="2" name="esrs-e1:TotalGHGEmissions">182.85</ns0:nonFraction>
+                </strong>
+              </td>
+              <td colspan="2">Mixed</td>
+              <td>E1-6.56</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="disclosure">
+        <h3>Scope 3 Calculation Methodology</h3>
+        <p>
+          Methodology standard: 
+          <ns0:nonNumeric contextRef="c-period" name="ghg:Scope3MethodologyStandard">GHG Protocol Corporate Value Chain (Scope 3) Standard</ns0:nonNumeric>
+        </p>
+        <p>
+          Organizational boundary: 
+          <ns0:nonNumeric contextRef="c-period" name="ghg:OrganizationalBoundary">Operational control</ns0:nonNumeric>
+        </p>
+        <h4>Key Emission Factor Sources</h4>
+        <table class="emission-factors">
+          <thead>
+            <tr>
+              <th>Scope 3 Category</th>
+              <th>Primary Data Source</th>
+              <th>Factor Source</th>
+              <th>Update Frequency</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Category 1</td>
+              <td>Spend data</td>
+              <td>EPA Supply Chain Factors 2024</td>
+              <td>Annual</td>
+            </tr>
+            <tr>
+              <td>Category 3</td>
+              <td>Energy consumption</td>
+              <td>DEFRA 2024 WTT factors</td>
+              <td>Annual</td>
+            </tr>
+            <tr>
+              <td>Category 4</td>
+              <td>Distance &amp; weight</td>
+              <td>GLEC Framework v3.0</td>
+              <td>Periodic</td>
+            </tr>
+            <tr>
+              <td>Category 6</td>
+              <td>Travel records</td>
+              <td>DEFRA 2024 business travel</td>
+              <td>Annual</td>
+            </tr>
+            <tr>
+              <td>Category 11</td>
+              <td>Product energy use</td>
+              <td>IEA regional grid factors</td>
+              <td>Annual</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="disclosure">
+        <h3>E1-7: GHG removals and carbon credits</h3>
+        <p>
+          GHG removals from own operations: 
+          <ns0:nonFraction contextRef="c-period" unitRef="u-tCO2e" decimals="2" name="esrs-e1:GHGRemovals">5.0</ns0:nonFraction>
+        </p>
+        <p>
+          Carbon credits cancelled in reporting period: 
+          <ns0:nonFraction contextRef="c-period" unitRef="u-tCO2e" decimals="2" name="esrs-e1:CarbonCreditsCancelled">10.0</ns0:nonFraction>
+        </p>
+      </div>
+      <div class="disclosure">
+        <h3>E1-9: Anticipated financial effects</h3>
+        <table class="financial-risks">
+          <thead>
+            <tr>
+              <th>Risk Type</th>
+              <th>Time Horizon</th>
+              <th>Potential Impact (EUR)</th>
+              <th>Likelihood</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Physical - Flooding</td>
+              <td>Medium-term (2030)</td>
+              <td>
+                <ns0:nonFraction contextRef="c-period" unitRef="u-EUR" decimals="0" name="esrs-e1:FinancialRiskImpact">2000000</ns0:nonFraction>
+              </td>
+              <td>Likely</td>
+            </tr>
+            <tr>
+              <td>Transition - Carbon pricing</td>
+              <td>Short-term (2025)</td>
+              <td>
+                <ns0:nonFraction contextRef="c-period" unitRef="u-EUR" decimals="0" name="esrs-e1:FinancialRiskImpact">500000</ns0:nonFraction>
+              </td>
+              <td>Very likely</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="disclosure">
+        <h3>Data Quality Assessment</h3>
+        <p>
+          Overall data quality score: 
+          <ns0:nonNumeric contextRef="c-period" name="ghg:DataQualityScore">Medium-High</ns0:nonNumeric>
+        </p>
+      </div>
+    </section>
+  </body>
+</html>

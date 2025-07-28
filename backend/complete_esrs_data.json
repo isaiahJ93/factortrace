@@ -1,0 +1,126 @@
+{
+  "organization": "Your Company Name",
+  "lei": "529900HNOAA1KXQJUQ27",
+  "reporting_period": 2024,
+  "governance": {
+    "board_oversight": true,
+    "discussion_frequency": "Quarterly"
+  },
+  "transition_plan": {
+    "adopted": true,
+    "aligned_1_5c": true
+  },
+  "targets": {
+    "targets": [{
+      "type": "Absolute reduction",
+      "scope": "Scopes 1, 2 & 3",
+      "base_year": "2019",
+      "target_year": "2030",
+      "reduction_percent": 50,
+      "progress_percent": 25
+    }]
+  },
+  "emissions": {
+    "scope1": 100.5,
+    "scope1_stationary": 60.5,
+    "scope1_mobile": 30,
+    "scope1_process": 10,
+    "scope1_fugitive": 0,
+    "scope2_location": 50.3,
+    "scope2_market": 45.2
+  },
+  "scope3_detailed": {
+    "category_1": {
+      "emissions_tco2e": 15.5,
+      "calculation_method": "Spend-based",
+      "data_quality": "Medium",
+      "emission_factor_source": "EPA Supply Chain Factors 2024"
+    },
+    "category_2": {
+      "emissions_tco2e": 5.2,
+      "calculation_method": "Average-data",
+      "data_quality": "Medium",
+      "emission_factor_source": "Ecoinvent 3.9"
+    },
+    "category_3": {
+      "emissions_tco2e": 3.8,
+      "calculation_method": "Average-data",
+      "data_quality": "High",
+      "emission_factor_source": "DEFRA 2024 WTT factors"
+    },
+    "category_4": {
+      "emissions_tco2e": 4.1,
+      "calculation_method": "Distance-based",
+      "data_quality": "High",
+      "emission_factor_source": "GLEC Framework v3.0"
+    },
+    "category_5": {
+      "emissions_tco2e": 0.8,
+      "calculation_method": "Waste-type-specific",
+      "data_quality": "High",
+      "emission_factor_source": "EPA WARM"
+    },
+    "category_6": {
+      "emissions_tco2e": 7.2,
+      "calculation_method": "Distance-based",
+      "data_quality": "High",
+      "emission_factor_source": "DEFRA 2024 business travel"
+    },
+    "category_7": {
+      "emissions_tco2e": 0.55,
+      "calculation_method": "Average-data",
+      "data_quality": "Medium",
+      "emission_factor_source": "Local transport survey"
+    },
+    "category_8": {
+      "excluded": true,
+      "exclusion_reason": "No upstream leased assets"
+    },
+    "category_9": {
+      "excluded": true,
+      "exclusion_reason": "Not applicable - B2B services"
+    },
+    "category_10": {
+      "excluded": true,
+      "exclusion_reason": "Not applicable - services company"
+    },
+    "category_11": {
+      "excluded": true,
+      "exclusion_reason": "Not applicable - services only"
+    },
+    "category_12": {
+      "excluded": true,
+      "exclusion_reason": "Not applicable - no physical products"
+    },
+    "category_13": {
+      "excluded": true,
+      "exclusion_reason": "No downstream leased assets"
+    },
+    "category_14": {
+      "excluded": true,
+      "exclusion_reason": "No franchises"
+    },
+    "category_15": {
+      "excluded": true,
+      "exclusion_reason": "De minimis (<1% of total)"
+    }
+  },
+  "removals": {
+    "own_removals": 5.0,
+    "credits_cancelled": 10.0
+  },
+  "financial_effects": {
+    "risks": [{
+      "type": "Physical - Flooding",
+      "time_horizon": "Medium-term (2030)",
+      "impact_eur": 2000000,
+      "likelihood": "Likely"
+    }, {
+      "type": "Transition - Carbon pricing",
+      "time_horizon": "Short-term (2025)",
+      "impact_eur": 500000,
+      "likelihood": "Very likely"
+    }]
+  },
+  "data_quality_score": "Medium-High"
+}

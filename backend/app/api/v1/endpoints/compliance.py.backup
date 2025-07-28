@@ -1,0 +1,71 @@
+"""Compliance endpoints for CSRD/ESRS regulatory requirements"""
+
+from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel
+from typing import Dict, Any
+from app.compliance_engine import (
+    EliteEmissionsCalculator,
+    validate_compliance,
+    generate_ixbrl_report,
+    EmissionCalculationInput,
+)
+
+
+router = APIRouter()
+
+
+class ComplianceCheckRequest(BaseModel):
+    """Request model for compliance checks"""
+    voucher_id: str
+    check_type: str = "full"
+    include_cbam: bool = True
+
+
+class ComplianceCheckResponse(BaseModel):
+    """Response model for compliance checks"""
+    voucher_id: str
+    compliant: bool
+    score: float
+    issues: list[str]
+    recommendations: list[str]
+
+
+@router.post("/check", response_model=ComplianceCheckResponse)
+async def check_compliance(request: ComplianceCheckRequest):
+    """
+    Run compliance checks on a voucher.
+    
+    Checks include:
+    - ESRS E1-6 requirements
+    - CBAM compliance
+    - Data quality thresholds
+    """
+    # Placeholder implementation
+    return ComplianceCheckResponse(
+        voucher_id=request.voucher_id,
+        compliant=True,
+        score=0.95,
+        issues=[],
+        recommendations=["Consider adding Scope 3 Category 11 data"],
+    )
+
+
+@router.get("/status")
+async def get_status():
+    return {"status": "ok"}
+
+
+@router.get("/standards")
+async def get_compliance_standards():
+    """Get list of supported compliance standards"""
+    return {
+        "standards": [
+            {"code": "ESRS", "version": "2025.1", "name": "European Sustainability Reporting Standards"},
+            {"code": "CBAM", "version": "2023/1773", "name": "Carbon Border Adjustment Mechanism"},
+            {"code": "GHG", "version": "2024", "name": "GHG Protocol Corporate Standard"},
+        ]
+    }
+
+@router.post("/export")
+async def export_ixbrl(data: dict):
+    return generate_ixbrl_report(data)

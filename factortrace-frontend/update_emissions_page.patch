@@ -1,0 +1,36 @@
+// Add this state at the top with other states:
+const [selectedCategory, setSelectedCategory] = useState<string>('');
+
+// Update fetchFactors to include category:
+const fetchFactors = async () => {
+  try {
+    let url = `http://localhost:8000/api/v1/emission-factors?scope=${selectedScope}`;
+    if (selectedCategory) {
+      url += `&category=${selectedCategory}`;
+    }
+    const response = await fetch(url);
+    if (response.ok) {
+      const data = await response.json();
+      setFactors(data);
+    }
+  } catch (err) {
+    console.error('Failed to fetch factors:', err);
+  }
+};
+
+// Add this UI after the scope selector:
+{categories && selectedScope && (
+  <div className="mb-6">
+    <h3 className="font-semibold mb-2">Select Category:</h3>
+    <select 
+      value={selectedCategory} 
+      onChange={(e) => setSelectedCategory(e.target.value)}
+      className="border rounded px-3 py-2"
+    >
+      <option value="">All Categories</option>
+      {categories[selectedScope]?.map((cat: string) => (
+        <option key={cat} value={cat}>{cat}</option>
+      ))}
+    </select>
+  </div>
+)}

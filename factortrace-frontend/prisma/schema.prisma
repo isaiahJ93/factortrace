@@ -1,0 +1,249 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  password      String?
+  emailVerified DateTime?
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  accounts      Account[]
+  sessions      Session[]
+  vouchers      Voucher[]
+  dataEntries   XBRLDataEntry[]
+  reports       Report[]
+  payments      Payment[]
+  
+  @@index([email])
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+}
+
+model Voucher {
+  id            String    @id @default(cuid())
+  code          String    @unique
+  userId        String?
+  status        VoucherStatus @default(VALID)
+  permissions   String
+  remainingUses Int       @default(10)
+  totalUses     Int       @default(10)
+  createdAt     DateTime  @default(now())
+  expiresAt     DateTime?
+  lastUsedAt    DateTime?
+  
+  user          User?     @relation(fields: [userId], references: [id])
+  dataEntries   XBRLDataEntry[]
+  reports       Report[]
+  payment       Payment?  @relation(fields: [paymentId], references: [id])
+  paymentId     String?   @unique
+  
+  @@index([code])
+  @@index([userId])
+  @@index([status])
+}
+
+enum VoucherStatus {
+  VALID
+  EXPIRED
+  USED
+  INVALID
+  REVOKED
+}
+
+model XBRLDataEntry {
+  id            String    @id @default(cuid())
+  sessionId     String    @unique
+  userId        String
+  voucherId     String
+  factData      String
+  validationState String?
+  status        DataEntryStatus @default(DRAFT)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  submittedAt   DateTime?
+  validatedAt   DateTime?
+  
+  user          User      @relation(fields: [userId], references: [id])
+  voucher       Voucher   @relation(fields: [voucherId], references: [id])
+  reports       Report[]
+  
+  @@index([sessionId])
+  @@index([userId])
+  @@index([voucherId])
+  @@index([status])
+}
+
+enum DataEntryStatus {
+  DRAFT
+  SUBMITTED
+  VALIDATING
+  VALIDATED
+  FAILED
+}
+
+model Report {
+  id            String    @id @default(cuid())
+  userId        String
+  dataEntryId   String
+  voucherId     String
+  format        ReportFormat
+  storageUrl    String?
+  fileSize      Int?
+  checksum      String?
+  isSigned      Boolean   @default(false)
+  signatureData String?
+  status        ReportStatus @default(PENDING)
+  createdAt     DateTime  @default(now())
+  expiresAt     DateTime?
+  downloadCount Int       @default(0)
+  
+  user          User      @relation(fields: [userId], references: [id])
+  dataEntry     XBRLDataEntry @relation(fields: [dataEntryId], references: [id])
+  voucher       Voucher   @relation(fields: [voucherId], references: [id])
+  
+  @@index([userId])
+  @@index([dataEntryId])
+  @@index([status])
+}
+
+enum ReportFormat {
+  PDF
+  XLSX
+  XBRL
+  IXBRL
+  JSON
+}
+
+enum ReportStatus {
+  PENDING
+  GENERATING
+  COMPLETE
+  FAILED
+  EXPIRED
+}
+
+model Payment {
+  id            String    @id @default(cuid())
+  userId        String
+  amount        String
+  currency      String    @default("USD")
+  stripePaymentIntentId String? @unique
+  stripeSessionId       String? @unique
+  status        PaymentStatus @default(PENDING)
+  productType   ProductType
+  quantity      Int       @default(1)
+  createdAt     DateTime  @default(now())
+  completedAt   DateTime?
+  
+  user          User      @relation(fields: [userId], references: [id])
+  voucher       Voucher?
+  
+  @@index([userId])
+  @@index([status])
+  @@index([stripePaymentIntentId])
+}
+
+enum PaymentStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+enum ProductType {
+  VOUCHER_SINGLE
+  VOUCHER_PACK_5
+  VOUCHER_PACK_10
+  VOUCHER_UNLIMITED
+}
+
+model AuditLog {
+  id            String    @id @default(cuid())
+  userId        String?
+  action        String
+  entityType    String
+  entityId      String?
+  metadata      String?
+  ipAddress     String?
+  userAgent     String?
+  createdAt     DateTime  @default(now())
+  
+  @@index([userId])
+  @@index([action])
+  @@index([entityType, entityId])
+  @@index([createdAt])
+}
+
+model Job {
+  id            String    @id @default(cuid())
+  type          JobType
+  payload       String
+  result        String?
+  status        JobStatus @default(QUEUED)
+  attempts      Int       @default(0)
+  maxAttempts   Int       @default(3)
+  queuedAt      DateTime  @default(now())
+  startedAt     DateTime?
+  completedAt   DateTime?
+  failedAt      DateTime?
+  error         String?
+  
+  @@index([type])
+  @@index([status])
+  @@index([queuedAt])
+}
+
+enum JobType {
+  XBRL_VALIDATION
+  REPORT_GENERATION
+  EMAIL_NOTIFICATION
+  VOUCHER_EXPIRY_CHECK
+}
+
+enum JobStatus {
+  QUEUED
+  PROCESSING
+  COMPLETED
+  FAILED
+  CANCELLED
+}

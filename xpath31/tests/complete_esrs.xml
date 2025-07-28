@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xbrl xmlns:xbrli="http://www.xbrl.org/2003/instance"
+      xmlns:esrs="https://xbrl.efrag.org/taxonomy/2023-12-31/esrs"
+      xmlns:iso4217="http://www.xbrl.org/2003/iso4217"
+      xmlns:xbrldi="http://xbrl.org/2006/xbrldi"
+      xmlns:xlink="http://www.w3.org/1999/xlink">
+  
+  <!-- Contexts -->
+  <xbrli:context id="c2024">
+    <xbrli:entity>
+      <xbrli:identifier scheme="http://www.example.com">COMPANY-001</xbrli:identifier>
+    </xbrli:entity>
+    <xbrli:period>
+      <xbrli:instant>2024-12-31</xbrli:instant>
+    </xbrli:period>
+  </xbrli:context>
+  
+  <!-- Units -->
+  <xbrli:unit id="EUR">
+    <xbrli:measure>iso4217:EUR</xbrli:measure>
+  </xbrli:unit>
+  
+  <xbrli:unit id="tCO2e">
+    <xbrli:measure>esrs:tonnesCO2e</xbrli:measure>
+  </xbrli:unit>
+  
+  <xbrli:unit id="MWh">
+    <xbrli:measure>esrs:MegawattHour</xbrli:measure>
+  </xbrli:unit>
+  
+  <xbrli:unit id="m3">
+    <xbrli:measure>esrs:CubicMetre</xbrli:measure>
+  </xbrli:unit>
+  
+  <xbrli:unit id="tonnes">
+    <xbrli:measure>esrs:Tonne</xbrli:measure>
+  </xbrli:unit>
+  
+  <xbrli:unit id="pure">
+    <xbrli:measure>xbrli:pure</xbrli:measure>
+  </xbrli:unit>
+  
+  <!-- Facts -->
+  <esrs:GrossScope1GHGEmissions contextRef='c2024' unitRef='tCO2e' decimals='0'>5,000</esrs:GrossScope1GHGEmissions>
+  <esrs:GrossScope2MarketBased contextRef='c2024' unitRef='tCO2e' decimals='0'>3,000</esrs:GrossScope2MarketBased>
+  <esrs:GrossScope3TotalEmissions contextRef='c2024' unitRef='tCO2e' decimals='0'>6,000</esrs:GrossScope3TotalEmissions>
+  <esrs:TotalGHGEmissions contextRef='c2024' unitRef='tCO2e' decimals='0'>14,000</esrs:TotalGHGEmissions>
+  <esrs:RenewableEnergyPercentage contextRef='c2024' unitRef='pure' decimals='1'>67</esrs:RenewableEnergyPercentage>
+  <esrs:TotalEnergyConsumption contextRef='c2024' unitRef='MWh' decimals='0'>125,000</esrs:TotalEnergyConsumption>
+  <esrs:Scope3Category1PurchasedGoods contextRef='c2024' unitRef='tCO2e' decimals='0'>4,000</esrs:Scope3Category1PurchasedGoods>
+  <esrs:Scope3Category2CapitalGoods contextRef='c2024' unitRef='tCO2e' decimals='0'>2,000</esrs:Scope3Category2CapitalGoods>
+  <esrs:AirPollutants contextRef='c2024' unitRef='tonnes' decimals='1'>45</esrs:AirPollutants>
+  <esrs:NOxEmissions contextRef='c2024' unitRef='tonnes' decimals='1'>12</esrs:NOxEmissions>
+  <esrs:SOxEmissions contextRef='c2024' unitRef='tonnes' decimals='1'>8</esrs:SOxEmissions>
+  <esrs:TotalWaterConsumption contextRef='c2024' unitRef='m3' decimals='0'>2,100,000</esrs:TotalWaterConsumption>
+  <esrs:WaterWithdrawal contextRef='c2024' unitRef='m3' decimals='0'>2,500,000</esrs:WaterWithdrawal>
+  <esrs:WaterIntensity contextRef='c2024' unitRef='m3' decimals='2'>2.1</esrs:WaterIntensity>
+  <esrs:ProtectedAreasImpacted contextRef='c2024' unitRef='hectares' decimals='0'>0</esrs:ProtectedAreasImpacted>
+  <esrs:LandUseChange contextRef='c2024' unitRef='hectares' decimals='0'>5</esrs:LandUseChange>
+  <esrs:WasteGenerated contextRef='c2024' unitRef='tonnes' decimals='0'>45,000</esrs:WasteGenerated>
+  <esrs:WasteRecycled contextRef='c2024' unitRef='tonnes' decimals='0'>37,800</esrs:WasteRecycled>
+  <esrs:WasteRecyclingRate contextRef='c2024' unitRef='pure' decimals='1'>84</esrs:WasteRecyclingRate>
+  <esrs:HazardousWaste contextRef='c2024' unitRef='tonnes' decimals='0'>500</esrs:HazardousWaste>
+  <esrs:TotalEmployees contextRef='c2024' unitRef='pure' decimals='0'>8,456</esrs:TotalEmployees>
+  <esrs:GenderDiversityAllEmployees contextRef='c2024' unitRef='pure' decimals='1'>45</esrs:GenderDiversityAllEmployees>
+  <esrs:GenderPayGap contextRef='c2024' unitRef='pure' decimals='1'>12</esrs:GenderPayGap>
+  <esrs:AverageTrainingHours contextRef='c2024' unitRef='hours' decimals='1'>32</esrs:AverageTrainingHours>
+  <esrs:WorkRelatedInjuries contextRef='c2024' unitRef='pure' decimals='2'>0.23</esrs:WorkRelatedInjuries>
+  <esrs:EmployeeTurnoverRate contextRef='c2024' unitRef='pure' decimals='1'>8</esrs:EmployeeTurnoverRate>
+  <esrs:ConfirmedIncidentsOfCorruption contextRef='c2024' unitRef='pure' decimals='0'>0</esrs:ConfirmedIncidentsOfCorruption>
+  <esrs:PoliticalContributions contextRef='c2024' unitRef='EUR' decimals='0'>0</esrs:PoliticalContributions>
+  <esrs:LobbyingExpenditure contextRef='c2024' unitRef='EUR' decimals='0'>50,000</esrs:LobbyingExpenditure>
+  <esrs:WhistleblowingCases contextRef='c2024' unitRef='pure' decimals='0'>3</esrs:WhistleblowingCases>
+  <esrs:Revenue contextRef='c2024' unitRef='EUR' decimals='-6'>150</esrs:Revenue>
+  <esrs:TotalAssets contextRef='c2024' unitRef='EUR' decimals='-9'>2.5</esrs:TotalAssets>
+  <esrs:NetProfit contextRef='c2024' unitRef='EUR' decimals='-6'>25</esrs:NetProfit>
+</xbrl>

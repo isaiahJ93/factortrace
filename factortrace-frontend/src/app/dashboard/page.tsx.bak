@@ -1,0 +1,1011 @@
+'use client';
+
+import React, { useState, useEffect, useMemo } from 'react';
+import { 
+  BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, 
+  XAxis, YAxis, CartesianGrid, Tooltip, Legend, 
+  ResponsiveContainer, RadialBarChart, RadialBar, 
+  AreaChart, Area, ComposedChart, Scatter
+} from 'recharts';
+import { 
+  Activity, TrendingUp, AlertCircle, CheckCircle, 
+  Download, Plus, FileText, BarChart3, Zap, Gauge,
+  ArrowUpRight, ArrowDownRight, Target, Loader2,
+  RefreshCw, Filter, Calendar, ChevronRight
+} from 'lucide-react';
+
+// Enhanced animation hook with spring physics
+const useSpringValue = (targetValue, duration = 2000) => {
+  const [value, setValue] = useState(0);
+  
+  useEffect(() => {
+    const startTime = Date.now();
+    const startValue = value;
+    const diff = targetValue - startValue;
+    
+    const animate = () => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      
+      // Easing function for smooth animation
+      const easeOutExpo = 1 - Math.pow(2, -10 * progress);
+      
+      setValue(startValue + diff * easeOutExpo);
+      
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      }
+    };
+    
+    requestAnimationFrame(animate);
+  }, [targetValue]);
+  
+  return value;
+};
+
+// Custom tooltip with glassmorphism
+const CustomTooltip = ({ active, payload, label }) => {
+  if (active && payload && payload.length) {
+    return (
+      <div style={{
+        background: 'rgba(255, 255, 255, 0.95)',
+        backdropFilter: 'blur(10px)',
+        border: '1px solid rgba(0, 0, 0, 0.1)',
+        borderRadius: '0.5rem',
+        padding: '0.75rem',
+        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+      }}>
+        <p style={{ fontSize: '0.875rem', fontWeight: '600', marginBottom: '0.5rem' }}>{label}</p>
+        {payload.map((entry, index) => (
+          <p key={index} style={{ fontSize: '0.875rem', color: entry.color }}>
+            {entry.name}: {entry.value.toFixed(2)} tCO₂e
+          </p>
+        ))}
+      </div>
+    );
+  }
+  return null;
+};
+
+// Performance indicator component
+const PerformanceIndicator = ({ value, previousValue, format = 'percent' }) => {
+  const change = ((value - previousValue) / previousValue) * 100;
+  const isPositive = change > 0;
+  const color = isPositive ? '#dc2626' : '#059669'; // Red for increase, green for decrease in emissions
+  
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', fontSize: '0.875rem' }}>
+      {isPositive ? (
+        <ArrowUpRight style={{ width: '1rem', height: '1rem', color, marginRight: '0.25rem' }} />
+      ) : (
+        <ArrowDownRight style={{ width: '1rem', height: '1rem', color, marginRight: '0.25rem' }} />
+      )}
+      <span style={{ color, fontWeight: '500' }}>
+        {Math.abs(change).toFixed(1)}% vs last {format === 'month' ? 'month' : 'year'}
+      </span>
+    </div>
+  );
+};
+
+const FactorTraceDashboard = () => {
+  const [selectedScope, setSelectedScope] = useState('all');
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectedTimeRange, setSelectedTimeRange] = useState('4m'); // 4 months
+  const [refreshKey, setRefreshKey] = useState(0);
+  
+  // Animated values with spring physics
+  const animatedEmissions = useSpringValue(1247.3);
+  const animatedQuality = useSpringValue(87);
+  const animatedCompliance = useSpringValue(92);
+  
+  // Enhanced data with more dimensions
+  const emissionsByScope = [
+    { name: 'Scope 1', value: 234.5, percentage: 18.8, color: '#6366F1', previousValue: 228.3 },
+    { name: 'Scope 2', value: 156.2, percentage: 12.5, color: '#8B5CF6', previousValue: 162.1 },
+    { name: 'Scope 3', value: 856.6, percentage: 68.7, color: '#EC4899', previousValue: 842.4 }
+  ];
+
+  // Extended trend data
+  const monthlyTrend = useMemo(() => {
+    const baseData = [
+      { month: 'Jan', scope1: 220, scope2: 150, scope3: 810, quality: 82, target: 1150 },
+      { month: 'Feb', scope1: 225, scope2: 148, scope3: 825, quality: 84, target: 1150 },
+      { month: 'Mar', scope1: 230, scope2: 152, scope3: 840, quality: 85, target: 1150 },
+      { month: 'Apr', scope1: 234.5, scope2: 156.2, scope3: 856.6, quality: 87, target: 1150 }
+    ];
+    
+    return baseData.map(item => ({
+      ...item,
+      total: item.scope1 + item.scope2 + item.scope3,
+      efficiency: Math.random() * 20 + 70 // Simulated efficiency metric
+    }));
+  }, [refreshKey]);
+
+  const dataQualityMetrics = [
+    { category: 'Primary Data', score: 92, color: '#10B981', target: 95 },
+    { category: 'Estimates', score: 78, color: '#F59E0B', target: 85 },
+    { category: 'Proxies', score: 65, color: '#EF4444', target: 75 }
+  ];
+
+  const complianceStatus = [
+    { standard: 'CSRD', status: 'Compliant', progress: 100, deadline: '2024-12-31' },
+    { standard: 'ESRS E1', status: 'In Progress', progress: 87, deadline: '2025-01-15' },
+    { standard: 'CBAM', status: 'In Progress', progress: 92, deadline: '2025-02-01' },
+    { standard: 'SBTi', status: 'Pending', progress: 78, deadline: '2025-03-31' }
+  ];
+
+  const materialCategories = [
+    { name: 'Transportation', emissions: 342.1, quality: 89, trend: '+2.3%', subcategories: 5 },
+    { name: 'Purchased Goods', emissions: 289.4, quality: 85, trend: '-1.2%', subcategories: 12 },
+    { name: 'Capital Goods', emissions: 156.7, quality: 92, trend: '+0.8%', subcategories: 8 },
+    { name: 'Fuel & Energy', emissions: 134.2, quality: 94, trend: '-3.1%', subcategories: 4 },
+    { name: 'Waste', emissions: 89.3, quality: 78, trend: '+1.5%', subcategories: 6 }
+  ];
+
+  // Action handlers
+  const handleRefresh = () => {
+    setIsLoading(true);
+    setTimeout(() => {
+      setRefreshKey(prev => prev + 1);
+      setIsLoading(false);
+    }, 1000);
+  };
+
+  const handleNewVoucher = () => {
+    console.log('Navigating to voucher creation...');
+    // In your actual Next.js app, use: router.push('/vouchers/create');
+    window.location.href = '/vouchers/create';
+  };
+
+  const handleGenerateReport = () => {
+    console.log('Generating comprehensive ESG report...');
+  };
+
+  const handleGenerateXBRL = () => {
+    console.log('Generating XBRL-compliant voucher...');
+  };
+
+  return (
+    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)', padding: '1.5rem' }}>
+      {/* Enhanced Header */}
+      <header style={{ marginBottom: '2rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div>
+            <h1 style={{ fontSize: '2rem', fontWeight: 'bold', color: '#0f172a', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <div style={{ 
+                background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', 
+                borderRadius: '0.75rem', 
+                padding: '0.5rem',
+                boxShadow: '0 4px 6px -1px rgba(16, 185, 129, 0.25)'
+              }}>
+                <Zap style={{ width: '1.5rem', height: '1.5rem', color: 'white' }} />
+              </div>
+              FactorTrace Dashboard
+            </h1>
+            <p style={{ color: '#64748b', marginTop: '0.25rem' }}>
+              Real-time emissions intelligence
+            </p>
+          </div>
+          <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+            {/* Time range selector */}
+            <select
+              value={selectedTimeRange}
+              onChange={(e) => setSelectedTimeRange(e.target.value)}
+              style={{
+                padding: '0.5rem 1rem',
+                background: 'white',
+                border: '1px solid #e5e7eb',
+                borderRadius: '0.5rem',
+                fontSize: '0.875rem',
+                cursor: 'pointer'
+              }}
+            >
+              <option value="1m">Last Month</option>
+              <option value="4m">Last 4 Months</option>
+              <option value="1y">Last Year</option>
+            </select>
+            
+            <button
+              onClick={handleRefresh}
+              disabled={isLoading}
+              style={{
+                padding: '0.5rem',
+                background: 'white',
+                border: '1px solid #e5e7eb',
+                borderRadius: '0.5rem',
+                cursor: isLoading ? 'not-allowed' : 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                transition: 'all 0.2s'
+              }}
+            >
+              {isLoading ? (
+                <Loader2 style={{ width: '1rem', height: '1rem', animation: 'spin 1s linear infinite' }} />
+              ) : (
+                <RefreshCw style={{ width: '1rem', height: '1rem' }} />
+              )}
+            </button>
+            
+            <button 
+              onClick={handleGenerateReport}
+              style={{ 
+                padding: '0.5rem 1rem', 
+                background: 'white', 
+                border: '1px solid #e5e7eb', 
+                borderRadius: '0.5rem',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                transition: 'all 0.2s',
+                boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)'
+              }}
+            >
+              <FileText style={{ width: '1rem', height: '1rem' }} />
+              Generate Report
+            </button>
+            
+            <button 
+              onClick={handleNewVoucher}
+              style={{ 
+                padding: '0.5rem 1rem', 
+                background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', 
+                color: 'white', 
+                border: 'none',
+                borderRadius: '0.5rem',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                transition: 'all 0.2s',
+                boxShadow: '0 4px 6px -1px rgba(16, 185, 129, 0.25)'
+              }}
+            >
+              <Plus style={{ width: '1rem', height: '1rem' }} />
+              New Voucher
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* Enhanced Key Metrics with Progress Rings */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
+        {/* Total Emissions Card */}
+        <div style={{ 
+          background: 'white', 
+          borderRadius: '1rem', 
+          padding: '1.5rem', 
+          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+          border: '1px solid rgba(0, 0, 0, 0.05)',
+          position: 'relative',
+          overflow: 'hidden'
+        }}>
+          <div style={{ 
+            position: 'absolute', 
+            top: '-2rem', 
+            right: '-2rem', 
+            width: '8rem', 
+            height: '8rem', 
+            background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', 
+            borderRadius: '50%',
+            opacity: 0.1
+          }} />
+          
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem', position: 'relative' }}>
+            <span style={{ fontSize: '0.875rem', fontWeight: '600', color: '#64748b' }}>Total Emissions</span>
+            <Activity style={{ width: '1.25rem', height: '1.25rem', color: '#10b981' }} />
+          </div>
+          <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#0f172a', marginBottom: '0.5rem' }}>
+            {animatedEmissions.toFixed(1)} tCO₂e
+          </div>
+          <PerformanceIndicator value={1247.3} previousValue={1219.4} format="month" />
+          
+          {/* Mini trend chart */}
+          <div style={{ marginTop: '1rem', height: '3rem' }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={monthlyTrend.slice(-3)}>
+                <Area 
+                  type="monotone" 
+                  dataKey="total" 
+                  stroke="#10b981" 
+                  fill="#10b981" 
+                  fillOpacity={0.1}
+                  strokeWidth={2}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Data Quality Score with Radial Chart */}
+        <div style={{ 
+          background: 'white', 
+          borderRadius: '1rem', 
+          padding: '1.5rem', 
+          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+          border: '1px solid rgba(0, 0, 0, 0.05)'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+            <span style={{ fontSize: '0.875rem', fontWeight: '600', color: '#64748b' }}>Data Quality Score</span>
+            <BarChart3 style={{ width: '1.25rem', height: '1.25rem', color: '#3b82f6' }} />
+          </div>
+          
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div>
+              <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#0f172a' }}>
+                {animatedQuality.toFixed(0)}%
+              </div>
+              <div style={{ fontSize: '0.875rem', color: '#64748b' }}>
+                Target: 90%
+              </div>
+            </div>
+            
+            {/* Circular progress indicator */}
+            <div style={{ width: '5rem', height: '5rem' }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <RadialBarChart cx="50%" cy="50%" innerRadius="70%" outerRadius="100%" data={[{ value: animatedQuality, fill: '#3b82f6' }]}>
+                  <RadialBar dataKey="value" cornerRadius={10} fill="#3b82f6" />
+                </RadialBarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+          
+          <div style={{ marginTop: '1rem', fontSize: '0.75rem', color: '#64748b' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span>Primary: 92%</span>
+              <span>Estimates: 78%</span>
+              <span>Proxies: 65%</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Compliance Rate with Timeline */}
+        <div style={{ 
+          background: 'white', 
+          borderRadius: '1rem', 
+          padding: '1.5rem', 
+          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+          border: '1px solid rgba(0, 0, 0, 0.05)'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+            <span style={{ fontSize: '0.875rem', fontWeight: '600', color: '#64748b' }}>Compliance Rate</span>
+            <CheckCircle style={{ width: '1.25rem', height: '1.25rem', color: '#10b981' }} />
+          </div>
+          <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#0f172a', marginBottom: '0.5rem' }}>
+            {animatedCompliance.toFixed(0)}%
+          </div>
+          
+          {/* Compliance badges */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
+            {['CSRD', 'ESRS', 'CBAM'].map(std => (
+              <span key={std} style={{ 
+                fontSize: '0.75rem', 
+                padding: '0.25rem 0.5rem', 
+                background: 'linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%)', 
+                color: '#065f46', 
+                borderRadius: '9999px',
+                fontWeight: '500'
+              }}>
+                {std}
+              </span>
+            ))}
+          </div>
+          
+          {/* Next deadline */}
+          <div style={{ 
+            padding: '0.5rem', 
+            background: '#fef3c7', 
+            borderRadius: '0.5rem',
+            fontSize: '0.75rem',
+            color: '#92400e'
+          }}>
+            <Calendar style={{ width: '0.875rem', height: '0.875rem', display: 'inline', marginRight: '0.25rem' }} />
+            Next deadline: ESRS E1 in 13 days
+          </div>
+        </div>
+
+        {/* Active Vouchers with Status Breakdown */}
+        <div style={{ 
+          background: 'white', 
+          borderRadius: '1rem', 
+          padding: '1.5rem', 
+          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+          border: '1px solid rgba(0, 0, 0, 0.05)'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+            <span style={{ fontSize: '0.875rem', fontWeight: '600', color: '#64748b' }}>Active Vouchers</span>
+            <FileText style={{ width: '1.25rem', height: '1.25rem', color: '#8b5cf6' }} />
+          </div>
+          <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#0f172a' }}>14</div>
+          
+          {/* Status breakdown */}
+          <div style={{ marginTop: '1rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.75rem', marginBottom: '0.5rem' }}>
+              <span style={{ color: '#64748b' }}>Verified</span>
+              <span style={{ fontWeight: '600', color: '#10b981' }}>11</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.75rem', marginBottom: '0.5rem' }}>
+              <span style={{ color: '#64748b' }}>Under Review</span>
+              <span style={{ fontWeight: '600', color: '#f59e0b' }}>3</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.75rem' }}>
+              <span style={{ color: '#64748b' }}>Draft</span>
+              <span style={{ fontWeight: '600', color: '#6b7280' }}>0</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content Grid */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '1.5rem' }}>
+        {/* Enhanced Emissions by Scope */}
+        <div style={{ 
+          background: 'white', 
+          borderRadius: '1rem', 
+          padding: '1.5rem', 
+          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+          border: '1px solid rgba(0, 0, 0, 0.05)'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+            <h3 style={{ fontSize: '1.125rem', fontWeight: '600', color: '#0f172a' }}>Emissions by Scope</h3>
+            <button style={{
+              padding: '0.25rem 0.5rem',
+              fontSize: '0.75rem',
+              background: '#f3f4f6',
+              border: 'none',
+              borderRadius: '0.375rem',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.25rem'
+            }}>
+              <Filter style={{ width: '0.875rem', height: '0.875rem' }} />
+              Filter
+            </button>
+          </div>
+          
+          <div style={{ height: '16rem' }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={emissionsByScope}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={({ percentage }) => `${percentage}%`}
+                  outerRadius={80}
+                  fill="#8884d8"
+                  dataKey="value"
+                  animationBegin={0}
+                  animationDuration={800}
+                >
+                  {emissionsByScope.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip content={<CustomTooltip />} />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+          
+          {/* Enhanced scope breakdown */}
+          <div style={{ marginTop: '1rem' }}>
+            {emissionsByScope.map(scope => (
+              <div key={scope.name} style={{ marginBottom: '0.75rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <div style={{ 
+                      width: '0.75rem', 
+                      height: '0.75rem', 
+                      borderRadius: '50%', 
+                      backgroundColor: scope.color,
+                      boxShadow: `0 0 0 3px ${scope.color}20`
+                    }} />
+                    <span style={{ fontSize: '0.875rem', fontWeight: '500', color: '#1e293b' }}>{scope.name}</span>
+                  </div>
+                  <div style={{ textAlign: 'right' }}>
+                    <span style={{ fontSize: '0.875rem', fontWeight: '600', color: '#0f172a' }}>
+                      {scope.value} tCO₂e
+                    </span>
+                    <PerformanceIndicator 
+                      value={scope.value} 
+                      previousValue={scope.previousValue} 
+                      format="month" 
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Enhanced Monthly Trend with Target Line */}
+        <div style={{ 
+          background: 'white', 
+          borderRadius: '1rem', 
+          padding: '1.5rem', 
+          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+          border: '1px solid rgba(0, 0, 0, 0.05)',
+          gridColumn: 'span 2'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+            <h3 style={{ fontSize: '1.125rem', fontWeight: '600', color: '#0f172a' }}>Emissions Trend & Target</h3>
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
+              {['all', '1', '2', '3'].map(scope => (
+                <button
+                  key={scope}
+                  onClick={() => setSelectedScope(scope)}
+                  style={{ 
+                    padding: '0.375rem 0.875rem', 
+                    fontSize: '0.875rem', 
+                    borderRadius: '0.5rem',
+                    border: 'none',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                    fontWeight: '500',
+                    background: selectedScope === scope 
+                      ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' 
+                      : '#f3f4f6',
+                    color: selectedScope === scope ? 'white' : '#64748b',
+                    boxShadow: selectedScope === scope 
+                      ? '0 4px 6px -1px rgba(16, 185, 129, 0.25)' 
+                      : 'none'
+                  }}
+                >
+                  {scope === 'all' ? 'All Scopes' : `Scope ${scope}`}
+                </button>
+              ))}
+            </div>
+          </div>
+          
+          <div style={{ height: '20rem' }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <ComposedChart data={monthlyTrend}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                <XAxis dataKey="month" />
+                <YAxis />
+                <Tooltip content={<CustomTooltip />} />
+                <Legend />
+                
+                {/* Stacked areas for emissions */}
+                <Area type="monotone" dataKey="scope1" stackId="1" stroke="#6366F1" fill="#6366F1" fillOpacity={0.6} name="Scope 1" />
+                <Area type="monotone" dataKey="scope2" stackId="1" stroke="#8B5CF6" fill="#8B5CF6" fillOpacity={0.6} name="Scope 2" />
+                <Area type="monotone" dataKey="scope3" stackId="1" stroke="#EC4899" fill="#EC4899" fillOpacity={0.6} name="Scope 3" />
+                
+                {/* Target line */}
+                <Line 
+                  type="monotone" 
+                  dataKey="target" 
+                  stroke="#dc2626" 
+                  strokeWidth={2} 
+                  strokeDasharray="5 5" 
+                  dot={false}
+                  name="Target"
+                />
+                
+                {/* Efficiency scatter */}
+                <Scatter dataKey="efficiency" fill="#10b981" name="Efficiency %" />
+              </ComposedChart>
+            </ResponsiveContainer>
+          </div>
+          
+          {/* Insights */}
+          <div style={{ 
+            marginTop: '1rem', 
+            padding: '1rem', 
+            background: 'linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)', 
+            borderRadius: '0.5rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.75rem'
+          }}>
+            <Target style={{ width: '1.25rem', height: '1.25rem', color: '#1e40af' }} />
+            <div>
+              <p style={{ fontSize: '0.875rem', fontWeight: '600', color: '#1e3a8a' }}>
+                8.3% above target
+              </p>
+              <p style={{ fontSize: '0.75rem', color: '#1e40af', marginTop: '0.125rem' }}>
+                Implement energy efficiency measures to meet Q2 target
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Enhanced Data Quality Distribution */}
+        <div style={{ 
+          background: 'white', 
+          borderRadius: '1rem', 
+          padding: '1.5rem', 
+          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+          border: '1px solid rgba(0, 0, 0, 0.05)'
+        }}>
+          <h3 style={{ fontSize: '1.125rem', fontWeight: '600', color: '#0f172a', marginBottom: '1rem' }}>
+            Data Quality Analysis
+          </h3>
+          
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            {dataQualityMetrics.map(metric => (
+              <div key={metric.category}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                  <span style={{ fontSize: '0.875rem', fontWeight: '500', color: '#1e293b' }}>
+                    {metric.category}
+                  </span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <span style={{ fontSize: '0.875rem', fontWeight: '600', color: metric.color }}>
+                      {metric.score}%
+                    </span>
+                    <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                      / {metric.target}%
+                    </span>
+                  </div>
+                </div>
+                <div style={{ position: 'relative' }}>
+                  <div style={{ 
+                    width: '100%', 
+                    background: '#e5e7eb', 
+                    borderRadius: '9999px', 
+                    height: '0.75rem',
+                    overflow: 'hidden'
+                  }}>
+                    <div
+                      style={{ 
+                        height: '0.75rem',
+                        borderRadius: '9999px',
+                        transition: 'width 0.5s',
+                        width: `${metric.score}%`,
+                        background: `linear-gradient(90deg, ${metric.color}cc 0%, ${metric.color} 100%)`
+                      }}
+                    />
+                    {/* Target marker */}
+                    <div style={{
+                      position: 'absolute',
+                      top: '-0.125rem',
+                      left: `${metric.target}%`,
+                      width: '0.125rem',
+                      height: '1rem',
+                      background: '#1e293b',
+                      transform: 'translateX(-50%)'
+                    }} />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          {/* Quality improvement suggestion */}
+          <div style={{ 
+            marginTop: '1.5rem', 
+            padding: '1rem', 
+            background: 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)', 
+            borderRadius: '0.5rem',
+            border: '1px solid #bbf7d0'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
+              <AlertCircle style={{ width: '1.25rem', height: '1.25rem', color: '#059669', marginTop: '0.125rem' }} />
+              <div>
+                <p style={{ fontSize: '0.875rem', fontWeight: '600', color: '#047857' }}>
+                  Improve Data Quality
+                </p>
+                <p style={{ fontSize: '0.75rem', color: '#059669', marginTop: '0.25rem' }}>
+                  Replace 15% of estimates with primary data to reach 90% quality score
+                </p>
+                <button style={{
+                  marginTop: '0.5rem',
+                  fontSize: '0.75rem',
+                  color: '#047857',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.25rem',
+                  fontWeight: '500'
+                }}>
+                  View recommendations
+                  <ChevronRight style={{ width: '0.875rem', height: '0.875rem' }} />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Enhanced Material Categories */}
+        <div style={{ 
+          background: 'white', 
+          borderRadius: '1rem', 
+          padding: '1.5rem', 
+          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+          border: '1px solid rgba(0, 0, 0, 0.05)',
+          gridColumn: 'span 2'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+            <h3 style={{ fontSize: '1.125rem', fontWeight: '600', color: '#0f172a' }}>
+              Emission Categories Performance
+            </h3>
+            <button style={{
+              padding: '0.375rem 0.75rem',
+              fontSize: '0.875rem',
+              background: 'linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%)',
+              border: 'none',
+              borderRadius: '0.5rem',
+              cursor: 'pointer',
+              fontWeight: '500'
+            }}>
+              View All Categories
+            </button>
+          </div>
+          
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            {materialCategories.map((category, index) => (
+              <div 
+                key={category.name} 
+                style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'space-between', 
+                  padding: '1rem', 
+                  background: index === 0 
+                    ? 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)' 
+                    : '#f9fafb', 
+                  borderRadius: '0.75rem',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                  border: index === 0 ? '1px solid #bbf7d0' : '1px solid transparent'
+                }}
+                onMouseEnter={(e) => {
+                  if (index !== 0) {
+                    e.currentTarget.style.background = '#f3f4f6';
+                    e.currentTarget.style.transform = 'translateX(4px)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (index !== 0) {
+                    e.currentTarget.style.background = '#f9fafb';
+                    e.currentTarget.style.transform = 'translateX(0)';
+                  }
+                }}
+              >
+                <div style={{ flex: 1 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <h4 style={{ fontWeight: '600', color: '#0f172a', fontSize: '0.9375rem' }}>
+                      {category.name}
+                    </h4>
+                    {index === 0 && (
+                      <span style={{
+                        fontSize: '0.75rem',
+                        padding: '0.125rem 0.5rem',
+                        background: '#10b981',
+                        color: 'white',
+                        borderRadius: '9999px',
+                        fontWeight: '500'
+                      }}>
+                        Top contributor
+                      </span>
+                    )}
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', marginTop: '0.5rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <span style={{ fontSize: '1.125rem', fontWeight: '600', color: '#0f172a' }}>
+                        {category.emissions}
+                      </span>
+                      <span style={{ fontSize: '0.875rem', color: '#64748b' }}>tCO₂e</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
+                      <Gauge style={{ width: '0.875rem', height: '0.875rem', color: '#6b7280' }} />
+                      <span style={{ fontSize: '0.875rem', color: '#64748b' }}>
+                        Quality: {category.quality}%
+                      </span>
+                    </div>
+                    <div style={{ fontSize: '0.875rem', color: '#64748b' }}>
+                      {category.subcategories} subcategories
+                    </div>
+                  </div>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                  <span style={{ 
+                    fontSize: '0.9375rem', 
+                    fontWeight: '600',
+                    color: category.trend.startsWith('+') ? '#dc2626' : '#059669',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.25rem'
+                  }}>
+                    {category.trend.startsWith('+') ? (
+                      <ArrowUpRight style={{ width: '1rem', height: '1rem' }} />
+                    ) : (
+                      <ArrowDownRight style={{ width: '1rem', height: '1rem' }} />
+                    )}
+                    {category.trend}
+                  </span>
+                  <ChevronRight style={{ width: '1.25rem', height: '1.25rem', color: '#94a3b8' }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Enhanced Compliance Status */}
+        <div style={{ 
+          background: 'white', 
+          borderRadius: '1rem', 
+          padding: '1.5rem', 
+          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+          border: '1px solid rgba(0, 0, 0, 0.05)'
+        }}>
+          <h3 style={{ fontSize: '1.125rem', fontWeight: '600', color: '#0f172a', marginBottom: '1rem' }}>
+            Compliance Tracker
+          </h3>
+          
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            {complianceStatus.map(item => (
+              <div key={item.standard} style={{ 
+                padding: '0.75rem',
+                background: item.progress === 100 ? '#f0fdf4' : '#f9fafb',
+                borderRadius: '0.5rem',
+                border: item.progress === 100 ? '1px solid #bbf7d0' : '1px solid transparent'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                  <div>
+                    <span style={{ fontSize: '0.875rem', fontWeight: '600', color: '#1e293b' }}>
+                      {item.standard}
+                    </span>
+                    <span style={{ 
+                      marginLeft: '0.5rem',
+                      fontSize: '0.75rem', 
+                      padding: '0.125rem 0.5rem', 
+                      borderRadius: '9999px',
+                      background: item.status === 'Compliant' ? '#10b981' : item.status === 'In Progress' ? '#3b82f6' : '#6b7280',
+                      color: 'white',
+                      fontWeight: '500'
+                    }}>
+                      {item.status}
+                    </span>
+                  </div>
+                  <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                    
+                  </span>
+                </div>
+                <div style={{ position: 'relative' }}>
+                  <div style={{ 
+                    width: '100%', 
+                    background: '#e5e7eb', 
+                    borderRadius: '9999px', 
+                    height: '0.5rem',
+                    overflow: 'hidden'
+                  }}>
+                    <div
+                      style={{ 
+                        height: '0.5rem',
+                        borderRadius: '9999px',
+                        transition: 'width 0.5s',
+                        background: item.progress === 100 
+                          ? 'linear-gradient(90deg, #10b981 0%, #059669 100%)' 
+                          : 'linear-gradient(90deg, #3b82f6 0%, #2563eb 100%)',
+                        width: `${item.progress}%`
+                      }}
+                    />
+                  </div>
+                  <span style={{
+                    position: 'absolute',
+                    right: '0',
+                    top: '-1.25rem',
+                    fontSize: '0.75rem',
+                    fontWeight: '600',
+                    color: item.progress === 100 ? '#059669' : '#3b82f6'
+                  }}>
+                    {item.progress}%
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          <button style={{ 
+            marginTop: '1rem', 
+            width: '100%', 
+            padding: '0.75rem', 
+            background: 'linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)', 
+            color: '#1e40af', 
+            border: 'none',
+            borderRadius: '0.5rem',
+            cursor: 'pointer',
+            fontSize: '0.875rem',
+            fontWeight: '600',
+            transition: 'all 0.2s',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '0.5rem'
+          }}>
+            <FileText style={{ width: '1rem', height: '1rem' }} />
+            View Compliance Report
+          </button>
+        </div>
+      </div>
+
+      {/* Enhanced Action Bar */}
+      <div style={{ 
+        marginTop: '2rem', 
+        background: 'linear-gradient(135deg, #059669 0%, #047857 100%)', 
+        borderRadius: '1rem', 
+        padding: '2rem', 
+        color: 'white',
+        position: 'relative',
+        overflow: 'hidden'
+      }}>
+        <div style={{
+          position: 'absolute',
+          top: '-4rem',
+          right: '-4rem',
+          width: '12rem',
+          height: '12rem',
+          background: 'radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%)',
+          borderRadius: '50%'
+        }} />
+        
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'relative' }}>
+          <div>
+            <h3 style={{ fontSize: '1.5rem', fontWeight: '700', marginBottom: '0.5rem' }}>
+              Ready to generate your XBRL report?
+            </h3>
+            <p style={{ color: '#d1fae5', fontSize: '1rem' }}>
+              All required data points collected with {animatedQuality.toFixed(0)}% average quality score
+            </p>
+            <div style={{ marginTop: '1rem', display: 'flex', gap: '1rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <CheckCircle style={{ width: '1.25rem', height: '1.25rem', color: '#10b981' }} />
+                <span style={{ fontSize: '0.875rem' }}>CSRD Compliant</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <CheckCircle style={{ width: '1.25rem', height: '1.25rem', color: '#10b981' }} />
+                <span style={{ fontSize: '0.875rem' }}>Audit Ready</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <CheckCircle style={{ width: '1.25rem', height: '1.25rem', color: '#10b981' }} />
+                <span style={{ fontSize: '0.875rem' }}>Real-time Data</span>
+              </div>
+            </div>
+          </div>
+          <button 
+            onClick={handleGenerateXBRL}
+            style={{ 
+              padding: '1rem 2rem', 
+              background: 'white', 
+              color: '#047857', 
+              border: 'none',
+              borderRadius: '0.5rem',
+              cursor: 'pointer',
+              fontWeight: '600',
+              fontSize: '1rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              transition: 'all 0.2s',
+              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
+            }}
+          >
+            <Download style={{ width: '1.25rem', height: '1.25rem' }} />
+            Generate XBRL Voucher
+          </button>
+        </div>
+      </div>
+
+      <style jsx>{`
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+      `}</style>
+    </div>
+  );
+};
+
+export default FactorTraceDashboard;

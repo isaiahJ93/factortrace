@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xbrl xmlns:xbrli="http://www.xbrl.org/2003/instance"
+      xmlns:esrs="https://xbrl.efrag.org/taxonomy/2023-12-31/esrs"
+      xmlns:iso4217="http://www.xbrl.org/2003/iso4217"
+      xmlns:xbrldi="http://xbrl.org/2006/xbrldi"
+      xmlns:xlink="http://www.w3.org/1999/xlink">
+  
+  <!-- Contexts -->
+  <xbrli:context id="c2024">
+    <xbrli:entity>
+      <xbrli:identifier scheme="http://www.example.com">COMPANY-001</xbrli:identifier>
+    </xbrli:entity>
+    <xbrli:period>
+      <xbrli:instant>2024-12-31</xbrli:instant>
+    </xbrli:period>
+  </xbrli:context>
+  
+  <!-- Units -->
+  <xbrli:unit id="EUR">
+    <xbrli:measure>iso4217:EUR</xbrli:measure>
+  </xbrli:unit>
+  
+  <xbrli:unit id="tCO2e">
+    <xbrli:measure>esrs:tonnesCO2e</xbrli:measure>
+  </xbrli:unit>
+  
+  <xbrli:unit id="MWh">
+    <xbrli:measure>esrs:MegawattHour</xbrli:measure>
+  </xbrli:unit>
+  
+  <xbrli:unit id="m3">
+    <xbrli:measure>esrs:CubicMetre</xbrli:measure>
+  </xbrli:unit>
+  
+  <xbrli:unit id="tonnes">
+    <xbrli:measure>esrs:Tonne</xbrli:measure>
+  </xbrli:unit>
+  
+  <xbrli:unit id="pure">
+    <xbrli:measure>xbrli:pure</xbrli:measure>
+  </xbrli:unit>
+  
+  <!-- Facts -->
+  <esrs:GrossScope1GHGEmissions contextRef='c2024' unitRef='tCO2e' decimals='0'>1</esrs:GrossScope1GHGEmissions>
+  <esrs:GrossScope2MarketBased contextRef='c2024' unitRef='tCO2e' decimals='0'>2</esrs:GrossScope2MarketBased>
+  <esrs:Scope3Category2CapitalGoods contextRef='c2024' unitRef='tCO2e' decimals='0'>3</esrs:Scope3Category2CapitalGoods>
+</xbrl>

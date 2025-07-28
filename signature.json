@@ -1,0 +1,18 @@
+{
+  "algorithm": "rsa-pss-sha256",
+  "signature": "RX2qLuq7aXw8Gpe2VMPbOARSB2v9auG8jjqOGSCnas6Bj9mEDlvf6vjD3VppDaI0rWLR2MB2GaLXwPRG6HGPSvKjljaE0Vlv0/NsxJAX58mhhFYPWqoo1EA9A8TGzqcYY9Z+X5YaPn4zOxJPVsk/2FPliO/uy6G9fhYGWog1opIqJzV+KtMgMW/CkCFGQjbGrapmeTasPrns2BKd4rU9SLTTqTLGKHueasn7rLoNVmbzZu3cSshMn2b54hn8aJs64tfbQeQ5fPxm8SeVpq6V0tMgRXYcgaBYjfnfhiLi03MiZ3qImGYHZTjzqw02jQfE5GGH0zt7wQd3PUeRztvR5A==",
+  "content_hash": "4f1c819744df79728efc26967d797694cd0960c8132dd28b13c5d3aeeab973d7",
+  "signing_time": "2025-07-03T00:45:57.559036Z",
+  "certificate_chain": null,
+  "signature_format": "CAdES-BASELINE-B-T",
+  "timestamp_token": "bW9ja190aW1lc3RhbXA=",
+  "timestamp_token_format": "RFC3161_DER",
+  "timestamp_message_imprint": "KShY8eA7HQyDjJw6Clne11BDtKjX47tb5Mv3s+9aZQk=",
+  "ocsp_response": null,
+  "quantum_ready": false,
+  "migration_info": {
+    "target_algorithm": "dilithium2-rsa-hybrid",
+    "planned_date": "2026-Q2",
+    "standard": "ETSI TS 119 312 V1.4.2"
+  }
+}

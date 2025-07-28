@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FactorTrace - Test Checkout</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; }
+        button { background: #5469d4; color: white; padding: 12px 24px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
+        button:hover { background: #4354c7; }
+        .result { margin-top: 20px; padding: 10px; background: #f0f0f0; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <h1>FactorTrace Voucher Purchase Test</h1>
+    <p>Click the button to test the Stripe checkout flow</p>
+    
+    <button id="checkout">Buy Compliance Voucher - €299</button>
+    
+    <div id="result" class="result" style="display:none;"></div>
+    
+    <script>
+    document.getElementById('checkout').addEventListener('click', async () => {
+        const resultDiv = document.getElementById('result');
+        resultDiv.style.display = 'block';
+        resultDiv.innerHTML = 'Creating checkout session...';
+        
+        try {
+            const response = await fetch('http://localhost:8001/api/v1/vouchers/checkout', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    company_email: 'test@example.com',
+                    company_name: 'Test Company',
+                    success_url: window.location.href.split('?')[0] + '?status=success',
+                    cancel_url: window.location.href.split('?')[0] + '?status=cancelled'
+                })
+            });
+            
+            const data = await response.json();
+            console.log('Response:', data);
+            
+            if (data.checkout_url) {
+                resultDiv.innerHTML = 'Redirecting to Stripe...';
+                setTimeout(() => {
+                    window.location.href = data.checkout_url;
+                }, 1000);
+            } else {
+                resultDiv.innerHTML = 'Error: ' + JSON.stringify(data);
+            }
+        } catch (error) {
+            resultDiv.innerHTML = 'Error: ' + error.message;
+        }
+    });
+    
+    // Check for return from Stripe
+    const urlParams = new URLSearchParams(window.location.search);
+    const status = urlParams.get('status');
+    if (status) {
+        document.getElementById('result').style.display = 'block';
+        document.getElementById('result').innerHTML = status === 'success' 
+            ? '✅ Payment successful! Check your email for the voucher.' 
+            : '❌ Payment cancelled.';
+    }
+    </script>
+</body>
+</html>

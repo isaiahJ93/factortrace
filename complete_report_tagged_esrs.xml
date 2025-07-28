@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xbrl xmlns:esrs="https://xbrl.efrag.org/taxonomy/2023-12-31/esrs">
+  <context id='c1'>
+    <entity><identifier scheme='http://www.example.com'>COMPANY</identifier></entity>
+    <period><instant>2024-12-31</instant></period>
+  </context>
+  <esrs:GrossScope1Emissions contextRef='c1' unitRef='tCO2e'>1</esrs:GrossScope1Emissions>
+  <esrs:GrossScope2MarketBased contextRef='c1' unitRef='tCO2e'>2</esrs:GrossScope2MarketBased>
+  <esrs:GrossScope3Emissions contextRef='c1' unitRef='tCO2e'>3</esrs:GrossScope3Emissions>
+  <esrs:Scope3Category1PurchasedGoods contextRef='c1' unitRef='tCO2e'>4,000</esrs:Scope3Category1PurchasedGoods>
+  <esrs:Scope3Category2CapitalGoods contextRef='c1' unitRef='tCO2e'>2,000</esrs:Scope3Category2CapitalGoods>
+  <esrs:Revenue contextRef='c1' unitRef='EUR' decimals='6'>150</esrs:Revenue>
+  <esrs:TotalAssets contextRef='c1' unitRef='EUR' decimals='9'>2.5</esrs:TotalAssets>
+  <esrs:NetProfit contextRef='c1' unitRef='EUR' decimals='6'>25</esrs:NetProfit>
+  <unit id='tCO2e'><measure>esrs:tonnesCO2e</measure></unit>
+  <unit id='EUR'><measure>iso4217:EUR</measure></unit>
+</xbrl>

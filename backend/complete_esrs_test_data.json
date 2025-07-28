@@ -1,0 +1,167 @@
+{
+  "force_generation": true,
+  "organization": "Example Corporation Ltd",
+  "lei": "5493000KJTIIGC8Y1R12",
+  "reporting_period": 2024,
+  "company_size": "large",
+  "consolidation_scope": "Group",
+  "headquarters_location": "EU",
+  "sector": "Manufacturing",
+  "primary_nace_code": "C20",
+  "emissions": {
+    "scope1": 15000,
+    "scope2_location": 8000,
+    "scope2_market": 6500,
+    "scope2": 6500,
+    "scope3": 120000,
+    "ghg_intensity": 45.2,
+    "ghg_breakdown": {
+      "co2": 140000,
+      "ch4": 2000,
+      "n2o": 1500,
+      "hfcs": 0,
+      "pfcs": 0,
+      "sf6": 0,
+      "nf3": 0
+    }
+  },
+  "scope3_detailed": {
+    "category_1": {
+      "emissions_tco2e": 30000,
+      "excluded": false,
+      "activity_type": "Procurement",
+      "calculation_method": "Supplier-specific",
+      "data_quality_tier": "Tier 1",
+      "data_quality_score": 85,
+      "coverage_percent": 95,
+      "emission_factors": [
+        {
+          "source": "DEFRA 2024",
+          "factor": 2.5,
+          "unit": "kgCO2e/unit"
+        }
+      ],
+      "activity_data": {
+        "value": 10000,
+        "unit": "units"
+      }
+    },
+    "category_2": {
+      "emissions_tco2e": 10000,
+      "excluded": false,
+      "activity_type": "Capital investments",
+      "calculation_method": "Spend-based",
+      "data_quality_tier": "Tier 2"
+    },
+    "category_3": {
+      "emissions_tco2e": 8000,
+      "excluded": false,
+      "activity_type": "Energy supply",
+      "calculation_method": "Average-data",
+      "data_quality_tier": "Tier 2"
+    },
+    "category_4": {
+      "emissions_tco2e": 7000,
+      "excluded": false,
+      "activity_type": "Logistics",
+      "calculation_method": "Distance-based",
+      "data_quality_tier": "Tier 2"
+    },
+    "category_5": {
+      "emissions_tco2e": 2000,
+      "excluded": false,
+      "activity_type": "Waste management",
+      "calculation_method": "Waste-type-specific",
+      "data_quality_tier": "Tier 2"
+    },
+    "category_6": {
+      "emissions_tco2e": 5000,
+      "excluded": false,
+      "activity_type": "Business travel",
+      "calculation_method": "Distance-based",
+      "data_quality_tier": "Tier 1"
+    },
+    "category_7": {
+      "emissions_tco2e": 3000,
+      "excluded": false,
+      "activity_type": "Employee transport",
+      "calculation_method": "Average-data",
+      "data_quality_tier": "Tier 2"
+    },
+    "category_8": {
+      "emissions_tco2e": 0,
+      "excluded": true,
+      "activity_type": "Leased assets",
+      "exclusion_reason": "Not applicable"
+    },
+    "category_9": {
+      "emissions_tco2e": 10000,
+      "excluded": false,
+      "activity_type": "Distribution",
+      "calculation_method": "Distance-based",
+      "data_quality_tier": "Tier 2"
+    },
+    "category_10": {
+      "emissions_tco2e": 15000,
+      "excluded": false,
+      "activity_type": "Manufacturing",
+      "calculation_method": "Average-data",
+      "data_quality_tier": "Tier 2"
+    },
+    "category_11": {
+      "emissions_tco2e": 25000,
+      "excluded": false,
+      "activity_type": "Product use",
+      "calculation_method": "Direct use-phase emissions",
+      "data_quality_tier": "Tier 1"
+    },
+    "category_12": {
+      "emissions_tco2e": 5000,
+      "excluded": false,
+      "activity_type": "End-of-life",
+      "calculation_method": "Waste-type-specific",
+      "data_quality_tier": "Tier 2"
+    },
+    "category_13": {
+      "emissions_tco2e": 0,
+      "excluded": true,
+      "activity_type": "Leased assets",
+      "exclusion_reason": "Not applicable"
+    },
+    "category_14": {
+      "emissions_tco2e": 0,
+      "excluded": true,
+      "activity_type": "Franchise operations",
+      "exclusion_reason": "No franchises"
+    },
+    "category_15": {
+      "emissions_tco2e": 0,
+      "excluded": true,
+      "activity_type": "Investments",
+      "exclusion_reason": "No relevant investments"
+    }
+  },
+  "transition_plan": {
+    "adopted": true,
+    "net_zero_target": true,
+    "net_zero_target_year": 2050
+  },
+  "governance": {
+    "board_oversight": true,
+    "governance_integration": "Fully integrated"
+  },
+  "targets": {
+    "base_year": 2020,
+    "targets": [
+      {
+        "description": "Net zero by 2050",
+        "target_year": 2050,
+        "reduction_percent": 100
+      }
+    ]
+  },
+  "data_quality_score": 85,
+  "methodology": {
+    "ghg_standard": "GHG Protocol"
+  }
+}

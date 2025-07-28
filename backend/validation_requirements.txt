@@ -1,0 +1,82 @@
+def validate_efrag_compliance(data: Dict[str, Any]) -> Dict[str, Any]:
+    """Enhanced comprehensive EFRAG compliance validation"""
+    validation_results = {
+        "compliant": True,
+        "esrs_e1_compliance": {},
+        "cross_standard_consistency": {},
+        "data_point_coverage": {},
+        "assurance_readiness": {},
+        "eu_taxonomy_alignment": {},
+        "narrative_quality": {},
+        "errors": [],
+        "warnings": [],
+        "recommendations": [],
+        "period_consistency": {},
+        "nil_reporting": {},
+        "nace_validation": {},
+        "lei_validation": {},
+        "esrs_s1_alignment": {},
+        "scope2_dual_reporting": {},
+        "boundary_changes": {},
+        "sector_specific": {},
+        "transition_plan": {},
+        "financial_effects": {},
+        "scenario_analysis": {},
+        "value_chain": {}
+    }
+    
+    # Validate LEI
+    lei = data.get('lei')
+    if lei:
+        validation_results["lei_validation"] = validate_gleif_lei(lei)
+        if not validation_results["lei_validation"]["valid"]:
+            validation_results["errors"].append(f"Invalid LEI: {lei}")
+            validation_results["compliant"] = False
+    
+    # Validate period consistency
+    validation_results["period_consistency"] = validate_period_consistency(data)
+    if not validation_results["period_consistency"]["consistent"]:
+        validation_results["warnings"].extend(validation_results["period_consistency"]["issues"])
+    
+    # Validate nil reporting
+    validation_results["nil_reporting"] = validate_nil_reporting(data)
+    if not validation_results["nil_reporting"]["valid"]:
+        validation_results["errors"].extend(validation_results["nil_reporting"]["missing_explanations"])
+        validation_results["compliant"] = False
+    
+    # Validate NACE codes
+    validation_results["nace_validation"] = validate_nace_codes(data)
+    if not validation_results["nace_validation"]["valid"]:
+        validation_results["errors"].extend(
+            [f"Invalid NACE code: {code}" for code in validation_results["nace_validation"]["invalid_codes"]]
+def validate_data_completeness(data: Dict[str, Any]) -> Dict[str, Any]:
+    """Comprehensive data completeness check per ESRS E1 requirements"""
+    required_fields = {
+        'basic': {
+            'lei': 'Legal Entity Identifier',
+            'organization': 'Organization name',
+            'reporting_period': 'Reporting period',
+            'sector': 'Business sector',
+            'primary_nace_code': 'Primary NACE code',
+            'consolidation_scope': 'Consolidation scope'
+        },
+        'emissions': {
+            'emissions.scope1': 'Scope 1 emissions',
+            'emissions.scope2_location': 'Location-based Scope 2',
+            'emissions.ghg_breakdown': 'GHG breakdown',
+            'scope3_detailed': 'Scope 3 categories'
+        },
+        'targets': {
+            'targets.base_year': 'Base year for targets',
+            'targets.targets': 'Emission reduction targets',
+            'transition_plan.net_zero_target_year': 'Net-zero target year'
+        },
+        'governance': {
+            'governance.board_oversight': 'Board oversight',
+            'governance.management_responsibility': 'Management responsibility',
+            'governance.climate_expertise': 'Climate expertise'
+        },
+        'financial': {
+            'financial_effects.risks': 'Climate risk assessment',
+            'financial_effects.opportunities': 'Climate opportunities',
+            'climate_actions.capex_climate_eur': 'Climate CapEx'

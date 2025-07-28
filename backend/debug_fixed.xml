@@ -1,0 +1,1091 @@
+<xbrl xmlns:ns0="http://www.xbrl.org/2013/inlineXBRL" xmlns:ns1="http://www.w3.org/1999/xlink" xmlns:ns2="http://www.xbrl.org/2003/instance" xmlns:ns3="http://xbrl.org/2006/xbrldi" xmlns="http://www.xbrl.org/2003/instance" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:link="http://www.xbrl.org/2003/linkbase" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:iso4217="http://www.xbrl.org/2003/iso4217" xmlns:xbrli="http://www.xbrl.org/2003/instance" xmlns:xbrldi="http://xbrl.org/2006/xbrldi" xmlns:esrs="http://xbrl.org/esrs/2023" xmlns:esrs-e1="http://xbrl.org/esrs/2023/esrs-e1" xmlns:ixt="http://www.xbrl.org/inlineXBRL/transformation/2020-02-12" xmlns:ixt-sec="http://www.sec.gov/inlineXBRL/transformation/2015-08-31" xmlns:ref="http://example.com/ref"><head><title>ESRS Sustainability Statement - Example Corporation Ltd - 2024</title><meta name="description" content="ESRS E1 Climate-related disclosures with complete XBRL tagging, GHG Protocol compliance, and EFRAG excellence" /><meta name="generator" content="ESRS E1 Full iXBRL Generator v1.0" /><meta name="created" content="2025-07-24T18:08:03.572342" /><meta name="document-id" content="ESRS-E1-20250724-180803" /><meta name="reporting-period" content="2024" /><meta name="esap:documentType" content="ESRS-SUSTAINABILITY-STATEMENT" /><meta name="esap:reportingEntity" content="5493000KJTIIGC8Y1R12" /><meta name="esap:reportingPeriod" content="2024" /><meta name="esap:publicationDate" content="2025-07-24" /><meta name="esap:language" content="en" /><meta name="esap:assuranceProvider" content="PwC" /><meta name="esap:consolidationScope" content="Group" /><link rel="stylesheet" type="text/xsl" href="https://www.efrag.org/esrs/2023/transforms/esrs-html.xsl" /><ns0:header><ns0:references><link:schemaRef ns1:type="simple" ns1:href="https://www.efrag.org/esrs/2023/esrs-all.xsd" /><link:linkbaseRef ns1:type="simple" ns1:href="https://www.efrag.org/esrs/2023/linkbases/esrs-e1-calculation.xml" ns1:role="http://www.xbrl.org/2003/role/calculationLink" ns1:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" /><link:linkbaseRef ns1:type="simple" ns1:href="https://www.efrag.org/esrs/2023/linkbases/esrs-e1-presentation.xml" ns1:role="http://www.xbrl.org/2003/role/presentationLink" ns1:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" /><link:linkbaseRef ns1:type="simple" ns1:href="https://www.efrag.org/esrs/2023/linkbases/esrs-e1-definition.xml" ns1:role="http://www.xbrl.org/2003/role/definitionLink" ns1:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" /><link:linkbaseRef ns1:type="simple" ns1:href="https://www.efrag.org/esrs/2023/linkbases/esrs-e1-label.xml" ns1:role="http://www.xbrl.org/2003/role/labelLink" ns1:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" /><link:linkbaseRef ns1:type="simple" ns1:href="https://www.efrag.org/esrs/2023/linkbases/esrs-e1-reference.xml" ns1:role="http://www.xbrl.org/2003/role/referenceLink" ns1:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" /></ns0:references><ns0:hidden><ns0:references><ns2:context id="c-current"><ns2:entity><ns2:identifier scheme="http://www.gleif.org">5493000KJTIIGC8Y1R12</ns2:identifier></ns2:entity><ns2:period><ns2:startDate>2024-01-01</ns2:startDate><ns2:endDate>2024-12-31</ns2:endDate></ns2:period></ns2:context><ns2:context id="c-previous"><ns2:entity><ns2:identifier scheme="http://www.gleif.org">5493000KJTIIGC8Y1R12</ns2:identifier></ns2:entity><ns2:period><ns2:startDate>2023-01-01</ns2:startDate><ns2:endDate>2023-12-31</ns2:endDate></ns2:period></ns2:context><ns2:context id="c-base"><ns2:entity><ns2:identifier scheme="http://www.gleif.org">5493000KJTIIGC8Y1R12</ns2:identifier></ns2:entity><ns2:period><ns2:startDate>2020-01-01</ns2:startDate><ns2:endDate>2020-12-31</ns2:endDate></ns2:period></ns2:context><ns2:context id="c-target-2025"><ns2:entity><ns2:identifier scheme="http://www.gleif.org">5493000KJTIIGC8Y1R12</ns2:identifier></ns2:entity><ns2:period><ns2:startDate>2025-01-01</ns2:startDate><ns2:endDate>2025-12-31</ns2:endDate></ns2:period></ns2:context><ns2:context id="c-target-2030"><ns2:entity><ns2:identifier scheme="http://www.gleif.org">5493000KJTIIGC8Y1R12</ns2:identifier></ns2:entity><ns2:period><ns2:startDate>2030-01-01</ns2:startDate><ns2:endDate>2030-12-31</ns2:endDate></ns2:period></ns2:context><ns2:context id="c-target-2035"><ns2:entity><ns2:identifier scheme="http://www.gleif.org">5493000KJTIIGC8Y1R12</ns2:identifier></ns2:entity><ns2:period><ns2:startDate>2035-01-01</ns2:startDate><ns2:endDate>2035-12-31</ns2:endDate></ns2:period></ns2:context><ns2:context id="c-target-2040"><ns2:entity><ns2:identifier scheme="http://www.gleif.org">5493000KJTIIGC8Y1R12</ns2:identifier></ns2:entity><ns2:period><ns2:startDate>2040-01-01</ns2:startDate><ns2:endDate>2040-12-31</ns2:endDate></ns2:period></ns2:context><ns2:context id="c-target-2050"><ns2:entity><ns2:identifier scheme="http://www.gleif.org">5493000KJTIIGC8Y1R12</ns2:identifier></ns2:entity><ns2:period><ns2:startDate>2050-01-01</ns2:startDate><ns2:endDate>2050-12-31</ns2:endDate></ns2:period></ns2:context><ns2:context id="c-retrospective"><ns2:entity><ns2:identifier scheme="http://www.gleif.org">5493000KJTIIGC8Y1R12</ns2:identifier></ns2:entity><ns2:scenario><ns3:explicitMember dimension="esrs:TimePerspectiveDimension">esrs:Retrospective</ns3:explicitMember></ns2:scenario><ns2:period><ns2:startDate>2024-01-01</ns2:startDate><ns2:endDate>2024-12-31</ns2:endDate></ns2:period></ns2:context><ns2:context id="c-prospective"><ns2:entity><ns2:identifier scheme="http://www.gleif.org">5493000KJTIIGC8Y1R12</ns2:identifier></ns2:entity><ns2:scenario><ns3:explicitMember dimension="esrs:TimePerspectiveDimension">esrs:Prospective</ns3:explicitMember></ns2:scenario><ns2:period><ns2:startDate>2024-01-01</ns2:startDate><ns2:endDate>2024-12-31</ns2:endDate></ns2:period></ns2:context><ns2:context id="c-physical-risk"><ns2:entity><ns2:identifier scheme="http://www.gleif.org">5493000KJTIIGC8Y1R12</ns2:identifier><ns2:segment><ns3:explicitMember dimension="tcfd:ClimateRiskTypeDimension">tcfd:PhysicalRisk</ns3:explicitMember></ns2:segment></ns2:entity><ns2:period><ns2:startDate>2024-01-01</ns2:startDate><ns2:endDate>2024-12-31</ns2:endDate></ns2:period></ns2:context><ns2:context id="c-transition-risk"><ns2:entity><ns2:identifier scheme="http://www.gleif.org">5493000KJTIIGC8Y1R12</ns2:identifier><ns2:segment><ns3:explicitMember dimension="tcfd:ClimateRiskTypeDimension">tcfd:TransitionRisk</ns3:explicitMember></ns2:segment></ns2:entity><ns2:period><ns2:startDate>2024-01-01</ns2:startDate><ns2:endDate>2024-12-31</ns2:endDate></ns2:period></ns2:context></ns0:references><ns0:resources><ns2:unit id="u-tCO2e"><ns2:measure>esrs:tonnesCO2e</ns2:measure></ns2:unit><ns2:unit id="u-kgCO2e"><ns2:measure>esrs:kilogramsCO2e</ns2:measure></ns2:unit><ns2:unit id="u-tCO2e-per-EUR"><ns2:measure>esrs:tonnesCO2ePerEuro</ns2:measure></ns2:unit><ns2:unit id="u-tCO2e-per-unit"><ns2:measure>esrs:tonnesCO2ePerUnit</ns2:measure></ns2:unit><ns2:unit id="u-tCO2e-per-m2"><ns2:measure>esrs:tonnesCO2ePerSquareMeter</ns2:measure></ns2:unit><ns2:unit id="u-tCO2e-per-employee"><ns2:measure>esrs:tonnesCO2ePerEmployee</ns2:measure></ns2:unit><ns2:unit id="u-tCO2e-per-product"><ns2:measure>esrs:tonnesCO2ePerProduct</ns2:measure></ns2:unit><ns2:unit id="u-MWh"><ns2:measure>esrs:megawattHour</ns2:measure></ns2:unit><ns2:unit id="u-GWh"><ns2:measure>esrs:gigawattHour</ns2:measure></ns2:unit><ns2:unit id="u-GJ"><ns2:measure>esrs:gigajoule</ns2:measure></ns2:unit><ns2:unit id="u-TJ"><ns2:measure>esrs:terajoule</ns2:measure></ns2:unit><ns2:unit id="u-kWh"><ns2:measure>esrs:kilowattHour</ns2:measure></ns2:unit><ns2:unit id="u-EUR"><ns2:measure>iso4217:EUR</ns2:measure></ns2:unit><ns2:unit id="u-EUR-millions"><ns2:measure>esrs:millionsEuro</ns2:measure></ns2:unit><ns2:unit id="u-EUR-billions"><ns2:measure>esrs:billionsEuro</ns2:measure></ns2:unit><ns2:unit id="u-EUR-per-tCO2e"><ns2:measure>esrs:euroPerTonneCO2e</ns2:measure></ns2:unit><ns2:unit id="u-percent"><ns2:measure>xbrli:percent</ns2:measure></ns2:unit><ns2:unit id="u-percent-revenue"><ns2:measure>esrs:percentOfRevenue</ns2:measure></ns2:unit><ns2:unit id="u-percent-capex"><ns2:measure>esrs:percentOfCapEx</ns2:measure></ns2:unit><ns2:unit id="u-percent-opex"><ns2:measure>esrs:percentOfOpEx</ns2:measure></ns2:unit><ns2:unit id="u-basis-points"><ns2:measure>esrs:basisPoints</ns2:measure></ns2:unit><ns2:unit id="u-pure"><ns2:measure>xbrli:pure</ns2:measure></ns2:unit><ns2:unit id="u-hectares"><ns2:measure>esrs:hectares</ns2:measure></ns2:unit><ns2:unit id="u-square-meters"><ns2:measure>esrs:squareMeters</ns2:measure></ns2:unit><ns2:unit id="u-kilometers"><ns2:measure>esrs:kilometers</ns2:measure></ns2:unit><ns2:unit id="u-meters"><ns2:measure>esrs:meters</ns2:measure></ns2:unit><ns2:unit id="u-liters"><ns2:measure>esrs:liters</ns2:measure></ns2:unit><ns2:unit id="u-cubic-meters"><ns2:measure>esrs:cubicMeters</ns2:measure></ns2:unit><ns2:unit id="u-tonnes"><ns2:measure>esrs:tonnes</ns2:measure></ns2:unit><ns2:unit id="u-kilograms"><ns2:measure>esrs:kilograms</ns2:measure></ns2:unit><ns2:unit id="u-FTE"><ns2:measure>esrs:fullTimeEquivalent</ns2:measure></ns2:unit><ns2:unit id="u-days"><ns2:measure>esrs:days</ns2:measure></ns2:unit><ns2:unit id="u-years"><ns2:measure>esrs:years</ns2:measure></ns2:unit><ns2:unit id="u-hours"><ns2:measure>esrs:hours</ns2:measure></ns2:unit><ns2:unit id="u-degrees-celsius"><ns2:measure>esrs:degreesCelsius</ns2:measure></ns2:unit><ns2:unit id="u-sea-level-mm"><ns2:measure>esrs:millimeters</ns2:measure></ns2:unit><ns2:unit id="u-precipitation-mm"><ns2:measure>esrs:millimetersRainfall</ns2:measure></ns2:unit><ns2:unit id="u-wind-speed-ms"><ns2:measure>esrs:metersPerSecond</ns2:measure></ns2:unit><ns2:unit id="u-events"><ns2:measure>esrs:numberOfEvents</ns2:measure></ns2:unit><ns2:unit id="u-gCO2-per-km"><ns2:measure>sector-transport:gramsCO2PerKilometer</ns2:measure></ns2:unit><ns2:unit id="u-gCO2-per-pkm"><ns2:measure>sector-transport:gramsCO2PerPassengerKilometer</ns2:measure></ns2:unit><ns2:unit id="u-gCO2-per-tkm"><ns2:measure>sector-transport:gramsCO2PerTonneKilometer</ns2:measure></ns2:unit><ns2:unit id="u-vehicle-km"><ns2:measure>sector-transport:vehicleKilometers</ns2:measure></ns2:unit><ns2:unit id="u-tCO2e-per-FTE"><ns2:measure>esrs:tonnesCO2ePerFTE</ns2:measure></ns2:unit><ns2:unit id="u-MWh-per-EUR"><ns2:measure>esrs:megawattHourPerEuro</ns2:measure></ns2:unit><ns2:unit id="u-water-m3"><ns2:measure>esrs:cubicMeters</ns2:measure></ns2:unit><ns2:unit id="u-waste-tonnes"><ns2:measure>esrs:tonnes</ns2:measure></ns2:unit><ns2:unit id="MWh"><ns2:measure>esrs:megawattHour</ns2:measure></ns2:unit><ns2:unit id="FTE"><ns2:measure>esrs:fullTimeEquivalent</ns2:measure></ns2:unit><ns2:unit id="year"><ns2:measure>xbrli:pure</ns2:measure></ns2:unit><ns2:unit id="percentage"><ns2:measure>xbrli:pure</ns2:measure></ns2:unit><ns2:unit id="tonnes"><ns2:measure>esrs:tonnes</ns2:measure></ns2:unit><ns2:unit id="EUR"><ns2:measure>iso4217:EUR</ns2:measure></ns2:unit><ns2:unit id="u-perMWh"><ns2:measure>esrs:eurPerMegawattHour</ns2:measure></ns2:unit><ns2:unit id="u-tCO2e-per-MWh"><ns2:divide><ns2:numerator><ns2:measure>esrs:tonnesCO2e</ns2:measure></ns2:numerator><ns2:denominator><ns2:measure>esrs:megawattHour</ns2:measure></ns2:denominator></ns2:divide></ns2:unit><ns2:unit id="u-EUR-per-MWh"><ns2:divide><ns2:numerator><ns2:measure>iso4217:EUR</ns2:measure></ns2:numerator><ns2:denominator><ns2:measure>esrs:megawattHour</ns2:measure></ns2:denominator></ns2:divide></ns2:unit><ns2:unit id="u-EUR-per-tCO2e"><ns2:divide><ns2:numerator><ns2:measure>iso4217:EUR</ns2:measure></ns2:numerator><ns2:denominator><ns2:measure>esrs:tonnesCO2e</ns2:measure></ns2:denominator></ns2:divide></ns2:unit><ns2:unit id="u-tCO2e-per-million-EUR"><ns2:divide><ns2:numerator><ns2:measure>esrs:tonnesCO2e</ns2:measure></ns2:numerator><ns2:denominator><ns2:measure>esrs:millionsEuro</ns2:measure></ns2:denominator></ns2:divide></ns2:unit><ns2:unit id="u-MWh-per-million-EUR"><ns2:divide><ns2:numerator><ns2:measure>esrs:megawattHour</ns2:measure></ns2:numerator><ns2:denominator><ns2:measure>esrs:millionsEuro</ns2:measure></ns2:denominator></ns2:divide></ns2:unit></ns0:resources><ns0:resources><ns3:typedMember dimension="esrs:TemperatureScenarioDimension" id="temp-1-5c"><esrs:temperatureValue>1.5C</esrs:temperatureValue></ns3:typedMember><ns3:typedMember dimension="esrs:TemperatureScenarioDimension" id="temp-2-0c"><esrs:temperatureValue>2.0C</esrs:temperatureValue></ns3:typedMember><ns3:typedMember dimension="esrs:TemperatureScenarioDimension" id="temp-3-0c"><esrs:temperatureValue>3.0C</esrs:temperatureValue></ns3:typedMember><ns3:typedMember dimension="esrs:TemperatureScenarioDimension" id="temp-4-0c"><esrs:temperatureValue>4.0C</esrs:temperatureValue></ns3:typedMember><ns3:typedMember dimension="esrs:TemperatureScenarioDimension" id="temp-wb2c"><esrs:temperatureValue>WB2C</esrs:temperatureValue></ns3:typedMember><ns3:typedMember dimension="esrs:TimeHorizonDimension" id="horizon-short"><esrs:timeHorizonDescription>Short-term (0-5 years)</esrs:timeHorizonDescription></ns3:typedMember><ns3:typedMember dimension="esrs:TimeHorizonDimension" id="horizon-medium"><esrs:timeHorizonDescription>Medium-term (5-15 years)</esrs:timeHorizonDescription></ns3:typedMember><ns3:typedMember dimension="esrs:TimeHorizonDimension" id="horizon-long"><esrs:timeHorizonDescription>Long-term (15+ years)</esrs:timeHorizonDescription></ns3:typedMember></ns0:resources><ns0:resources><ns2:tuple id="ghg-emissions-tuple"><esrs-e1:GHGCO2Emissions contextRef="c-current" unitRef="u-tonnes" decimals="0">0</esrs-e1:GHGCO2Emissions><esrs-e1:GHGCH4Emissions contextRef="c-current" unitRef="u-tonnes" decimals="0">0</esrs-e1:GHGCH4Emissions><esrs-e1:GHGN2OEmissions contextRef="c-current" unitRef="u-tonnes" decimals="0">0</esrs-e1:GHGN2OEmissions><esrs-e1:GHGHFCsEmissions contextRef="c-current" unitRef="u-tonnesCO2e" decimals="0">0</esrs-e1:GHGHFCsEmissions><esrs-e1:GHGPFCsEmissions contextRef="c-current" unitRef="u-tonnesCO2e" decimals="0">0</esrs-e1:GHGPFCsEmissions><esrs-e1:GHGSF6Emissions contextRef="c-current" unitRef="u-tonnes" decimals="0">0</esrs-e1:GHGSF6Emissions><esrs-e1:GHGNF3Emissions contextRef="c-current" unitRef="u-tonnes" decimals="0">0</esrs-e1:GHGNF3Emissions></ns2:tuple><ns2:tuple id="targets-tuple"><esrs-e1:EmissionReductionTarget id="target-0"><esrs-e1:TargetDescription>Reduce absolute emissions 50% by 2030</esrs-e1:TargetDescription><esrs-e1:TargetYear>2030</esrs-e1:TargetYear><esrs-e1:ReductionPercentage>50</esrs-e1:ReductionPercentage></esrs-e1:EmissionReductionTarget><esrs-e1:EmissionReductionTarget id="target-1"><esrs-e1:TargetDescription>Achieve net zero emissions</esrs-e1:TargetDescription><esrs-e1:TargetYear>2050</esrs-e1:TargetYear><esrs-e1:ReductionPercentage>100</esrs-e1:ReductionPercentage></esrs-e1:EmissionReductionTarget></ns2:tuple><ns2:tuple id="financial-effects-tuple"><esrs-e1:ClimateRisk id="risks-0" /><esrs-e1:ClimateRisk id="risks-1" /><esrs-e1:ClimateOpportunity id="opportunities-0" /></ns2:tuple></ns0:resources></ns0:hidden><link:calculationLink ns1:type="extended" ns1:role="http://www.efrag.org/esrs/2024/role/e1-calculations"><link:loc ns1:type="locator" ns1:href="#concept-esrs-e1:Scope3Category2" ns1:label="esrs-e1:Scope3Category2" /><link:loc ns1:type="locator" ns1:href="#concept-esrs-e1:Scope3Category12" ns1:label="esrs-e1:Scope3Category12" /><link:loc ns1:type="locator" ns1:href="#concept-esrs-e1:GHGPFCsEmissionsCO2e" ns1:label="esrs-e1:GHGPFCsEmissionsCO2e" /><link:loc ns1:type="locator" ns1:href="#concept-esrs-e1:Scope3Category15" ns1:label="esrs-e1:Scope3Category15" /><link:loc ns1:type="locator" ns1:href="#concept-esrs-e1:GrossScope3Emissions" ns1:label="esrs-e1:GrossScope3Emissions" /><link:loc ns1:type="locator" ns1:href="#concept-esrs-e1:TotalEnergyConsumption" ns1:label="esrs-e1:TotalEnergyConsumption" /><link:loc ns1:type="locator" ns1:href="#concept-esrs-e1:Scope1StationaryCombustion" ns1:label="esrs-e1:Scope1StationaryCombustion" /><link:loc ns1:type="locator" ns1:href="#concept-esrs-e1:TotalClimateFinance" ns1:label="esrs-e1:TotalClimateFinance" /><link:loc ns1:type="locator" ns1:href="#concept-esrs-e1:Scope3Category3" ns1:label="esrs-e1:Scope3Category3" /><link:loc ns1:type="locator" ns1:href="#concept-esrs-e1:GHGN2OEmissionsCO2e" ns1:label="esrs-e1:GHGN2OEmissionsCO2e" /><link:loc ns1:type="locator" ns1:href="#concept-esrs-e1:EnergyConsumptionElectricity" ns1:label="esrs-e1:EnergyConsumptionElectricity" /><link:loc ns1:type="locator" ns1:href="#concept-esrs-e1:EnergyConsumptionHeatingCooling" ns1:label="esrs-e1:EnergyConsumptionHeatingCooling" /><link:loc ns1:type="locator" ns1:href="#concept-esrs-e1:Scope3Category7" ns1:label="esrs-e1:Scope3Category7" /><link:loc ns1:type="locator" ns1:href="#concept-esrs-e1:RenewableGreenTariff" ns1:label="esrs-e1:RenewableGreenTariff" /><link:loc ns1:type="locator" ns1:href="#concept-esrs-e1:ClimateOpEx" ns1:label="esrs-e1:ClimateOpEx" /><link:loc ns1:type="locator" ns1:href="#concept-esrs-e1:EnergySold" ns1:label="esrs-e1:EnergySold" /><link:loc ns1:type="locator" ns1:href="#concept-esrs-e1:TotalGHGEmissionsByGas" ns1:label="esrs-e1:TotalGHGEmissionsByGas" /><link:loc ns1:type="locator" ns1:href="#concept-esrs-e1:Scope1ProcessEmissions" ns1:label="esrs-e1:Scope1ProcessEmissions" /><link:loc ns1:type="locator" ns1:href="#concept-esrs-e1:Scope3Category9" ns1:label="esrs-e1:Scope3Category9" /><link:loc ns1:type="locator" ns1:href="#concept-esrs-e1:ClimateOpportunityRevenue" ns1:label="esrs-e1:ClimateOpportunityRevenue" /><link:loc ns1:type="locator" ns1:href="#concept-esrs-e1:Scope3Category4" ns1:label="esrs-e1:Scope3Category4" /><link:loc ns1:type="locator" ns1:href="#concept-esrs-e1:EnergyConsumptionSteam" ns1:label="esrs-e1:EnergyConsumptionSteam" /><link:loc ns1:type="locator" ns1:href="#concept-esrs-e1:GHGCH4EmissionsCO2e" ns1:label="esrs-e1:GHGCH4EmissionsCO2e" /><link:loc ns1:type="locator" ns1:href="#concept-esrs-e1:Scope3Category11" ns1:label="esrs-e1:Scope3Category11" /><link:loc ns1:type="locator" ns1:href="#concept-esrs-e1:RenewablePurchasedPPA" ns1:label="esrs-e1:RenewablePurchasedPPA" /><link:loc ns1:type="locator" ns1:href="#concept-esrs-e1:Scope1MobileCombustion" ns1:label="esrs-e1:Scope1MobileCombustion" /><link:loc ns1:type="locator" ns1:href="#concept-esrs-e1:RenewableCertificates" ns1:label="esrs-e1:RenewableCertificates" /><link:loc ns1:type="locator" ns1:href="#concept-esrs-e1:GHGNF3EmissionsCO2e" ns1:label="esrs-e1:GHGNF3EmissionsCO2e" /><link:loc ns1:type="locator" ns1:href="#concept-esrs-e1:TotalRenewableEnergy" ns1:label="esrs-e1:TotalRenewableEnergy" /><link:loc ns1:type="locator" ns1:href="#concept-esrs-e1:GrossScope2MarketBased" ns1:label="esrs-e1:GrossScope2MarketBased" /><link:loc ns1:type="locator" ns1:href="#concept-esrs-e1:ClimateCapEx" ns1:label="esrs-e1:ClimateCapEx" /><link:loc ns1:type="locator" ns1:href="#concept-esrs-e1:Scope3Category14" ns1:label="esrs-e1:Scope3Category14" /><link:loc ns1:type="locator" ns1:href="#concept-esrs-e1:GHGRemovalsOwn" ns1:label="esrs-e1:GHGRemovalsOwn" /><link:loc ns1:type="locator" ns1:href="#concept-esrs-e1:PhysicalRiskCosts" ns1:label="esrs-e1:PhysicalRiskCosts" /><link:loc ns1:type="locator" ns1:href="#concept-esrs-e1:AdaptationInvestments" ns1:label="esrs-e1:AdaptationInvestments" /><link:loc ns1:type="locator" ns1:href="#concept-esrs-e1:Scope3Category13" ns1:label="esrs-e1:Scope3Category13" /><link:loc ns1:type="locator" ns1:href="#concept-esrs-e1:EnergyConsumptionFuelCombustion" ns1:label="esrs-e1:EnergyConsumptionFuelCombustion" /><link:loc ns1:type="locator" ns1:href="#concept-esrs-e1:Scope3Category5" ns1:label="esrs-e1:Scope3Category5" /><link:loc ns1:type="locator" ns1:href="#concept-esrs-e1:TotalGHGEmissions" ns1:label="esrs-e1:TotalGHGEmissions" /><link:loc ns1:type="locator" ns1:href="#concept-esrs-e1:GHGOtherEmissionsCO2e" ns1:label="esrs-e1:GHGOtherEmissionsCO2e" /><link:loc ns1:type="locator" ns1:href="#concept-esrs-e1:Scope3Category10" ns1:label="esrs-e1:Scope3Category10" /><link:loc ns1:type="locator" ns1:href="#concept-esrs-e1:CarbonCreditsUsed" ns1:label="esrs-e1:CarbonCreditsUsed" /><link:loc ns1:type="locator" ns1:href="#concept-esrs-e1:MitigationInvestments" ns1:label="esrs-e1:MitigationInvestments" /><link:loc ns1:type="locator" ns1:href="#concept-esrs-e1:GrossScope2LocationBased" ns1:label="esrs-e1:GrossScope2LocationBased" /><link:loc ns1:type="locator" ns1:href="#concept-esrs-e1:NetFinancialEffects" ns1:label="esrs-e1:NetFinancialEffects" /><link:loc ns1:type="locator" ns1:href="#concept-esrs-e1:RenewableSelfGenerated" ns1:label="esrs-e1:RenewableSelfGenerated" /><link:loc ns1:type="locator" ns1:href="#concept-esrs-e1:Scope3Category1" ns1:label="esrs-e1:Scope3Category1" /><link:loc ns1:type="locator" ns1:href="#concept-esrs-e1:Scope3Category6" ns1:label="esrs-e1:Scope3Category6" /><link:loc ns1:type="locator" ns1:href="#concept-esrs-e1:Scope3Category8" ns1:label="esrs-e1:Scope3Category8" /><link:loc ns1:type="locator" ns1:href="#concept-esrs-e1:GHGSF6EmissionsCO2e" ns1:label="esrs-e1:GHGSF6EmissionsCO2e" /><link:loc ns1:type="locator" ns1:href="#concept-esrs-e1:GHGHFCsEmissionsCO2e" ns1:label="esrs-e1:GHGHFCsEmissionsCO2e" /><link:loc ns1:type="locator" ns1:href="#concept-esrs-e1:GrossScope1Emissions" ns1:label="esrs-e1:GrossScope1Emissions" /><link:loc ns1:type="locator" ns1:href="#concept-esrs-e1:GHGCO2Emissions" ns1:label="esrs-e1:GHGCO2Emissions" /><link:loc ns1:type="locator" ns1:href="#concept-esrs-e1:TransitionRiskCosts" ns1:label="esrs-e1:TransitionRiskCosts" /><link:loc ns1:type="locator" ns1:href="#concept-esrs-e1:Scope1FugitiveEmissions" ns1:label="esrs-e1:Scope1FugitiveEmissions" /><link:calculationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/summation-item" ns1:from="esrs-e1:TotalGHGEmissions" ns1:to="esrs-e1:GrossScope1Emissions" order="1.0" weight="1.0" use="required" /><link:calculationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/summation-item" ns1:from="esrs-e1:TotalGHGEmissions" ns1:to="esrs-e1:GrossScope2LocationBased" order="1.0" weight="1.0" use="required" /><link:calculationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/summation-item" ns1:from="esrs-e1:TotalGHGEmissions" ns1:to="esrs-e1:GrossScope2MarketBased" order="1.0" weight="0.0" use="optional" /><link:calculationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/summation-item" ns1:from="esrs-e1:TotalGHGEmissions" ns1:to="esrs-e1:GrossScope3Emissions" order="1.0" weight="1.0" use="required" /><link:calculationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/summation-item" ns1:from="esrs-e1:TotalGHGEmissions" ns1:to="esrs-e1:GHGRemovalsOwn" order="1.0" weight="-1.0" use="required" /><link:calculationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/summation-item" ns1:from="esrs-e1:TotalGHGEmissions" ns1:to="esrs-e1:CarbonCreditsUsed" order="1.0" weight="-1.0" use="required" /><link:calculationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/summation-item" ns1:from="esrs-e1:GrossScope1Emissions" ns1:to="esrs-e1:Scope1StationaryCombustion" order="1.0" weight="1.0" use="required" /><link:calculationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/summation-item" ns1:from="esrs-e1:GrossScope1Emissions" ns1:to="esrs-e1:Scope1MobileCombustion" order="1.0" weight="1.0" use="required" /><link:calculationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/summation-item" ns1:from="esrs-e1:GrossScope1Emissions" ns1:to="esrs-e1:Scope1ProcessEmissions" order="1.0" weight="1.0" use="required" /><link:calculationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/summation-item" ns1:from="esrs-e1:GrossScope1Emissions" ns1:to="esrs-e1:Scope1FugitiveEmissions" order="1.0" weight="1.0" use="required" /><link:calculationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/summation-item" ns1:from="esrs-e1:GrossScope3Emissions" ns1:to="esrs-e1:Scope3Category1" order="1.0" weight="1.0" use="required" /><link:calculationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/summation-item" ns1:from="esrs-e1:GrossScope3Emissions" ns1:to="esrs-e1:Scope3Category2" order="1.0" weight="1.0" use="required" /><link:calculationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/summation-item" ns1:from="esrs-e1:GrossScope3Emissions" ns1:to="esrs-e1:Scope3Category3" order="1.0" weight="1.0" use="required" /><link:calculationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/summation-item" ns1:from="esrs-e1:GrossScope3Emissions" ns1:to="esrs-e1:Scope3Category4" order="1.0" weight="1.0" use="required" /><link:calculationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/summation-item" ns1:from="esrs-e1:GrossScope3Emissions" ns1:to="esrs-e1:Scope3Category5" order="1.0" weight="1.0" use="required" /><link:calculationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/summation-item" ns1:from="esrs-e1:GrossScope3Emissions" ns1:to="esrs-e1:Scope3Category6" order="1.0" weight="1.0" use="required" /><link:calculationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/summation-item" ns1:from="esrs-e1:GrossScope3Emissions" ns1:to="esrs-e1:Scope3Category7" order="1.0" weight="1.0" use="required" /><link:calculationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/summation-item" ns1:from="esrs-e1:GrossScope3Emissions" ns1:to="esrs-e1:Scope3Category8" order="1.0" weight="1.0" use="required" /><link:calculationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/summation-item" ns1:from="esrs-e1:GrossScope3Emissions" ns1:to="esrs-e1:Scope3Category9" order="1.0" weight="1.0" use="required" /><link:calculationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/summation-item" ns1:from="esrs-e1:GrossScope3Emissions" ns1:to="esrs-e1:Scope3Category10" order="1.0" weight="1.0" use="required" /><link:calculationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/summation-item" ns1:from="esrs-e1:GrossScope3Emissions" ns1:to="esrs-e1:Scope3Category11" order="1.0" weight="1.0" use="required" /><link:calculationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/summation-item" ns1:from="esrs-e1:GrossScope3Emissions" ns1:to="esrs-e1:Scope3Category12" order="1.0" weight="1.0" use="required" /><link:calculationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/summation-item" ns1:from="esrs-e1:GrossScope3Emissions" ns1:to="esrs-e1:Scope3Category13" order="1.0" weight="1.0" use="required" /><link:calculationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/summation-item" ns1:from="esrs-e1:GrossScope3Emissions" ns1:to="esrs-e1:Scope3Category14" order="1.0" weight="1.0" use="required" /><link:calculationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/summation-item" ns1:from="esrs-e1:GrossScope3Emissions" ns1:to="esrs-e1:Scope3Category15" order="1.0" weight="1.0" use="required" /><link:calculationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/summation-item" ns1:from="esrs-e1:TotalEnergyConsumption" ns1:to="esrs-e1:EnergyConsumptionElectricity" order="1.0" weight="1.0" use="required" /><link:calculationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/summation-item" ns1:from="esrs-e1:TotalEnergyConsumption" ns1:to="esrs-e1:EnergyConsumptionHeatingCooling" order="1.0" weight="1.0" use="required" /><link:calculationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/summation-item" ns1:from="esrs-e1:TotalEnergyConsumption" ns1:to="esrs-e1:EnergyConsumptionSteam" order="1.0" weight="1.0" use="required" /><link:calculationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/summation-item" ns1:from="esrs-e1:TotalEnergyConsumption" ns1:to="esrs-e1:EnergyConsumptionFuelCombustion" order="1.0" weight="1.0" use="required" /><link:calculationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/summation-item" ns1:from="esrs-e1:TotalEnergyConsumption" ns1:to="esrs-e1:EnergySold" order="1.0" weight="-1.0" use="required" /><link:calculationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/summation-item" ns1:from="esrs-e1:TotalRenewableEnergy" ns1:to="esrs-e1:RenewableSelfGenerated" order="1.0" weight="1.0" use="required" /><link:calculationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/summation-item" ns1:from="esrs-e1:TotalRenewableEnergy" ns1:to="esrs-e1:RenewablePurchasedPPA" order="1.0" weight="1.0" use="required" /><link:calculationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/summation-item" ns1:from="esrs-e1:TotalRenewableEnergy" ns1:to="esrs-e1:RenewableGreenTariff" order="1.0" weight="1.0" use="required" /><link:calculationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/summation-item" ns1:from="esrs-e1:TotalRenewableEnergy" ns1:to="esrs-e1:RenewableCertificates" order="1.0" weight="1.0" use="required" /><link:calculationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/summation-item" ns1:from="esrs-e1:TotalGHGEmissionsByGas" ns1:to="esrs-e1:GHGCO2Emissions" order="1.0" weight="1.0" use="required" /><link:calculationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/summation-item" ns1:from="esrs-e1:TotalGHGEmissionsByGas" ns1:to="esrs-e1:GHGCH4EmissionsCO2e" order="1.0" weight="1.0" use="required" /><link:calculationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/summation-item" ns1:from="esrs-e1:TotalGHGEmissionsByGas" ns1:to="esrs-e1:GHGN2OEmissionsCO2e" order="1.0" weight="1.0" use="required" /><link:calculationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/summation-item" ns1:from="esrs-e1:TotalGHGEmissionsByGas" ns1:to="esrs-e1:GHGHFCsEmissionsCO2e" order="1.0" weight="1.0" use="required" /><link:calculationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/summation-item" ns1:from="esrs-e1:TotalGHGEmissionsByGas" ns1:to="esrs-e1:GHGPFCsEmissionsCO2e" order="1.0" weight="1.0" use="required" /><link:calculationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/summation-item" ns1:from="esrs-e1:TotalGHGEmissionsByGas" ns1:to="esrs-e1:GHGSF6EmissionsCO2e" order="1.0" weight="1.0" use="required" /><link:calculationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/summation-item" ns1:from="esrs-e1:TotalGHGEmissionsByGas" ns1:to="esrs-e1:GHGNF3EmissionsCO2e" order="1.0" weight="1.0" use="required" /><link:calculationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/summation-item" ns1:from="esrs-e1:TotalGHGEmissionsByGas" ns1:to="esrs-e1:GHGOtherEmissionsCO2e" order="1.0" weight="1.0" use="required" /><link:calculationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/summation-item" ns1:from="esrs-e1:TotalClimateFinance" ns1:to="esrs-e1:ClimateCapEx" order="1.0" weight="1.0" use="required" /><link:calculationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/summation-item" ns1:from="esrs-e1:TotalClimateFinance" ns1:to="esrs-e1:ClimateOpEx" order="1.0" weight="1.0" use="required" /><link:calculationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/summation-item" ns1:from="esrs-e1:NetFinancialEffects" ns1:to="esrs-e1:PhysicalRiskCosts" order="1.0" weight="-1.0" use="required" /><link:calculationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/summation-item" ns1:from="esrs-e1:NetFinancialEffects" ns1:to="esrs-e1:TransitionRiskCosts" order="1.0" weight="-1.0" use="required" /><link:calculationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/summation-item" ns1:from="esrs-e1:NetFinancialEffects" ns1:to="esrs-e1:ClimateOpportunityRevenue" order="1.0" weight="1.0" use="required" /><link:calculationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/summation-item" ns1:from="esrs-e1:NetFinancialEffects" ns1:to="esrs-e1:AdaptationInvestments" order="1.0" weight="-1.0" use="required" /><link:calculationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/summation-item" ns1:from="esrs-e1:NetFinancialEffects" ns1:to="esrs-e1:MitigationInvestments" order="1.0" weight="-1.0" use="required" /><link:formulaArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/formula" ns1:from="esrs-e1:GHGIntensityRevenue" ns1:to="formula-esrs-e1:GHGIntensityRevenue" order="1.0" /><link:formulaArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/formula" ns1:from="esrs-e1:EnergyIntensityRevenue" ns1:to="formula-esrs-e1:EnergyIntensityRevenue" order="1.0" /><link:formulaArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/formula" ns1:from="esrs-e1:RenewableEnergyPercentage" ns1:to="formula-esrs-e1:RenewableEnergyPercentage" order="1.0" /></link:calculationLink><link:presentationLink ns1:type="extended" ns1:role="http://www.efrag.org/esrs/2024/role/e1-presentation"><link:presentationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/parent-child" ns1:from="esrs-e1:ClimateDisclosures" ns1:to="esrs-e1:TransitionPlan" order="1.0" use="optional" /><link:presentationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/parent-child" ns1:from="esrs-e1:ClimateDisclosures" ns1:to="esrs-e1:ClimatePolicies" order="2.0" use="optional" /><link:presentationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/parent-child" ns1:from="esrs-e1:ClimateDisclosures" ns1:to="esrs-e1:ClimateActions" order="3.0" use="optional" /><link:presentationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/parent-child" ns1:from="esrs-e1:ClimateDisclosures" ns1:to="esrs-e1:ClimateTargets" order="4.0" use="optional" /><link:presentationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/parent-child" ns1:from="esrs-e1:ClimateDisclosures" ns1:to="esrs-e1:EnergyManagement" order="5.0" use="optional" /><link:presentationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/parent-child" ns1:from="esrs-e1:ClimateDisclosures" ns1:to="esrs-e1:GHGEmissions" order="6.0" use="optional" /><link:presentationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/parent-child" ns1:from="esrs-e1:ClimateDisclosures" ns1:to="esrs-e1:CarbonRemovals" order="7.0" use="optional" /><link:presentationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/parent-child" ns1:from="esrs-e1:ClimateDisclosures" ns1:to="esrs-e1:CarbonPricing" order="8.0" use="optional" /><link:presentationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/parent-child" ns1:from="esrs-e1:ClimateDisclosures" ns1:to="esrs-e1:FinancialEffects" order="9.0" use="optional" /><link:presentationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/parent-child" ns1:from="esrs-e1:GHGEmissions" ns1:to="esrs-e1:GrossScope1Emissions" order="1.0" use="optional" /><link:presentationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/parent-child" ns1:from="esrs-e1:GHGEmissions" ns1:to="esrs-e1:GrossScope2Emissions" order="2.0" use="optional" /><link:presentationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/parent-child" ns1:from="esrs-e1:GHGEmissions" ns1:to="esrs-e1:GrossScope3Emissions" order="3.0" use="optional" /><link:presentationArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/parent-child" ns1:from="esrs-e1:GHGEmissions" ns1:to="esrs-e1:TotalGHGEmissions" order="4.0" use="optional" /></link:presentationLink><link:definitionLink ns1:type="extended" ns1:role="http://www.efrag.org/esrs/2024/role/e1-definitions"><link:definitionArc ns1:type="arc" ns1:arcrole="http://xbrl.org/int/dim/arcrole/dimension-domain" ns1:from="esrs:TimePerspectiveDimension" ns1:to="esrs:TimePerspectiveDimensionDomain" /><link:definitionArc ns1:type="arc" ns1:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" ns1:from="esrs:TimePerspectiveDimensionDomain" ns1:to="esrs:TimePerspectiveDimensionRetrospective" order="1" /><link:definitionArc ns1:type="arc" ns1:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" ns1:from="esrs:TimePerspectiveDimensionDomain" ns1:to="esrs:TimePerspectiveDimensionProspective" order="2" /><link:definitionArc ns1:type="arc" ns1:arcrole="http://xbrl.org/int/dim/arcrole/dimension-domain" ns1:from="esrs:ConsolidationDimension" ns1:to="esrs:ConsolidationDimensionDomain" /><link:definitionArc ns1:type="arc" ns1:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" ns1:from="esrs:ConsolidationDimensionDomain" ns1:to="esrs:ConsolidationDimensionConsolidated" order="1" /><link:definitionArc ns1:type="arc" ns1:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" ns1:from="esrs:ConsolidationDimensionDomain" ns1:to="esrs:ConsolidationDimensionParentOnly" order="2" /><link:definitionArc ns1:type="arc" ns1:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" ns1:from="esrs:ConsolidationDimensionDomain" ns1:to="esrs:ConsolidationDimensionProportionalConsolidation" order="3" /><link:definitionArc ns1:type="arc" ns1:arcrole="http://xbrl.org/int/dim/arcrole/dimension-domain" ns1:from="ghg:Scope3CategoryDimension" ns1:to="ghg:Scope3CategoryDimensionDomain" /><link:definitionArc ns1:type="arc" ns1:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" ns1:from="ghg:Scope3CategoryDimensionDomain" ns1:to="ghg:Scope3CategoryDimensionCategory1" order="1" /><link:definitionArc ns1:type="arc" ns1:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" ns1:from="ghg:Scope3CategoryDimensionDomain" ns1:to="ghg:Scope3CategoryDimensionCategory2" order="2" /><link:definitionArc ns1:type="arc" ns1:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" ns1:from="ghg:Scope3CategoryDimensionDomain" ns1:to="ghg:Scope3CategoryDimensionCategory3" order="3" /><link:definitionArc ns1:type="arc" ns1:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" ns1:from="ghg:Scope3CategoryDimensionDomain" ns1:to="ghg:Scope3CategoryDimensionCategory4" order="4" /><link:definitionArc ns1:type="arc" ns1:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" ns1:from="ghg:Scope3CategoryDimensionDomain" ns1:to="ghg:Scope3CategoryDimensionCategory5" order="5" /><link:definitionArc ns1:type="arc" ns1:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" ns1:from="ghg:Scope3CategoryDimensionDomain" ns1:to="ghg:Scope3CategoryDimensionCategory6" order="6" /><link:definitionArc ns1:type="arc" ns1:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" ns1:from="ghg:Scope3CategoryDimensionDomain" ns1:to="ghg:Scope3CategoryDimensionCategory7" order="7" /><link:definitionArc ns1:type="arc" ns1:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" ns1:from="ghg:Scope3CategoryDimensionDomain" ns1:to="ghg:Scope3CategoryDimensionCategory8" order="8" /><link:definitionArc ns1:type="arc" ns1:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" ns1:from="ghg:Scope3CategoryDimensionDomain" ns1:to="ghg:Scope3CategoryDimensionCategory9" order="9" /><link:definitionArc ns1:type="arc" ns1:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" ns1:from="ghg:Scope3CategoryDimensionDomain" ns1:to="ghg:Scope3CategoryDimensionCategory10" order="10" /><link:definitionArc ns1:type="arc" ns1:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" ns1:from="ghg:Scope3CategoryDimensionDomain" ns1:to="ghg:Scope3CategoryDimensionCategory11" order="11" /><link:definitionArc ns1:type="arc" ns1:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" ns1:from="ghg:Scope3CategoryDimensionDomain" ns1:to="ghg:Scope3CategoryDimensionCategory12" order="12" /><link:definitionArc ns1:type="arc" ns1:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" ns1:from="ghg:Scope3CategoryDimensionDomain" ns1:to="ghg:Scope3CategoryDimensionCategory13" order="13" /><link:definitionArc ns1:type="arc" ns1:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" ns1:from="ghg:Scope3CategoryDimensionDomain" ns1:to="ghg:Scope3CategoryDimensionCategory14" order="14" /><link:definitionArc ns1:type="arc" ns1:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" ns1:from="ghg:Scope3CategoryDimensionDomain" ns1:to="ghg:Scope3CategoryDimensionCategory15" order="15" /><link:definitionArc ns1:type="arc" ns1:arcrole="http://xbrl.org/int/dim/arcrole/dimension-domain" ns1:from="esrs:ValueChainDimension" ns1:to="esrs:ValueChainDimensionDomain" /><link:definitionArc ns1:type="arc" ns1:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" ns1:from="esrs:ValueChainDimensionDomain" ns1:to="esrs:ValueChainDimensionUpstream" order="1" /><link:definitionArc ns1:type="arc" ns1:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" ns1:from="esrs:ValueChainDimensionDomain" ns1:to="esrs:ValueChainDimensionOwnOperations" order="2" /><link:definitionArc ns1:type="arc" ns1:arcrole="http://xbrl.org/int/dim/arcrole/domain-member" ns1:from="esrs:ValueChainDimensionDomain" ns1:to="esrs:ValueChainDimensionDownstream" order="3" /><link:definitionArc ns1:type="arc" ns1:arcrole="http://www.efrag.org/esrs/arcrole/requires-if-present" ns1:from="esrs-e1:TransitionPlan" ns1:to="esrs-s1:WorkforceTransition" order="1.0" use="optional" /><link:definitionArc ns1:type="arc" ns1:arcrole="http://www.efrag.org/esrs/arcrole/influences" ns1:from="esrs-e1:ClimateRisks" ns1:to="esrs-e4:BiodiversityRisks" order="1.0" use="optional" /><link:definitionArc ns1:type="arc" ns1:arcrole="http://www.efrag.org/esrs/arcrole/should-align" ns1:from="esrs-e1:ClimateTargets" ns1:to="esrs-g1:IncentiveSchemes" order="1.0" use="optional" /><link:definitionArc ns1:type="arc" ns1:arcrole="http://www.efrag.org/esrs/arcrole/consider-together" ns1:from="esrs-e1:Scope3Emissions" ns1:to="esrs-s2:ValueChainWorkers" order="1.0" use="optional" /><link:definitionArc ns1:type="arc" ns1:arcrole="http://www.efrag.org/esrs/arcrole/related-to" ns1:from="esrs-e1:PhysicalRiskAssessment" ns1:to="esrs-e3:WaterRiskAssessment" order="1.0" use="optional" /><link:definitionArc ns1:type="arc" ns1:arcrole="http://www.efrag.org/esrs/arcrole/synergies" ns1:from="esrs-e1:RenewableEnergyTargets" ns1:to="esrs-e5:CircularEconomyTargets" order="1.0" use="optional" /><link:definitionArc ns1:type="arc" ns1:arcrole="http://www.efrag.org/esrs/arcrole/directly-linked" ns1:from="esrs-e1:JustTransition" ns1:to="esrs-s1:EmploymentImpacts" order="1.0" use="optional" /><link:definitionArc ns1:type="arc" ns1:arcrole="http://www.efrag.org/esrs/arcrole/affects" ns1:from="esrs-e1:CarbonPricing" ns1:to="esrs-g1:TaxStrategy" order="1.0" use="optional" /></link:definitionLink><link:referenceLink ns1:type="extended" ns1:role="http://www.efrag.org/esrs/2024/role/e1-references"><link:referenceArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" ns1:from="esrs-e1:TransitionPlan" ns1:to="ref-esrs-e1:TransitionPlan" /><reference id="ref-esrs-e1:TransitionPlan" ns1:type="resource" ns1:label="ref-esrs-e1:TransitionPlan"><ref:Name>ESRS E1</ref:Name><ref:Paragraph>16-21</ref:Paragraph><ref:URI>https://www.efrag.org/esrs/esrs-e1</ref:URI></reference><link:referenceArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" ns1:from="esrs-e1:ClimatePolicies" ns1:to="ref-esrs-e1:ClimatePolicies" /><reference id="ref-esrs-e1:ClimatePolicies" ns1:type="resource" ns1:label="ref-esrs-e1:ClimatePolicies"><ref:Name>ESRS E1</ref:Name><ref:Paragraph>22-24</ref:Paragraph><ref:URI>https://www.efrag.org/esrs/esrs-e1</ref:URI></reference><link:referenceArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" ns1:from="esrs-e1:ClimateActions" ns1:to="ref-esrs-e1:ClimateActions" /><reference id="ref-esrs-e1:ClimateActions" ns1:type="resource" ns1:label="ref-esrs-e1:ClimateActions"><ref:Name>ESRS E1</ref:Name><ref:Paragraph>25-28</ref:Paragraph><ref:URI>https://www.efrag.org/esrs/esrs-e1</ref:URI></reference><link:referenceArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" ns1:from="esrs-e1:ClimateTargets" ns1:to="ref-esrs-e1:ClimateTargets" /><reference id="ref-esrs-e1:ClimateTargets" ns1:type="resource" ns1:label="ref-esrs-e1:ClimateTargets"><ref:Name>ESRS E1</ref:Name><ref:Paragraph>29-34</ref:Paragraph><ref:URI>https://www.efrag.org/esrs/esrs-e1</ref:URI></reference><link:referenceArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" ns1:from="esrs-e1:EnergyConsumption" ns1:to="ref-esrs-e1:EnergyConsumption" /><reference id="ref-esrs-e1:EnergyConsumption" ns1:type="resource" ns1:label="ref-esrs-e1:EnergyConsumption"><ref:Name>ESRS E1</ref:Name><ref:Paragraph>35-38</ref:Paragraph><ref:URI>https://www.efrag.org/esrs/esrs-e1</ref:URI></reference><link:referenceArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" ns1:from="esrs-e1:GHGEmissions" ns1:to="ref-esrs-e1:GHGEmissions" /><reference id="ref-esrs-e1:GHGEmissions" ns1:type="resource" ns1:label="ref-esrs-e1:GHGEmissions"><ref:Name>ESRS E1</ref:Name><ref:Paragraph>39-52</ref:Paragraph><ref:URI>https://www.efrag.org/esrs/esrs-e1</ref:URI></reference><link:referenceArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" ns1:from="esrs-e1:CarbonRemovals" ns1:to="ref-esrs-e1:CarbonRemovals" /><reference id="ref-esrs-e1:CarbonRemovals" ns1:type="resource" ns1:label="ref-esrs-e1:CarbonRemovals"><ref:Name>ESRS E1</ref:Name><ref:Paragraph>53-56</ref:Paragraph><ref:URI>https://www.efrag.org/esrs/esrs-e1</ref:URI></reference><link:referenceArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" ns1:from="esrs-e1:CarbonPricing" ns1:to="ref-esrs-e1:CarbonPricing" /><reference id="ref-esrs-e1:CarbonPricing" ns1:type="resource" ns1:label="ref-esrs-e1:CarbonPricing"><ref:Name>ESRS E1</ref:Name><ref:Paragraph>57-58</ref:Paragraph><ref:URI>https://www.efrag.org/esrs/esrs-e1</ref:URI></reference><link:referenceArc ns1:type="arc" ns1:arcrole="http://www.xbrl.org/2003/arcrole/concept-reference" ns1:from="esrs-e1:FinancialEffects" ns1:to="ref-esrs-e1:FinancialEffects" /><reference id="ref-esrs-e1:FinancialEffects" ns1:type="resource" ns1:label="ref-esrs-e1:FinancialEffects"><ref:Name>ESRS E1</ref:Name><ref:Paragraph>59-67</ref:Paragraph><ref:URI>https://www.efrag.org/esrs/esrs-e1</ref:URI></reference></link:referenceLink></ns0:header><style>
+        /* ESRS E1 Full Styling - Complete EFRAG Edition */
+        :root {
+            --efrag-blue: #003d7a;
+            --efrag-light-blue: #4a90e2;
+            --esrs-green: #2e7d32;
+            --esrs-light-green: #66bb6a;
+            --warning: #ff9800;
+            --error: #f44336;
+            --success: #4caf50;
+            --background: #f5f7fa;
+            --text-primary: #212529;
+            --text-secondary: #6c757d;
+            --border-color: #dee2e6;
+            --primary-green: #1a472a;
+            --secondary-green: #2d5f3f;
+            --accent-green: #3e7e5e;
+            --light-green: #e8f5e9;
+            --danger-red: #dc3545;
+            --info-blue: #17a2b8;
+        }
+        
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: var(--background);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+        
+        /* Navigation */
+        .navigation {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: white;
+            border-right: 1px solid var(--border-color);
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+        
+        .nav-header {
+            padding: 20px;
+            background: var(--efrag-blue);
+            color: white;
+        }
+        
+        .nav-header h3 {
+            margin: 0;
+            font-size: 1.2em;
+        }
+        
+        .nav-section {
+            padding: 10px 0;
+        }
+        
+        .nav-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.95em;
+        }
+        
+        .nav-item:hover {
+            background: var(--background);
+            padding-left: 30px;
+            color: var(--efrag-blue);
+        }
+        
+        .nav-item.active {
+            background: var(--efrag-light-blue);
+            color: white;
+            font-weight: 600;
+        }
+        
+        /* Main content */
+        .main-content {
+            margin-left: 300px;
+            padding: 40px;
+            max-width: 1400px;
+        }
+        
+        /* Executive Summary */
+        .executive-summary {
+            background: var(--primary-green);
+            color: white;
+            padding: 40px;
+            margin: -40px -40px 40px -40px;
+            border-radius: 0 0 20px 20px;
+        }
+        
+        .executive-summary h1 {
+            margin: 0 0 30px 0;
+            font-size: 2.5em;
+            font-weight: 300;
+            border: none;
+        }
+        
+        .kpi-dashboard {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+        }
+        
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .kpi-card {
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--primary-green);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .kpi-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        .kpi-label {
+            font-size: 0.9em;
+            opacity: 0.8;
+            margin-bottom: 10px;
+        }
+        
+        .kpi-value {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .kpi-unit {
+            font-size: 0.8em;
+            opacity: 0.7;
+        }
+        
+        .kpi-card.primary {
+            background: var(--accent-green);
+            color: white;
+        }
+        
+        .kpi-card.trend {
+            background: var(--info-blue);
+            color: white;
+        }
+        
+        .kpi-card.quality {
+            background: var(--warning);
+            color: var(--primary-green);
+        }
+        
+        .kpi-card.target {
+            background: var(--success);
+            color: white;
+        }
+        
+        /* Headers */
+        h1 {
+            color: var(--efrag-blue);
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            border-bottom: 3px solid var(--efrag-blue);
+            padding-bottom: 15px;
+        }
+        
+        h2 {
+            color: var(--efrag-blue);
+            font-size: 1.8em;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 10px;
+        }
+        
+        h2::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 24px;
+            background: var(--esrs-green);
+            margin-right: 12px;
+        }
+        
+        h3 {
+            color: var(--text-primary);
+            font-size: 1.3em;
+            margin-top: 25px;
+        }
+        
+        /* XBRL Tags - Premium styling */
+        ix\:nonFraction, ix\:nonNumeric {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+            color: var(--efrag-blue);
+            font-weight: 600;
+            padding: 2px 6px;
+            border-radius: 4px;
+            border-bottom: 2px solid var(--efrag-light-blue);
+            position: relative;
+            cursor: help;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+        
+        ix\:nonFraction:hover, ix\:nonNumeric:hover {
+            background: linear-gradient(135deg, #ffe0b2 0%, #ffcc80 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        /* XBRL tag tooltip */
+        ix\:nonFraction::after, ix\:nonNumeric::after {
+            content: attr(name) " | " attr(contextRef) " | " attr(unitRef);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(-5px);
+            background: var(--efrag-blue);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.85em;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s, transform 0.3s;
+            z-index: 100;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        
+        ix\:nonFraction:hover::after, ix\:nonNumeric:hover::after {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+        
+        /* Tables - Professional design */
+        table {
+            width: 100%;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin: 20px 0;
+        }
+        
+        th {
+            background: var(--efrag-blue);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.95em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border-color);
+            background: white;
+        }
+        
+        tr:hover td {
+            background: var(--background);
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        tr.scope-header td {
+            background: var(--light-green);
+            font-weight: bold;
+            color: var(--primary-green);
+            font-size: 1.1em;
+        }
+        
+        tr.subcategory td:first-child {
+            padding-left: 35px;
+        }
+        
+        tr.total td {
+            background: #c8e6c9;
+            font-weight: bold;
+        }
+        
+        tr.grand-total td {
+            background: var(--primary-green);
+            color: white;
+            font-size: 1.2em;
+        }
+        
+        /* Status indicators */
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-green { background: var(--success); }
+        .status-yellow { background: var(--warning); }
+        .status-red { background: var(--error); }
+        
+        .status-achieved { color: var(--success); font-weight: bold; }
+        .status-on-track { color: var(--info-blue); }
+        .status-at-risk { color: var(--warning); }
+        .status-off-track { color: var(--danger-red); }
+        
+        /* Risk levels */
+        .risk-high { 
+            background: #ffcdd2; 
+            color: #c62828;
+            font-weight: bold;
+        }
+        .risk-medium { 
+            background: #fff3cd; 
+            color: #856404;
+        }
+        .risk-low { 
+            background: #d4edda; 
+            color: #155724;
+        }
+        
+        /* Trend indicators */
+        .trend-down-strong { color: var(--success); font-size: 1.5em; }
+        .trend-down { color: var(--info-blue); font-size: 1.2em; }
+        .trend-up { color: var(--warning); font-size: 1.2em; }
+        .trend-up-strong { color: var(--danger-red); font-size: 1.5em; }
+        
+        /* Cards */
+        .metric-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            border: 1px solid transparent;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+            border-color: var(--efrag-light-blue);
+        }
+        
+        .metric-value {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: var(--efrag-blue);
+            margin: 10px 0;
+        }
+        
+        .metric-label {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Progress bars */
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--border-color);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--esrs-green) 0%, var(--esrs-light-green) 100%);
+            transition: width 0.6s ease;
+        }
+        
+        /* Assurance indicators */
+        .assurance-indicators {
+            position: fixed;
+            bottom: 20px;
+            left: 300px;
+            display: flex;
+            gap: 15px;
+            background: white;
+            padding: 15px;
+            border-radius: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        .assurance-indicator {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            margin: 5px;
+        }
+        
+        .assurance-indicator[data-assured="true"] {
+            background: var(--success);
+            color: white;
+        }
+        
+        .assurance-indicator[data-assured="false"] {
+            background: var(--border-color);
+            color: var(--text-secondary);
+        }
+        
+        /* EU Taxonomy styling */
+        .taxonomy-eligible {
+            background: #e8f5e9;
+            border-left: 4px solid var(--esrs-green);
+            padding: 15px;
+            margin: 10px 0;
+        }
+        
+        .taxonomy-aligned {
+            background: #c8e6c9;
+            border-left: 4px solid var(--success);
+            padding: 15px;
+            margin: 10px 0;
+        }
+        
+        /* Connectivity visualization */
+        .connectivity-diagram {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 30px 0;
+        }
+        
+        .standard-node {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: white;
+            margin: 0 20px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .standard-node.e1 { background: var(--esrs-green); }
+        .standard-node.e2 { background: #ff9800; }
+        .standard-node.s1 { background: #2196f3; }
+        .standard-node.g1 { background: #9c27b0; }
+        
+        .standard-node:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        
+        /* Report metadata */
+        .report-metadata {
+            background: var(--light-green);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        
+        .report-metadata p {
+            margin: 5px 0;
+        }
+        
+        /* Disclosure sections */
+        .disclosure {
+            margin: 25px 0;
+            padding: 25px;
+            background: #f8f9fa;
+            border-left: 5px solid var(--secondary-green);
+            border-radius: 0 8px 8px 0;
+        }
+        
+        /* SBTi badge */
+        .sbti-badge {
+            background: var(--success);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            display: inline-block;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        /* Assurance section */
+        .assurance-statement {
+            border: 2px solid var(--secondary-green);
+            padding: 20px;
+            border-radius: 8px;
+            background: #f0f7f4;
+        }
+        
+        /* Enhanced sections */
+        .ghg-breakdown table,
+        .energy-table,
+        .pricing-table,
+        .policy-table,
+        .finance-table {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .total-row {
+            font-weight: bold;
+            background: #e8f5e9 !important;
+        }
+        
+        /* ESAP indicator */
+        .esap-ready-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--success);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+        }
+        
+        .esap-ready-indicator[data-ready="false"] {
+            background: var(--warning);
+        }
+        
+        .esap-icon {
+            margin-right: 8px;
+            font-size: 1.2em;
+        }
+        
+        /* Cross-reference indicators */
+        .cross-reference {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border-left: 4px solid #1976d2;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .cross-ref-indicator {
+            color: #1976d2;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+        
+        /* Just transition styling */
+        .just-transition {
+            background: #f3e5f5;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .workforce-impacts table {
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        /* Boundary changes */
+        .boundary-changes {
+            border: 2px dashed #ff9800;
+            padding: 20px;
+            margin: 20px 0;
+            background: #fff3e0;
+            border-radius: 8px;
+        }
+        
+        .boundary-changes-table tr.restatement-required {
+            background: #ffecb3;
+        }
+        
+        /* Sector-specific */
+        .sector-specific-metrics {
+            background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+            padding: 25px;
+            border-radius: 12px;
+            margin: 30px 0;
+        }
+        
+        .sector-specific-metrics h3 {
+            color: var(--primary-green);
+            border-bottom: 2px solid var(--accent-green);
+            padding-bottom: 10px;
+        }
+        
+        /* DNSH criteria */
+        .dnsh-criteria td:nth-child(2) {
+            font-weight: bold;
+        }
+        
+        .dnsh-criteria td:contains("No") {
+            color: var(--danger-red);
+            font-weight: bold;
+        }
+        
+        /* Audit trail */
+        .audit-trail {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin-top: 40px;
+        }
+        
+        .audit-trail h3 {
+            color: #666;
+            font-size: 1.1em;
+        }
+        
+        /* Screening documentation */
+        .screening-thresholds {
+            background: #e8f5e9;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        
+        .threshold-table {
+            background: white;
+            margin-top: 20px;
+        }
+        
+        /* Enhanced XBRL tag styling with metadata */
+        ix\:nonFraction[data-assurance-status="assured"] {
+            border-bottom-color: var(--success);
+            border-bottom-width: 3px;
+        }
+        
+        ix\:nonFraction[data-assurance-status="reviewed"] {
+            border-bottom-color: var(--info-blue);
+            border-bottom-style: dashed;
+        }
+        
+        ix\:nonFraction[data-assurance-status="unassured"] {
+            border-bottom-color: var(--warning);
+            border-bottom-style: dotted;
+        }
+        
+        /* Linked elements */
+        [data-linked-standard] {
+            position: relative;
+        }
+        
+        [data-linked-standard]::before {
+            content: "🔗";
+            position: absolute;
+            left: -20px;
+            top: 0;
+            font-size: 0.8em;
+            opacity: 0.6;
+        }
+        
+        /* Data lineage indicator */
+        [data-lineage="PRIMARY_SOURCE"] {
+            background: #c8e6c9;
+        }
+        
+        [data-lineage="CALCULATED"] {
+            background: #fff9c4;
+        }
+        
+        [data-lineage="ESTIMATED"] {
+            background: #ffccbc;
+        }
+        
+        /* Climate VaR styling */
+        .climate-var {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .climate-var table {
+            background: white;
+            margin-top: 15px;
+        }
+        
+        /* Print styles */
+        @media print {
+            .navigation,
+            .assurance-indicators,
+            .esap-ready-indicator {
+                display: none;
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+            
+            .executive-summary {
+                page-break-after: always;
+            }
+            
+            .metric-card, table, .disclosure {
+                break-inside: avoid;
+            }
+            
+            h2 {
+                break-after: avoid;
+            }
+            
+            ix\:nonFraction, ix\:nonNumeric {
+                background: none;
+                color: black;
+                text-decoration: none;
+                border: none;
+            }
+        }
+        
+        /* Responsive design */
+        @media (max-width: 1024px) {
+            .navigation {
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+            }
+            
+            .navigation.open {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .assurance-indicators {
+                left: 20px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .kpi-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .connectivity-diagram {
+                flex-direction: column;
+            }
+            
+            .standard-node {
+                margin: 10px 0;
+            }
+            
+            .boundary-changes-table,
+            .dnsh-criteria,
+            .workforce-impacts table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+        }
+        
+        /* Interactive chart placeholder */
+        .chart-container {
+            background: #f5f5f5;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .chart-container::before {
+            content: "📊 Interactive chart would appear here in production";
+            color: #6c757d;
+            font-style: italic;
+        }
+    </style><script>
+        // Interactive features for professional ESRS reporting
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            // Navigation functionality
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item =&gt; {
+                item.addEventListener('click', function() {
+                    const target = this.getAttribute('data-target');
+                    const section = document.getElementById(target);
+                    if (section) {
+                        section.scrollIntoView({ behavior: 'smooth' });
+                        
+                        // Update active state
+                        navItems.forEach(nav =&gt; nav.classList.remove('active'));
+                        this.classList.add('active');
+                    }
+                });
+            });
+            
+            // Progress bar animations
+            const progressBars = document.querySelectorAll('.progress-fill');
+            const observer = new IntersectionObserver(entries =&gt; {
+                entries.forEach(entry =&gt; {
+                    if (entry.isIntersecting) {
+                        const progress = entry.target.getAttribute('data-progress');
+                        entry.target.style.width = progress + '%';
+                    }
+                });
+            });
+            
+            progressBars.forEach(bar =&gt; observer.observe(bar));
+            
+            // XBRL tag highlighting
+            const xbrlTags = document.querySelectorAll('ix\\:nonFraction, ix\\:nonNumeric');
+            xbrlTags.forEach(tag =&gt; {
+                tag.addEventListener('click', function() {
+                    this.style.background = '#ffeb3b';
+                    setTimeout(() =&gt; {
+                        this.style.background = '';
+                    }, 1000);
+                });
+            });
+            
+            // Connectivity diagram interactions
+            const standardNodes = document.querySelectorAll('.standard-node');
+            standardNodes.forEach(node =&gt; {
+                node.addEventListener('click', function() {
+                    const standard = this.getAttribute('data-standard');
+                    // Show connections for this standard
+                    highlightConnections(standard);
+                });
+            });
+            
+            // Data validation indicators
+            function updateValidationStatus() {
+                const indicators = document.querySelectorAll('[data-validation]');
+                indicators.forEach(indicator =&gt; {
+                    const status = indicator.getAttribute('data-validation');
+                    if (status === 'valid') {
+                        indicator.style.borderLeft = '4px solid var(--success)';
+                    } else if (status === 'warning') {
+                        indicator.style.borderLeft = '4px solid var(--warning)';
+                    } else {
+                        indicator.style.borderLeft = '4px solid var(--error)';
+                    }
+                });
+            }
+            
+            updateValidationStatus();
+            
+            // Export functionality
+            document.getElementById('export-btn')?.addEventListener('click', function() {
+                const format = document.getElementById('export-format').value;
+                exportReport(format);
+            });
+            
+            // Mobile menu toggle
+            const menuToggle = document.querySelector('.menu-toggle');
+            const navigation = document.querySelector('.navigation');
+            
+            menuToggle?.addEventListener('click', function() {
+                navigation.classList.toggle('open');
+            });
+            
+            // Enhanced cross-reference navigation
+            document.querySelectorAll('[data-linked-standard]').forEach(element =&gt; {
+                element.addEventListener('click', function(e) {
+                    if (e.ctrlKey || e.metaKey) {
+                        const linkedStandard = this.getAttribute('data-linked-standard');
+                        const linkedElement = this.getAttribute('data-linked-element');
+                        
+                        // In production, this would navigate to the linked standard
+                        console.log(`Navigate to ${linkedStandard} - ${linkedElement}`);
+                        
+                        // Show tooltip
+                        const tooltip = document.createElement('div');
+                        tooltip.className = 'cross-ref-tooltip';
+                        tooltip.textContent = `Links to ${linkedStandard}: ${linkedElement}`;
+                        tooltip.style.position = 'absolute';
+                        tooltip.style.background = '#333';
+                        tooltip.style.color = 'white';
+                        tooltip.style.padding = '5px 10px';
+                        tooltip.style.borderRadius = '4px';
+                        tooltip.style.fontSize = '0.9em';
+                        
+                        document.body.appendChild(tooltip);
+                        
+                        const rect = this.getBoundingClientRect();
+                        tooltip.style.left = rect.left + 'px';
+                        tooltip.style.top = (rect.bottom + 5) + 'px';
+                        
+                        setTimeout(() =&gt; {
+                            tooltip.remove();
+                        }, 3000);
+                    }
+                });
+            });
+            
+            // Assurance status filter
+            function filterByAssuranceStatus(status) {
+                const elements = document.querySelectorAll('[data-assurance-status]');
+                elements.forEach(el =&gt; {
+                    if (status === 'all' || el.getAttribute('data-assurance-status') === status) {
+                        el.style.opacity = '1';
+                        el.style.filter = 'none';
+                    } else {
+                        el.style.opacity = '0.3';
+                        el.style.filter = 'grayscale(100%)';
+                    }
+                });
+            }
+            
+            // Data lineage viewer
+            document.querySelectorAll('[data-lineage]').forEach(element =&gt; {
+                element.addEventListener('mouseenter', function() {
+                    const lineage = this.getAttribute('data-lineage');
+                    const method = this.getAttribute('data-calculation-method');
+                    const updated = this.getAttribute('data-last-updated');
+                    
+                    const info = document.createElement('div');
+                    info.className = 'lineage-info';
+                    info.innerHTML = `
+                        &lt;strong&gt;Data Lineage:&lt;/strong&gt; ${lineage}&lt;br&gt;
+                        ${method ? `&lt;strong&gt;Method:&lt;/strong&gt; ${method}&lt;br&gt;` : ''}
+                        ${updated ? `&lt;strong&gt;Updated:&lt;/strong&gt; ${updated}` : ''}
+                    `;
+                    
+                    // Style and position the info box
+                    info.style.cssText = `
+                        position: absolute;
+                        background: white;
+                        border: 1px solid #ddd;
+                        padding: 10px;
+                        border-radius: 4px;
+                        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                        font-size: 0.85em;
+                        z-index: 1000;
+                        max-width: 300px;
+                    `;
+                    
+                    document.body.appendChild(info);
+                    
+                    const rect = this.getBoundingClientRect();
+                    info.style.left = rect.right + 10 + 'px';
+                    info.style.top = rect.top + 'px';
+                    
+                    this.addEventListener('mouseleave', function() {
+                        info.remove();
+                    }, { once: true });
+                });
+            });
+            
+            // Boundary change impact calculator
+            function calculateBoundaryImpact() {
+                const changes = document.querySelectorAll('[id^="c-boundary-change-"]');
+                let totalImpact = 0;
+                
+                changes.forEach(change =&gt; {
+                    const impact = parseFloat(change.textContent) || 0;
+                    totalImpact += impact;
+                });
+                
+                return totalImpact;
+            }
+            
+            // DNSH compliance checker
+            function checkDNSHCompliance() {
+                const criteria = document.querySelectorAll('.dnsh-criteria tbody tr');
+                let compliant = true;
+                
+                criteria.forEach(row =&gt; {
+                    const status = row.cells[1].textContent.trim();
+                    if (status === 'No') {
+                        compliant = false;
+                        row.classList.add('non-compliant');
+                    }
+                });
+                
+                return compliant;
+            }
+            
+            // Initialize enhanced features
+            // Check DNSH compliance
+            const dnshCompliant = checkDNSHCompliance();
+            if (!dnshCompliant) {
+                const alert = document.createElement('div');
+                alert.className = 'dnsh-alert';
+                alert.textContent = '⚠️ DNSH criteria not fully met - EU Taxonomy alignment at risk';
+                alert.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: #ff9800;
+                    color: white;
+                    padding: 15px 20px;
+                    border-radius: 4px;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+                    z-index: 1000;
+                `;
+                document.body.appendChild(alert);
+            }
+            
+            // Add assurance filter controls
+            const filterContainer = document.createElement('div');
+            filterContainer.className = 'assurance-filter';
+            filterContainer.innerHTML = `
+                &lt;label&gt;Filter by assurance status:&lt;/label&gt;
+                &lt;select onchange="filterByAssuranceStatus(this.value)"&gt;
+                    &lt;option value="all"&gt;All&lt;/option&gt;
+                    &lt;option value="assured"&gt;Assured&lt;/option&gt;
+                    &lt;option value="reviewed"&gt;Reviewed&lt;/option&gt;
+                    &lt;option value="unassured"&gt;Unassured&lt;/option&gt;
+                &lt;/select&gt;
+            `;
+            filterContainer.style.cssText = `
+                position: fixed;
+                bottom: 100px;
+                left: 320px;
+                background: white;
+                padding: 10px;
+                border-radius: 4px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                z-index: 900;
+            `;
+            document.body.appendChild(filterContainer);
+            
+            // Auto-save draft
+            let autoSaveTimer;
+            function autoSaveDraft() {
+                clearTimeout(autoSaveTimer);
+                autoSaveTimer = setTimeout(() =&gt; {
+                    console.log('Auto-saving draft...');
+                    // Implementation would save current state
+                }, 30000); // Every 30 seconds
+            }
+            
+            // Climate VaR visualization
+            document.querySelectorAll('.climate-var table tr').forEach((row, index) =&gt; {
+                if (index &gt; 0) { // Skip header row
+                    const impactCell = row.cells[2];
+                    const impact = parseFloat(impactCell.textContent) || 0;
+                    
+                    // Add visual indicator based on impact severity
+                    if (impact &gt; 100) {
+                        row.classList.add('severe-impact');
+                        row.style.background = '#ffebee';
+                    } else if (impact &gt; 50) {
+                        row.classList.add('moderate-impact');
+                        row.style.background = '#fff3e0';
+                    } else {
+                        row.classList.add('low-impact');
+                        row.style.background = '#e8f5e9';
+                    }
+                }
+            });
+            
+            // Function placeholder for highlighting connections
+            function highlightConnections(standard) {
+                console.log('Highlighting connections for:', standard);
+                // Implementation would show visual connections
+            }
+            
+            // Function placeholder for exporting report
+            function exportReport(format) {
+                console.log('Exporting report as:', format);
+                // Implementation would handle export
+            }
+        });
+        
+        // Make filter function available globally
+        window.filterByAssuranceStatus = function(status) {
+            const elements = document.querySelectorAll('[data-assurance-status]');
+            elements.forEach(el =&gt; {
+                if (status === 'all' || el.getAttribute('data-assurance-status') === status) {
+                    el.style.opacity = '1';
+                    el.style.filter = 'none';
+                } else {
+                    el.style.opacity = '0.3';
+                    el.style.filter = 'grayscale(100%)';
+                }
+            });
+        };
+    </script></head><body><nav class="navigation" id="navigation"><div class="nav-header"><h3>ESRS E1 Navigation</h3></div><div class="nav-section"><div class="nav-item" data-target="executive">Executive Summary</div><div class="nav-item" data-target="materiality">Materiality Assessment</div><div class="nav-item" data-target="governance">Governance (E1-1)</div><div class="nav-item" data-target="transition-plan">Transition Plan (E1-1)</div><div class="nav-item" data-target="policies">Policies (E1-2)</div><div class="nav-item" data-target="actions">Actions &amp; Resources (E1-3)</div><div class="nav-item" data-target="targets">Targets (E1-4)</div><div class="nav-item" data-target="energy">Energy (E1-5)</div><div class="nav-item" data-target="emissions">GHG Emissions (E1-6)</div><div class="nav-item" data-target="removals">Removals (E1-7)</div><div class="nav-item" data-target="pricing">Carbon Pricing (E1-8)</div><div class="nav-item" data-target="financial">Financial Effects (E1-9)</div><div class="nav-item" data-target="eu-taxonomy">EU Taxonomy</div><div class="nav-item" data-target="value-chain">Value Chain</div><div class="nav-item" data-target="methodology">Methodology</div><div class="nav-item" data-target="assurance">Assurance</div></div></nav><main class="main-content"><section class="executive-summary" id="executive"><h1>ESRS E1 Climate Disclosures - Example Corporation Ltd</h1><div class="kpi-dashboard"><div class="kpi-grid"><div class="kpi-card primary"><div class="kpi-label">Total GHG Emissions</div><div class="kpi-value"><ns0:nonFraction name="esrs-e1:TotalGHGEmissions" contextRef="c-current" unitRef="u-tCO2e" decimals="0">141500</ns0:nonFraction></div><div class="kpi-unit">tCO₂e</div></div><div class="kpi-card trend"><div class="kpi-label">Year-over-Year Change</div><div class="kpi-value"><ns0:nonFraction name="esrs-e1:EmissionsChangePercent" contextRef="c-current" unitRef="u-percent" decimals="1">-8.5</ns0:nonFraction></div><div class="kpi-unit">%</div></div><div class="kpi-card quality"><div class="kpi-label">Data Quality Score</div><div class="kpi-value"><ns0:nonFraction name="esrs-e1:DataQualityScore" contextRef="c-current">85</ns0:nonFraction></div><div class="kpi-unit">/100</div></div><div class="kpi-card target"><div class="kpi-label">Net Zero Target</div><div class="kpi-value"><ns0:nonNumeric name="esrs-e1:NetZeroTargetYear" contextRef="c-current" xml:lang="en">2050</ns0:nonNumeric></div></div></div></div></section><section class="report-header"><div class="report-metadata"><p><strong>Organization: </strong>Example Corporation Ltd</p><p><strong>LEI: </strong>5493000KJTIIGC8Y1R12</p><p><strong>Reporting Period: </strong>2024</p><p><strong>Document ID: </strong>ESRS-E1-20250724-180803</p><p><strong>ESRS Standard: </strong>E1 - Climate Change</p><p><strong>Consolidation Scope: </strong>Group</p></div></section><section class="materiality-assessment" id="materiality"><h2>Double Materiality Assessment</h2><p>Climate change has been identified as material through our double materiality assessment process.</p></section><section class="governance" id="governance"><h2>Governance of Climate-Related Matters</h2><div class="board-oversight"><h3>Board Oversight</h3><p>Board oversight of climate-related risks and opportunities: <ns0:nonNumeric name="esrs-2:BoardOversightClimate" contextRef="c-current" xml:lang="en">Yes</ns0:nonNumeric></p><p>Board meetings discussing climate in reporting period: <ns0:nonFraction name="esrs-2:BoardMeetingsClimate" contextRef="c-current" decimals="0">6</ns0:nonFraction></p></div><div class="management-responsibility"><h3>Management Responsibility</h3><p>Executive management responsibility for climate matters: <ns0:nonNumeric name="esrs-2:ManagementResponsibilityClimate" contextRef="c-current" xml:lang="en">Yes</ns0:nonNumeric></p></div><div class="climate-expertise"><h3>Climate Expertise</h3><p><ns0:nonNumeric name="esrs-2:ClimateExpertiseDescription" contextRef="c-current" xml:lang="en">Two board members with climate science PhDs</ns0:nonNumeric></p></div><div class="climate-incentives"><p>Executive compensation linked to climate performance: <ns0:nonNumeric name="esrs-2:ClimateLinkedCompensation" contextRef="c-current" xml:lang="en">Yes</ns0:nonNumeric></p></div></section><section class="transition-plan" id="transition-plan"><h2>E1-1: Transition Plan for Climate Change Mitigation</h2><p>Transition plan adopted: <ns0:nonNumeric name="esrs-e1:TransitionPlanAdopted" contextRef="c-current" xml:lang="en">Yes</ns0:nonNumeric></p><p>Adoption date: <ns0:nonNumeric name="esrs-e1:TransitionPlanAdoptionDate" contextRef="c-current" xml:lang="en">2024-01-01</ns0:nonNumeric></p><div class="net-zero-target"><h3>Net Zero Target</h3><p>Net zero target year: <ns0:nonFraction name="esrs-e1:NetZeroTargetYear" contextRef="c-current" decimals="0">2050</ns0:nonFraction></p></div><div class="decarbonization-levers"><h3>Key Decarbonization Levers</h3><ul><li>Renewable energy</li><li>Energy efficiency</li><li>Electrification</li></ul></div><div class="financial-planning"><h3>Financial Planning</h3><p>CapEx allocated for transition: €<ns0:nonFraction name="esrs-e1:TransitionCapEx" contextRef="c-current" unitRef="u-EUR-millions" decimals="0">100000000</ns0:nonFraction></p> million</div><div class="locked-in-emissions"><h3>Locked-in GHG Emissions</h3><p><ns0:nonNumeric name="esrs-e1:LockedInEmissionsDisclosure" contextRef="c-current" xml:lang="en">Analysis shows 20% of current emissions locked-in until 2035</ns0:nonNumeric></p></div><div class="just-transition"><h3>Just Transition Considerations</h3><p><ns0:nonNumeric name="esrs-e1:JustTransitionDisclosure" contextRef="c-current" xml:lang="en">Comprehensive reskilling program for affected workers</ns0:nonNumeric></p><p class="cross-reference">→ See ESRS S1 disclosures for detailed workforce transition impacts</p></div></section><section class="climate-policies" id="policies"><h2>E1-2: Policies Related to Climate Change Mitigation and Adaptation</h2><p>Climate policy in place: <ns0:nonNumeric name="esrs-e1:HasClimatePolicy" contextRef="c-current" xml:lang="en">Yes</ns0:nonNumeric></p><div class="policy-description"><p><ns0:nonNumeric name="esrs-e1:ClimatePolicyDescription" contextRef="c-current" xml:lang="en">Net-zero aligned climate policy approved by board</ns0:nonNumeric></p></div><p>Policy adoption date: <ns0:nonNumeric name="esrs-e1:PolicyAdoptionDate" contextRef="c-current" xml:lang="en">2023-01-01</ns0:nonNumeric></p><div class="policy-coverage"><h3>Policy Coverage</h3><ul><li>✓ Own operations</li><li>✓ Value chain</li><li>✓ Products and services</li></ul></div><p>Policy integrated with business strategy: <ns0:nonNumeric name="esrs-e1:PolicyIntegratedWithStrategy" contextRef="c-current" xml:lang="en">Yes</ns0:nonNumeric></p></section><section class="climate-actions" id="actions"><h2>E1-3: Actions and Resources Related to Climate Change</h2><table class="actions-table"><thead><tr><th>Action</th><th>Type</th><th>Timeline</th><th>Investment (€M)</th><th>Expected Impact</th></tr></thead><tbody><tr><td><ns0:nonNumeric name="esrs-e1:ClimateAction1Description" contextRef="c-current" xml:lang="en">Install 50MW solar capacity</ns0:nonNumeric></td><td>Mitigation</td><td>2024-2025</td><td><ns0:nonFraction name="esrs-e1:ClimateAction1Investment" contextRef="c-current" unitRef="u-EUR-millions" decimals="0">50</ns0:nonFraction></td><td>Reduce Scope 2 by 30%</td></tr><tr><td><ns0:nonNumeric name="esrs-e1:ClimateAction2Description" contextRef="c-current" xml:lang="en">Fleet electrification</ns0:nonNumeric></td><td>Mitigation</td><td>2024-2027</td><td><ns0:nonFraction name="esrs-e1:ClimateAction2Investment" contextRef="c-current" unitRef="u-EUR-millions" decimals="0">30</ns0:nonFraction></td><td>Reduce Scope 1 by 15%</td></tr></tbody></table><div class="total-resources"><h3>Total Resources Allocated</h3><p>Climate-related CapEx: €<ns0:nonFraction name="esrs-e1:ClimateCapEx" contextRef="c-current" unitRef="u-EUR-millions" decimals="0">100</ns0:nonFraction></p> million<p>Climate-related OpEx: €<ns0:nonFraction name="esrs-e1:ClimateOpEx" contextRef="c-current" unitRef="u-EUR-millions" decimals="0">20</ns0:nonFraction></p> million<p>FTEs dedicated to climate actions: <ns0:nonFraction name="esrs-e1:ClimateFTE" contextRef="c-current" unitRef="u-FTE" decimals="0">25</ns0:nonFraction></p></div></section><section class="climate-targets" id="targets"><h2>E1-4: GHG Emission Reduction Targets</h2><div class="base-year-info"><p>Base year: <ns0:nonFraction name="esrs-e1:TargetBaseYear" contextRef="c-current" decimals="0">2020</ns0:nonFraction></p><p>Base year emissions: <ns0:nonFraction name="esrs-e1:BaseYearEmissions" contextRef="c-base" unitRef="u-tCO2e" decimals="0">150000</ns0:nonFraction></p> tCO₂e</div><table class="targets-table"><thead><tr><th>Target</th><th>Scope</th><th>Target Year</th><th>Reduction %</th><th>Progress %</th><th>Status</th></tr></thead><tbody><tr><td><ns0:nonNumeric name="esrs-e1:Target1Description" contextRef="c-current" xml:lang="en">Reduce absolute emissions 50% by 2030</ns0:nonNumeric></td><td>Scope 1, 2 &amp; 3</td><td><ns0:nonFraction name="esrs-e1:Target1Year" contextRef="c-target-2030" decimals="0">2030</ns0:nonFraction></td><td><ns0:nonFraction name="esrs-e1:Target1ReductionPercent" contextRef="c-current" unitRef="u-percent" decimals="0">50</ns0:nonFraction></td>%<td><ns0:nonFraction name="esrs-e1:Target1ProgressPercent" contextRef="c-current" unitRef="u-percent" decimals="1">25.0</ns0:nonFraction></td>%<td class="status-on-track">On track</td></tr><tr><td><ns0:nonNumeric name="esrs-e1:Target2Description" contextRef="c-current" xml:lang="en">Achieve net zero emissions</ns0:nonNumeric></td><td>All scopes</td><td><ns0:nonFraction name="esrs-e1:Target2Year" contextRef="c-target-2050" decimals="0">2050</ns0:nonFraction></td><td><ns0:nonFraction name="esrs-e1:Target2ReductionPercent" contextRef="c-current" unitRef="u-percent" decimals="0">100</ns0:nonFraction></td>%<td><ns0:nonFraction name="esrs-e1:Target2ProgressPercent" contextRef="c-current" unitRef="u-percent" decimals="1">10.0</ns0:nonFraction></td>%<td class="status-on-track">On track</td></tr></tbody></table><div class="sbti-validation"><p class="sbti-badge">✓ Science-Based Targets Validated</p><p>SBTi ambition level: <ns0:nonNumeric name="esrs-e1:SBTiAmbitionLevel" contextRef="c-current" xml:lang="en">1.5°C aligned</ns0:nonNumeric></p></div></section><section class="energy-consumption" id="energy"><h2>E1-5: Energy Consumption and Mix</h2><table class="energy-table"><thead><tr><th>Energy Type</th><th>Total Consumption (MWh)</th><th>Renewable (MWh)</th><th>Renewable %</th></tr></thead><tbody><tr><td>Electricity</td><td><ns0:nonFraction name="esrs-e1:EnergyConsumptionElectricity" contextRef="c-current" unitRef="u-MWh" decimals="0">50000</ns0:nonFraction></td><td><ns0:nonFraction name="esrs-e1:RenewableEnergyElectricity" contextRef="c-current" unitRef="u-MWh" decimals="0">20000</ns0:nonFraction></td><td><ns0:nonFraction name="esrs-e1:RenewablePercentageElectricity" contextRef="c-current" unitRef="u-percent" decimals="1">40.0</ns0:nonFraction></td>%</tr><tr><td>Heating &amp; Cooling</td><td><ns0:nonFraction name="esrs-e1:EnergyConsumptionHeatingCooling" contextRef="c-current" unitRef="u-MWh" decimals="0">20000</ns0:nonFraction></td><td><ns0:nonFraction name="esrs-e1:RenewableEnergyHeatingCooling" contextRef="c-current" unitRef="u-MWh" decimals="0">5000</ns0:nonFraction></td><td><ns0:nonFraction name="esrs-e1:RenewablePercentageHeatingCooling" contextRef="c-current" unitRef="u-percent" decimals="1">25.0</ns0:nonFraction></td>%</tr><tr><td>Steam</td><td><ns0:nonFraction name="esrs-e1:EnergyConsumptionSteam" contextRef="c-current" unitRef="u-MWh" decimals="0">10000</ns0:nonFraction></td><td><ns0:nonFraction name="esrs-e1:RenewableEnergySteam" contextRef="c-current" unitRef="u-MWh" decimals="0">1000</ns0:nonFraction></td><td><ns0:nonFraction name="esrs-e1:RenewablePercentageSteam" contextRef="c-current" unitRef="u-percent" decimals="1">10.0</ns0:nonFraction></td>%</tr><tr><td>Fuel Combustion</td><td><ns0:nonFraction name="esrs-e1:EnergyConsumptionFuelCombustion" contextRef="c-current" unitRef="u-MWh" decimals="0">20000</ns0:nonFraction></td><td><ns0:nonFraction name="esrs-e1:RenewableEnergyFuelCombustion" contextRef="c-current" unitRef="u-MWh" decimals="0">2000</ns0:nonFraction></td><td><ns0:nonFraction name="esrs-e1:RenewablePercentageFuelCombustion" contextRef="c-current" unitRef="u-percent" decimals="1">10.0</ns0:nonFraction></td>%</tr><tr class="total-row"><td>TOTAL</td><td><ns0:nonFraction name="esrs-e1:TotalEnergyConsumption" contextRef="c-current" unitRef="u-MWh" decimals="0">100000</ns0:nonFraction></td><td><ns0:nonFraction name="esrs-e1:TotalRenewableEnergy" contextRef="c-current" unitRef="u-MWh" decimals="0">28000</ns0:nonFraction></td><td><ns0:nonFraction name="esrs-e1:TotalRenewableEnergyPercentage" contextRef="c-current" unitRef="u-percent" decimals="1">28.0</ns0:nonFraction></td>%</tr></tbody></table><div class="energy-intensity"><h3>Energy Intensity</h3><p>Energy intensity: <ns0:nonFraction name="esrs-e1:EnergyIntensity" contextRef="c-current" unitRef="u-MWh-per-EUR" decimals="2">0.50</ns0:nonFraction></p> MWh/million EUR</div></section><section class="ghg-emissions" id="emissions"><h2>E1-6: Gross Scopes 1, 2, 3 and Total GHG Emissions</h2><table class="emissions-overview-table"><thead><tr><th>Emission Scope</th><th>Current Year (tCO₂e)</th><th>Previous Year (tCO₂e)</th><th>Change %</th></tr></thead><tbody><tr><td>Scope 1 (Direct emissions)</td><td><ns0:nonFraction name="esrs-e1:GrossScope1Emissions" contextRef="c-current" unitRef="u-tCO2e" decimals="0">15000</ns0:nonFraction></td><td><ns0:nonFraction name="esrs-e1:GrossScope1Emissions" contextRef="c-previous" unitRef="u-tCO2e" decimals="0">16500</ns0:nonFraction></td><td>-9.1%</td></tr><tr><td>Scope 2 (Location-based)</td><td><ns0:nonFraction name="esrs-e1:GrossScope2LocationBased" contextRef="c-current" unitRef="u-tCO2e" decimals="0">8000</ns0:nonFraction></td><td><ns0:nonFraction name="esrs-e1:GrossScope2LocationBased" contextRef="c-previous" unitRef="u-tCO2e" decimals="0">8800</ns0:nonFraction></td><td>N/A</td></tr><tr><td>Scope 2 (Market-based)</td><td><ns0:nonFraction name="esrs-e1:GrossScope2MarketBased" contextRef="c-current" unitRef="u-tCO2e" decimals="0">6500</ns0:nonFraction></td><td><ns0:nonFraction name="esrs-e1:GrossScope2MarketBased" contextRef="c-previous" unitRef="u-tCO2e" decimals="0">7000</ns0:nonFraction></td><td>N/A</td></tr><tr><td>Scope 3 (Value chain emissions)</td><td><ns0:nonFraction name="esrs-e1:GrossScope3Emissions" contextRef="c-current" unitRef="u-tCO2e" decimals="0">120000</ns0:nonFraction></td><td>N/A</td><td>N/A</td></tr><tr class="grand-total"><td>TOTAL GHG EMISSIONS</td><td><ns0:nonFraction name="esrs-e1:TotalGHGEmissions" contextRef="c-current" unitRef="u-tCO2e" decimals="0">141500</ns0:nonFraction></td><td>N/A</td><td>N/A</td></tr></tbody></table><div class="scope3-breakdown"><h3>Scope 3 Categories Breakdown</h3><table class="scope3-table"><thead><tr><th>Category</th><th>Emissions (tCO₂e)</th><th>Method</th><th>Data Quality</th><th>Coverage</th></tr></thead><tbody><tr><td>Cat 1: Purchased goods and services</td><td><ns0:nonFraction name="esrs-e1:Scope3Category1" contextRef="c-cat1" unitRef="u-tCO2e" decimals="0">30000</ns0:nonFraction></td><td>Supplier-specific</td><td><span class="data-quality-indicator quality-tier 1" data-score="85">Tier 1</span></td><td>95%</td></tr><tr><td>Cat 2: Capital goods</td><td><ns0:nonFraction name="esrs-e1:Scope3Category2" contextRef="c-cat2" unitRef="u-tCO2e" decimals="0">10000</ns0:nonFraction></td><td>Spend-based</td><td><span class="data-quality-indicator quality-tier 2" data-score="75">Tier 2</span></td><td>95%</td></tr><tr><td>Cat 3: Fuel- and energy-related activities</td><td><ns0:nonFraction name="esrs-e1:Scope3Category3" contextRef="c-cat3" unitRef="u-tCO2e" decimals="0">8000</ns0:nonFraction></td><td>Spend-based</td><td><span class="data-quality-indicator quality-tier 2" data-score="75">Tier 2</span></td><td>95%</td></tr><tr><td>Cat 4: Upstream transportation and distribution</td><td><ns0:nonFraction name="esrs-e1:Scope3Category4" contextRef="c-cat4" unitRef="u-tCO2e" decimals="0">7000</ns0:nonFraction></td><td>Spend-based</td><td><span class="data-quality-indicator quality-tier 2" data-score="75">Tier 2</span></td><td>95%</td></tr><tr><td>Cat 5: Waste generated in operations</td><td><ns0:nonFraction name="esrs-e1:Scope3Category5" contextRef="c-cat5" unitRef="u-tCO2e" decimals="0">2000</ns0:nonFraction></td><td>Spend-based</td><td><span class="data-quality-indicator quality-tier 2" data-score="75">Tier 2</span></td><td>95%</td></tr><tr><td>Cat 6: Business travel</td><td><ns0:nonFraction name="esrs-e1:Scope3Category6" contextRef="c-cat6" unitRef="u-tCO2e" decimals="0">5000</ns0:nonFraction></td><td>Spend-based</td><td><span class="data-quality-indicator quality-tier 2" data-score="75">Tier 2</span></td><td>95%</td></tr><tr><td>Cat 7: Employee commuting</td><td><ns0:nonFraction name="esrs-e1:Scope3Category7" contextRef="c-cat7" unitRef="u-tCO2e" decimals="0">3000</ns0:nonFraction></td><td>Spend-based</td><td><span class="data-quality-indicator quality-tier 2" data-score="75">Tier 2</span></td><td>95%</td></tr><tr><td>Cat 8: Upstream leased assets</td><td>Excluded</td><td>Spend-based</td><td><span class="data-quality-indicator quality-tier 2" data-score="75">Tier 2</span></td><td>N/A</td></tr><tr><td>Cat 9: Downstream transportation and distribution</td><td><ns0:nonFraction name="esrs-e1:Scope3Category9" contextRef="c-cat9" unitRef="u-tCO2e" decimals="0">10000</ns0:nonFraction></td><td>Spend-based</td><td><span class="data-quality-indicator quality-tier 2" data-score="75">Tier 2</span></td><td>95%</td></tr><tr><td>Cat 10: Processing of sold products</td><td><ns0:nonFraction name="esrs-e1:Scope3Category10" contextRef="c-cat10" unitRef="u-tCO2e" decimals="0">15000</ns0:nonFraction></td><td>Spend-based</td><td><span class="data-quality-indicator quality-tier 2" data-score="75">Tier 2</span></td><td>95%</td></tr><tr><td>Cat 11: Use of sold products</td><td><ns0:nonFraction name="esrs-e1:Scope3Category11" contextRef="c-cat11" unitRef="u-tCO2e" decimals="0">25000</ns0:nonFraction></td><td>Supplier-specific</td><td><span class="data-quality-indicator quality-tier 1" data-score="85">Tier 1</span></td><td>95%</td></tr><tr><td>Cat 12: End-of-life treatment of sold products</td><td><ns0:nonFraction name="esrs-e1:Scope3Category12" contextRef="c-cat12" unitRef="u-tCO2e" decimals="0">5000</ns0:nonFraction></td><td>Spend-based</td><td><span class="data-quality-indicator quality-tier 2" data-score="75">Tier 2</span></td><td>95%</td></tr><tr><td>Cat 13: Downstream leased assets</td><td>Excluded</td><td>Spend-based</td><td><span class="data-quality-indicator quality-tier 2" data-score="75">Tier 2</span></td><td>N/A</td></tr><tr><td>Cat 14: Franchises</td><td>Excluded</td><td>Spend-based</td><td><span class="data-quality-indicator quality-tier 2" data-score="75">Tier 2</span></td><td>N/A</td></tr><tr><td>Cat 15: Investments</td><td>Excluded</td><td>Spend-based</td><td><span class="data-quality-indicator quality-tier 2" data-score="75">Tier 2</span></td><td>N/A</td></tr></tbody></table></div><div class="ghg-intensity"><h3>GHG Intensity Metrics</h3><p>GHG intensity per revenue: <ns0:nonFraction name="esrs-e1:GHGIntensityRevenue" contextRef="c-current" unitRef="u-tCO2e-per-EUR" decimals="2">45.20</ns0:nonFraction></p> tCO₂e/million EUR</div></section><section class="removals-credits" id="removals"><h2>E1-7: GHG Removals and Avoided Emissions</h2><div class="ghg-removals"><h3>GHG Removals</h3><p>Total GHG removals: <ns0:nonFraction name="esrs-e1:GHGRemovalsTotal" contextRef="c-current" unitRef="u-tCO2e" decimals="0">1000</ns0:nonFraction></p> tCO₂e<p>Removals within value chain: <ns0:nonFraction name="esrs-e1:RemovalsWithinValueChain" contextRef="c-current" unitRef="u-tCO2e" decimals="0">1000</ns0:nonFraction></p> tCO₂e<table><thead><tr><th>Removal Type</th><th>Amount (tCO₂e)</th><th>Permanence (years)</th></tr></thead><tbody><tr><td>Reforestation</td><td>800</td><td>TBD</td></tr><tr><td>Direct Air Capture</td><td>200</td><td>TBD</td></tr></tbody></table></div></section><section class="carbon-pricing" id="pricing"><h2>E1-8: Internal Carbon Pricing</h2><p>Internal carbon pricing implemented: <ns0:nonNumeric name="esrs-e1:InternalCarbonPricingImplemented" contextRef="c-current" xml:lang="en">Yes</ns0:nonNumeric></p><table class="pricing-table"><thead><tr><th>Scope</th><th>Price (EUR/tCO₂e)</th><th>Application</th><th>Coverage %</th></tr></thead><tbody><tr><td>Shadow price</td><td><ns0:nonFraction name="esrs-e1:ShadowCarbonPrice" contextRef="c-current" unitRef="u-EUR-per-tCO2e" decimals="0">100</ns0:nonFraction></td><td>All major investment decisions</td><td>80%</td></tr></tbody></table><div class="external-pricing"><h3>External Carbon Pricing Exposure</h3><p>EU ETS allowances required: <ns0:nonFraction name="esrs-e1:EUETSAllowancesRequired" contextRef="c-current" unitRef="u-tCO2e" decimals="0">50000</ns0:nonFraction></p> tCO₂e<p>EU ETS cost: €<ns0:nonFraction name="esrs-e1:EUETSCost" contextRef="c-current" unitRef="u-EUR" decimals="0">4000000</ns0:nonFraction></p></div></section><section class="financial-effects" id="financial"><h2>E1-9: Anticipated Financial Effects from Climate-Related Risks and Opportunities</h2><div class="climate-risks"><h3>Financial Effects of Climate Risks</h3><table><thead><tr><th>Risk Type</th><th>Description</th><th>Time Horizon</th><th>Likelihood</th><th>Financial Impact (M€)</th><th>Management Response</th></tr></thead><tbody><tr><td><ns0:nonNumeric name="esrs-e1:ClimateRisk1Type" contextRef="c-current" xml:lang="en">Physical</ns0:nonNumeric></td><td><ns0:nonNumeric name="esrs-e1:ClimateRisk1Description" contextRef="c-current" xml:lang="en">Flood risk to coastal facilities</ns0:nonNumeric></td><td>Medium-term</td><td>Likely</td><td>TBD</td><td>Under assessment</td></tr><tr><td><ns0:nonNumeric name="esrs-e1:ClimateRisk2Type" contextRef="c-current" xml:lang="en">Transition</ns0:nonNumeric></td><td><ns0:nonNumeric name="esrs-e1:ClimateRisk2Description" contextRef="c-current" xml:lang="en">Carbon pricing exposure</ns0:nonNumeric></td><td>Short-term</td><td>Very likely</td><td>TBD</td><td>Under assessment</td></tr></tbody></table></div><div class="climate-opportunities"><h3>Financial Effects of Climate Opportunities</h3><table><thead><tr><th>Opportunity Type</th><th>Description</th><th>Time Horizon</th><th>Likelihood</th><th>Financial Impact (M€)</th><th>Investment Required</th></tr></thead><tbody><tr><td><ns0:nonNumeric name="esrs-e1:ClimateOpportunity1Type" contextRef="c-current" xml:lang="en">Products and services</ns0:nonNumeric></td><td><ns0:nonNumeric name="esrs-e1:ClimateOpportunity1Description" contextRef="c-current" xml:lang="en">Low-carbon product line</ns0:nonNumeric></td><td>Short-term</td><td>Likely</td><td>TBD</td><td>TBD</td></tr></tbody></table></div><div class="financial-summary"><h3>Summary of Financial Effects</h3><p>Total potential risk impact: <ns0:nonFraction name="esrs-e1:TotalClimateRiskImpact" contextRef="c-prospective" unitRef="u-EUR-millions" decimals="0">0</ns0:nonFraction></p> M€<p>Total potential opportunity impact: <ns0:nonFraction name="esrs-e1:TotalClimateOpportunityImpact" contextRef="c-prospective" unitRef="u-EUR-millions" decimals="0">0</ns0:nonFraction></p> M€<p class="net-impact">Net potential impact: <ns0:nonFraction name="esrs-e1:NetClimateFinancialImpact" contextRef="c-prospective" unitRef="u-EUR-millions" decimals="0">0</ns0:nonFraction></p> M€</div></section><section class="eu-taxonomy" id="eu-taxonomy"><h2>EU Taxonomy Alignment</h2><div class="taxonomy-overview"><div class="kpi-grid"><div class="kpi-card"><div class="kpi-label">Taxonomy-aligned Revenue</div><div class="kpi-value"><ns0:nonFraction name="eu-tax:TaxonomyAlignedRevenuePercentage" contextRef="c-current" unitRef="u-percent" decimals="1">35.0</ns0:nonFraction></div><div class="kpi-unit">%</div></div><div class="kpi-card"><div class="kpi-label">Taxonomy-aligned CapEx</div><div class="kpi-value"><ns0:nonFraction name="eu-tax:TaxonomyAlignedCapExPercentage" contextRef="c-current" unitRef="u-percent" decimals="1">45.0</ns0:nonFraction></div><div class="kpi-unit">%</div></div><div class="kpi-card"><div class="kpi-label">Taxonomy-aligned OpEx</div><div class="kpi-value"><ns0:nonFraction name="eu-tax:TaxonomyAlignedOpExPercentage" contextRef="c-current" unitRef="u-percent" decimals="1">30.0</ns0:nonFraction></div><div class="kpi-unit">%</div></div></div></div><div class="eligible-activities"><h3>Taxonomy-Eligible Activities</h3><table><thead><tr><th>Activity</th><th>NACE Code</th><th>Revenue %</th><th>CapEx %</th><th>Aligned</th></tr></thead><tbody><tr><td>Solar energy generation</td><td>D35.11</td><td>20%</td><td>30%</td><td>✓</td></tr></tbody></table></div></section><section class="value-chain" id="value-chain"><h2>Value Chain Engagement</h2><div class="upstream-value-chain"><h3>Upstream Value Chain</h3><p>Suppliers with climate targets: <ns0:nonFraction name="esrs-e1:SuppliersWithClimateTargetsPercentage" contextRef="c-value-chain-upstream" unitRef="u-percent" decimals="1" data-assurance-status="reviewed">60.0</ns0:nonFraction></p>%<p>Supplier engagement program: <ns0:nonNumeric name="esrs-e1:SupplierEngagementProgram" contextRef="c-current" xml:lang="en">Supplier Climate Action Program launched 2023</ns0:nonNumeric></p></div><div class="own-operations"><h3>Own Operations</h3><p>See emissions data in E1-6 section for detailed breakdown of own operations.</p></div><div class="downstream"><h3>Downstream Value Chain</h3><p>Product carbon footprint assessments completed: <ns0:nonNumeric name="esrs-e1:ProductCarbonFootprintAssessments" contextRef="c-current" xml:lang="en">Yes</ns0:nonNumeric></p><table class="pcf-table"><thead><tr><th>Product</th><th>Carbon Footprint (kgCO₂e/unit)</th><th>LCA Standard</th><th>Coverage</th></tr></thead><tbody><tr><td>Main Product Line</td><td><ns0:nonFraction name="esrs-e1:ProductCarbonFootprint1" contextRef="c-downstream" unitRef="u-kgCO2e-per-unit" decimals="1">10.5</ns0:nonFraction></td><td>ISO 14067</td><td>Cradle-to-gate</td></tr></tbody></table></div></section><section class="sector-specific" id="sector"><h2>Sector-Specific Disclosures - Manufacturing</h2><div class="sector-metrics"><h3>Key Sector Metrics</h3><ul><li>Production intensity</li><li>Circular economy metrics</li><li>Supply chain emissions</li></ul></div></section><section class="connectivity" id="connectivity"><h2>ESRS Connectivity</h2><table class="connectivity-table"><thead><tr><th>ESRS E1 Topic</th><th>Connected Standard</th><th>Connection Type</th><th>Reference</th></tr></thead><tbody><tr><td>Climate governance</td><td>ESRS 2 GOV-1</td><td>Direct link</td><td>Par. 16-20</td></tr><tr><td>Just transition</td><td>ESRS S1</td><td>Impact on workforce</td><td>S1-1</td></tr><tr><td>Climate risks</td><td>ESRS 2 SBM-3</td><td>Material IROs</td><td>Par. 48-53</td></tr><tr><td>Nature impacts</td><td>ESRS E4</td><td>Climate-nature nexus</td><td>E4-1</td></tr><tr><td>Water use</td><td>ESRS E3</td><td>Climate adaptation</td><td>E3-1</td></tr><tr><td>Supply chain</td><td>ESRS S2</td><td>Value chain workers</td><td>S2-1</td></tr><tr><td>Innovation</td><td>ESRS G1</td><td>Business conduct</td><td>G1-1</td></tr></tbody></table></section><div class="cross-references" /><section class="methodology" id="methodology"><h2>Methodology and Data Quality</h2><div class="calculation-methodology"><h3>Calculation Methodology</h3><p>GHG accounting standard: <ns0:nonNumeric name="esrs-e1:GHGAccountingStandard" contextRef="c-current" xml:lang="en">GHG Protocol Corporate Standard</ns0:nonNumeric></p><p>Consolidation approach: <ns0:nonNumeric name="esrs-e1:ConsolidationApproach" contextRef="c-current" xml:lang="en">Operational control</ns0:nonNumeric></p></div><div class="emission-factors"><h3>Emission Factor Sources</h3><ul><li>DEFRA 2024</li><li>IEA 2024</li><li>EPA Hub</li></ul></div><div class="data-quality"><h3>Data Quality Assessment</h3><p>Average data quality score across all Scope 3 categories: <ns0:nonFraction name="esrs-e1:AverageDataQualityScore" contextRef="c-current" decimals="0">85</ns0:nonFraction></p>/100</div><div class="uncertainty"><h3>Uncertainty Assessment</h3><p><ns0:nonNumeric name="esrs-e1:UncertaintyAssessment" contextRef="c-current" xml:lang="en">Monte Carlo analysis shows 95% CI of ±15%</ns0:nonNumeric></p></div><div class="recalculation-policy"><h3>Base Year Recalculation Policy</h3><p><ns0:nonNumeric name="esrs-e1:RecalculationPolicy" contextRef="c-current" xml:lang="en">Recalculate if changes exceed 5% threshold</ns0:nonNumeric></p></div></section><section class="assurance" id="assurance"><h2>Assurance</h2><div class="assurance-statement"><p>Level of assurance: <ns0:nonNumeric name="esrs-e1:AssuranceLevel" contextRef="c-current" xml:lang="en">Limited assurance</ns0:nonNumeric></p><p>Assurance provider: <ns0:nonNumeric name="esrs-e1:AssuranceProvider" contextRef="c-current" xml:lang="en">PwC</ns0:nonNumeric></p><p>Assurance standard: <ns0:nonNumeric name="esrs-e1:AssuranceStandard" contextRef="c-current" xml:lang="en">ISAE 3410</ns0:nonNumeric></p><div class="assurance-scope"><h3>Scope of Assurance</h3><ul><li>Scope 1</li><li>Scope 2</li><li>Material Scope 3 categories</li></ul></div></div></section><section class="document-versioning" id="versioning"><h2>Document Version Control</h2><table><tbody><tr><td>Document Version</td><td>1.0</td></tr><tr><td>Generation Date</td><td>2025-07-24 18:08:03</td></tr><tr><td>XBRL Taxonomy Version</td><td>EFRAG 2024.1.0</td></tr><tr><td>Generator Version</td><td>2.0 Enhanced</td></tr><tr><td>Last Modified</td><td>2025-07-24T18:08:03.573395</td></tr></tbody></table></section></main><div class="esap-ready-indicator" data-ready="false"><span class="esap-icon">!</span><span class="esap-text">ESAP Preparation Needed</span><div class="esap-details">Missing: Digital Signature, Assurance Completed</div></div><div class="assurance-indicators"><div class="assurance-indicator" data-assured="false"><span class="assurance-icon">○</span><span class="assurance-label">Governance</span></div><div class="assurance-indicator" data-assured="false"><span class="assurance-icon">○</span><span class="assurance-label">Targets</span></div><div class="assurance-indicator" data-assured="false"><span class="assurance-icon">○</span><span class="assurance-label">Emissions Data</span></div><div class="assurance-indicator" data-assured="false"><span class="assurance-icon">○</span><span class="assurance-label">Energy Data</span></div><div class="assurance-indicator" data-assured="false"><span class="assurance-icon">○</span><span class="assurance-label">Financial Effects</span></div><div class="assurance-indicator" data-assured="false"><span class="assurance-icon">○</span><span class="assurance-label">Transition Plan</span></div></div><div class="esap-metadata" style="display: none;"><meta name="esap:reportingStandard" content="ESRS" /><meta name="esap:reportingFramework" content="CSRD" /><meta name="esap:entityIdentifier" content="5493000KJTIIGC8Y1R12" /><meta name="esap:consolidationScope" content="Group" /><meta name="esap:reportingCurrency" content="EUR" /><meta name="esap:reportingLanguage" content="en" /><meta name="esap:assuranceLevel" content="Limited assurance" /><meta name="esap:digitalSignature" content="7706cea04223d8b06806e73e76ef486c31833ab55d84b663922ed8fe5b3f8cda" /><meta name="esap:reportingPeriod" content="2024" /><meta name="esap:publicationDate" content="2025-07-24" /><meta name="esap:lastModified" content="2025-07-24T18:08:03.573539" /><meta name="esap:documentVersion" content="1.0" /><meta name="esap:contactEmail" content="" /><meta name="esap:authorizedRepresentative" content="" /></div></body></xbrl>

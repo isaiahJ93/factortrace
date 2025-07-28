@@ -1,0 +1,509 @@
+{
+  "report": {
+    "type": "ESRS Sustainability Report",
+    "created": "2025-07-03T12:16:19.272658",
+    "standard": "EFRAG ESRS 2023"
+  },
+  "company": {
+    "identifier": "COMPANY-001",
+    "reporting_period": "2024"
+  },
+  "metrics": {
+    "climate": {
+      "emissions": {
+        "scope1": {
+          "value": "5,000",
+          "unit": "esrs:tonnesCO2e",
+          "context": {
+            "entity": "COMPANY-001",
+            "period": "2024-12-31"
+          },
+          "decimals": "0"
+        },
+        "scope2_market": {
+          "value": "3,000",
+          "unit": "esrs:tonnesCO2e",
+          "context": {
+            "entity": "COMPANY-001",
+            "period": "2024-12-31"
+          },
+          "decimals": "0"
+        },
+        "scope3": {
+          "value": "6,000",
+          "unit": "esrs:tonnesCO2e",
+          "context": {
+            "entity": "COMPANY-001",
+            "period": "2024-12-31"
+          },
+          "decimals": "0"
+        },
+        "total": {
+          "value": "14,000",
+          "unit": "esrs:tonnesCO2e",
+          "context": {
+            "entity": "COMPANY-001",
+            "period": "2024-12-31"
+          },
+          "decimals": "0"
+        }
+      },
+      "energy": {
+        "renewable_percentage": {
+          "value": "67",
+          "unit": "xbrli:pure",
+          "context": {
+            "entity": "COMPANY-001",
+            "period": "2024-12-31"
+          },
+          "decimals": "1"
+        },
+        "total_consumption": {
+          "value": "125,000",
+          "unit": "esrs:MegawattHour",
+          "context": {
+            "entity": "COMPANY-001",
+            "period": "2024-12-31"
+          },
+          "decimals": "0"
+        }
+      }
+    },
+    "environmental": {
+      "water": {
+        "consumption": {
+          "value": "2,100,000",
+          "unit": "esrs:CubicMetre",
+          "context": {
+            "entity": "COMPANY-001",
+            "period": "2024-12-31"
+          },
+          "decimals": "0"
+        },
+        "intensity": {
+          "value": "2.1",
+          "unit": "esrs:CubicMetre",
+          "context": {
+            "entity": "COMPANY-001",
+            "period": "2024-12-31"
+          },
+          "decimals": "2"
+        }
+      },
+      "waste": {
+        "generated": {
+          "value": "45,000",
+          "unit": "esrs:Tonne",
+          "context": {
+            "entity": "COMPANY-001",
+            "period": "2024-12-31"
+          },
+          "decimals": "0"
+        },
+        "recycled": {
+          "value": "37,800",
+          "unit": "esrs:Tonne",
+          "context": {
+            "entity": "COMPANY-001",
+            "period": "2024-12-31"
+          },
+          "decimals": "0"
+        },
+        "recycling_rate": {
+          "value": "84",
+          "unit": "xbrli:pure",
+          "context": {
+            "entity": "COMPANY-001",
+            "period": "2024-12-31"
+          },
+          "decimals": "1"
+        }
+      }
+    },
+    "social": {
+      "workforce": {
+        "total_employees": {
+          "value": "8,456",
+          "unit": "xbrli:pure",
+          "context": {
+            "entity": "COMPANY-001",
+            "period": "2024-12-31"
+          },
+          "decimals": "0"
+        },
+        "gender_diversity": {
+          "value": "45",
+          "unit": "xbrli:pure",
+          "context": {
+            "entity": "COMPANY-001",
+            "period": "2024-12-31"
+          },
+          "decimals": "1"
+        },
+        "training_hours": {
+          "value": "32",
+          "unit": "hours",
+          "context": {
+            "entity": "COMPANY-001",
+            "period": "2024-12-31"
+          },
+          "decimals": "1"
+        },
+        "injury_rate": {
+          "value": "0.23",
+          "unit": "xbrli:pure",
+          "context": {
+            "entity": "COMPANY-001",
+            "period": "2024-12-31"
+          },
+          "decimals": "2"
+        }
+      }
+    },
+    "governance": {
+      "business_conduct": {
+        "corruption_incidents": {
+          "value": "0",
+          "unit": "xbrli:pure",
+          "context": {
+            "entity": "COMPANY-001",
+            "period": "2024-12-31"
+          },
+          "decimals": "0"
+        },
+        "political_contributions": {
+          "value": "0",
+          "unit": "iso4217:EUR",
+          "context": {
+            "entity": "COMPANY-001",
+            "period": "2024-12-31"
+          },
+          "decimals": "0"
+        }
+      }
+    }
+  },
+  "raw_facts": {
+    "identifier": {
+      "value": "COMPANY-001",
+      "unit": "xbrli:pure",
+      "context": {
+        "period": "2024-12-31"
+      },
+      "decimals": "0"
+    },
+    "instant": {
+      "value": "2024-12-31",
+      "unit": "xbrli:pure",
+      "context": {
+        "period": "2024-12-31"
+      },
+      "decimals": "0"
+    },
+    "measure": {
+      "value": "xbrli:pure",
+      "unit": "xbrli:pure",
+      "context": {
+        "period": "2024-12-31"
+      },
+      "decimals": "0"
+    },
+    "GrossScope1GHGEmissions": {
+      "value": "5,000",
+      "unit": "esrs:tonnesCO2e",
+      "context": {
+        "entity": "COMPANY-001",
+        "period": "2024-12-31"
+      },
+      "decimals": "0"
+    },
+    "GrossScope2MarketBased": {
+      "value": "3,000",
+      "unit": "esrs:tonnesCO2e",
+      "context": {
+        "entity": "COMPANY-001",
+        "period": "2024-12-31"
+      },
+      "decimals": "0"
+    },
+    "GrossScope3TotalEmissions": {
+      "value": "6,000",
+      "unit": "esrs:tonnesCO2e",
+      "context": {
+        "entity": "COMPANY-001",
+        "period": "2024-12-31"
+      },
+      "decimals": "0"
+    },
+    "TotalGHGEmissions": {
+      "value": "14,000",
+      "unit": "esrs:tonnesCO2e",
+      "context": {
+        "entity": "COMPANY-001",
+        "period": "2024-12-31"
+      },
+      "decimals": "0"
+    },
+    "RenewableEnergyPercentage": {
+      "value": "67",
+      "unit": "xbrli:pure",
+      "context": {
+        "entity": "COMPANY-001",
+        "period": "2024-12-31"
+      },
+      "decimals": "1"
+    },
+    "TotalEnergyConsumption": {
+      "value": "125,000",
+      "unit": "esrs:MegawattHour",
+      "context": {
+        "entity": "COMPANY-001",
+        "period": "2024-12-31"
+      },
+      "decimals": "0"
+    },
+    "Scope3Category1PurchasedGoods": {
+      "value": "4,000",
+      "unit": "esrs:tonnesCO2e",
+      "context": {
+        "entity": "COMPANY-001",
+        "period": "2024-12-31"
+      },
+      "decimals": "0"
+    },
+    "Scope3Category2CapitalGoods": {
+      "value": "2,000",
+      "unit": "esrs:tonnesCO2e",
+      "context": {
+        "entity": "COMPANY-001",
+        "period": "2024-12-31"
+      },
+      "decimals": "0"
+    },
+    "AirPollutants": {
+      "value": "45",
+      "unit": "esrs:Tonne",
+      "context": {
+        "entity": "COMPANY-001",
+        "period": "2024-12-31"
+      },
+      "decimals": "1"
+    },
+    "NOxEmissions": {
+      "value": "12",
+      "unit": "esrs:Tonne",
+      "context": {
+        "entity": "COMPANY-001",
+        "period": "2024-12-31"
+      },
+      "decimals": "1"
+    },
+    "SOxEmissions": {
+      "value": "8",
+      "unit": "esrs:Tonne",
+      "context": {
+        "entity": "COMPANY-001",
+        "period": "2024-12-31"
+      },
+      "decimals": "1"
+    },
+    "TotalWaterConsumption": {
+      "value": "2,100,000",
+      "unit": "esrs:CubicMetre",
+      "context": {
+        "entity": "COMPANY-001",
+        "period": "2024-12-31"
+      },
+      "decimals": "0"
+    },
+    "WaterWithdrawal": {
+      "value": "2,500,000",
+      "unit": "esrs:CubicMetre",
+      "context": {
+        "entity": "COMPANY-001",
+        "period": "2024-12-31"
+      },
+      "decimals": "0"
+    },
+    "WaterIntensity": {
+      "value": "2.1",
+      "unit": "esrs:CubicMetre",
+      "context": {
+        "entity": "COMPANY-001",
+        "period": "2024-12-31"
+      },
+      "decimals": "2"
+    },
+    "ProtectedAreasImpacted": {
+      "value": "0",
+      "unit": "hectares",
+      "context": {
+        "entity": "COMPANY-001",
+        "period": "2024-12-31"
+      },
+      "decimals": "0"
+    },
+    "LandUseChange": {
+      "value": "5",
+      "unit": "hectares",
+      "context": {
+        "entity": "COMPANY-001",
+        "period": "2024-12-31"
+      },
+      "decimals": "0"
+    },
+    "WasteGenerated": {
+      "value": "45,000",
+      "unit": "esrs:Tonne",
+      "context": {
+        "entity": "COMPANY-001",
+        "period": "2024-12-31"
+      },
+      "decimals": "0"
+    },
+    "WasteRecycled": {
+      "value": "37,800",
+      "unit": "esrs:Tonne",
+      "context": {
+        "entity": "COMPANY-001",
+        "period": "2024-12-31"
+      },
+      "decimals": "0"
+    },
+    "WasteRecyclingRate": {
+      "value": "84",
+      "unit": "xbrli:pure",
+      "context": {
+        "entity": "COMPANY-001",
+        "period": "2024-12-31"
+      },
+      "decimals": "1"
+    },
+    "HazardousWaste": {
+      "value": "500",
+      "unit": "esrs:Tonne",
+      "context": {
+        "entity": "COMPANY-001",
+        "period": "2024-12-31"
+      },
+      "decimals": "0"
+    },
+    "TotalEmployees": {
+      "value": "8,456",
+      "unit": "xbrli:pure",
+      "context": {
+        "entity": "COMPANY-001",
+        "period": "2024-12-31"
+      },
+      "decimals": "0"
+    },
+    "GenderDiversityAllEmployees": {
+      "value": "45",
+      "unit": "xbrli:pure",
+      "context": {
+        "entity": "COMPANY-001",
+        "period": "2024-12-31"
+      },
+      "decimals": "1"
+    },
+    "GenderPayGap": {
+      "value": "12",
+      "unit": "xbrli:pure",
+      "context": {
+        "entity": "COMPANY-001",
+        "period": "2024-12-31"
+      },
+      "decimals": "1"
+    },
+    "AverageTrainingHours": {
+      "value": "32",
+      "unit": "hours",
+      "context": {
+        "entity": "COMPANY-001",
+        "period": "2024-12-31"
+      },
+      "decimals": "1"
+    },
+    "WorkRelatedInjuries": {
+      "value": "0.23",
+      "unit": "xbrli:pure",
+      "context": {
+        "entity": "COMPANY-001",
+        "period": "2024-12-31"
+      },
+      "decimals": "2"
+    },
+    "EmployeeTurnoverRate": {
+      "value": "8",
+      "unit": "xbrli:pure",
+      "context": {
+        "entity": "COMPANY-001",
+        "period": "2024-12-31"
+      },
+      "decimals": "1"
+    },
+    "ConfirmedIncidentsOfCorruption": {
+      "value": "0",
+      "unit": "xbrli:pure",
+      "context": {
+        "entity": "COMPANY-001",
+        "period": "2024-12-31"
+      },
+      "decimals": "0"
+    },
+    "PoliticalContributions": {
+      "value": "0",
+      "unit": "iso4217:EUR",
+      "context": {
+        "entity": "COMPANY-001",
+        "period": "2024-12-31"
+      },
+      "decimals": "0"
+    },
+    "LobbyingExpenditure": {
+      "value": "50,000",
+      "unit": "iso4217:EUR",
+      "context": {
+        "entity": "COMPANY-001",
+        "period": "2024-12-31"
+      },
+      "decimals": "0"
+    },
+    "WhistleblowingCases": {
+      "value": "3",
+      "unit": "xbrli:pure",
+      "context": {
+        "entity": "COMPANY-001",
+        "period": "2024-12-31"
+      },
+      "decimals": "0"
+    },
+    "Revenue": {
+      "value": "150",
+      "unit": "iso4217:EUR",
+      "context": {
+        "entity": "COMPANY-001",
+        "period": "2024-12-31"
+      },
+      "decimals": "-6"
+    },
+    "TotalAssets": {
+      "value": "2.5",
+      "unit": "iso4217:EUR",
+      "context": {
+        "entity": "COMPANY-001",
+        "period": "2024-12-31"
+      },
+      "decimals": "-9"
+    },
+    "NetProfit": {
+      "value": "25",
+      "unit": "iso4217:EUR",
+      "context": {
+        "entity": "COMPANY-001",
+        "period": "2024-12-31"
+      },
+      "decimals": "-6"
+    }
+  }
+}

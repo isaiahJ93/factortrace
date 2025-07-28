@@ -1,0 +1,94 @@
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
+
+// Design constants for PDF styling
+const DESIGN = {
+  colors: {
+    primary: [26, 26, 46] as [number, number, number],
+    secondary: [100, 100, 100] as [number, number, number],
+    text: [50, 50, 50] as [number, number, number],
+    success: [16, 185, 129] as [number, number, number],
+    warning: [245, 158, 11] as [number, number, number],
+    error: [239, 68, 68] as [number, number, number]
+  },
+  fonts: {
+    sizes: {
+      title: 16,
+      subtitle: 14,
+      body: 11,
+      small: 10,
+      tiny: 9
+    }
+  },
+  layout: {
+    margins: {
+      top: 20,
+      bottom: 20,
+      left: 20,
+      right: 20
+    },
+    pageHeight: 297,
+    pageWidth: 210
+  }
+};
+
+// Interfaces
+export interface PDFExportData {
+  metadata: {
+    documentId?: string;
+    companyName: string;
+    reportingPeriod: string;
+    generatedDate: string;
+    standard?: string;
+    methodology?: string;
+  };
+  summary: {
+    totalEmissions: number;
+    scope1: number;
+    scope2: number;
+    scope3: number;
+    scope1Percentage?: number;
+    scope2Percentage?: number;
+    scope3Percentage?: number;
+    dataQualityScore?: number;
+  };
+  governance?: any;
+  targets?: any[];
+  activities?: any[];
+  scope3Categories?: any[];
+  topEmissionSources?: any[];
+  [key: string]: any;
+}
+
+export interface ExportResult {
+  success: boolean;
+  blob: Blob | null;
+  error?: string;
+}
+
+/**
+ * PDF Export Handler for ESRS E1 compliant reports
+ */
+export class PDFExportHandler {
+  private static instance: PDFExportHandler;
+  private readonly apiUrl: string;
+  
+  private constructor(apiUrl: string = 'http://localhost:8000') {
+    this.apiUrl = apiUrl;
+  }
+  
+  public static getInstance(apiUrl?: string): PDFExportHandler {
+    if (!PDFExportHandler.instance) {
+      PDFExportHandler.instance = new PDFExportHandler(apiUrl);
+    }
+    return PDFExportHandler.instance;
+  }
+}
+
+export async function generatePDFReport(
+  data: PDFExportData,
+  options?: { useBackend?: boolean; filename?: string; compress?: boolean; validate?: boolean }
+): Promise<ExportResult> {
+  const handler = PDFExportHandler.getInstance();
+  return handler.exportSinglePDF(data, options);
+}

@@ -1,0 +1,19 @@
+# Complete EFRAG/CSRD Taxonomy Configuration
+# All ESRS Standards with comprehensive disclosure requirements
+
+taxonomy:
+  namespace: "https://xbrl.efrag.org/taxonomy/2023-12-31/esrs"
+  prefix: "esrs"
+  version: "2023.1"
+  
+standards:
+  # ESRS 2 - General Disclosures
+  ESRS_2:
+    # Governance (GOV)
+    GOV-1:
+      - concept: "esrs:GovernanceStructureComposition"
+        patterns: ["governance.*structure", "board.*composition"]
+        datatype: "xbrli:textBlockItemType"
+      - concept: "esrs:BoardGenderDiversityPercentage"
+        patterns: ["(?:female|women).*board.*(?:members?|%)", "board.*gender.*diversity"]
+        datatype: "xbrli:percentItemType"

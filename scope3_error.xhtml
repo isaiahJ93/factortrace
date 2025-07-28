@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns:ix="http://www.xbrl.org/2013/inlineXBRL"
+      xmlns:xbrli="http://www.xbrl.org/2003/instance">
+<body>
+    <xbrli:unit id="tCO2e">
+        <xbrli:measure>unit:tCO2e</xbrli:measure>
+    </xbrli:unit>
+    <!-- Scope 3 categories that don't add up -->
+    <ix:nonFraction name="esrs-e1:GHGEmissionsScope3Cat01" contextRef="2024" unitRef="tCO2e">1000</ix:nonFraction>
+    <ix:nonFraction name="esrs-e1:GHGEmissionsScope3Cat02" contextRef="2024" unitRef="tCO2e">2000</ix:nonFraction>
+    <ix:nonFraction name="esrs-e1:GHGEmissionsScope3Total" contextRef="2024" unitRef="tCO2e">5000</ix:nonFraction>
+    <!-- Wrong total! Should be 3000 -->
+</body>
+</html>

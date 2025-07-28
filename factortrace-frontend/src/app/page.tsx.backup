@@ -1,0 +1,727 @@
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, RadialBarChart, RadialBar, AreaChart, Area } from 'recharts';
+import { Activity, TrendingUp, AlertCircle, CheckCircle, Download, Plus, FileText, BarChart3, Zap, Gauge, Menu, X, Settings, LogOut } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { ConnectionStatus } from './components/ConnectionStatus';
+import EliteGHGCalculator from './components/EliteGHGCalculator';
+
+
+// Tesla Design System
+const teslaTheme = {
+  colors: {
+    gray: {
+      50: '#fafafa',
+      100: '#f5f5f5',
+      200: '#e5e5e5',
+      300: '#d4d4d4',
+      400: '#a3a3a3',
+      500: '#737373',
+      600: '#525252',
+      700: '#404040',
+      800: '#262626',
+      900: '#171717',
+    },
+    accent: {
+      primary: '#e82127',
+      primaryDark: '#cc1f1a',
+      secondary: '#0396FF',
+      secondaryDark: '#0074D9',
+    },
+    success: '#10b981',
+    warning: '#f59e0b',
+    error: '#ef4444',
+  },
+  shadows: {
+    subtle: '0 2px 8px rgba(0,0,0,0.08)',
+    elevated: '0 8px 32px rgba(0,0,0,0.12)',
+    glow: '0 0 40px rgba(232, 33, 39, 0.1)',
+  },
+  transitions: {
+    smooth: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+    bounce: 'all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+  }
+};
+
+// Custom Tooltip Component (Tesla Style)
+const CustomTooltip = ({ active, payload, label }: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-gray-900/95 backdrop-blur-md p-4 rounded-lg shadow-2xl border border-gray-800">
+        <p className="text-gray-400 text-xs font-medium mb-2">{label}</p>
+        {payload.map((entry: any, index: number) => (
+          <p key={index} className="text-sm font-semibold" style={{ color: entry.color }}>
+            {entry.name}: {entry.value.toFixed(1)} tCO₂e
+          </p>
+        ))}
+      </div>
+    );
+  }
+  return null;
+};
+
+const FactorTraceDashboard = () => {
+  const router = useRouter();
+  const [selectedScope, setSelectedScope] = useState('all');
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [animatedValues, setAnimatedValues] = useState({
+    totalEmissions: 0,
+    dataQuality: 0,
+    compliance: 0
+  });
+
+  // Check authentication
+  useEffect(() => {
+    const voucherSession = localStorage.getItem('voucherSession');
+    if (!voucherSession) {
+      router.push('/login');
+    } else {
+      setIsAuthenticated(true);
+    }
+  }, [router]);
+
+  // Animate numbers on mount with easing
+  useEffect(() => {
+    const duration = 1500;
+    const startTime = Date.now();
+
+    const interval = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      
+      // Easing function for smooth animation
+      const easeOutExpo = 1 - Math.pow(2, -10 * progress);
+      
+      setAnimatedValues({
+        totalEmissions: 1247.3 * easeOutExpo,
+        dataQuality: 87 * easeOutExpo,
+        compliance: 92 * easeOutExpo
+      });
+
+      if (progress >= 1) {
+        clearInterval(interval);
+      }
+    }, 16);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  // Navigate to voucher creation
+  const handleNewVoucher = () => {
+    router.push('/vouchers/create');
+  };
+
+  // Sample data with Tesla colors
+  const emissionsByScope = [
+    { name: 'Scope 1', value: 234.5, percentage: 18.8, color: teslaTheme.colors.accent.primary },
+    { name: 'Scope 2', value: 156.2, percentage: 12.5, color: teslaTheme.colors.accent.secondary },
+    { name: 'Scope 3', value: 856.6, percentage: 68.7, color: teslaTheme.colors.gray[600] }
+  ];
+
+  const monthlyTrend = [
+    { month: 'Jan', scope1: 220, scope2: 150, scope3: 810, quality: 82 },
+    { month: 'Feb', scope1: 225, scope2: 148, scope3: 825, quality: 84 },
+    { month: 'Mar', scope1: 230, scope2: 152, scope3: 840, quality: 85 },
+    { month: 'Apr', scope1: 234.5, scope2: 156.2, scope3: 856.6, quality: 87 }
+  ];
+
+  const dataQualityMetrics = [
+    { category: 'Primary Data', score: 92, color: teslaTheme.colors.success },
+    { category: 'Estimates', score: 78, color: teslaTheme.colors.warning },
+    { category: 'Proxies', score: 65, color: teslaTheme.colors.error }
+  ];
+
+  const complianceStatus = [
+    { standard: 'CSRD', status: 'Compliant', progress: 100 },
+    { standard: 'ESRS E1', status: 'In Progress', progress: 87 },
+    { standard: 'CBAM', status: 'In Progress', progress: 92 },
+    { standard: 'SBTi', status: 'Pending', progress: 78 }
+  ];
+
+  const materialCategories = [
+    { name: 'Transportation', emissions: 342.1, quality: 89, trend: '+2.3%' },
+    { name: 'Purchased Goods', emissions: 289.4, quality: 85, trend: '-1.2%' },
+    { name: 'Capital Goods', emissions: 156.7, quality: 92, trend: '+0.8%' },
+    { name: 'Fuel & Energy', emissions: 134.2, quality: 94, trend: '-3.1%' },
+    { name: 'Waste', emissions: 89.3, quality: 78, trend: '+1.5%' }
+  ];
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-red-600 to-red-700 flex items-center justify-center mx-auto mb-4 animate-pulse">
+            <Zap className="w-8 h-8 text-white" />
+          </div>
+          <p className="text-gray-400 font-light">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <div className="min-h-screen bg-gray-900 text-gray-100">
+        {/* Subtle gradient overlay */}
+        <div className="fixed inset-0 bg-gradient-to-br from-gray-900 via-gray-900 to-gray-800 pointer-events-none" />
+        
+        {/* Navigation Bar */}
+        <nav className="relative z-20 bg-gray-900/80 backdrop-blur-md border-b border-gray-800/50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between h-16">
+              {/* Left side - Logo and main nav */}
+              <div className="flex items-center space-x-8">
+                {/* Logo */}
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-red-600 to-red-700 flex items-center justify-center">
+                    <Zap className="w-4 h-4 text-white" />
+                  </div>
+                  <span className="text-lg font-light text-gray-100">FactorTrace</span>
+                </div>
+
+                {/* Main Navigation - Desktop */}
+                <div className="hidden md:flex items-center space-x-1">
+                  <button 
+                    onClick={() => router.push('/dashboard')}
+                    className="px-4 py-2 rounded-lg text-sm font-medium text-gray-100 bg-gray-800/50 transition-all duration-200 flex items-center gap-2"
+                  >
+                    <BarChart3 className="w-4 h-4" />
+                    Dashboard
+                  </button>
+                  <button 
+                    onClick={() => router.push('/emissions/new')}
+                    className="px-4 py-2 rounded-lg text-sm font-medium text-gray-300 hover:text-gray-100 hover:bg-gray-800/50 transition-all duration-200 flex items-center gap-2"
+                  >
+                    <Plus className="w-4 h-4" />
+                    Create Entry
+                  </button>
+                  <button 
+                    onClick={() => router.push('/reports')}
+                    className="px-4 py-2 rounded-lg text-sm font-medium text-gray-300 hover:text-gray-100 hover:bg-gray-800/50 transition-all duration-200 flex items-center gap-2"
+                  >
+                    <FileText className="w-4 h-4" />
+                    Reports
+                  </button>
+                  <button 
+                    onClick={() => router.push('/settings')}
+                    className="px-4 py-2 rounded-lg text-sm font-medium text-gray-300 hover:text-gray-100 hover:bg-gray-800/50 transition-all duration-200 flex items-center gap-2"
+                  >
+                    <Settings className="w-4 h-4" />
+                    Settings
+                  </button>
+                </div>
+              </div>
+
+              {/* Right side - Status and logout */}
+              <div className="flex items-center space-x-4">
+                <div className="hidden md:flex items-center px-3 py-1.5 bg-green-900/20 border border-green-800/30 rounded-lg">
+                  <CheckCircle className="w-4 h-4 text-green-400 mr-2" />
+                  <span className="text-sm font-medium text-green-400">XBRL/iXBRL Ready</span>
+                </div>
+                <button 
+                  onClick={() => {
+                    localStorage.removeItem('voucherSession');
+                    router.push('/login');
+                  }}
+                  className="hidden md:flex px-4 py-2 rounded-lg text-sm font-medium text-gray-300 hover:text-gray-100 hover:bg-gray-800/50 transition-all duration-200 items-center gap-2"
+                >
+                  <LogOut className="w-4 h-4" />
+                  Logout
+                </button>
+
+                {/* Mobile menu button */}
+                <button
+                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                  className="md:hidden p-2 rounded-lg text-gray-300 hover:text-gray-100 hover:bg-gray-800/50 transition-all duration-200"
+                >
+                  {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                </button>
+              </div>
+            </div>
+
+            {/* Mobile Navigation Menu */}
+            {isMobileMenuOpen && (
+              <>
+                {/* Backdrop */}
+                <div 
+                  className="fixed inset-0 z-10 md:hidden" 
+                  onClick={() => setIsMobileMenuOpen(false)}
+                />
+                <div className="md:hidden border-t border-gray-800/50 py-4 animate-slideDown relative z-20">
+                  <div className="space-y-1">
+                    <button 
+                      onClick={() => {
+                        router.push('/dashboard');
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className="w-full px-4 py-2 rounded-lg text-sm font-medium text-gray-100 bg-gray-800/50 transition-all duration-200 flex items-center gap-2"
+                    >
+                      <BarChart3 className="w-4 h-4" />
+                      Dashboard
+                    </button>
+                    <button 
+                      onClick={() => {
+                        router.push('/emissions/new');
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className="w-full px-4 py-2 rounded-lg text-sm font-medium text-gray-300 hover:text-gray-100 hover:bg-gray-800/50 transition-all duration-200 flex items-center gap-2"
+                    >
+                      <Plus className="w-4 h-4" />
+                      Create Entry
+                    </button>
+                    <button 
+                      onClick={() => {
+                        router.push('/reports');
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className="w-full px-4 py-2 rounded-lg text-sm font-medium text-gray-300 hover:text-gray-100 hover:bg-gray-800/50 transition-all duration-200 flex items-center gap-2"
+                    >
+                      <FileText className="w-4 h-4" />
+                      Reports
+                    </button>
+                    <button 
+                      onClick={() => {
+                        router.push('/settings');
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className="w-full px-4 py-2 rounded-lg text-sm font-medium text-gray-300 hover:text-gray-100 hover:bg-gray-800/50 transition-all duration-200 flex items-center gap-2"
+                    >
+                      <Settings className="w-4 h-4" />
+                      Settings
+                    </button>
+                    <div className="my-2 h-px bg-gray-800/50" />
+                    <div className="px-4 py-2 flex items-center">
+                      <CheckCircle className="w-4 h-4 text-green-400 mr-2" />
+                      <span className="text-sm font-medium text-green-400">XBRL/iXBRL Ready</span>
+                    </div>
+                    <button 
+                      onClick={() => {
+                        localStorage.removeItem('voucherSession');
+                        router.push('/login');
+                      }}
+                      className="w-full px-4 py-2 rounded-lg text-sm font-medium text-gray-300 hover:text-gray-100 hover:bg-gray-800/50 transition-all duration-200 flex items-center gap-2"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      Logout
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+        </nav>
+        
+        <div className="relative z-10 p-8">
+          {/* Header */}
+          <header className="mb-8 mt-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-2xl font-light text-gray-100 tracking-tight">
+                  Emissions Dashboard
+                </h1>
+                <p className="text-sm text-gray-400 mt-1">Real-time monitoring & compliance tracking</p>
+              </div>
+              <div className="flex gap-3">
+                <button 
+                  onClick={() => router.push("/reports")}
+                  className="px-5 py-2.5 bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-lg hover:bg-gray-800 transition-all duration-300 flex items-center gap-2 text-sm font-medium"
+                >
+                  <FileText className="w-4 h-4" />
+                  View Reports
+                </button>	
+                <button 
+                  onClick={() => router.push("/emissions/new")}
+                  className="px-5 py-2.5 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-lg hover:from-red-700 hover:to-red-800 transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl text-sm font-medium"
+                  style={{ boxShadow: '0 4px 20px rgba(232, 33, 39, 0.3)' }}
+                >
+                  <Plus className="w-4 h-4" />
+                  Generate Report
+                </button>
+              </div>
+            </div>
+          </header>
+
+          {/* Key Metrics */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50 hover:border-gray-600 transition-all duration-300 group">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">Total Emissions</span>
+                <div className="w-8 h-8 rounded-lg bg-red-900/30 flex items-center justify-center group-hover:bg-red-900/40 transition-colors">
+                  <Activity className="w-4 h-4 text-red-400" />
+                </div>
+              </div>
+              <div className="text-3xl font-light text-gray-100 mb-1">
+                {animatedValues.totalEmissions.toFixed(1)} <span className="text-lg text-gray-400">tCO₂e</span>
+              </div>
+              <div className="mt-3 flex items-center text-xs">
+                <TrendingUp className="w-3 h-3 text-green-400 mr-1" />
+                <span className="text-green-400">2.3%</span>
+                <span className="text-gray-500 ml-1">vs last month</span>
+              </div>
+            </div>
+
+            <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50 hover:border-gray-600 transition-all duration-300 group">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">Data Quality</span>
+                <div className="w-8 h-8 rounded-lg bg-blue-900/30 flex items-center justify-center group-hover:bg-blue-900/40 transition-colors">
+                  <BarChart3 className="w-4 h-4 text-blue-400" />
+                </div>
+              </div>
+              <div className="text-3xl font-light text-gray-100 mb-3">
+                {Math.round(animatedValues.dataQuality)}<span className="text-lg text-gray-400">%</span>
+              </div>
+              <div className="mt-3">
+                <div className="w-full bg-gray-700/50 rounded-full h-1.5 overflow-hidden">
+                  <div 
+                    className="bg-gradient-to-r from-blue-500 to-blue-400 h-full rounded-full transition-all duration-1000 ease-out relative"
+                    style={{ width: `${animatedValues.dataQuality}%` }}
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shimmer" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50 hover:border-gray-600 transition-all duration-300 group">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">Compliance</span>
+                <div className="w-8 h-8 rounded-lg bg-green-900/30 flex items-center justify-center group-hover:bg-green-900/40 transition-colors">
+                  <CheckCircle className="w-4 h-4 text-green-400" />
+                </div>
+              </div>
+              <div className="text-3xl font-light text-gray-100 mb-3">
+                {Math.round(animatedValues.compliance)}<span className="text-lg text-gray-400">%</span>
+              </div>
+              <div className="mt-3 flex items-center gap-2">
+                {['CSRD', 'ESRS', 'CBAM'].map(std => (
+                  <span key={std} className="text-xs px-2 py-0.5 bg-green-900/20 text-green-400 rounded-md border border-green-800/30">
+                    {std}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50 hover:border-gray-600 transition-all duration-300 group">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">Active Vouchers</span>
+                <div className="w-8 h-8 rounded-lg bg-purple-900/30 flex items-center justify-center group-hover:bg-purple-900/40 transition-colors">
+                  <FileText className="w-4 h-4 text-purple-400" />
+                </div>
+              </div>
+              <div className="text-3xl font-light text-gray-100 mb-1">14</div>
+              <div className="mt-3 text-xs text-gray-500">
+                3 pending review
+              </div>
+            </div>
+          </div>
+
+          {/* Main Content Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Emissions by Scope */}
+            <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50">
+              <h3 className="text-lg font-light text-gray-100 mb-6">Emissions by Scope</h3>
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={emissionsByScope}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="value"
+                      animationBegin={0}
+                      animationDuration={1000}
+                    >
+                      {emissionsByScope.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip content={<CustomTooltip />} />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="mt-6 space-y-3">
+                {emissionsByScope.map(scope => (
+                  <div key={scope.name} className="flex items-center justify-between group">
+                    <div className="flex items-center gap-3">
+                      <div 
+                        className="w-2 h-2 rounded-full transition-all duration-300 group-hover:w-3 group-hover:h-3" 
+                        style={{ backgroundColor: scope.color }} 
+                      />
+                      <span className="text-sm text-gray-400 group-hover:text-gray-300 transition-colors">{scope.name}</span>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-sm font-medium text-gray-200">{scope.value} tCO₂e</span>
+                      <span className="text-xs text-gray-500 ml-2">({scope.percentage}%)</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Monthly Trend */}
+            <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50 lg:col-span-2">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-light text-gray-100">Emissions Trend</h3>
+                <div className="flex gap-2">
+                  {['all', '1', '2', '3'].map(scope => (
+                    <button
+                      key={scope}
+                      onClick={() => setSelectedScope(scope)}
+                      className={`px-3 py-1.5 text-xs rounded-lg transition-all duration-300 font-medium ${
+                        selectedScope === scope 
+                          ? 'bg-red-600 text-white shadow-lg' 
+                          : 'bg-gray-700/50 text-gray-400 hover:bg-gray-700 hover:text-gray-300'
+                      }`}
+                      style={selectedScope === scope ? { boxShadow: '0 4px 20px rgba(232, 33, 39, 0.3)' } : {}}
+                    >
+                      {scope === 'all' ? 'All Scopes' : `Scope ${scope}`}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={monthlyTrend}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#374151" strokeOpacity={0.3} />
+                    <XAxis 
+                      dataKey="month" 
+                      stroke="#9CA3AF" 
+                      fontSize={12}
+                      axisLine={{ stroke: '#374151' }}
+                      tick={{ fill: '#9CA3AF' }}
+                    />
+                    <YAxis 
+                      stroke="#9CA3AF" 
+                      fontSize={12}
+                      axisLine={{ stroke: '#374151' }}
+                      tick={{ fill: '#9CA3AF' }}
+                    />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Area 
+                      type="monotone" 
+                      dataKey="scope1" 
+                      stackId="1" 
+                      stroke={teslaTheme.colors.accent.primary}
+                      fill={teslaTheme.colors.accent.primary}
+                      fillOpacity={0.8}
+                      animationDuration={1000}
+                    />
+                    <Area 
+                      type="monotone" 
+                      dataKey="scope2" 
+                      stackId="1" 
+                      stroke={teslaTheme.colors.accent.secondary}
+                      fill={teslaTheme.colors.accent.secondary}
+                      fillOpacity={0.8}
+                      animationDuration={1200}
+                    />
+                    <Area 
+                      type="monotone" 
+                      dataKey="scope3" 
+                      stackId="1" 
+                      stroke={teslaTheme.colors.gray[600]}
+                      fill={teslaTheme.colors.gray[600]}
+                      fillOpacity={0.8}
+                      animationDuration={1400}
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            {/* Data Quality Distribution */}
+            <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50">
+              <h3 className="text-lg font-light text-gray-100 mb-6">Data Quality Distribution</h3>
+              <div className="space-y-4">
+                {dataQualityMetrics.map((metric, index) => (
+                  <div key={metric.category} style={{ animationDelay: `${index * 100}ms` }} className="animate-fadeIn">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-medium text-gray-300">{metric.category}</span>
+                      <span className="text-sm font-semibold" style={{ color: metric.color }}>
+                        {metric.score}%
+                      </span>
+                    </div>
+                    <div className="w-full bg-gray-700/30 rounded-full h-2 overflow-hidden">
+                      <div
+                        className="h-full rounded-full transition-all duration-1000 ease-out relative overflow-hidden"
+                        style={{ 
+                          width: `${metric.score}%`,
+                          backgroundColor: metric.color,
+                          animationDelay: `${index * 200}ms`
+                        }}
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shimmer" />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-6 p-4 bg-blue-900/20 backdrop-blur-sm rounded-xl border border-blue-800/30">
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-blue-900/30 flex items-center justify-center flex-shrink-0">
+                    <AlertCircle className="w-4 h-4 text-blue-400" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-blue-200">Improve Data Quality</p>
+                    <p className="text-xs text-blue-400 mt-1 leading-relaxed">
+                      Replace 15% of estimates with primary data to reach 90% quality score
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Material Categories */}
+            <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50 lg:col-span-2">
+              <h3 className="text-lg font-light text-gray-100 mb-6">Top Emission Categories</h3>
+              <div className="space-y-3">
+                {materialCategories.map((category, index) => (
+                  <div 
+                    key={category.name} 
+                    className="flex items-center justify-between p-4 bg-gray-700/20 rounded-xl hover:bg-gray-700/30 transition-all duration-300 border border-gray-700/30 hover:border-gray-600/50 group"
+                    style={{ animationDelay: `${index * 50}ms` }}
+                  >
+                    <div className="flex-1">
+                      <h4 className="font-medium text-gray-200 group-hover:text-gray-100 transition-colors">{category.name}</h4>
+                      <div className="flex items-center gap-6 mt-2">
+                        <span className="text-sm text-gray-400">{category.emissions} tCO₂e</span>
+                        <div className="flex items-center gap-2">
+                          <div className="w-6 h-6 rounded-md bg-gray-700/50 flex items-center justify-center">
+                            <Gauge className="w-3 h-3 text-gray-500" />
+                          </div>
+                          <span className="text-sm text-gray-400">Quality: {category.quality}%</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className={`text-sm font-medium px-3 py-1 rounded-lg ${
+                        category.trend.startsWith('+') 
+                          ? 'bg-red-900/20 text-red-400 border border-red-800/30' 
+                          : 'bg-green-900/20 text-green-400 border border-green-800/30'
+                      }`}>
+                        {category.trend}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Compliance Status */}
+            <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50">
+              <h3 className="text-lg font-light text-gray-100 mb-6">Compliance Status</h3>
+              <div className="space-y-4">
+                {complianceStatus.map((item, index) => (
+                  <div key={item.standard} className="space-y-2" style={{ animationDelay: `${index * 100}ms` }}>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-gray-300">{item.standard}</span>
+                      <span className={`text-xs px-2.5 py-1 rounded-md font-medium ${
+                        item.status === 'Compliant' 
+                          ? 'bg-green-900/20 text-green-400 border border-green-800/30'
+                          : item.status === 'In Progress'
+                          ? 'bg-blue-900/20 text-blue-400 border border-blue-800/30'
+                          : 'bg-gray-700/30 text-gray-400 border border-gray-600/30'
+                      }`}>
+                        {item.status}
+                      </span>
+                    </div>
+                    <div className="w-full bg-gray-700/30 rounded-full h-1.5 overflow-hidden">
+                      <div
+                        className={`h-full rounded-full transition-all duration-1000 relative ${
+                          item.progress === 100 ? 'bg-green-500' : 'bg-blue-500'
+                        }`}
+                        style={{ width: `${item.progress}%` }}
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer" />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <button className="mt-6 w-full px-4 py-2.5 bg-gray-700/30 text-gray-300 rounded-lg hover:bg-gray-700/50 hover:text-gray-100 transition-all duration-300 text-sm font-medium border border-gray-600/30 hover:border-gray-500/50">
+                View Compliance Report
+              </button>
+            </div>
+          </div>
+
+          {/* Action Bar */}
+          <div className="mt-8 bg-gradient-to-r from-red-600/90 to-red-700/90 backdrop-blur-sm rounded-xl p-8 text-white border border-red-600/30" style={{ boxShadow: teslaTheme.shadows.glow }}>
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-2xl font-light mb-2">Ready to generate your XBRL report?</h3>
+                <p className="text-red-100/80 text-sm">
+                  All required data points collected with {Math.round(animatedValues.dataQuality)}% average quality score
+                </p>
+              </div>
+              <button 
+                onClick={() => router.push("/emissions/new")}
+                className="px-6 py-3 bg-white/10 backdrop-blur-sm text-white rounded-lg hover:bg-white/20 transition-all duration-300 font-medium flex items-center gap-2 border border-white/20 hover:border-white/30"
+              >
+                <Download className="w-5 h-5" />
+                Generate XBRL Voucher
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <style jsx>{`
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        @keyframes slideDown {
+          from {
+            opacity: 0;
+            transform: translateY(-10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        @keyframes shimmer {
+          0% {
+            transform: translateX(-100%);
+          }
+          100% {
+            transform: translateX(100%);
+          }
+        }
+        
+        .animate-fadeIn {
+          animation: fadeIn 0.6s ease-out forwards;
+        }
+        
+        .animate-slideDown {
+          animation: slideDown 0.3s ease-out forwards;
+        }
+        
+        .animate-shimmer {
+          animation: shimmer 2s ease-in-out infinite;
+        }
+      `}</style>
+      
+      <ConnectionStatus />
+    </>
+  );
+};
+
+export default function Home() {
+  return <EliteGHGCalculator />;
+}
+
+export default FactorTraceDashboard;

@@ -1,0 +1,130 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+
+export default function NewEmissionPage() {
+  const [categories, setCategories] = useState<any>(null);
+  const [factors, setFactors] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string>('');
+  const [selectedScope, setSelectedScope] = useState(2);
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  useEffect(() => {
+    if (categories && selectedScope) {
+      fetchFactors();
+    }
+  }, [selectedScope, categories]);
+
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch('http://localhost:8000/api/v1/emission-factors/categories');
+      const data = await response.json();
+      setCategories(data);
+      setLoading(false);
+    } catch (err) {
+      setError('Failed to fetch categories');
+      setLoading(false);
+    }
+  };
+
+  const fetchFactors = async () => {
+    try {
+      const response = await fetch(`http://localhost:8000/api/v1/emission-factors?scope=${selectedScope}`);
+      if (response.ok) {
+        const data = await response.json();
+        setFactors(data);
+      }
+    } catch (err) {
+      console.error('Failed to fetch factors:', err);
+    }
+  };
+
+  const calculateEmission = async (factorId: number, amount: number) => {
+    try {
+      const response = await fetch('http://localhost:8000/api/v1/emission-factors/calculate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ factor_id: factorId, amount })
+      });
+      
+      if (response.ok) {
+        const result = await response.json();
+        alert(`Calculated: ${result.calculated_emissions} kg CO2e`);
+      } else {
+        alert('Calculation failed');
+      }
+    } catch (err) {
+      console.error('Calculation error:', err);
+    }
+  };
+
+  return (
+    <div className="p-8">
+      <h1 className="text-2xl font-bold mb-4">Emission Entry</h1>
+      
+      {loading && <p>Loading...</p>}
+      {error && <p className="text-red-600">{error}</p>}
+      
+      {categories && (
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold mb-2">Select Scope:</h2>
+          <div className="flex gap-4">
+            {Object.keys(categories).map(scope => (
+              <button
+                key={scope}
+                onClick={() => setSelectedScope(parseInt(scope))}
+                className={`px-4 py-2 rounded ${
+                  selectedScope === parseInt(scope) 
+                    ? 'bg-blue-500 text-white' 
+                    : 'bg-gray-200'
+                }`}
+              >
+                Scope {scope}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+      
+      {categories && selectedScope && (
+        <div className="mb-6">
+          <h3 className="font-semibold mb-2">Categories in Scope {selectedScope}:</h3>
+          <ul className="list-disc pl-5">
+            {categories[selectedScope]?.map((cat: string) => (
+              <li key={cat}>{cat}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {factors.length > 0 && (
+        <div>
+          <h3 className="font-semibold mb-2">Available Factors:</h3>
+          <div className="grid gap-2">
+            {factors.map((factor: any) => (
+              <div key={factor.id} className="border p-3 rounded">
+                <p className="font-medium">{factor.name}</p>
+                <p className="text-sm text-gray-600">
+                  {factor.factor} kg CO2e per {factor.unit}
+                </p>
+                <button
+                  onClick={() => {
+                    const amount = prompt(`Enter amount in ${factor.unit}:`);
+                    if (amount) calculateEmission(factor.id, parseFloat(amount));
+                  }}
+                  className="mt-2 px-3 py-1 bg-green-500 text-white rounded text-sm"
+                >
+                  Calculate
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

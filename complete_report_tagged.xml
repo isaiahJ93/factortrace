@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xbrl xmlns:esrs="https://xbrl.efrag.org/taxonomy/2023-12-31/esrs">
+  <context id='c1'>
+    <entity><identifier scheme='http://www.example.com'>COMPANY</identifier></entity>
+    <period><instant>2024-12-31</instant></period>
+  </context>
+</xbrl>

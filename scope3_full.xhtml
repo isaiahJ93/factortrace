@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:ix="http://www.xbrl.org/2013/inlineXBRL"
+      xmlns:xbrli="http://www.xbrl.org/2003/instance">
+<body>
+    <xbrli:unit id="tCO2e"><xbrli:measure>unit:tCO2e</xbrli:measure></xbrli:unit>
+    <xbrli:context id="2024">
+        <xbrli:entity><xbrli:identifier scheme="LEI">123456789012345678</xbrli:identifier></xbrli:entity>
+        <xbrli:period><xbrli:instant>2024-12-31</xbrli:instant></xbrli:period>
+    </xbrli:context>
+    
+    <h2>Scope 3 Emissions Breakdown</h2>
+    <table>
+        <tr><td>Category 1 (Purchased goods):</td><td><ix:nonFraction name="esrs-e1:GHGEmissionsScope3Cat01" contextRef="2024" unitRef="tCO2e">1000</ix:nonFraction></td></tr>
+        <tr><td>Category 2 (Capital goods):</td><td><ix:nonFraction name="esrs-e1:GHGEmissionsScope3Cat02" contextRef="2024" unitRef="tCO2e">500</ix:nonFraction></td></tr>
+        <tr><td>Category 3 (Fuel/energy):</td><td><ix:nonFraction name="esrs-e1:GHGEmissionsScope3Cat03" contextRef="2024" unitRef="tCO2e">300</ix:nonFraction></td></tr>
+        <tr><td>Category 4 (Upstream transport):</td><td><ix:nonFraction name="esrs-e1:GHGEmissionsScope3Cat04" contextRef="2024" unitRef="tCO2e">400</ix:nonFraction></td></tr>
+        <tr><td>Category 5 (Waste):</td><td><ix:nonFraction name="esrs-e1:GHGEmissionsScope3Cat05" contextRef="2024" unitRef="tCO2e">100</ix:nonFraction></td></tr>
+        <tr><td><b>Total Scope 3:</b></td><td><b><ix:nonFraction name="esrs-e1:GHGEmissionsScope3Total" contextRef="2024" unitRef="tCO2e">2300</ix:nonFraction></b></td></tr>
+    </table>
+</body>
+</html>

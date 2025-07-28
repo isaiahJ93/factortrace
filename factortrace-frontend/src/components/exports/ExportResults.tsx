@@ -1,0 +1,782 @@
+import React, { useState } from 'react';
+import { Download, FileText, FileCode, FilePlus, Check, Loader2, ChevronDown, FileJson, FileSpreadsheet } from 'lucide-react';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
+
+interface ExportResultsProps {
+  emissionsData: any;
+  companyInfo?: {
+    name: string;
+    lei?: string;
+    reportingPeriod: string;
+  };
+}
+
+const ExportResults: React.FC<ExportResultsProps> = ({ 
+  emissionsData, 
+  companyInfo = {
+    name: 'Your Company',
+    lei: 'PENDING_LEI_REGISTRATION',
+    reportingPeriod: new Date().getFullYear().toString()
+  }
+}) => {
+  const [isExporting, setIsExporting] = useState(false);
+  const [exportFormat, setExportFormat] = useState<string | null>(null);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [exportStatus, setExportStatus] = useState<{ [key: string]: 'idle' | 'loading' | 'success' | 'error' }>({
+    json: 'idle',
+    ixbrl: 'idle',
+    pdf: 'idle',
+    excel: 'idle'
+  });
+
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+
+  // Format configurations
+  const exportFormats = [
+    {
+      id: 'ixbrl',
+      name: 'iXBRL Report',
+      description: 'ESRS E1 Compliant',
+      icon: <FileCode className="w-5 h-5" />,
+      color: 'text-purple-400',
+      bgColor: 'bg-purple-500/10'
+    },
+    {
+      id: 'pdf',
+      name: 'PDF Report',
+      description: 'Professional Document',
+      icon: <FileText className="w-5 h-5" />,
+      color: 'text-red-400',
+      bgColor: 'bg-red-500/10'
+    },
+    {
+      id: 'excel',
+      name: 'Excel Summary',
+      description: 'Data Workbook',
+      icon: <FileSpreadsheet className="w-5 h-5" />,
+      color: 'text-green-400',
+      bgColor: 'bg-green-500/10'
+    },
+    {
+      id: 'json',
+      name: 'JSON Data',
+      description: 'Raw Data Export',
+      icon: <FileJson className="w-5 h-5" />,
+      color: 'text-blue-400',
+      bgColor: 'bg-blue-500/10'
+    }
+  ];
+
+  // Prepare data for iXBRL export
+  const prepareIXBRLData = () => {
+    const scope3Categories = {};
+    
+    // Process scope 3 categories from emissions data
+    if (emissionsData.categoryTotals) {
+      emissionsData.categoryTotals.forEach((cat: any, index: number) => {
+        if (cat.scope === '3' || cat.scope === 3) {
+          // Map category name to proper category number
+          const categoryNumber = getCategoryNumber(cat.category);
+          if (categoryNumber) {
+            scope3Categories[`category_${categoryNumber}`] = {
+              emissions_tco2e: cat.emissions || 0,
+              calculation_method: cat.calculationMethod || 'spend-based',
+              data_quality_tier: cat.dataQualityTier || 'TIER_3',
+              emission_factor_source: cat.emissionFactorSource || 'EPA EEIO 2024',
+              emission_factor_year: 2024,
+              activity_data_source: cat.activityDataSource || 'Internal systems',
+              activity_uncertainty: cat.activityUncertainty || 20,
+              ef_uncertainty: cat.efUncertainty || 25,
+              applicable: true,
+              excluded: false
+            };
+          }
+        }
+      });
+    }
+
+    // Fill in any missing categories as excluded
+    for (let i = 1; i <= 15; i++) {
+      if (!scope3Categories[`category_${i}`]) {
+        scope3Categories[`category_${i}`] = {
+          excluded: true,
+          exclusion_reason: 'Not applicable to business model'
+        };
+      }
+    }
+
+    return {
+      // REQUIRED FIELDS
+      lei: companyInfo.lei || "ABCDEFGHIJ1234567890",
+      sector: companyInfo.sector || "Technology",
+      primary_nace_code: "62.01",
+      consolidation_scope: "consolidated",
+      organization: companyInfo.name,
+      lei: companyInfo.lei,
+      reporting_period: parseInt(companyInfo.reportingPeriod),
+      boundary: 'Operational control',
+      consolidation: 'Equity share',
+      governance: {
+        board_oversight: true,
+        discussion_frequency: 'Quarterly'
+      },
+      transition_plan: {
+        adopted: true,
+        aligned_1_5c: true,
+        net_zero_target_year: 2050,
+        net_zero_target_year: 2050
+      },
+      targets: {
+        base_year: 2019,
+        sbti_validated: false,
+        targets: [{
+          type: 'Absolute reduction',
+          scope: 'Scopes 1, 2 & 3',
+          base_year: '2019',
+          target_year: 2030,
+          target_reduction_percent: 50,
+          progress_percent: 25
+        }]
+      },
+      emissions: {
+        scope1: emissionsData.scope1 || 0,
+        scope2_location: emissionsData.scope2 || 0,
+        scope2_market: emissionsData.scope2 || 0,
+        scope3_total: emissionsData.scope3 || 0,
+        total_ghg_emissions: emissionsData.total || 0,
+        ghg_breakdown: {
+          co2: (emissionsData.total || 0) * 0.95,
+          ch4: (emissionsData.total || 0) * 0.03,
+          n2o: (emissionsData.total || 0) * 0.02,
+          hfcs: 0, pfcs: 0, sf6: 0, nf3: 0
+        },
+        scope3_total: emissionsData.scope3 || 0,
+        total_ghg_emissions: emissionsData.total || 0,
+        ghg_breakdown: {
+          co2: (emissionsData.total || 0) * 0.95,
+          ch4: (emissionsData.total || 0) * 0.03,
+          n2o: (emissionsData.total || 0) * 0.02,
+          hfcs: 0, pfcs: 0, sf6: 0, nf3: 0
+        }
+      },
+      scope3_detailed: scope3Categories,
+      uncertainty_analysis: emissionsData.uncertainty_analysis || {},
+      removals: {
+        own_removals: 0,
+        credits_cancelled: 0
+      },
+      financial_effects: {
+        risks: [{
+          type: 'Transition',
+          category: 'Policy',
+          time_horizon: 'Medium-term',
+          impact_meur: 10,
+          likelihood: 'Possible',
+          risk_score: 'Medium'
+        }]
+      },
+      data_quality_score: emissionsData.dataQualityScore || 'Medium',
+      assurance: {
+        provider: 'Not yet assured',
+        level: 'NONE'
+      }
+    };
+  };
+
+  // Map category names to numbers
+  const getCategoryNumber = (categoryName: string): number | null => {
+    const categoryMap: { [key: string]: number } = {
+      'Purchased Goods & Services': 1,
+      'Capital goods': 2,
+      'Fuel- and energy-related activities': 3,
+      'Upstream transportation and distribution': 4,
+      'Waste generated in operations': 5,
+      'Business travel': 6,
+      'Employee commuting': 7,
+      'Upstream leased assets': 8,
+      'Downstream transportation and distribution': 9,
+      'Processing of sold products': 10,
+      'Use of sold products': 11,
+      'End-of-life treatment of sold products': 12,
+      'Downstream leased assets': 13,
+      'Franchises': 14,
+      'Investments': 15
+    };
+    
+    return categoryMap[categoryName] || null;
+  };
+
+  // Export handlers for each format
+  const exportJSON = () => {
+    setExportStatus({ ...exportStatus, json: 'loading' });
+    
+    try {
+      const exportData = {
+        metadata: {
+          exportDate: new Date().toISOString(),
+          reportingPeriod: companyInfo.reportingPeriod,
+          company: companyInfo.name,
+          format: 'JSON',
+          version: '1.0'
+        },
+        emissions: emissionsData,
+        summary: {
+          totalEmissions: emissionsData.total || 0,
+          scope1: emissionsData.scope1 || 0,
+          scope2: emissionsData.scope2 || 0,
+          scope3: emissionsData.scope3 || 0
+        }
+      };
+
+      const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `ghg-emissions-${companyInfo.reportingPeriod}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+
+      setExportStatus({ ...exportStatus, json: 'success' });
+      setTimeout(() => setExportStatus({ ...exportStatus, json: 'idle' }), 3000);
+    } catch (error) {
+      console.error('JSON export failed:', error);
+      setExportStatus({ ...exportStatus, json: 'error' });
+    }
+  };
+
+  const exportIXBRL = async () => {
+    alert("exportIXBRL called!");  setExportStatus({ ...exportStatus, ixbrl: 'loading' });
+  
+  try {
+    const ixbrlData = prepareIXBRLData();
+    
+    const response = await fetch(`${API_URL}/api/v1/esrs-e1/export/esrs-e1-world-class`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(ixbrlData)
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Backend error:', errorText);
+      throw new Error(`Export failed: ${response.status}`);
+    }
+
+    // Parse the JSON response
+    const jsonResult = await response.json();
+    alert("Got response: " + Object.keys(jsonResult).join(", "));
+    console.log('Received response:', jsonResult);
+    console.log('xhtml_content exists?', !!jsonResult.xhtml_content);
+    console.log('xhtml_content preview:', jsonResult.xhtml_content?.substring(0, 100));
+    console.log("xhtml_content type:", typeof jsonResult.xhtml_content);
+    console.log("First 50 chars raw:", jsonResult.xhtml_content.substring(0, 50));    
+    // Extract the XHTML content
+    if (!jsonResult.xhtml_content) {
+      throw new Error('No xhtml_content in response');
+    }
+    // Create blob with XHTML content
+    const blob = new Blob([jsonResult.xhtml_content], { type: "application/xhtml+xml" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = jsonResult.filename || `esrs-e1-${companyInfo.reportingPeriod}.xhtml`;
+    a.click();
+    URL.revokeObjectURL(url);
+
+    setExportStatus({ ...exportStatus, ixbrl: "success" });
+    setTimeout(() => setExportStatus({ ...exportStatus, ixbrl: "idle" }), 3000);
+  } catch (error) {
+    console.error('iXBRL export failed:', error);
+    setExportStatus({ ...exportStatus, ixbrl: 'error' });
+    alert(error.message);
+  }
+};
+
+  const generateLocalIXBRL = () => {
+    const ixbrlContent = `<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:ix="http://www.xbrl.org/2013/inlineXBRL"
+      xmlns:esrs-e1="http://www.efrag.org/esrs/2023/e1">
+<head>
+    <title>ESRS E1 Climate Disclosure - ${companyInfo.name} - ${companyInfo.reportingPeriod}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        h1 { color: #1a472a; }
+        table { border-collapse: collapse; width: 100%; margin: 20px 0; }
+        th { background: #2d5f3f; color: white; padding: 10px; }
+        td { border: 1px solid #ddd; padding: 8px; }
+        .scope-header { background: #e8f5e9; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>ESRS E1 Climate-related Disclosures</h1>
+    <h2>${companyInfo.name} - Reporting Period: ${companyInfo.reportingPeriod}</h2>
+    
+    <section>
+        <h3>E1-6: Gross GHG Emissions</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Scope</th>
+                    <th>Emissions (tCO₂e)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Scope 1</td>
+                    <td><ix:nonFraction name="esrs-e1:GrossScope1Emissions" 
+                         decimals="2" unitRef="tCO2e">
+                         ${(emissionsData.scope1 || 0).toFixed(2)}
+                    </ix:nonFraction></td>
+                </tr>
+                <tr>
+                    <td>Scope 2</td>
+                    <td><ix:nonFraction name="esrs-e1:GrossScope2MarketBased" 
+                         decimals="2" unitRef="tCO2e">
+                         ${(emissionsData.scope2 || 0).toFixed(2)}
+                    </ix:nonFraction></td>
+                </tr>
+                <tr>
+                    <td>Scope 3</td>
+                    <td><ix:nonFraction name="esrs-e1:GrossScope3Emissions" 
+                         decimals="2" unitRef="tCO2e">
+                         ${(emissionsData.scope3 || 0).toFixed(2)}
+                    </ix:nonFraction></td>
+                </tr>
+                <tr style="font-weight: bold; background: #c8e6c9;">
+                    <td>Total</td>
+                    <td><ix:nonFraction name="esrs-e1:TotalGHGEmissions" 
+                         decimals="2" unitRef="tCO2e">
+                         ${(emissionsData.total || 0).toFixed(2)}
+                    </ix:nonFraction></td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+    
+    <p style="margin-top: 40px; font-size: 0.9em; color: #666;">
+        Generated on ${new Date().toLocaleDateString()} using FactorTrace GHG Calculator
+    </p>
+</body>
+</html>`;
+
+    const blob = new Blob([ixbrlContent], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `esrs-e1-basic-${companyInfo.reportingPeriod}.html`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const exportPDF = () => {
+    setExportStatus({ ...exportStatus, pdf: 'loading' });
+    
+    try {
+      const pdf = new jsPDF();
+      let yPosition = 20;
+      
+      // Add header with logo placeholder
+      pdf.setFillColor(26, 71, 42); // #1a472a
+      pdf.rect(0, 0, 210, 40, 'F');
+      
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFontSize(24);
+      pdf.text('GHG Emissions Report', 20, 25);
+      
+      // Add company info
+      pdf.setFontSize(14);
+      pdf.setTextColor(255, 255, 255);
+      pdf.text(companyInfo.name, 20, 35);
+      
+      // Reset colors for body
+      pdf.setTextColor(0, 0, 0);
+      yPosition = 55;
+      
+      // Add metadata
+      pdf.setFontSize(10);
+      pdf.setTextColor(100, 100, 100);
+      pdf.text(`Reporting Period: ${companyInfo.reportingPeriod}`, 20, yPosition);
+      pdf.text(`Generated: ${new Date().toLocaleDateString()}`, 120, yPosition);
+      yPosition += 15;
+      
+      // Executive Summary Box
+      pdf.setDrawColor(45, 95, 63);
+      pdf.setLineWidth(1);
+      pdf.rect(15, yPosition - 5, 180, 35, 'S');
+      
+      pdf.setFontSize(16);
+      pdf.setTextColor(45, 95, 63);
+      pdf.text('Executive Summary', 20, yPosition);
+      yPosition += 10;
+      
+      // Summary data
+      pdf.setFontSize(11);
+      pdf.setTextColor(0, 0, 0);
+      const summaryText = [
+        `Total Emissions: ${(emissionsData.total || 0).toFixed(2)} tCO₂e`,
+        `Scope 1: ${(emissionsData.scope1 || 0).toFixed(2)} tCO₂e | Scope 2: ${(emissionsData.scope2 || 0).toFixed(2)} tCO₂e | Scope 3: ${(emissionsData.scope3 || 0).toFixed(2)} tCO₂e`
+      ];
+      
+      summaryText.forEach(text => {
+        pdf.text(text, 20, yPosition);
+        yPosition += 7;
+      });
+      
+      yPosition += 10;
+      
+      // Emissions by Scope Chart
+      pdf.setFontSize(14);
+      pdf.setTextColor(45, 95, 63);
+      pdf.text('Emissions by Scope', 20, yPosition);
+      yPosition += 10;
+      
+      // Create visual bar chart
+      const chartData = [
+        { label: 'Scope 1', value: emissionsData.scope1 || 0, color: [239, 68, 68] },
+        { label: 'Scope 2', value: emissionsData.scope2 || 0, color: [59, 130, 246] },
+        { label: 'Scope 3', value: emissionsData.scope3 || 0, color: [16, 185, 129] }
+      ];
+      
+      const maxValue = Math.max(...chartData.map(d => d.value));
+      const chartWidth = 160;
+      const barHeight = 15;
+      
+      chartData.forEach((data, index) => {
+        const barWidth = maxValue > 0 ? (data.value / maxValue) * chartWidth : 0;
+        
+        // Draw bar
+        pdf.setFillColor(...data.color);
+        pdf.rect(20, yPosition, barWidth, barHeight, 'F');
+        
+        // Add label and value
+        pdf.setFontSize(10);
+        pdf.setTextColor(0, 0, 0);
+        pdf.text(data.label, 22, yPosition + 10);
+        pdf.text(`${data.value.toFixed(2)} tCO₂e`, 180, yPosition + 10, { align: 'right' });
+        
+        yPosition += barHeight + 5;
+      });
+      
+      yPosition += 10;
+      
+      // Category breakdown table
+      if (emissionsData.categoryTotals && emissionsData.categoryTotals.length > 0) {
+        pdf.setFontSize(14);
+        pdf.setTextColor(45, 95, 63);
+        pdf.text('Emissions by Category', 20, yPosition);
+        yPosition += 10;
+        
+        // Prepare table data
+        const tableData = emissionsData.categoryTotals
+          .sort((a: any, b: any) => b.emissions - a.emissions)
+          .slice(0, 10) // Top 10 categories
+          .map((cat: any) => [
+            cat.category,
+            `Scope ${cat.scope}`,
+            `${cat.emissions.toFixed(3)}`,
+            `${((cat.emissions / emissionsData.total) * 100).toFixed(1)}%`
+          ]);
+        
+        (pdf as any).autoTable({
+          startY: yPosition,
+          head: [['Category', 'Scope', 'Emissions (tCO₂e)', '% of Total']],
+          body: tableData,
+          theme: 'striped',
+          headStyles: { 
+            fillColor: [45, 95, 63],
+            textColor: [255, 255, 255],
+            fontSize: 11
+          },
+          alternateRowStyles: { fillColor: [232, 245, 233] },
+          columnStyles: {
+            2: { halign: 'right' },
+            3: { halign: 'right' }
+          },
+          margin: { left: 20, right: 20 },
+          styles: { fontSize: 10 }
+        });
+        
+        yPosition = (pdf as any).lastAutoTable.finalY + 10;
+      }
+      
+      // Add new page for detailed breakdown
+      pdf.addPage();
+      yPosition = 20;
+      
+      // Detailed Activity Breakdown
+      if (emissionsData.breakdown && emissionsData.breakdown.length > 0) {
+        pdf.setFontSize(16);
+        pdf.setTextColor(45, 95, 63);
+        pdf.text('Detailed Activity Breakdown', 20, yPosition);
+        yPosition += 10;
+        
+        const detailData = emissionsData.breakdown
+          .sort((a: any, b: any) => b.emissions - a.emissions)
+          .map((item: any) => [
+            item.name,
+            `${item.amount} ${item.unit}`,
+            `${item.factor}`,
+            `${item.emissions.toFixed(3)}`
+          ]);
+        
+        (pdf as any).autoTable({
+          startY: yPosition,
+          head: [['Activity', 'Amount', 'Factor (kg CO₂e/unit)', 'Emissions (tCO₂e)']],
+          body: detailData,
+          theme: 'striped',
+          headStyles: { 
+            fillColor: [45, 95, 63],
+            textColor: [255, 255, 255],
+            fontSize: 11
+          },
+          alternateRowStyles: { fillColor: [232, 245, 233] },
+          columnStyles: {
+            1: { halign: 'center' },
+            2: { halign: 'center' },
+            3: { halign: 'right' }
+          },
+          margin: { left: 20, right: 20 },
+          styles: { fontSize: 9 },
+          didDrawPage: function() {
+            // Add footer on each page
+            pdf.setFontSize(8);
+            pdf.setTextColor(150, 150, 150);
+            pdf.text('Generated by FactorTrace GHG Calculator', 105, 290, { align: 'center' });
+            pdf.text(`Page ${pdf.internal.getCurrentPageInfo().pageNumber}`, 190, 290, { align: 'right' });
+          }
+        });
+      }
+      
+      // Add methodology page
+      pdf.addPage();
+      pdf.setFontSize(16);
+      pdf.setTextColor(45, 95, 63);
+      pdf.text('Methodology & Standards', 20, 20);
+      
+      pdf.setFontSize(11);
+      pdf.setTextColor(0, 0, 0);
+      const methodologyText = [
+        'This report has been prepared in accordance with:',
+        '• GHG Protocol Corporate Accounting and Reporting Standard',
+        '• GHG Protocol Corporate Value Chain (Scope 3) Standard',
+        '• ESRS E1 Climate Change disclosure requirements',
+        '',
+        'Organizational Boundary: Operational Control',
+        'Consolidation Approach: Equity Share',
+        '',
+        'Emission factors sourced from:',
+        '• DEFRA/BEIS 2024 conversion factors',
+        '• EPA Supply Chain GHG Emission Factors v2.0',
+        '• IEA Emission Factors 2024',
+        '',
+        'Data Quality Assessment:',
+        '• Primary data used where available',
+        '• Spend-based methods for Scope 3 categories',
+        '• Uncertainty analysis included where applicable'
+      ];
+      
+      let textY = 35;
+      methodologyText.forEach(line => {
+        pdf.text(line, 20, textY);
+        textY += 6;
+      });
+      
+      // Save the PDF
+      pdf.save(`ghg-emissions-report-${companyInfo.reportingPeriod}.pdf`);
+      
+      setExportStatus({ ...expor
+        tStatus, pdf: 'success' });
+      setTimeout(() => setExportStatus({ ...exportStatus, pdf: 'idle' }), 3000);
+    } catch (error) {
+      console.error('PDF export failed:', error);
+      setExportStatus({ ...exportStatus, pdf: 'error' });
+    }
+  };
+
+  const exportExcel = async () => {
+    setExportStatus({ ...exportStatus, excel: 'loading' });
+    
+    try {
+      // Try to get Excel from iXBRL endpoint first - CORRECT ENDPOINT
+      const ixbrlData = prepareIXBRLData();
+      const response = await fetch(`${API_URL}/api/v1/esrs-e1/export/esrs-e1-world-class`, {
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Backend error:", errorText);
+      try {
+        const errorData = JSON.parse(errorText);
+        throw new Error(errorData.detail || `Export failed: ${response.status}`);
+      } catch (e) {
+        throw new Error(`Export failed: ${response.status}`);
+      }
+    }        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ...ixbrlData, only_excel: true })
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        if (result.supplementary_files?.excel_summary) {
+          const excelData = result.supplementary_files.excel_summary;
+          const excelBytes = Uint8Array.from(atob(excelData.content), c => c.charCodeAt(0));
+          const excelBlob = new Blob([excelBytes], { type: excelData.mime_type });
+          const excelUrl = URL.createObjectURL(excelBlob);
+          const a = document.createElement('a');
+          a.href = excelUrl;
+          a.download = excelData.filename || `ghg-emissions-${companyInfo.reportingPeriod}.xlsx`;
+          a.click();
+          URL.revokeObjectURL(excelUrl);
+          
+          setExportStatus({ ...exportStatus, excel: 'success' });
+          setTimeout(() => setExportStatus({ ...exportStatus, excel: 'idle' }), 3000);
+          return;
+        }
+      }
+      
+      // Fallback to CSV if Excel generation fails
+      generateCSV();
+    } catch (error) {
+      console.error('Excel export failed:', error);
+      generateCSV();
+    }
+  };
+
+  const generateCSV = () => {
+    const csv = [];
+    
+    // Header
+    csv.push(['GHG Emissions Report']);
+    csv.push([companyInfo.name]);
+    csv.push([`Reporting Period: ${companyInfo.reportingPeriod}`]);
+    csv.push([`Generated: ${new Date().toISOString()}`]);
+    csv.push([]);
+    
+    // Summary
+    csv.push(['Summary']);
+    csv.push(['Scope', 'Emissions (tCO2e)']);
+    csv.push(['Scope 1', emissionsData.scope1 || 0]);
+    csv.push(['Scope 2', emissionsData.scope2 || 0]);
+    csv.push(['Scope 3', emissionsData.scope3 || 0]);
+    csv.push(['Total', emissionsData.total || 0]);
+    csv.push([]);
+    
+    // Category breakdown
+    if (emissionsData.categoryTotals) {
+      csv.push(['Category Breakdown']);
+      csv.push(['Category', 'Scope', 'Emissions (tCO2e)', '% of Total']);
+      emissionsData.categoryTotals.forEach((cat: any) => {
+        csv.push([
+          cat.category,
+          `Scope ${cat.scope}`,
+          cat.emissions.toFixed(3),
+          `${((cat.emissions / emissionsData.total) * 100).toFixed(1)}%`
+        ]);
+      });
+    }
+    
+    // Convert to CSV string
+    const csvContent = csv.map(row => row.join(',')).join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `ghg-emissions-${companyInfo.reportingPeriod}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    
+    setExportStatus({ ...exportStatus, excel: 'success' });
+    setTimeout(() => setExportStatus({ ...exportStatus, excel: 'idle' }), 3000);
+  };
+
+  const handleExport = (format: string) => {
+    setShowDropdown(false);
+    setExportFormat(format);
+    
+    switch (format) {
+      case 'json':
+        exportJSON();
+        break;
+      case 'ixbrl':
+        exportIXBRL();
+        break;
+      case 'pdf':
+        exportPDF();
+        break;
+      case 'excel':
+        exportExcel();
+        break;
+    }
+  };
+
+  return (
+    <div className="relative">
+      <button
+        onClick={() => setShowDropdown(!showDropdown)}
+        className="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+      >
+        <Download className="w-4 h-4" />
+        <span>Export Results</span>
+        <ChevronDown className={`w-4 h-4 transition-transform ${showDropdown ? 'rotate-180' : ''}`} />
+      </button>
+      
+      {showDropdown && (
+        <div className="absolute right-0 mt-2 w-72 bg-gray-800 rounded-lg shadow-xl border border-gray-700 z-50">
+          <div className="p-2">
+            {exportFormats.map((format) => (
+              <button
+                key={format.id}
+                onClick={() => handleExport(format.id)}
+                className="w-full flex items-center gap-3 px-3 py-3 hover:bg-gray-700 rounded-lg transition-colors group"
+              >
+                <div className={`w-10 h-10 rounded-lg ${format.bgColor} flex items-center justify-center ${format.color}`}>
+                  {exportStatus[format.id] === 'loading' ? (
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                  ) : exportStatus[format.id] === 'success' ? (
+                    <Check className="w-5 h-5 text-green-400" />
+                  ) : (
+                    format.icon
+                  )}
+                </div>
+                <div className="flex-1 text-left">
+                  <div className="font-medium text-gray-200">{format.name}</div>
+                  <div className="text-sm text-gray-400">{format.description}</div>
+                </div>
+                {exportStatus[format.id] === 'success' && (
+                  <span className="text-xs text-green-400">Success!</span>
+                )}
+              </button>
+            ))}
+          </div>
+          
+          <div className="border-t border-gray-700 p-3">
+            <div className="text-xs text-gray-400">
+              <p className="mb-1">• iXBRL: ESRS E1 compliant report for regulatory filing</p>
+              <p className="mb-1">• PDF: Professional report for stakeholders</p>
+              <p className="mb-1">• Excel: Data workbook for analysis</p>
+              <p>• JSON: Raw data for integrations</p>
+            </div>
+
+
+
+        </div>
+      )}
+      
+      {/* Click outside to close */}
+      {showDropdown && (
+        <div 
+          className="fixed inset-0 z-40" 
+          onClick={() => setShowDropdown(false)}
+        />
+      )}
+    </div>
+  );
+};
+
+export default ExportResults;

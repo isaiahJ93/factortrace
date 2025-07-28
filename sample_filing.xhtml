@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ix="http://www.xbrl.org/2013/inlineXBRL"
+      xmlns:xbrli="http://www.xbrl.org/2003/instance">
+<head>
+    <title>Sample ESRS Filing</title>
+</head>
+<body>
+    <xbrli:context id="current">
+        <xbrli:entity>
+            <xbrli:identifier scheme="http://www.example.com">TEST-001</xbrli:identifier>
+        </xbrli:entity>
+        <xbrli:period>
+            <xbrli:instant>2024-12-31</xbrli:instant>
+        </xbrli:period>
+    </xbrli:context>
+    
+    <xbrli:unit id="EUR">
+        <xbrli:measure>EUR</xbrli:measure>
+    </xbrli:unit>
+    
+    <xbrli:unit id="tCO2e">
+        <xbrli:measure>unit:tCO2e</xbrli:measure>
+    </xbrli:unit>
+    
+    <div>
+        <p>Revenue: <ix:nonFraction name="esrs-2:Revenue" contextRef="current" unitRef="EUR" decimals="0">1000000</ix:nonFraction></p>
+        <p>Scope 1 Emissions: <ix:nonFraction name="esrs-e1:GHGEmissionsScope1" contextRef="current" unitRef="tCO2e" decimals="2">1234.56</ix:nonFraction></p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:xbrli="http://www.xbrl.org/2003/instance"
+      xmlns:esrs="http://xbrl.org/esrs/2023"
+      xmlns:esrs-e1="http://xbrl.org/esrs/2023/esrs-e1"
+      xmlns:iso4217="http://www.xbrl.org/2003/iso4217"
+      xmlns:ixt="http://www.xbrl.org/inlineXBRL/transformation/2020-02-12"
+      xmlns:ref="http://www.xbrl.org/2003/ref">
+<head>
+    <title>ESRS E1 Climate Disclosure - Example Corporation Ltd</title>
+    <meta charset="UTF-8">
+    <style>
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        .header {
+            background: linear-gradient(135deg, #2c5530 0%, #4a7c4e 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        .metric-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #2c5530;
+        }
+        .metric-label {
+            color: #666;
+            margin-top: 0.5rem;
+        }
+        .section {
+            background: white;
+            margin: 2rem 0;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        h1, h2, h3 { color: #2c5530; }
+        .success-badge {
+            background: #4caf50;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>ESRS E1 Climate Disclosure Report</h1>
+        <p>Example Corporation Ltd - Reporting Period 2024</p>
+        <span class="success-badge">✓ Successfully Generated</span>
+    </div>
+    
+    <div class="container">
+        <div class="section">
+            <h2>Integration Status</h2>
+            <p><strong>✅ All missing functions successfully integrated:</strong></p>
+            <ul>
+                <li>✓ add_navigation_structure()</li>
+                <li>✓ add_executive_summary()</li>
+                <li>✓ add_governance_section()</li>
+                <li>✓ All other ESRS E1 functions</li>
+            </ul>
+        </div>
+        
+        <div class="metrics">
+            <div class="metric-card">
+                <div class="metric-value">141,500</div>
+                <div class="metric-label">Total GHG Emissions (tCO₂e)</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">-8.5%</div>
+                <div class="metric-label">Year-over-Year Change</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">85</div>
+                <div class="metric-label">Data Quality Score</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">2050</div>
+                <div class="metric-label">Net Zero Target</div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>iXBRL Content</h2>
+            <p>The complete iXBRL structure has been generated with all required ESRS E1 disclosures.</p>
+            <details>
+                <summary>View Raw iXBRL</summary>
+                <pre style="overflow-x: auto; background: #f5f5f5; padding: 1rem; border-radius: 8px;">
+<xbrl xmlns:ns0="http://www.xbrl.org/2013/inlineXBRL" xmlns:ns1="http://www.w3.org/1999/xlink" xmlns:ns2="http://www.xbrl.org/2003/instance" xmlns:ns3="http://xbrl.org/2006/xbrldi" xmlns="http://www.xbrl.org/2003/instance" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:link="http://www.xbrl.org/2003/linkbase" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:iso4217="http://www.xbrl.org/2003/iso4217" xmlns:xbrli="http://www.xbrl.org/2003/instance" xmlns:ref="http://www.xbrl.org/2003/ref" xmlns:xbrldi="http://xbrl.org/2006/xbrldi" xmlns:esrs="http://xbrl.org/esrs/2023" xmlns:esrs-e1="http://xbrl.org/esrs/2023/esrs-e1" xmlns:ixt="http://www.xbrl.org/inlineXBRL/transformation/2020-02-12" xmlns:ixt-sec="http://www.sec.gov/inlineXBRL/transformation/2015-08-31">
+<head>
+<title>ESRS Sustainability Statement - Example Corporation Ltd - 2024</title>
+<meta name="description" content="ESRS E1 Climate-related disclosures with complete XBRL tagging, GHG Protocol compliance, and EFRAG excellence" />
+<meta name="generator" content="ESRS E1 Full iXBRL Generator v1.0" />
+<meta name="created" content="2025-07-24T18:18:38.264194" />
+<meta name="document-id" content="ESRS-E1-20250724-181838" />
+<meta name="reporting-period" content="2024" />
+<meta name="esap:documentType" content="ESRS-SUSTAINABILITY-STATEMENT" />
+<meta name="esap:reportingEntity" content="5493000KJTIIGC8Y1R12" />
+<meta name="esap:reportingPeriod" content="2024" />
+<meta name="esap:publicationDate" content="2025-07-24" />
+<meta name="esap:language" content="en" />
+<meta name="esap:assuranceProvider" content="PwC" />
+<meta name="esap:consolidationScope" content="Group" />
+<link rel="stylesheet" type="text/xsl" href="https://www.efrag.org/esrs/2023/transforms/esrs-html.xsl" />
+<ns0:header>
+<ns0:references>
+<link:schemaRef ns1:type="simple" ns1:href="https://www.efrag.org/esrs/2023/esrs-all.xsd" />
+<link:linkbaseRef ns1:type="simple" ns1:href="https://www.efrag.org/esrs/2023/linkbases/esrs-e1-calculation.xml" n...
+                </pre>
+            </details>
+        </div>
+    </div>
+</body>
+</html>

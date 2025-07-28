@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="http://www.xbrl.org/iso/3166-2-alpha2"
+           xmlns="http://www.xbrl.org/iso/3166-2-alpha2"
+           elementFormDefault="qualified"
+           attributeFormDefault="unqualified">
+
+  <xs:simpleType name="countryItemType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="US"/>
+      <xs:enumeration value="GB"/>
+      <xs:enumeration value="DE"/>
+      <xs:enumeration value="FR"/>
+      <xs:enumeration value="ES"/>
+      <xs:enumeration value="IT"/>
+      <xs:enumeration value="CN"/>
+      <xs:enumeration value="JP"/>
+      <xs:enumeration value="IN"/>
+      <xs:enumeration value="AU"/>
+      <xs:enumeration value="CA"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:element name="country" type="countryItemType"/>
+</xs:schema>

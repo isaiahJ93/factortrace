@@ -1,0 +1,883 @@
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
+
+// Design constants
+const DESIGN = {
+  colors: {
+    primary: [26, 26, 46] as [number, number, number],
+    secondary: [100, 100, 100] as [number, number, number],
+    text: [50, 50, 50] as [number, number, number],
+    success: [16, 185, 129] as [number, number, number],
+    warning: [245, 158, 11] as [number, number, number],
+    error: [239, 68, 68] as [number, number, number]
+  },
+  fonts: {
+    sizes: {
+      title: 16,
+      subtitle: 14,
+      body: 11,
+      small: 10,
+      tiny: 9
+    }
+  },
+  layout: {
+    margins: {
+      top: 20,
+      bottom: 20,
+      left: 20,
+      right: 20
+    },
+    pageHeight: 297,
+    pageWidth: 210
+  }
+};
+
+export interface PDFExportData {
+  metadata: {
+    documentId: string;
+    companyName: string;
+    reportingPeriod: string;
+    generatedDate: string;
+    standard?: string;
+    methodology?: string;
+  };
+  summary: {
+    totalEmissions: number;
+    scope1: number;
+    scope2: number;
+    scope3: number;
+    scope1Percentage: number;
+    scope2Percentage: number;
+    scope3Percentage: number;
+    dataQualityScore?: number;
+  };
+  governance?: any;
+  targets?: any[];
+  activities?: any[];
+  scope3Categories?: any[];
+  topEmissionSources?: any[];
+  [key: string]: any;
+}
+
+export interface ExportResult {
+  success: boolean;
+  blob: Blob | null;
+  error?: string;
+}
+
+/**
+ * PDF Export Handler for ESRS E1 compliant reports
+ */
+export class PDFExportHandler {
+  private static instance: PDFExportHandler;
+  private readonly apiUrl: string;
+  
+  private constructor(apiUrl: string = 'http://localhost:8000') {
+    this.apiUrl = apiUrl;
+  }
+  
+  public static getInstance(apiUrl?: string): PDFExportHandler {
+    if (!PDFExportHandler.instance) {
+      PDFExportHandler.instance = new PDFExportHandler(apiUrl);
+    }
+    return PDFExportHandler.instance;
+  }
+  
+  /**
+   * Export single PDF with all sections
+   */
+  public async exportSinglePDF(
+    data: PDFExportData,
+    options?: { useBackend?: boolean; filename?: string; compress?: boolean; validate?: boolean }
+  ): Promise<ExportResult> {
+    try {
+      console.log('Generating PDF with data:', data);
+      
+      if (options?.validate !== false) {
+        const isValid = this.validateData(data);
+        if (!isValid) {
+          throw new Error('Invalid data structure for PDF export');
+        }
+      }
+      
+      const reconciledData = this.reconcileData(data);
+      const pdfBlob = await this.generatePDFClient(reconciledData, options?.compress || false);
+      
+      if (options?.filename) {
+        this.downloadBlob(pdfBlob, options.filename);
+      }
+      
+      return { success: true, blob: pdfBlob };
+    } catch (error) {
+      console.error('PDF export failed:', error);
+      return { 
+        success: false, 
+        blob: null, 
+        error: error instanceof Error ? error.message : 'Export failed' 
+      };
+    }
+  }
+  
+  private validateData(data: PDFExportData): boolean {
+    return !!(data && data.metadata && data.summary);
+  }
+  
+  private reconcileData(data: PDFExportData): PDFExportData {
+    return {
+      ...data,
+      summary: {
+        ...data.summary,
+        scope1Percentage: (data.summary.scope1 / data.summary.totalEmissions * 100) || 0,
+        scope2Percentage: (data.summary.scope2 / data.summary.totalEmissions * 100) || 0,
+        scope3Percentage: (data.summary.scope3 / data.summary.totalEmissions * 100) || 0,
+        dataQualityScore: data.summary.dataQualityScore || 72
+      }
+    };
+  }
+  
+  private async generatePDFClient(data: PDFExportData, compress: boolean): Promise<Blob> {
+    const pdf = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: 'a4',
+      compress
+    });
+    
+    let currentY = DESIGN.layout.margins.top;
+    
+    // Add all sections
+    this.addHeader(pdf, data);
+    currentY = this.addTitle(pdf, data, currentY);
+    currentY = this.addReportInfo(pdf, data, currentY);
+    currentY = this.addExecutiveSummary(pdf, data, currentY);
+    
+    pdf.addPage();
+    currentY = DESIGN.layout.margins.top;
+    currentY = this.addGovernanceSection(pdf, data, currentY);
+    currentY = this.addTargetsSection(pdf, data, currentY);
+    
+    pdf.addPage();
+    currentY = DESIGN.layout.margins.top;
+    currentY = this.addEmissionsOverview(pdf, data, currentY);
+    
+    pdf.addPage();
+    currentY = DESIGN.layout.margins.top;
+    currentY = this.addScope3Categories(pdf, data, currentY);
+    
+    if (data.activities && data.activities.length > 0) {
+      pdf.addPage();
+      currentY = DESIGN.layout.margins.top;
+      currentY = this.addActivityDetails(pdf, data, currentY);
+    }
+    
+    this.addFooters(pdf, data);
+    
+    return pdf.output('blob');
+  }
+  
+  private downloadBlob(blob: Blob, filename: string): void {
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    link.click();
+    URL.revokeObjectURL(url);
+  }
+
+
+    private addESRS2Section(pdf: jsPDF, y: number, data?: PDFExportData): number {
+    const { colors, typography } = DESIGN;
+    
+    pdf.setFontSize(typography.sizes.h2);
+    pdf.setFont(typography.fonts.primary, 'bold');
+    pdf.setTextColor(colors.black.r, colors.black.g, colors.black.b);
+    pdf.text('ESRS 2 - General Disclosures', DESIGN.layout.margins.left, y);
+    
+    y += 10;
+    
+    const pageWidth = 210;
+    const boxWidth = pageWidth - DESIGN.layout.margins.left - DESIGN.layout.margins.right;
+    pdf.setFillColor(colors.lightGreen.r, colors.lightGreen.g, colors.lightGreen.b);
+    pdf.rect(DESIGN.layout.margins.left, y - 5, boxWidth, 28, 'F');
+    
+    pdf.setFontSize(typography.sizes.body);
+    pdf.setFont(typography.fonts.primary, 'bold');
+    pdf.setTextColor(colors.darkGreen.r, colors.darkGreen.g, colors.darkGreen.b);
+    pdf.text('GOV-1: The role of governance bodies', DESIGN.layout.margins.left + 5, y);
+    
+    pdf.setFont(typography.fonts.primary, 'normal');
+    pdf.setTextColor(colors.black.r, colors.black.g, colors.black.b);
+    
+    // Use actual data if available, otherwise show placeholder
+    const boardOversight = (data && data.governanceData?.boardOversight) || 'Confirmed';
+    const boardFrequency = (data && data.governanceData?.boardMeetingFrequency) || 'Quarterly';
+    const mgmtResponsibilities = (data && data.governanceData?.managementResponsibilities) || 'Defined and operational';
+    
+    pdf.text('Board oversight of climate-related issues: ' + boardOversight + '', DESIGN.layout.margins.left + 5, y + 6);
+    pdf.text('Frequency of board climate discussions: ' + boardFrequency + '', DESIGN.layout.margins.left + 5, y + 12);
+    pdf.text('Management climate responsibilities: ' + mgmtResponsibilities + '', DESIGN.layout.margins.left + 5, y + 18);
+    
+    return y + 35;
+  }
+
+    private addESRSE1TransitionPlan(pdf: jsPDF, y: number, data?: PDFExportData): number {
+    const { colors, typography } = DESIGN;
+    
+    pdf.setFontSize(typography.sizes.h2);
+    pdf.setFont(typography.fonts.primary, 'bold');
+    pdf.setTextColor(colors.black.r, colors.black.g, colors.black.b);
+    pdf.text('ESRS E1 - Climate Change', DESIGN.layout.margins.left, y);
+    
+    y += 10;
+    
+    const pageWidth = 210;
+    const boxWidth = pageWidth - DESIGN.layout.margins.left - DESIGN.layout.margins.right;
+    pdf.setFillColor(colors.lightGreen.r, colors.lightGreen.g, colors.lightGreen.b);
+    pdf.rect(DESIGN.layout.margins.left, y - 5, boxWidth, 22, 'F');
+    
+    pdf.setFontSize(typography.sizes.body);
+    pdf.setFont(typography.fonts.primary, 'bold');
+    pdf.setTextColor(colors.darkGreen.r, colors.darkGreen.g, colors.darkGreen.b);
+    pdf.text('E1-1: Transition plan for climate change mitigation', DESIGN.layout.margins.left + 5, y);
+    
+    pdf.setFont(typography.fonts.primary, 'normal');
+    pdf.setTextColor(colors.black.r, colors.black.g, colors.black.b);
+    
+    // Use actual data if available
+    const planAdopted = (data && data.transitionPlan?.adopted !== undefined) ? 
+      (data.transitionPlan.adopted ? 'Yes' : 'No') : 'Yes';
+    const aligned15C = (data && data.transitionPlan?.alignedWith15C !== undefined) ? 
+      (data.transitionPlan.alignedWith15C ? 'Yes' : 'No') : 'Yes';
+    
+    pdf.text('Transition plan adopted: ' + planAdopted + '', DESIGN.layout.margins.left + 5, y + 6);
+    pdf.text('Aligned with 1.5°C pathway: ' + aligned15C + '', DESIGN.layout.margins.left + 5, y + 12);
+    
+    return y + 28;
+  }
+
+    private addESRSE1Sections(pdf: jsPDF, data: PDFExportData, y: number): number {
+    // Call the transition plan section
+    y = this.addESRSE1TransitionPlan(pdf, y, data);
+    
+    // Add some spacing
+    y += 15;
+    
+    // Call the targets section
+    y = this.addESRSE1Targets(pdf, data, y);
+    
+    return y;
+  }
+
+    private addEmissionsSummary(pdf: jsPDF, data: PDFExportData, scope3Data: Scope3Category[], y: number): number {
+    const { colors, typography, layout } = DESIGN;
+    
+    // Section header
+    pdf.setFontSize(typography.sizes.h2);
+    pdf.setFont(typography.fonts.primary, 'bold');
+    pdf.setTextColor(colors.black.r, colors.black.g, colors.black.b);
+    pdf.text('Emissions Overview', layout.margins.left, y);
+    
+    y += layout.spacing.subsection;
+    
+    // Scope breakdown visualization (simple bar chart)
+    // Uses summary data as source of truth
+    const barHeight = 20;
+    const barWidth = 150;
+    const scopes = [
+      { name: 'Scope 1', value: data.summary.scope1, percentage: data.summary.scope1Percentage },
+      { name: 'Scope 2', value: data.summary.scope2, percentage: data.summary.scope2Percentage },
+      { name: 'Scope 3', value: data.summary.scope3, percentage: data.summary.scope3Percentage }
+    ];
+    
+    scopes.forEach((scope, index) => {
+      const barY = y + (index * (barHeight + 5));
+      
+      // Label
+      pdf.setFontSize(typography.sizes.body);
+      pdf.setFont(typography.fonts.primary, 'normal');
+      pdf.setTextColor(colors.black.r, colors.black.g, colors.black.b);
+      pdf.text(scope.name, layout.margins.left, barY + 4);
+      
+      // Background bar
+      pdf.setFillColor(colors.lightGray.r, colors.lightGray.g, colors.lightGray.b);
+      pdf.rect(layout.margins.left + 25, barY, barWidth, barHeight - 5, 'F');
+      
+      // Value bar
+      const valueWidth = (scope.percentage / 100) * barWidth;
+      pdf.setFillColor(colors.green.r, colors.green.g, colors.green.b);
+      pdf.rect(layout.margins.left + 25, barY, valueWidth, barHeight - 5, 'F');
+      
+      // Value text
+      pdf.setFontSize(typography.sizes.small);
+      pdf.text(
+        '' + scope.value.toFixed(1) + ' tCO2e (' + scope.percentage.toFixed(0) + '%)',
+        layout.margins.left + 25 + barWidth + 5,
+        barY + 4
+      );
+    });
+    
+    return y + (scopes.length * (barHeight + 5)) + layout.spacing.section;
+  }
+
+    private addDetailedEmissionsTable(pdf: jsPDF, data: PDFExportData, processedScope3: Scope3Category[], y: number): number {
+    const { colors, typography } = DESIGN;
+    
+    // Section header
+    pdf.setFontSize(typography.sizes.h2);
+    pdf.setFont(typography.fonts.primary, 'bold');
+    pdf.setTextColor(colors.black.r, colors.black.g, colors.black.b);
+    pdf.text('E1-6: Gross Scopes 1, 2, 3 and Total GHG emissions', DESIGN.layout.margins.left, y);
+    
+    y += 10;
+    
+    // Prepare table data
+    const tableData = [];
+    
+    // Scope 1 - with subcategories if available
+    tableData.push(['Scope 1 - Direct emissions', '', '', '', '']);
+    
+    const scope1Categories = this.getScope1Breakdown(data);
+    scope1Categories.forEach(cat => {
+      if (cat.emissions > 0) {
+        tableData.push([
+          '   ' + cat.name + '',
+          cat.emissions.toFixed(3),
+          cat.dataQuality,
+          cat.method,
+          'E1-6.53'
+        ]);
+      }
+    });
+    
+    // Use SUMMARY data for Scope 1 total
+    tableData.push(['Scope 1 Total', data.summary.scope1.toFixed(3), 'High', 'Direct measurement', 'E1-6.53']);
+    tableData.push(['', '', '', '', '']);
+    
+    // Scope 2
+    tableData.push(['Scope 2 - Indirect emissions from purchased energy', '', '', '', '']);
+    tableData.push(['   Location-based', data.summary.scope2.toFixed(3), 'High', 'Grid average factors', 'E1-6.54']);
+    if (data.summary.scope2Market !== undefined && data.summary.scope2Market !== null) {
+      tableData.push(['   Market-based', data.summary.scope2Market.toFixed(3), 'High', 'Supplier-specific factors', 'E1-6.54']);
+    }
+    tableData.push(['', '', '', '', '']);
+    
+    // Scope 3 - using processed data for categories but summary for total
+    tableData.push(['Scope 3 - Other indirect emissions (GHG Protocol Categories)', '', '', '', '']);
+    
+    processedScope3.forEach(cat => {
+      let value = cat.emissions > 0 ? cat.emissions.toFixed(3) : 'N/A';
+      let quality = cat.emissions > 0 ? cat.dataQuality : '-';
+      let method = cat.emissions > 0 ? cat.calculationMethod : cat.notApplicableReason || 'Not calculated';
+      
+      tableData.push([
+        '   ' + cat.category + '',
+        value,
+        quality,
+        method,
+        'E1-6.55'
+      ]);
+    });
+    
+    tableData.push(['', '', '', '', '']);
+    
+    // Use SUMMARY data for Scope 3 total
+    tableData.push(['Scope 3 Total', data.summary.scope3.toFixed(3), 'See categories', '', 'E1-6.55']);
+    tableData.push(['', '', '', '', '']);
+    
+    // Use SUMMARY data for total emissions
+    tableData.push(['Total GHG emissions', data.summary.totalEmissions.toFixed(3), 'Mixed', '', 'E1-6.56']);
+    
+    // Create table
+    (pdf as any).autoTable({
+      startY: y,
+      head: [['GHG Emissions', 'Value (tCO2e)', 'Data Quality', 'Calculation Method', 'ESRS Ref']],
+      body: tableData,
+      theme: 'grid',
+      headStyles: {
+        fillColor: [colors.darkGreen.r, colors.darkGreen.g, colors.darkGreen.b],
+        textColor: 255,
+        fontSize: typography.sizes.small,
+        fontStyle: 'bold',
+        cellPadding: 3
+      },
+      bodyStyles: {
+        fontSize: typography.sizes.tiny,
+        textColor: [colors.black.r, colors.black.g, colors.black.b],
+        cellPadding: 2
+      },
+      alternateRowStyles: {
+        fillColor: [250, 250, 250]
+      },
+      columnStyles: {
+        0: { cellWidth: 70 },
+        1: { cellWidth: 25, halign: 'right' },
+        2: { cellWidth: 20, halign: 'center' },
+        3: { cellWidth: 35 },
+        4: { cellWidth: 17, halign: 'center' }
+      },
+      margin: { left: DESIGN.layout.margins.left, right: DESIGN.layout.margins.right },
+      pageBreak: 'auto',
+      showHead: 'everyPage',
+      didParseCell: (data: any) => {
+        // Style the total row
+        if (data.row.index === tableData.length - 1 && data.section === 'body') {
+          data.cell.styles.fillColor = [colors.darkGreen.r, colors.darkGreen.g, colors.darkGreen.b];
+          data.cell.styles.textColor = [255, 255, 255];
+          data.cell.styles.fontStyle = 'bold';
+        }
+        // Style section headers
+        if (data.cell.text[0] && data.cell.text[0].startsWith('Scope') && !data.cell.text[0].includes('   ')) {
+          data.cell.styles.fontStyle = 'bold';
+          data.cell.styles.fillColor = [colors.lightGreen.r, colors.lightGreen.g, colors.lightGreen.b];
+        }
+      }
+    });
+    
+    return (pdf as any).lastAutoTable.finalY + 15;
+  }
+
+    private determineScope(categoryName: string): string {
+    if (!categoryName) return 'unknown';
+    
+    const scope1Categories = ['Stationary Combustion', 'Mobile Combustion', 'Process Emissions', 'Fugitive Emissions'];
+    const scope2Categories = ['Purchased Electricity', 'Purchased Heat', 'Purchased Steam', 'Purchased Cooling', 
+                             'Grid Electricity', 'District Heating', 'District Cooling'];
+    
+    if (scope1Categories.includes(categoryName)) return 'scope1';
+    if (scope2Categories.some(cat => categoryName.includes(cat))) return 'scope2';
+    if (categoryName.match(/^\d+\./)) return 'scope3';
+    
+    return 'unknown';
+  }
+
+    private createBatches<T>(items: T[], batchSize: number): T[][] {
+    const batches: T[][] = [];
+    for (let i = 0; i < items.length; i += batchSize) {
+      batches.push(items.slice(i, i + batchSize));
+    }
+    return batches;
+  }
+
+    private delay(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  /**
+   * Add header to all pages
+   */
+  private addHeader(pdf: jsPDF, data: PDFExportData): void {
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const documentId = data.metadata.documentId || 'GHG-' + Date.now().toString(36).toUpperCase();
+    const currentDate = new Date().toLocaleDateString('en-GB');
+    const companyName = data.metadata.companyName || 'Your Company';
+    const totalEmissions = data.summary.totalEmissions.toFixed(1);
+    
+    pdf.setFontSize(8);
+    pdf.setTextColor(100, 100, 100);
+    
+    // Left side
+    pdf.text(documentId + ' | ' + currentDate, 20, 9);
+    
+    // Right side  
+    pdf.text(companyName + ' ESRS E1 | ' + totalEmissions + ' tCO2e', pageWidth - 20, 9, { align: 'right' });
+    
+    // Header line
+    pdf.setDrawColor(200, 200, 200);
+    pdf.setLineWidth(0.5);
+    pdf.line(20, 12, pageWidth - 20, 12);
+  }
+
+  /**
+   * Add title section
+   */
+  private addTitle(pdf: jsPDF, data: PDFExportData, startY: number): number {
+    let currentY = startY;
+    
+    pdf.setFontSize(20);
+    pdf.setTextColor(26, 26, 46);
+    pdf.text(data.metadata.companyName || 'Your Company', 20, currentY);
+    currentY += 10;
+    
+    pdf.setFontSize(14);
+    pdf.text('ESRS E1 Climate-related Disclosures', 20, currentY);
+    currentY += 15;
+    
+    return currentY;
+  }
+
+  /**
+   * Add report information section
+   */
+  private addReportInfo(pdf: jsPDF, data: PDFExportData, startY: number): number {
+    let currentY = startY;
+    
+    pdf.setFontSize(12);
+    pdf.setTextColor(26, 26, 46);
+    pdf.text('Report Information', 20, currentY);
+    currentY += 8;
+    
+    const info = [
+      ['Reporting Period:', data.metadata.reportingPeriod],
+      ['Publication Date:', new Date(data.metadata.generatedDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })],
+      ['Standard Applied:', data.metadata.standard || 'ESRS E1 Compliant'],
+      ['Methodology:', data.metadata.methodology || 'GHG Protocol Corporate Standard']
+    ];
+    
+    pdf.setFontSize(10);
+    pdf.setTextColor(50, 50, 50);
+    
+    info.forEach(item => {
+      pdf.text(item[0], 20, currentY);
+      pdf.text(item[1], 60, currentY);
+      currentY += 6;
+    });
+    
+    return currentY + 10;
+  }
+
+  /**
+   * Add executive summary
+   */
+  private addExecutiveSummary(pdf: jsPDF, data: PDFExportData, startY: number): number {
+    let currentY = startY;
+    
+    pdf.setFontSize(14);
+    pdf.setTextColor(26, 26, 46);
+    pdf.text('Executive Summary', 20, currentY);
+    currentY += 10;
+    
+    // Summary box
+    pdf.setFillColor(245, 245, 245);
+    pdf.rect(20, currentY - 5, 170, 50, 'F');
+    
+    const col1X = 25;
+    const col2X = 100;
+    const lineHeight = 7;
+    
+    pdf.setFontSize(11);
+    pdf.setTextColor(26, 26, 46);
+    
+    pdf.text('Total Emissions:', col1X, currentY);
+    pdf.setFont(undefined, 'bold');
+    pdf.text(data.summary.totalEmissions.toFixed(2) + ' tCO2e', col2X, currentY);
+    pdf.setFont(undefined, 'normal');
+    currentY += lineHeight;
+    
+    pdf.text('Data Quality Score:', col1X, currentY);
+    pdf.text((data.summary.dataQualityScore || 72) + '%', col2X, currentY);
+    currentY += lineHeight;
+    
+    pdf.text('Evidence Documents:', col1X, currentY);
+    pdf.text('0', col2X, currentY);
+    currentY += lineHeight;
+    
+    pdf.text('Scope 1:', col1X, currentY);
+    pdf.text(data.summary.scope1.toFixed(2) + ' tCO2e (' + data.summary.scope1Percentage.toFixed(0) + '%)', col2X, currentY);
+    currentY += lineHeight;
+    
+    pdf.text('Scope 2:', col1X, currentY);
+    pdf.text(data.summary.scope2.toFixed(2) + ' tCO2e (' + data.summary.scope2Percentage.toFixed(0) + '%)', col2X, currentY);
+    currentY += lineHeight;
+    
+    pdf.text('Scope 3:', col1X, currentY);
+    pdf.text(data.summary.scope3.toFixed(2) + ' tCO2e (' + data.summary.scope3Percentage.toFixed(0) + '%)', col2X, currentY);
+    
+    return currentY + 15;
+  }
+
+  /**
+   * Add governance section
+   */
+  private addGovernanceSection(pdf: jsPDF, data: PDFExportData, startY: number): number {
+    let currentY = startY;
+    
+    pdf.setFontSize(14);
+    pdf.setTextColor(26, 26, 46);
+    pdf.text('ESRS 2 - General Disclosures', 20, currentY);
+    currentY += 8;
+    
+    pdf.setFontSize(12);
+    pdf.text('GOV-1: The role of governance bodies', 20, currentY);
+    currentY += 8;
+    
+    pdf.setFontSize(10);
+    pdf.setTextColor(50, 50, 50);
+    
+    const govData = data.governance || {
+      boardOversight: true,
+      boardMeetingFrequency: 'Quarterly',
+      managementResponsibilities: true
+    };
+    
+    pdf.text('Board oversight of climate-related issues: ' + (govData.boardOversight ? 'Confirmed' : 'Not established'), 20, currentY);
+    currentY += 6;
+    pdf.text('Frequency of board climate discussions: ' + (govData.boardMeetingFrequency || 'Quarterly'), 20, currentY);
+    currentY += 6;
+    pdf.text('Management climate responsibilities: ' + (govData.managementResponsibilities ? 'Defined and operational' : 'Not defined'), 20, currentY);
+    currentY += 10;
+    
+    pdf.setFontSize(14);
+    pdf.setTextColor(26, 26, 46);
+    pdf.text('ESRS E1 - Climate Change', 20, currentY);
+    currentY += 8;
+    
+    pdf.setFontSize(12);
+    pdf.text('E1-1: Transition plan for climate change mitigation', 20, currentY);
+    currentY += 8;
+    
+    pdf.setFontSize(10);
+    pdf.setTextColor(50, 50, 50);
+    pdf.text('Transition plan adopted: Yes', 20, currentY);
+    currentY += 6;
+    pdf.text('Aligned with 1.5°C pathway: Yes', 20, currentY);
+    
+    return currentY + 10;
+  }
+
+  /**
+   * Add targets section
+   */
+  private addTargetsSection(pdf: jsPDF, data: PDFExportData, startY: number): number {
+    let currentY = startY;
+    
+    pdf.setFontSize(12);
+    pdf.setTextColor(26, 26, 46);
+    pdf.text('E1-4: GHG emission reduction targets', 20, currentY);
+    currentY += 10;
+    
+    const targets = data.targets || [
+      {
+        type: 'Absolute reduction',
+        scope: 'Scopes 1, 2 & 3',
+        baseYear: '2019',
+        targetYear: '2030',
+        reduction: '50%',
+        progress: '25%',
+        validation: 'SBTi 1.5°C'
+      }
+    ];
+    
+    if (targets.length > 0) {
+      const tableData = targets.map(t => [
+        t.type,
+        t.scope,
+        t.baseYear,
+        t.targetYear,
+        t.reduction,
+        t.progress,
+        t.validation
+      ]);
+      
+      (pdf as any).autoTable({
+        startY: currentY,
+        head: [['Target Type', 'Scope', 'Base Year', 'Target Year', 'Reduction', 'Progress', 'Validation']],
+        body: tableData,
+        theme: 'striped',
+        headStyles: { fillColor: [26, 26, 46] },
+        margin: { left: 20 },
+        styles: { fontSize: 9 }
+      });
+      
+      currentY = (pdf as any).lastAutoTable.finalY + 10;
+    }
+    
+    return currentY;
+  }
+
+  /**
+   * Add emissions overview
+   */
+  private addEmissionsOverview(pdf: jsPDF, data: PDFExportData, startY: number): number {
+    let currentY = startY;
+    
+    pdf.setFontSize(14);
+    pdf.setTextColor(26, 26, 46);
+    pdf.text('Emissions Overview', 20, currentY);
+    currentY += 15;
+    
+    // Visual bars for scopes
+    const barHeight = 20;
+    const maxWidth = 150;
+    const total = data.summary.totalEmissions;
+    
+    const scopes = [
+      { name: 'Scope 1', value: data.summary.scope1, color: [239, 68, 68] },
+      { name: 'Scope 2', value: data.summary.scope2, color: [245, 158, 11] },
+      { name: 'Scope 3', value: data.summary.scope3, color: [16, 185, 129] }
+    ];
+    
+    scopes.forEach((scope, index) => {
+      const width = total > 0 ? (scope.value / total * maxWidth) : 0;
+      
+      pdf.setFontSize(10);
+      pdf.setTextColor(50, 50, 50);
+      pdf.text(scope.name, 20, currentY + 15);
+      pdf.text(scope.value.toFixed(1) + ' tCO2e', 170, currentY + 15);
+      
+      pdf.setFillColor(scope.color[0], scope.color[1], scope.color[2]);
+      pdf.rect(20, currentY + 20, width, barHeight, 'F');
+      
+      currentY += 35;
+    });
+    
+    return currentY;
+  }
+
+  /**
+   * Add Scope 3 categories
+   */
+  private addScope3Categories(pdf: jsPDF, data: PDFExportData, startY: number): number {
+    let currentY = startY;
+    
+    pdf.setFontSize(14);
+    pdf.setTextColor(26, 26, 46);
+    pdf.text('E1-6: Gross Scopes 1, 2, 3 and Total GHG emissions', 20, currentY);
+    currentY += 15;
+    
+    // Scope 1 & 2 summary
+    const emissionsData = [
+      ['GHG Emissions', 'Value (tCO2e)', 'Data Quality', 'Calculation Method'],
+      ['Scope 1 - Direct emissions', data.summary.scope1.toFixed(3), 'High', 'Direct measurement'],
+      ['Scope 2 - Indirect emissions', data.summary.scope2.toFixed(3), 'High', 'Location-based'],
+      ['Scope 3 - Value chain', data.summary.scope3.toFixed(3), 'Medium', 'Mixed methods']
+    ];
+    
+    (pdf as any).autoTable({
+      startY: currentY,
+      head: [emissionsData[0]],
+      body: emissionsData.slice(1),
+      theme: 'striped',
+      headStyles: { fillColor: [26, 26, 46] },
+      margin: { left: 20 }
+    });
+    
+    currentY = (pdf as any).lastAutoTable.finalY + 15;
+    
+    // Scope 3 categories
+    pdf.setFontSize(12);
+    pdf.setTextColor(26, 26, 46);
+    pdf.text('Scope 3 Categories - Detailed Analysis', 20, currentY);
+    currentY += 10;
+    
+    const categories = data.scope3Categories || [];
+    
+    if (categories.length > 0) {
+      const categoryData = categories.map(cat => [
+        cat.category,
+        cat.emissions.toFixed(3) + ' tCO2e',
+        (cat.percentage || 0).toFixed(1) + '%',
+        cat.count || 0,
+        cat.status
+      ]);
+      
+      (pdf as any).autoTable({
+        startY: currentY,
+        head: [['Category', 'tCO2e', '% Scope 3', 'Count', 'Status']],
+        body: categoryData,
+        theme: 'striped',
+        headStyles: { fillColor: [26, 26, 46] },
+        margin: { left: 20 },
+        styles: { fontSize: 9 }
+      });
+      
+      currentY = (pdf as any).lastAutoTable.finalY + 10;
+    }
+    
+    return currentY;
+  }
+
+  /**
+   * Add activity details
+   */
+  private addActivityDetails(pdf: jsPDF, data: PDFExportData, startY: number): number {
+    let currentY = startY;
+    
+    pdf.setFontSize(14);
+    pdf.setTextColor(26, 26, 46);
+    pdf.text('Activity-level Emissions Data', 20, currentY);
+    currentY += 10;
+    
+    const activities = data.activities || [];
+    
+    if (activities.length > 0) {
+      const activityData = activities.slice(0, 20).map(act => [
+        act.name.substring(0, 30),
+        act.category,
+        act.quantity + ' ' + act.unit,
+        act.emissionFactor.toFixed(3),
+        act.emissions.toFixed(3) + ' tCO2e'
+      ]);
+      
+      (pdf as any).autoTable({
+        startY: currentY,
+        head: [['Activity', 'Category', 'Qty', 'Factor', 'tCO2e']],
+        body: activityData,
+        theme: 'striped',
+        headStyles: { fillColor: [26, 26, 46] },
+        margin: { left: 20 },
+        styles: { fontSize: 8 },
+        columnStyles: {
+          0: { cellWidth: 50 },
+          1: { cellWidth: 40 },
+          2: { cellWidth: 30 },
+          3: { cellWidth: 25 },
+          4: { cellWidth: 25 }
+        }
+      });
+      
+      currentY = (pdf as any).lastAutoTable.finalY + 5;
+      
+      pdf.setFontSize(9);
+      pdf.setTextColor(100, 100, 100);
+      pdf.text('Note: Showing top ' + Math.min(20, activities.length) + ' of ' + activities.length + ' activities, sorted by emissions impact.', 20, currentY);
+      currentY += 10;
+    }
+    
+    // Add ESRS note
+    currentY += 5;
+    pdf.setFontSize(9);
+    pdf.setTextColor(100, 100, 100);
+    pdf.text('ESRS E1-5 Energy: 0 MWh | E1-8 Carbon Price: EUR 0/tCO2e | E1-3 Climate CapEx/OpEx: EUR 0', 20, currentY);
+    
+    return currentY;
+  }
+
+  /**
+   * Add footers to all pages
+   */
+  private addFooters(pdf: jsPDF, data: PDFExportData): void {
+    const pageCount = pdf.getNumberOfPages();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    
+    for (let i = 1; i <= pageCount; i++) {
+      pdf.setPage(i);
+      
+      // Footer text
+      pdf.setFontSize(8);
+      pdf.setTextColor(100, 100, 100);
+      
+      // Left side
+      pdf.text(data.metadata.companyName + ' | ESRS E1 Climate Disclosures | ' + data.metadata.reportingPeriod, 
+        20, pageHeight - 10);
+      
+      // Right side - page numbers
+      pdf.text('Page ' + i + ' of ' + pageCount, pageWidth - 20, pageHeight - 10, { align: 'right' });
+      
+      // Version
+      pdf.text('v3.1.0', pageWidth / 2, pageHeight - 10, { align: 'center' });
+    }
+  }
+
+}
+
+/**
+ * Generate PDF report
+ */
+export async function generatePDFReport(
+  data: PDFExportData,
+  options?: { useBackend?: boolean; filename?: string; compress?: boolean; validate?: boolean }
+): Promise<ExportResult> {
+  const handler = PDFExportHandler.getInstance();
+  return handler.exportSinglePDF(data, options);
+}

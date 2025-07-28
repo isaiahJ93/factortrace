@@ -1,0 +1,66 @@
+# backend/app/schemas/emission.py
+"""
+Pydantic schemas for emissions data
+"""
+from pydantic import BaseModel, Field, ConfigDict
+from typing import Optional, Dict
+from datetime import datetime
+from enum import IntEnum
+
+class EmissionScope(IntEnum):
+    """GHG Protocol emission scopes"""
+    SCOPE_1 = 1
+    SCOPE_2 = 2
+    SCOPE_3 = 3
+
+class EmissionBase(BaseModel):
+    """Base emission schema"""
+    scope: int = Field(..., ge=1, le=3, description="Emission scope (1, 2, or 3)")
+    category: str = Field(..., description="Emission category")
+    activity_type: Optional[str] = Field(None, description="Type of activity")
+    calculation_method: Optional[str] = Field(None, description="Calculation method")
+    data_quality_score: Optional[float] = Field(None, description="Data quality score")
+    reporting_period: Optional[str] = Field(None, description="Reporting period")
+    activity_data: float = Field(..., gt=0, description="Activity data amount")
+    unit: str = Field(..., description="Unit of measurement")
+    emission_factor: Optional[float] = Field(None, gt=0, description="Emission factor")
+    emission_factor_id: Optional[int] = Field(None, description="Emission factor ID")
+    data_source: Optional[str] = Field(None, description="Data source type")
+    location: Optional[str] = Field(None, description="Location/facility")
+    description: Optional[str] = Field(None, description="Additional notes")
+
+class EmissionCreate(EmissionBase):
+    """Schema for creating emissions"""
+    pass
+
+class EmissionUpdate(BaseModel):
+    """Schema for updating emissions"""
+    scope: Optional[int] = Field(None, ge=1, le=3)
+    category: Optional[str] = None
+    activity_data: Optional[float] = Field(None, gt=0)
+    unit: Optional[str] = None
+    emission_factor: Optional[float] = Field(None, gt=0)
+    data_source: Optional[str] = None
+    location: Optional[str] = None
+    description: Optional[str] = None
+    amount: Optional[float] = None
+
+class EmissionResponse(EmissionBase):
+    """Schema for emission responses"""
+    id: int
+    amount: float = Field(..., description="Calculated emission amount in tCO2e")
+    created_at: datetime
+    updated_at: Optional[datetime] = None
+    user_id: Optional[int] = None
+    
+    model_config = ConfigDict(from_attributes=True)
+
+class EmissionsSummary(BaseModel):
+    """Schema for emissions summary"""
+    scope1_total: float = Field(0, description="Total Scope 1 emissions")
+    scope2_total: float = Field(0, description="Total Scope 2 emissions")
+    scope3_total: float = Field(0, description="Total Scope 3 emissions")
+    total_emissions: float = Field(0, description="Total emissions across all scopes")
+    by_category: Dict[str, float] = Field(default_factory=dict, description="Emissions by category")
+    
+    model_config = ConfigDict(from_attributes=True)

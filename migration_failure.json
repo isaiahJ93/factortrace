@@ -1,0 +1,17 @@
+{
+  "timestamp": "2025-07-28T16:53:35.476873",
+  "checkpoints": [
+    {
+      "step": 1,
+      "name": "Branch & Freeze",
+      "status": "failed",
+      "details": {
+        "error": "Uncommitted changes detected"
+      }
+    }
+  ],
+  "source_file": "endpoint/esrs_e1_full.py",
+  "last_error": {
+    "error": "Uncommitted changes detected"
+  }
+}

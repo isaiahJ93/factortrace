@@ -1,0 +1,227 @@
+{
+  "organization": "Example Corporation Ltd",
+  "lei": "5493000KJTIIGC8Y1R12",
+  "reporting_period": 2024,
+  "consolidation_scope": "Group",
+  "headquarters_location": "EU",
+  "company_size": "large",
+  "sector": "Manufacturing",
+  "primary_nace_code": "C20",
+  "emissions": {
+    "scope1": 15000,
+    "scope2_location": 8000,
+    "scope2_market": 6500,
+    "scope3": 120000,
+    "ghg_intensity": 45.2,
+    "ghg_breakdown": {
+      "co2": 140000,
+      "ch4": 2000,
+      "n2o": 1500,
+      "hfcs": 0,
+      "pfcs": 0,
+      "sf6": 0,
+      "nf3": 0
+    }
+  },
+  "esrs_e1_data": {
+    "transition_plan": {
+      "net_zero_target": true,
+      "net_zero_target_year": 2050,
+      "milestones": [
+        {
+          "year": 2030,
+          "target": "50% reduction"
+        },
+        {
+          "year": 2040,
+          "target": "80% reduction"
+        }
+      ],
+      "adopted": true,
+      "adoption_date": "2024-01-01"
+    },
+    "governance": {
+      "board_oversight": true,
+      "governance_integration": "Fully integrated into board governance",
+      "climate_expertise": "Board has climate experts"
+    },
+    "actions": {
+      "capex": 100,
+      "opex": 20,
+      "fte": 25,
+      "climate_actions": [
+        {
+          "description": "Solar installation",
+          "investment_meur": 50
+        }
+      ]
+    },
+    "targets": {
+      "base_year": 2020,
+      "progress": 25,
+      "base_year_emissions": 150000,
+      "targets": [
+        {
+          "description": "50% by 2030",
+          "target_year": 2030,
+          "reduction_percent": 50
+        }
+      ]
+    },
+    "energy_consumption": {
+      "total": 100000,
+      "renewable_percentage": 28,
+      "electricity_mwh": 50000,
+      "renewable_electricity_mwh": 20000
+    },
+    "emissions": {
+      "scope1": 15000,
+      "scope2": 6500,
+      "scope3": 120000,
+      "ghg_intensity": 45.2
+    }
+  },
+  "financial_effects": {
+    "risks": [
+      {
+        "type": "Physical",
+        "description": "Flood risk",
+        "financial_impact": 10000000
+      }
+    ],
+    "opportunities": [
+      {
+        "type": "Products",
+        "description": "Low-carbon products",
+        "potential_value": 50000000
+      }
+    ],
+    "climate_related_costs": 35000000
+  },
+  "transition_plan": {
+    "net_zero_target": true,
+    "net_zero_target_year": 2050,
+    "milestones": [
+      {
+        "year": 2030,
+        "target": "50% reduction"
+      },
+      {
+        "year": 2040,
+        "target": "80% reduction"
+      }
+    ],
+    "adopted": true
+  },
+  "governance": {
+    "board_oversight": true,
+    "governance_integration": "Fully integrated",
+    "climate_expertise": "Yes"
+  },
+  "climate_actions": {
+    "capex": 100,
+    "opex": 20,
+    "fte": 25
+  },
+  "targets": {
+    "base_year": 2020,
+    "progress": 25,
+    "base_year_emissions": 150000
+  },
+  "energy_consumption": {
+    "renewable_percentage": 28,
+    "total": 100000
+  },
+  "scope3_detailed": {
+    "category_1": {
+      "emissions_tco2e": 8000,
+      "excluded": false,
+      "data_quality_tier": "Tier 2"
+    },
+    "category_2": {
+      "emissions_tco2e": 8000,
+      "excluded": false,
+      "data_quality_tier": "Tier 2"
+    },
+    "category_3": {
+      "emissions_tco2e": 8000,
+      "excluded": false,
+      "data_quality_tier": "Tier 2"
+    },
+    "category_4": {
+      "emissions_tco2e": 8000,
+      "excluded": false,
+      "data_quality_tier": "Tier 2"
+    },
+    "category_5": {
+      "emissions_tco2e": 8000,
+      "excluded": false,
+      "data_quality_tier": "Tier 2"
+    },
+    "category_6": {
+      "emissions_tco2e": 8000,
+      "excluded": false,
+      "data_quality_tier": "Tier 2"
+    },
+    "category_7": {
+      "emissions_tco2e": 8000,
+      "excluded": false,
+      "data_quality_tier": "Tier 2"
+    },
+    "category_8": {
+      "emissions_tco2e": 8000,
+      "excluded": false,
+      "data_quality_tier": "Tier 2"
+    },
+    "category_9": {
+      "emissions_tco2e": 8000,
+      "excluded": false,
+      "data_quality_tier": "Tier 2"
+    },
+    "category_10": {
+      "emissions_tco2e": 7000,
+      "excluded": false,
+      "data_quality_tier": "Tier 2"
+    },
+    "category_11": {
+      "emissions_tco2e": 7000,
+      "excluded": false,
+      "data_quality_tier": "Tier 2"
+    },
+    "category_12": {
+      "emissions_tco2e": 7000,
+      "excluded": false,
+      "data_quality_tier": "Tier 2"
+    },
+    "category_13": {
+      "emissions_tco2e": 7000,
+      "excluded": false,
+      "data_quality_tier": "Tier 2"
+    },
+    "category_14": {
+      "emissions_tco2e": 7000,
+      "excluded": false,
+      "data_quality_tier": "Tier 2"
+    },
+    "category_15": {
+      "emissions_tco2e": 7000,
+      "excluded": false,
+      "data_quality_tier": "Tier 2"
+    }
+  },
+  "data_quality_score": 82,
+  "emissions_change_percent": -8.5,
+  "methodology": {
+    "ghg_standard": "GHG Protocol"
+  },
+  "eu_taxonomy_data": {
+    "eligible_activities": [
+      {
+        "name": "Solar energy generation",
+        "dnsh_compliant": true,
+        "substantial_contribution": true,
+        "minimum_safeguards": true
+      }
+    ]
+  }
+}

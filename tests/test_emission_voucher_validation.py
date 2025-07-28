@@ -1,0 +1,74 @@
+from datetime import datetime
+from decimal import Decimal
+
+from factortrace.models.emissions_voucher import EmissionVoucher, EmissionsRecord, EmissionFactor, GHGBreakdown, DataQuality
+from factortrace.shared_enums import (
+    GWPVersionEnum,
+    TierLevelEnum,
+    Scope3CategoryEnum,
+    ScopeLevelEnum,
+    VerificationLevelEnum,
+    ConsolidationMethodEnum,
+    DataQualityTierEnum,
+    ValueChainStageEnum,
+    UncertaintyDistributionEnum,
+    TemporalGranularityEnum,
+    GasTypeEnum,
+)
+
+def _sample_record() -> dict:
+    return {
+        "scope": ScopeLevelEnum.SCOPE_3,
+        "value_chain_stage": ValueChainStageEnum.UPSTREAM,
+        "scope3_category": Scope3CategoryEnum.CATEGORY_1_PURCHASED_GOODS_SERVICES,
+        "activity_description": "Purchased steel",
+        "activity_value": Decimal("100"),
+        "activity_unit": "t",
+        "emission_factor": EmissionFactor(
+            factor_id="EF-001",
+            value=Decimal("2.1"),
+            unit="tCO2e/t",
+            source="DEFRA_2024",
+            source_year=2024,
+            tier=TierLevelEnum.TIER_1
+        ).model_dump(),
+        "ghg_breakdown": [
+            GHGBreakdown(
+                gas_type=GasTypeEnum.CO2,
+                amount=Decimal("210"),
+                gwp_factor=Decimal("1"),
+                gwp_version=GWPVersionEnum.AR6_100
+            ).model_dump()
+        ],
+        "total_emissions_tco2e": Decimal("210"),
+        "data_quality": DataQuality(
+            tier=DataQualityTierEnum.TIER_1,
+            score=Decimal("95"),
+            temporal_representativeness=Decimal("90"),
+            geographical_representativeness=Decimal("90"),
+            technological_representativeness=Decimal("90"),
+            completeness=Decimal("95"),
+            uncertainty_percent=Decimal("5"),
+            confidence_level=Decimal("95"),
+            distribution=UncertaintyDistributionEnum.LOGNORMAL,
+        ).model_dump(),
+        "calculation_method": "invoice_factor",
+        "emission_date_start": datetime(2024, 1, 1),
+        "emission_date_end": datetime(2024, 1, 31),
+    }
+
+def test_valid_voucher():
+    voucher = EmissionVoucher(
+        supplier_lei="5493001KTIIGC8YR1234",
+        supplier_name="Acme Metals",
+        supplier_country="DE",
+        supplier_sector="C24.10",
+        reporting_entity_lei="5493001KTIIGC8YR1234",
+        reporting_period_start=datetime(2024, 1, 1),
+        reporting_period_end=datetime(2024, 12, 31),
+        consolidation_method=ConsolidationMethodEnum.OPERATIONAL_CONTROL,
+        emissions_records=[EmissionsRecord(**_sample_record())],
+        total_emissions_tco2e=Decimal("210"),
+    )
+
+    assert voucher.total_emissions_tco2e == Decimal("210")

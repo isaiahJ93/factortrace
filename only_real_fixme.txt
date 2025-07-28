@@ -1,0 +1,865 @@
+./src/main.bak:13:# 🔧 REVIEW: possible unclosed bracket -> sample_data = {}
+./src/main.bak:14:#        "lei": "5493001KJTIIGC8Y1R12"FIXME"
+./src/main.bak:15:#        "total_emissions"FIXME"
+./src/main.bak:18:# Lifespan handler replacing deprecated @app.on_event("startup"FIXME")
+./src/factortrace/main.bak:21:# 🔧 REVIEW: possible unclosed bracket ->     return templates.TemplateResponse("error.html"FIXME")
+./src/factortrace/main.bak:23:#            "request"FIXME"
+./src/factortrace/main.bak:24:#            "status_code"FIXME"
+./src/factortrace/main.bak:25:#            "detail"FIXME"
+./src/factortrace/main.bak:43:# 🔧 REVIEW: possible unclosed bracket ->         return templates.TemplateResponse("500.html"FIXME")
+./src/factortrace/main.bak:45:#                "request"FIXME"
+./src/factortrace/main.bak:46:#                "status_code"FIXME"
+./src/factortrace/main.bak:47:#                "detail"FIXME"
+./src/factortrace/main.bak:49:# 🔧 REVIEW: possible unclosed bracket ->     return templates.TemplateResponse("error.html"FIXME")
+./src/factortrace/main.bak:51:#            "request"FIXME"
+./src/factortrace/main.bak:52:#            "status_code"FIXME"
+./src/factortrace/main.bak:53:#            "detail"FIXME"
+./src/factortrace/main.bak:69:# 🔧 REVIEW: possible unclosed bracket -> generate_ixbrl()
+./src/factortrace/compliance_engine.py:6:# 🔧 REVIEW: possible unclosed bracket -> __all__ = []
+./src/factortrace/compliance_engine.py:22:# 🔧 REVIEW: possible unclosed bracket ->     result = calculator.calculate_emissions()
+./src/factortrace/schema_loader.bak:2:# 🔧 REVIEW: possible unclosed bracket -> schema = {}
+./src/factortrace/schema_loader.bak:3:#        "type": "object"FIXME"
+./src/factortrace/schema_loader.bak:4:# 🔧 REVIEW: possible unclosed bracket ->     "properties"FIXME"
+./src/factortrace/schema_loader.bak:5:#            "example_field": {"type": "string"FIXME"}
+./src/factortrace/schema_loader.bak:7:#        "required": ["example_field"FIXME"]
+./src/factortrace/utils.py.bak:41:# 🔧 REVIEW: possible unclosed bracket ->         root = etree.Element()
+./src/factortrace/utils.py.bak:44:# 🔧 REVIEW: possible unclosed bracket ->             nsmap={}
+./src/factortrace/utils.py.bak:151:# 🔧 REVIEW: possible unclosed bracket ->             return etree.tostring()
+./src/factortrace/utils.py.bak:160:# 🔧 REVIEW: possible unclosed bracket ->             return etree.tostring()
+./src/factortrace/emissions_voucher.bak:614:#            "voucher_id"FIXME"
+./src/factortrace/emissions_voucher.bak:615:#            "supplier_lei"FIXME"
+./src/factortrace/emissions_voucher.bak:616:#            "reporting_period": f"{self.reporting_period_start.isoformat(}|{self.reporting_period_end.isoformat(}"FIXME")
+./src/factortrace/emissions_voucher.bak:618:#            "emissions_count"FIXME"
+./src/factortrace/emissions_voucher.bak:619:#            "total_emissions"FIXME"
+./src/factortrace/emissions_voucher.bak:652:#            "title": "CSRD-Compliant Emission Voucher"FIXME"
+./src/factortrace/emissions_voucher.bak:653:#            "description": "Comprehensive emission voucher for Scope 1-3 reporting per ESRS E1-6"FIXME"
+./src/factortrace/emissions_voucher.bak:654:#            "examples"FIXME"
+./src/factortrace/emissions_voucher.bak:657:#                    "supplier_lei": "529900HNOAA1KXQJUQ27"FIXME"
+./src/factortrace/emissions_voucher.bak:658:#                    "supplier_name": "Sustainable Supplier GmbH"FIXME"
+./src/factortrace/emissions_voucher.bak:659:#                    "supplier_country": "DE"FIXME"
+./src/factortrace/emissions_voucher.bak:660:#                    "supplier_sector": "24.10"FIXME"
+./src/factortrace/emissions_voucher.bak:661:#                    "reporting_entity_lei": "529900T8BM49AURSDO55"FIXME"
+./src/factortrace/emissions_voucher.bak:662:#                    "reporting_period_start": "2024-01-01T00:00:00Z"FIXME"
+./src/factortrace/emissions_voucher.bak:663:#                    "reporting_period_end": "2024-12-31T23:59:59Z"FIXME"
+./src/factortrace/emissions_voucher.bak:664:#                    "consolidation_method": "operational_control"FIXME"
+./src/factortrace/emissions_voucher.bak:665:#                    "emissions_records"FIXME"
+./src/factortrace/emissions_voucher.bak:668:#                            "scope": "scope_3"FIXME"
+./src/factortrace/emissions_voucher.bak:669:#                            "value_chain_stage": "upstream"FIXME"
+./src/factortrace/emissions_voucher.bak:670:#                            "scope3_category": "category_1_purchased_goods_services"FIXME"
+./src/factortrace/emissions_voucher.bak:671:#                            "activity_description": "Steel production for automotive parts"FIXME"
+./src/factortrace/emissions_voucher.bak:672:#                            "activity_value"FIXME"
+./src/factortrace/emissions_voucher.bak:673:#                            "activity_unit": "tonnes"FIXME"
+./src/factortrace/emissions_voucher.bak:674:#                            "emission_factor"FIXME"
+./src/factortrace/emissions_voucher.bak:675:#                                "factor_id": "EF_STEEL_EU_2024"FIXME"
+./src/factortrace/emissions_voucher.bak:676:#                                "value"FIXME"
+./src/factortrace/emissions_voucher.bak:677:#                                "unit": "tCO2e/t"FIXME"
+./src/factortrace/emissions_voucher.bak:678:#                                "source": "CBAM_DEFAULT"FIXME"
+./src/factortrace/emissions_voucher.bak:679:#                                "source_year"FIXME"
+./src/factortrace/emissions_voucher.bak:680:#                                "tier": "tier_2"FIXME"
+./src/factortrace/emissions_voucher.bak:681:#                                "country_code": "EU"FIXME"
+./src/factortrace/emissions_voucher.bak:682:#                                "is_cbam_default"FIXME"
+./src/factortrace/emissions_voucher.bak:684:#                            "ghg_breakdown"FIXME"
+./src/factortrace/emissions_voucher.bak:687:#                                    "gas_type": "CO2"FIXME"
+./src/factortrace/emissions_voucher.bak:688:#                                    "amount"FIXME"
+./src/factortrace/emissions_voucher.bak:689:#                                    "unit": "tCO2e"FIXME"
+./src/factortrace/emissions_voucher.bak:690:#                                    "gwp_factor"FIXME"
+./src/factortrace/emissions_voucher.bak:691:#                                    "gwp_version": "AR6_100"FIXME"
+./src/factortrace/emissions_voucher.bak:694:#                            "total_emissions_tco2e"FIXME"
+./src/factortrace/emissions_voucher.bak:695:#                            "data_quality"FIXME"
+./src/factortrace/emissions_voucher.bak:696:#                                "tier": "tier_2"FIXME"
+./src/factortrace/emissions_voucher.bak:697:#                                "score"FIXME"
+./src/factortrace/emissions_voucher.bak:698:#                                "temporal_representativeness"FIXME"
+./src/factortrace/emissions_voucher.bak:699:#                                "geographical_representativeness"FIXME"
+./src/factortrace/emissions_voucher.bak:700:#                                "technological_representativeness"FIXME"
+./src/factortrace/emissions_voucher.bak:701:#                                "completeness"FIXME"
+./src/factortrace/emissions_voucher.bak:702:#                                "uncertainty_percent"FIXME"
+./src/factortrace/emissions_voucher.bak:703:#                                "confidence_level"FIXME"
+./src/factortrace/emissions_voucher.bak:704:#                                "distribution": "lognormal"FIXME"
+./src/factortrace/emissions_voucher.bak:706:#                            "calculation_method": "Emission factor approach"FIXME"
+./src/factortrace/emissions_voucher.bak:707:#                            "emission_date_start": "2024-01-01T00:00:00Z"FIXME"
+./src/factortrace/emissions_voucher.bak:708:#                            "emission_date_end": "2024-12-31T23:59:59Z"FIXME"
+./src/factortrace/emissions_voucher.bak:709:#                            "location_country": "DE"FIXME"
+./src/factortrace/emissions_voucher.bak:712:#                    "total_emissions_tco2e"FIXME"
+./src/factortrace/emissions_voucher.bak:713:#                    "verification_level": "limited_assurance"FIXME"
+./src/factortrace/voucher_xml_serializer.bak:24:# 🔧 REVIEW: possible unclosed bracket -> FIELD_ORDER: List[str] = []
+./src/factortrace/voucher_xml_serializer.bak:72:# 🔧 REVIEW: possible unclosed bracket ->     xml_bytes = tostring()
+./src/factortrace/voucher_xml_serializer.bak:105:# 🔧 REVIEW: possible unclosed bracket ->     xsd_file = ()
+./src/factortrace/factor_loader.py.bak:51:# 🔧 REVIEW: possible unclosed bracket ->         conversions = {}
+./src/factortrace/factor_loader.py.bak:114:# 🔧 REVIEW: possible unclosed bracket ->         logger.info()
+./src/factortrace/factor_loader.py.bak:150:# 🔧 REVIEW: possible unclosed bracket ->                 entry = {}
+./src/factortrace/factor_loader.py.bak:199:# 🔧 REVIEW: possible unclosed bracket ->         regional_mapping = {}
+./src/factortrace/factor_loader.py.bak:235:                    f"Calculated global average for {activity}: {avg_factor} (averaged from {len(factors} regional factors)# 🔧 REVIEW: possible unclosed bracket ->                 return {}
+./src/factortrace/factor_loader.py.bak:254:# 🔧 REVIEW: possible unclosed bracket ->         return FactorRecord()
+./src/factortrace/factor_loader.py.bak:281:# 🔧 REVIEW: possible unclosed bracket ->             report[activity] = {}
+./src/factortrace/factor_loader.py:56:        # 🔧 REVIEW: possible unclosed bracket -> conversions = {}
+./src/factortrace/factor_loader.py:128:        # 🔧 REVIEW: possible unclosed bracket -> logger.info()
+./src/factortrace/factor_loader.py:164:                # 🔧 REVIEW: possible unclosed bracket -> entry = {}
+./src/factortrace/factor_loader.py:211:        # 🔧 REVIEW: possible unclosed bracket -> regional_mapping = {}
+./src/factortrace/factor_loader.py:246:                # 🔧 REVIEW: possible unclosed bracket -> return {}
+./src/factortrace/factor_loader.py:265:        # 🔧 REVIEW: possible unclosed bracket -> return FactorRecord()
+./src/factortrace/factor_loader.py:293:            # 🔧 REVIEW: possible unclosed bracket -> report[activity] = {}:
+./src/factortrace/__init__.py:17:# 🔧 REVIEW: possible unclosed bracket -> 
+./src/factortrace/__init__.py:27:# 🔧 REVIEW: possible unclosed bracket -> __all__ = []
+./src/factortrace/tracecalc.py:56:            # 🔧 REVIEW: possible unclosed bracket -> results.append()
+./src/factortrace/tracecalc.py:58:                # 🔧 REVIEW: possible unclosed bracket -> ItemResult()
+./src/factortrace/tracecalc.py:72:        # 🔧 REVIEW: possible unclosed bracket -> return CalcResult()
+./src/factortrace/tracecalc.py:127:            # 🔧 REVIEW: possible unclosed bracket -> results.append()
+./src/factortrace/tracecalc.py:129:                # 🔧 REVIEW: possible unclosed bracket -> ItemResult()
+./src/factortrace/tracecalc.py:143:        # 🔧 REVIEW: possible unclosed bracket -> return CalcResult()
+./src/factortrace/tracecalc.py:157:    # 🔧 REVIEW: possible unclosed bracket -> demo_items = []
+Binary file ./src/factortrace/utils/__pycache__/coerce.cpython-311.pyc matches
+Binary file ./src/factortrace/utils/__pycache__/xml_validation.cpython-311.pyc matches
+./src/factortrace/voucher_xml_serializer.py.bak:20:# 🔧 REVIEW: possible unclosed bracket -> FIELD_ORDER: List[str] = []
+./src/factortrace/voucher_xml_serializer.py.bak:63:# 🔧 REVIEW: possible unclosed bracket ->     xml_bytes = tostring()
+./src/factortrace/voucher_xml_serializer.py.bak:92:# 🔧 REVIEW: possible unclosed bracket ->     xsd_file = ()
+./src/factortrace/models/uncertainty_model.py.bak:12:# 🔧 REVIEW: possible unclosed bracket ->     model_config = ConfigDict()
+./src/factortrace/models/emissions_voucher.bak:563:#            "voucher_id"FIXME"
+./src/factortrace/models/emissions_voucher.bak:564:#            "supplier_lei"FIXME"
+./src/factortrace/models/emissions_voucher.bak:565:#            "reporting_period": f"{self.reporting_period_start.isoformat(}|{self.reporting_period_end.isoformat(}"FIXME")
+./src/factortrace/models/emissions_voucher.bak:567:#            "emissions_count"FIXME"
+./src/factortrace/models/emissions_voucher.bak:568:#            "total_emissions"FIXME"
+./src/factortrace/models/emissions_voucher.bak:603:#            "title": "CSRD-Compliant Emission Voucher"FIXME"
+./src/factortrace/models/emissions_voucher.bak:604:#            "description": "Comprehensive emission voucher for Scope 1-3 reporting per ESRS E1-6"FIXME"
+./src/factortrace/models/emissions_voucher.bak:605:#            "examples"FIXME"
+./src/factortrace/models/emissions_voucher.bak:608:#                    "supplier_lei": "529900HNOAA1KXQJUQ27"FIXME"
+./src/factortrace/models/emissions_voucher.bak:609:#                    "supplier_name": "Sustainable Supplier GmbH"FIXME"
+./src/factortrace/models/emissions_voucher.bak:610:#                    "supplier_country": "DE"FIXME"
+./src/factortrace/models/emissions_voucher.bak:611:#                    "supplier_sector": "24.10"FIXME"
+./src/factortrace/models/emissions_voucher.bak:612:#                    "reporting_entity_lei": "529900T8BM49AURSDO55"FIXME"
+./src/factortrace/models/emissions_voucher.bak:613:#                    "reporting_period_start": "2024-01-01T00:00:00Z"FIXME"
+./src/factortrace/models/emissions_voucher.bak:614:#                    "reporting_period_end": "2024-12-31T23:59:59Z"FIXME"
+./src/factortrace/models/emissions_voucher.bak:615:#                    "consolidation_method": "operational_control"FIXME"
+./src/factortrace/models/emissions_voucher.bak:616:#                    "emissions_records"FIXME"
+./src/factortrace/models/emissions_voucher.bak:619:#                            "scope": "scope_3"FIXME"
+./src/factortrace/models/emissions_voucher.bak:620:#                            "value_chain_stage": "upstream"FIXME"
+./src/factortrace/models/emissions_voucher.bak:621:#                            "scope3_category": "category_1_purchased_goods_services"FIXME"
+./src/factortrace/models/emissions_voucher.bak:622:#                            "activity_description": "Steel production for automotive parts"FIXME"
+./src/factortrace/models/emissions_voucher.bak:623:#                            "activity_value"FIXME"
+./src/factortrace/models/emissions_voucher.bak:624:#                            "activity_unit": "tonnes"FIXME"
+./src/factortrace/models/emissions_voucher.bak:625:#                            "emission_factor"FIXME"
+./src/factortrace/models/emissions_voucher.bak:626:#                                "factor_id": "EF_STEEL_EU_2024"FIXME"
+./src/factortrace/models/emissions_voucher.bak:627:#                                "value"FIXME"
+./src/factortrace/models/emissions_voucher.bak:628:#                                "unit": "tCO2e/t"FIXME"
+./src/factortrace/models/emissions_voucher.bak:629:#                                "source": "CBAM_DEFAULT"FIXME"
+./src/factortrace/models/emissions_voucher.bak:630:#                                "source_year"FIXME"
+./src/factortrace/models/emissions_voucher.bak:631:#                                "tier": "tier_2"FIXME"
+./src/factortrace/models/emissions_voucher.bak:632:#                                "country_code": "EU"FIXME"
+./src/factortrace/models/emissions_voucher.bak:633:#                                "is_cbam_default"FIXME"
+./src/factortrace/models/emissions_voucher.bak:635:#                            "ghg_breakdown"FIXME"
+./src/factortrace/models/emissions_voucher.bak:638:#                                    "gas_type": "CO2"FIXME"
+./src/factortrace/models/emissions_voucher.bak:639:#                                    "amount"FIXME"
+./src/factortrace/models/emissions_voucher.bak:640:#                                    "unit": "tCO2e"FIXME"
+./src/factortrace/models/emissions_voucher.bak:641:#                                    "gwp_factor"FIXME"
+./src/factortrace/models/emissions_voucher.bak:642:#                                    "gwp_version": "AR6_100"FIXME"
+./src/factortrace/models/emissions_voucher.bak:645:#                            "total_emissions_tco2e"FIXME"
+./src/factortrace/models/emissions_voucher.bak:646:#                            "data_quality"FIXME"
+./src/factortrace/models/emissions_voucher.bak:647:#                                "tier": "tier_2"FIXME"
+./src/factortrace/models/emissions_voucher.bak:648:#                                "score"FIXME"
+./src/factortrace/models/emissions_voucher.bak:649:#                                "temporal_representativeness"FIXME"
+./src/factortrace/models/emissions_voucher.bak:650:#                                "geographical_representativeness"FIXME"
+./src/factortrace/models/emissions_voucher.bak:651:#                                "technological_representativeness"FIXME"
+./src/factortrace/models/emissions_voucher.bak:652:#                                "completeness"FIXME"
+./src/factortrace/models/emissions_voucher.bak:653:#                                "uncertainty_percent"FIXME"
+./src/factortrace/models/emissions_voucher.bak:654:#                                "confidence_level"FIXME"
+./src/factortrace/models/emissions_voucher.bak:655:#                                "distribution": "lognormal"FIXME"
+./src/factortrace/models/emissions_voucher.bak:657:#                            "calculation_method": "Emission factor approach"FIXME"
+./src/factortrace/models/emissions_voucher.bak:658:#                            "emission_date_start": "2024-01-01T00:00:00Z"FIXME"
+./src/factortrace/models/emissions_voucher.bak:659:#                            "emission_date_end": "2024-12-31T23:59:59Z"FIXME"
+./src/factortrace/models/emissions_voucher.bak:660:#                            "location_country": "DE"FIXME"
+./src/factortrace/models/emissions_voucher.bak:663:#                    "total_emissions_tco2e"FIXME"
+./src/factortrace/models/emissions_voucher.bak:664:#                    "verification_level": "limited_assurance"FIXME"
+./src/factortrace/models/common_enums.py.bak:17:# 🔧 REVIEW: possible unclosed bracket -> for _name in ()
+./src/factortrace/models/uncertainty_model.bak:17:# 🔧 REVIEW: possible unclosed bracket ->     model_config = ConfigDict()
+./src/factortrace/models/common_enums.py:16:# 🔧 REVIEW: possible unclosed bracket -> for _name in ()
+./src/factortrace/models/uncertainty_model.py:17:    # 🔧 REVIEW: possible unclosed bracket ->     model_config = ConfigDict()
+./src/factortrace/models/emissions.bak:73:#    """FIXME"""
+./src/factortrace/models/common_enums.bak:17:# 🔧 REVIEW: possible unclosed bracket -> for _name in ()
+./src/factortrace/models/common_enums.bak:23:    if _name in globals():                      # safe if some enums don'FIXME'
+./src/factortrace/models/common_enums.bak:34:        # allow 'TIER_1' → 'tier_1'FIXME'
+./src/factortrace/models/common_enums.bak:132:# ✅ Add this alias so legacy imports don'FIXME'
+./src/factortrace/schemas.py.bak:21:# 🔧 REVIEW: possible unclosed bracket ->         json_schema_extra = {}
+./src/factortrace/schemas.py.bak:22:# 🔧 REVIEW: possible unclosed bracket ->             "example
+./src/factortrace/schemas.py.bak:36:# 🔧 REVIEW: possible unclosed bracket ->         json_schema_extra = {}
+./src/factortrace/schemas.py.bak:37:# 🔧 REVIEW: possible unclosed bracket ->             "example
+./src/factortrace/schemas.py.bak:38:# 🔧 REVIEW: possible unclosed bracket ->                 "vouchers
+./src/factortrace/schemas.py.bak:40:# 🔧 REVIEW: possible unclosed bracket ->                     {}
+./src/factortrace/schemas.py.bak:47:# 🔧 REVIEW: possible unclosed bracket ->                     {}
+Binary file ./src/factortrace/__pycache__/emissions_calculator.cpython-311.pyc matches
+Binary file ./src/factortrace/__pycache__/emissions_voucher.cpython-311.pyc matches
+Binary file ./src/factortrace/__pycache__/utils.cpython-311.pyc matches
+Binary file ./src/factortrace/__pycache__/factor_loader.cpython-311.pyc matches
+./src/factortrace/compliance_engine.py.bak:6:# 🔧 REVIEW: possible unclosed bracket -> __all__ = []
+./src/factortrace/compliance_engine.py.bak:22:# 🔧 REVIEW: possible unclosed bracket ->     result = calculator.calculate_emissions()
+./src/factortrace/factor_loader.bak:59:# 🔧 REVIEW: possible unclosed bracket ->         conversions = {}
+./src/factortrace/factor_loader.bak:137:# 🔧 REVIEW: possible unclosed bracket ->         logger.info()
+./src/factortrace/factor_loader.bak:182:# 🔧 REVIEW: possible unclosed bracket ->                 entry = {}
+./src/factortrace/factor_loader.bak:183:#                        "factor"FIXME"
+./src/factortrace/factor_loader.bak:184:#                        "unit"FIXME"
+./src/factortrace/factor_loader.bak:185:#                        "confidence"FIXME"
+./src/factortrace/factor_loader.bak:186:#                        "region"FIXME"
+./src/factortrace/factor_loader.bak:187:#                        "method"FIXME"
+./src/factortrace/factor_loader.bak:233:# 🔧 REVIEW: possible unclosed bracket ->         regional_mapping = {}
+./src/factortrace/factor_loader.bak:270:# 🔧 REVIEW: possible unclosed bracket ->                 return {}
+./src/factortrace/factor_loader.bak:289:# 🔧 REVIEW: possible unclosed bracket ->         return FactorRecord()
+./src/factortrace/factor_loader.bak:316:# 🔧 REVIEW: possible unclosed bracket ->             report[activity] = {}
+./src/factortrace/schemas.bak:21:# 🔧 REVIEW: possible unclosed bracket ->         json_schema_extra = {}
+./src/factortrace/schemas.bak:22:# 🔧 REVIEW: possible unclosed bracket ->             "example"FIXME"
+./src/factortrace/schemas.bak:23:#                    "supplier_id": "SUP-001"FIXME"
+./src/factortrace/schemas.bak:24:#                    "activity": "Electricity consumption"FIXME"
+./src/factortrace/schemas.bak:25:#                    "value"FIXME"
+./src/factortrace/schemas.bak:26:#                    "unit": "kWh"FIXME"
+./src/factortrace/schemas.bak:27:#                    "country": "DE"FIXME"
+./src/factortrace/schemas.bak:36:# 🔧 REVIEW: possible unclosed bracket ->         json_schema_extra = {}
+./src/factortrace/schemas.bak:37:# 🔧 REVIEW: possible unclosed bracket ->             "example"FIXME"
+./src/factortrace/schemas.bak:38:# 🔧 REVIEW: possible unclosed bracket ->                 "vouchers"FIXME"
+./src/factortrace/schemas.bak:40:# 🔧 REVIEW: possible unclosed bracket ->                     {}
+./src/factortrace/schemas.bak:41:#                            "supplier_id": "SUP-001"FIXME"
+./src/factortrace/schemas.bak:42:#                            "activity": "Electricity consumption"FIXME"
+./src/factortrace/schemas.bak:43:#                            "value"FIXME"
+./src/factortrace/schemas.bak:44:#                            "unit": "kWh"FIXME"
+./src/factortrace/schemas.bak:45:#                            "country": "DE"FIXME"
+./src/factortrace/schemas.bak:47:# 🔧 REVIEW: possible unclosed bracket ->                     {}
+./src/factortrace/schemas.bak:48:#                            "supplier_id": "SUP-002"FIXME"
+./src/factortrace/schemas.bak:49:#                            "activity": "Diesel fuel usage"FIXME"
+./src/factortrace/schemas.bak:50:#                            "value"FIXME"
+./src/factortrace/schemas.bak:51:#                            "unit": "liters"FIXME"
+./src/factortrace/schemas.bak:52:#                            "country": "NL"FIXME"
+./src/factortrace/schema_loader.py.bak:2:# 🔧 REVIEW: possible unclosed bracket -> schema = {}
+./src/factortrace/schema_loader.py.bak:4:# 🔧 REVIEW: possible unclosed bracket ->     "properties
+./src/factortrace/compliance_engine.bak:6:# 🔧 REVIEW: possible unclosed bracket -> __all__ = []
+./src/factortrace/compliance_engine.bak:22:# 🔧 REVIEW: possible unclosed bracket ->     result = calculator.calculate_emissions()
+./src/factortrace/schemas.py:21:        # 🔧 REVIEW: possible unclosed bracket -> json_schema_extra = {}
+./src/factortrace/schemas.py:23:            # 🔧 REVIEW: possible unclosed bracket -> "example"
+./src/factortrace/schemas.py:38:        # 🔧 REVIEW: possible unclosed bracket -> json_schema_extra = {}
+./src/factortrace/schemas.py:40:            # 🔧 REVIEW: possible unclosed bracket -> "example"
+./src/factortrace/schemas.py:42:                # 🔧 REVIEW: possible unclosed bracket -> "vouchers"
+./src/factortrace/schemas.py:44:                    # 🔧 REVIEW: possible unclosed bracket -> {}
+./src/factortrace/schemas.py:52:                    # 🔧 REVIEW: possible unclosed bracket -> {}
+./src/factortrace/utils.py:43:        # 🔧 REVIEW: possible unclosed bracket -> root = etree.Element()
+./src/factortrace/utils.py:46:            # 🔧 REVIEW: possible unclosed bracket -> nsmap={}
+./src/factortrace/utils.py:220:            # 🔧 REVIEW: possible unclosed bracket -> return etree.tostring()
+./src/factortrace/utils.py:230:            # 🔧 REVIEW: possible unclosed bracket -> return etree.tostring()
+./src/factortrace/__init__.bak:17:# 🔧 REVIEW: possible unclosed bracket -> from factortrace.models.emissions_voucher import ()
+./src/factortrace/__init__.bak:27:# 🔧 REVIEW: possible unclosed bracket -> __all__ = []
+./src/factortrace/voucher_xml_serializer.py:20:# 🔧 REVIEW: possible unclosed bracket -> FIELD_ORDER: List[str] = []
+./src/factortrace/voucher_xml_serializer.py:65:    # 🔧 REVIEW: possible unclosed bracket -> xml_bytes = tostring()
+./src/factortrace/voucher_xml_serializer.py:98:    # 🔧 REVIEW: possible unclosed bracket -> xsd_file = ()
+./src/factortrace/main.py.bak:19:# 🔧 REVIEW: possible unclosed bracket ->     return templates.TemplateResponse("error.html)
+./src/factortrace/main.py.bak:40:# 🔧 REVIEW: possible unclosed bracket ->         return templates.TemplateResponse("500.html)
+./src/factortrace/main.py.bak:45:# 🔧 REVIEW: possible unclosed bracket ->     return templates.TemplateResponse("error.html)
+./src/factortrace/main.py.bak:62:# 🔧 REVIEW: possible unclosed bracket -> generate_ixbrl()
+./src/factortrace/main.py:19:    # 🔧 REVIEW: possible unclosed bracket -> return templates.TemplateResponse("error.html")
+./src/factortrace/main.py:42:        # 🔧 REVIEW: possible unclosed bracket -> return templates.TemplateResponse("500.html")
+./src/factortrace/main.py:48:    # 🔧 REVIEW: possible unclosed bracket -> return templates.TemplateResponse("error.html")
+./src/factortrace/main.py:68:# 🔧 REVIEW: possible unclosed bracket -> generate_ixbrl()
+./src/factortrace/tracecalc.bak:57:# 🔧 REVIEW: possible unclosed bracket ->             results.append()
+./src/factortrace/tracecalc.bak:59:# 🔧 REVIEW: possible unclosed bracket ->                 ItemResult()
+./src/factortrace/tracecalc.bak:71:# 🔧 REVIEW: possible unclosed bracket ->         return CalcResult()
+./src/factortrace/tracecalc.bak:126:# 🔧 REVIEW: possible unclosed bracket ->             results.append()
+./src/factortrace/tracecalc.bak:128:# 🔧 REVIEW: possible unclosed bracket ->                 ItemResult()
+./src/factortrace/tracecalc.bak:140:# 🔧 REVIEW: possible unclosed bracket ->         return CalcResult()
+./src/factortrace/tracecalc.bak:155:# 🔧 REVIEW: possible unclosed bracket ->     demo_items = []
+./src/factortrace/__init__.py.bak:17:# 🔧 REVIEW: possible unclosed bracket -> 
+./src/factortrace/__init__.py.bak:27:# 🔧 REVIEW: possible unclosed bracket -> __all__ = []
+./src/factortrace/routes/admin.py.bak:29:# 🔧 REVIEW: possible unclosed bracket -> 
+./src/factortrace/routes/admin.py.bak:50:# 🔧 REVIEW: possible unclosed bracket -> 
+./src/factortrace/routes/admin.py.bak:78:# 🔧 REVIEW: possible unclosed bracket ->         raise HTTPException()
+./src/factortrace/routes/admin.py.bak:91:# 🔧 REVIEW: possible unclosed bracket ->     return templates.TemplateResponse("admin_dashboard.html)
+./src/factortrace/routes/admin.py.bak:110:audit_logger = logging.getLogger("audit)audit_handler = logging.FileHandler(LOGS_DIR / "admin_audit.log)# 🔧 REVIEW: possible unclosed bracket -> audit_handler.setFormatter()
+./src/factortrace/routes/admin.py.bak:124:# 🔧 REVIEW: possible unclosed bracket ->         raise HTTPException()
+./src/factortrace/routes/admin.py.bak:137:# 🔧 REVIEW: possible unclosed bracket ->     return {}
+./src/factortrace/routes/admin.py.bak:224:# 🔧 REVIEW: possible unclosed bracket ->     ESRS_E1_MANDATORY = {}
+./src/factortrace/routes/admin.py.bak:235:# 🔧 REVIEW: possible unclosed bracket ->     CBAM_MANDATORY = {}
+./src/factortrace/routes/admin.py.bak:260:# 🔧 REVIEW: possible unclosed bracket ->                 self.validation_results.append(ValidationFlag()
+./src/factortrace/routes/admin.py.bak:269:# 🔧 REVIEW: possible unclosed bracket ->                 self.validation_results.append(ValidationFlag()
+./src/factortrace/routes/admin.py.bak:280:# 🔧 REVIEW: possible unclosed bracket ->                     self.validation_results.append(ValidationFlag()
+./src/factortrace/routes/admin.py.bak:314:# 🔧 REVIEW: possible unclosed bracket ->         return {}
+./src/factortrace/routes/admin.py.bak:330:# 🔧 REVIEW: possible unclosed bracket ->             self.validation_results.append(ValidationFlag()
+./src/factortrace/routes/admin.py.bak:338:# 🔧 REVIEW: possible unclosed bracket ->             self.validation_results.append(ValidationFlag()
+./src/factortrace/routes/admin.py.bak:347:# 🔧 REVIEW: possible unclosed bracket ->             self.validation_results.append(ValidationFlag()
+./src/factortrace/routes/admin.py.bak:357:# 🔧 REVIEW: possible unclosed bracket ->                 self.validation_results.append(ValidationFlag()
+./src/factortrace/routes/admin.py.bak:372:# 🔧 REVIEW: possible unclosed bracket ->                     self.validation_results.append(ValidationFlag()
+./src/factortrace/routes/admin.py.bak:382:# 🔧 REVIEW: possible unclosed bracket ->                     self.validation_results.append(ValidationFlag()
+./src/factortrace/routes/admin.py.bak:390:# 🔧 REVIEW: possible unclosed bracket ->                 self.validation_results.append(ValidationFlag()
+./src/factortrace/routes/admin.py.bak:401:# 🔧 REVIEW: possible unclosed bracket ->                 self.validation_results.append(ValidationFlag()
+./src/factortrace/routes/admin.py.bak:430:# 🔧 REVIEW: possible unclosed bracket -> USERS = {}
+./src/factortrace/routes/admin.py.bak:431:# 🔧 REVIEW: possible unclosed bracket ->     "admin
+./src/factortrace/routes/admin.py.bak:435:# 🔧 REVIEW: possible unclosed bracket ->     "auditor
+./src/factortrace/routes/admin.py.bak:446:# 🔧 REVIEW: possible unclosed bracket ->         raise HTTPException()
+./src/factortrace/routes/admin.py.bak:452:# 🔧 REVIEW: possible unclosed bracket ->     audit_logger.info()
+./src/factortrace/routes/admin.py.bak:464:@router.get("/)# 🔧 REVIEW: possible unclosed bracket -> async def render_admin_dashboard()
+./src/factortrace/routes/admin.py.bak:476:# 🔧 REVIEW: possible unclosed bracket ->     return templates.TemplateResponse("admin_dashboard.html)
+./src/factortrace/routes/admin.py.bak:491:# 🔧 REVIEW: possible unclosed bracket ->     audit_logger.info()
+./src/factortrace/routes/admin.py.bak:522:# 🔧 REVIEW: possible unclosed bracket ->     stats = {}
+./src/factortrace/routes/admin.py.bak:524:# 🔧 REVIEW: possible unclosed bracket ->         "compliant
+./src/factortrace/routes/admin.py.bak:527:# 🔧 REVIEW: possible unclosed bracket ->         "non_compliant
+./src/factortrace/routes/admin.py.bak:530:# 🔧 REVIEW: possible unclosed bracket ->         "average_completeness
+./src/factortrace/routes/admin.py.bak:544:# 🔧 REVIEW: possible unclosed bracket ->     return templates.TemplateResponse("admin_dashboard.html)
+./src/factortrace/routes/admin.py.bak:561:@router.get("/voucher/{voucher_id})# 🔧 REVIEW: possible unclosed bracket -> async def view_voucher_detail()
+./src/factortrace/routes/admin.py.bak:574:# 🔧 REVIEW: possible unclosed bracket ->     audit_logger.info()
+./src/factortrace/routes/admin.py.bak:580:# 🔧 REVIEW: possible unclosed bracket ->     flags_by_severity = {}
+./src/factortrace/routes/admin.py.bak:589:# 🔧 REVIEW: possible unclosed bracket ->     return templates.TemplateResponse("voucher_detail.html)
+./src/factortrace/routes/admin.py.bak:597:@router.post("/validate/{voucher_id})# 🔧 REVIEW: possible unclosed bracket -> async def revalidate_voucher()
+./src/factortrace/routes/admin.py.bak:611:# 🔧 REVIEW: possible unclosed bracket ->     audit_logger.info()
+./src/factortrace/routes/admin.py.bak:630:# 🔧 REVIEW: possible unclosed bracket ->     return {}
+./src/factortrace/routes/admin.py.bak:638:@router.get("/export/compliance-report)# 🔧 REVIEW: possible unclosed bracket -> async def export_compliance_report()
+./src/factortrace/routes/admin.py.bak:646:# 🔧 REVIEW: possible unclosed bracket ->     audit_logger.info()
+./src/factortrace/routes/admin.py.bak:657:# 🔧 REVIEW: possible unclosed bracket ->         export_data.append({})
+./src/factortrace/routes/admin.py.bak:682:# 🔧 REVIEW: possible unclosed bracket ->         return StreamingResponse()
+./src/factortrace/routes/admin.py.bak:703:# 🔧 REVIEW: possible unclosed bracket ->             worksheet.conditional_format(f'H2:H{len(df)+1}'
+./src/factortrace/routes/admin.py.bak:711:# 🔧 REVIEW: possible unclosed bracket ->         return StreamingResponse()
+./src/factortrace/routes/admin.py.bak:718:@router.post("/import/vouchers)# 🔧 REVIEW: possible unclosed bracket -> async def import_vouchers_batch()
+./src/factortrace/routes/admin.py.bak:743:# 🔧 REVIEW: possible unclosed bracket ->                 existing = db.query(VoucherRecord).filter()
+./src/factortrace/routes/admin.py.bak:754:# 🔧 REVIEW: possible unclosed bracket ->                 voucher = VoucherRecord()
+./src/factortrace/routes/admin.py.bak:772:# 🔧 REVIEW: possible unclosed bracket ->     audit_logger.info()
+./src/factortrace/routes/admin.py.bak:777:# 🔧 REVIEW: possible unclosed bracket ->     return {}
+./src/factortrace/routes/admin.py.bak:847:@router.get("/)# 🔧 REVIEW: possible unclosed bracket -> async def admin_home()
+./src/factortrace/routes/admin.py.bak:853:# 🔧 REVIEW: possible unclosed bracket ->     return templates.TemplateResponse("admin_dashboard.html)
+./src/factortrace/routes/admin.py:33:# 🔧 REVIEW: possible unclosed bracket -> 
+./src/factortrace/routes/admin.py:59:# 🔧 REVIEW: possible unclosed bracket -> 
+./src/factortrace/routes/admin.py:91:        # 🔧 REVIEW: possible unclosed bracket ->
+./src/factortrace/routes/admin.py:110:    # 🔧 REVIEW: possible unclosed bracket ->
+./src/factortrace/routes/admin.py:134:# 🔧 REVIEW: possible unclosed bracket ->
+./src/factortrace/routes/admin.py:151:        # 🔧 REVIEW: possible unclosed bracket ->
+./src/factortrace/routes/admin.py:168:    # 🔧 REVIEW: possible unclosed bracket ->
+./src/factortrace/routes/admin.py:263:    # 🔧 REVIEW: possible unclosed bracket ->
+./src/factortrace/routes/admin.py:275:    # 🔧 REVIEW: possible unclosed bracket ->
+./src/factortrace/routes/admin.py:302:                # 🔧 REVIEW: possible unclosed bracket ->
+./src/factortrace/routes/admin.py:312:                # 🔧 REVIEW: possible unclosed bracket ->
+./src/factortrace/routes/admin.py:325:                    # 🔧 REVIEW: possible unclosed bracket ->
+./src/factortrace/routes/admin.py:361:        # 🔧 REVIEW: possible unclosed bracket ->
+./src/factortrace/routes/admin.py:383:            # 🔧 REVIEW: possible unclosed bracket ->
+./src/factortrace/routes/admin.py:392:            # 🔧 REVIEW: possible unclosed bracket ->
+./src/factortrace/routes/admin.py:405:            # 🔧 REVIEW: possible unclosed bracket ->
+./src/factortrace/routes/admin.py:419:                # 🔧 REVIEW: possible unclosed bracket ->
+./src/factortrace/routes/admin.py:439:                    # 🔧 REVIEW: possible unclosed bracket ->
+./src/factortrace/routes/admin.py:450:                    # 🔧 REVIEW: possible unclosed bracket ->
+./src/factortrace/routes/admin.py:459:                # 🔧 REVIEW: possible unclosed bracket ->
+./src/factortrace/routes/admin.py:473:                # 🔧 REVIEW: possible unclosed bracket ->
+./src/factortrace/routes/admin.py:505:# 🔧 REVIEW: possible unclosed bracket ->
+./src/factortrace/routes/admin.py:507:    # 🔧 REVIEW: possible unclosed bracket ->
+./src/factortrace/routes/admin.py:513:    # 🔧 REVIEW: possible unclosed bracket ->
+./src/factortrace/routes/admin.py:527:        # 🔧 REVIEW: possible unclosed bracket ->
+./src/factortrace/routes/admin.py:535:    # 🔧 REVIEW: possible unclosed bracket ->
+./src/factortrace/routes/admin.py:550:# 🔧 REVIEW: possible unclosed bracket ->
+./src/factortrace/routes/admin.py:563:    # 🔧 REVIEW: possible unclosed bracket ->
+./src/factortrace/routes/admin.py:580:    # 🔧 REVIEW: possible unclosed bracket ->
+./src/factortrace/routes/admin.py:612:    # 🔧 REVIEW: possible unclosed bracket ->
+./src/factortrace/routes/admin.py:615:        # 🔧 REVIEW: possible unclosed bracket ->
+./src/factortrace/routes/admin.py:619:        # 🔧 REVIEW: possible unclosed bracket ->
+./src/factortrace/routes/admin.py:623:        # 🔧 REVIEW: possible unclosed bracket ->
+./src/factortrace/routes/admin.py:638:    # 🔧 REVIEW: possible unclosed bracket ->
+./src/factortrace/routes/admin.py:657:# 🔧 REVIEW: possible unclosed bracket ->
+./src/factortrace/routes/admin.py:673:    # 🔧 REVIEW: possible unclosed bracket ->
+./src/factortrace/routes/admin.py:680:    # 🔧 REVIEW: possible unclosed bracket ->
+./src/factortrace/routes/admin.py:690:    # 🔧 REVIEW: possible unclosed bracket ->
+./src/factortrace/routes/admin.py:700:# 🔧 REVIEW: possible unclosed bracket ->
+./src/factortrace/routes/admin.py:718:    # 🔧 REVIEW: possible unclosed bracket ->
+./src/factortrace/routes/admin.py:738:    # 🔧 REVIEW: possible unclosed bracket ->
+./src/factortrace/routes/admin.py:748:# 🔧 REVIEW: possible unclosed bracket ->
+./src/factortrace/routes/admin.py:757:    # 🔧 REVIEW: possible unclosed bracket ->
+./src/factortrace/routes/admin.py:769:        # 🔧 REVIEW: possible unclosed bracket ->
+./src/factortrace/routes/admin.py:794:        # 🔧 REVIEW: possible unclosed bracket ->
+./src/factortrace/routes/admin.py:800:    # FIXME: handle xlsx export properly
+./src/factortrace/routes/admin.py:815:            # 🔧 REVIEW: possible unclosed bracket ->
+./src/factortrace/routes/admin.py:824:        # 🔧 REVIEW: possible unclosed bracket ->
+./src/factortrace/routes/admin.py:834:# 🔧 REVIEW: possible unclosed bracket ->
+./src/factortrace/routes/admin.py:863:                # 🔧 REVIEW: possible unclosed bracket ->
+./src/factortrace/routes/admin.py:875:                # 🔧 REVIEW: possible unclosed bracket ->
+./src/factortrace/routes/admin.py:905:    # 🔧 REVIEW: possible unclosed bracket ->
+./src/factortrace/routes/admin.py:911:    # 🔧 REVIEW: possible unclosed bracket ->
+./src/factortrace/routes/admin.py:1002:# 🔧 REVIEW: possible unclosed bracket ->
+./src/factortrace/routes/admin.py:1009:    # 🔧 REVIEW: possible unclosed bracket ->
+./src/factortrace/routes/admin.bak:33:# 🔧 REVIEW: possible unclosed bracket -> from fastapi import ()
+./src/factortrace/routes/admin.bak:56:# 🔧 REVIEW: possible unclosed bracket -> from sqlalchemy import ()
+./src/factortrace/routes/admin.bak:86:# 🔧 REVIEW: possible unclosed bracket ->         raise HTTPException()
+./src/factortrace/routes/admin.bak:101:# 🔧 REVIEW: possible unclosed bracket ->     return templates.TemplateResponse("admin_dashboard.html"FIXME")
+./src/factortrace/routes/admin.bak:103:#            "request"FIXME"
+./src/factortrace/routes/admin.bak:104:#            "user"FIXME"
+./src/factortrace/routes/admin.bak:123:# 🔧 REVIEW: possible unclosed bracket -> audit_handler.setFormatter()
+./src/factortrace/routes/admin.bak:139:# 🔧 REVIEW: possible unclosed bracket ->         raise HTTPException()
+./src/factortrace/routes/admin.bak:155:# 🔧 REVIEW: possible unclosed bracket ->     return {}
+./src/factortrace/routes/admin.bak:156:#            "status": "success"FIXME"
+./src/factortrace/routes/admin.bak:157:#            "imported"FIXME"
+./src/factortrace/routes/admin.bak:158:#            "errors"FIXME"
+./src/factortrace/routes/admin.bak:255:# 🔧 REVIEW: possible unclosed bracket ->     ESRS_E1_MANDATORY = {}
+./src/factortrace/routes/admin.bak:256:#            "reporting_undertaking_lei": "ESRS 2 S17 - Reporting entity LEI"FIXME"
+./src/factortrace/routes/admin.bak:257:#            "scope": "ESRS E1-6 S44-53 - GHG Protocol scope"FIXME"
+./src/factortrace/routes/admin.bak:258:#            "total_emissions_tco2e": "ESRS E1-6 S53 - Total GHG emissions"FIXME"
+./src/factortrace/routes/admin.bak:259:#            "reporting_period_start": "ESRS E1-6 S46 - Reporting period"FIXME"
+./src/factortrace/routes/admin.bak:260:#            "reporting_period_end": "ESRS E1-6 S46 - Reporting period"FIXME"
+./src/factortrace/routes/admin.bak:261:#            "calculation_methodology": "ESRS E1-6 S54 - Methodology disclosure"FIXME"
+./src/factortrace/routes/admin.bak:262:#            "data_quality_rating": "ESRS 1 S64 - Data quality assessment"FIXME"
+./src/factortrace/routes/admin.bak:266:# 🔧 REVIEW: possible unclosed bracket ->     CBAM_MANDATORY = {}
+./src/factortrace/routes/admin.bak:267:#            "product_cn_code": "CBAM Annex III - Combined Nomenclature code"FIXME"
+./src/factortrace/routes/admin.bak:268:#            "installation_id": "CBAM Art 35.2(a) - Installation identifier"FIXME"
+./src/factortrace/routes/admin.bak:269:#            "installation_country": "CBAM Art 35.2(b) - Country of origin"FIXME"
+./src/factortrace/routes/admin.bak:270:#            "quantity": "CBAM Art 35.2(c) - Quantity of goods"FIXME"
+./src/factortrace/routes/admin.bak:271:#            "direct_emissions": "CBAM Art 35.2(f) - Direct emissions"FIXME"
+./src/factortrace/routes/admin.bak:272:#            "emission_factor_source": "CBAM Art 35.2(g) - Emission factor source"FIXME"
+./src/factortrace/routes/admin.bak:295:# 🔧 REVIEW: possible unclosed bracket ->                 self.validation_results.append(ValidationFlag()
+./src/factortrace/routes/admin.bak:304:# 🔧 REVIEW: possible unclosed bracket ->                 self.validation_results.append(ValidationFlag()
+./src/factortrace/routes/admin.bak:316:# 🔧 REVIEW: possible unclosed bracket ->                     self.validation_results.append(ValidationFlag()
+./src/factortrace/routes/admin.bak:351:# 🔧 REVIEW: possible unclosed bracket ->         return {}
+./src/factortrace/routes/admin.bak:352:#                "compliance_status"FIXME"
+./src/factortrace/routes/admin.bak:353:#                "validation_flags"FIXME"
+./src/factortrace/routes/admin.bak:354:#                "missing_fields"FIXME"
+./src/factortrace/routes/admin.bak:355:#                "completeness_score"FIXME"
+./src/factortrace/routes/admin.bak:356:#                "error_count"FIXME"
+./src/factortrace/routes/admin.bak:357:#                "warning_count": sum(1 for v in self.validation_results if v.severity == "warning"FIXME")
+./src/factortrace/routes/admin.bak:374:# 🔧 REVIEW: possible unclosed bracket ->             self.validation_results.append(ValidationFlag()
+./src/factortrace/routes/admin.bak:382:# 🔧 REVIEW: possible unclosed bracket ->             self.validation_results.append(ValidationFlag()
+./src/factortrace/routes/admin.bak:396:# 🔧 REVIEW: possible unclosed bracket ->             self.validation_results.append(ValidationFlag()
+./src/factortrace/routes/admin.bak:408:# 🔧 REVIEW: possible unclosed bracket ->                 self.validation_results.append(ValidationFlag()
+./src/factortrace/routes/admin.bak:428:# 🔧 REVIEW: possible unclosed bracket ->                     self.validation_results.append(ValidationFlag()
+./src/factortrace/routes/admin.bak:438:# 🔧 REVIEW: possible unclosed bracket ->                     self.validation_results.append(ValidationFlag()
+./src/factortrace/routes/admin.bak:446:# 🔧 REVIEW: possible unclosed bracket ->                 self.validation_results.append(ValidationFlag()
+./src/factortrace/routes/admin.bak:460:# 🔧 REVIEW: possible unclosed bracket ->                 self.validation_results.append(ValidationFlag()
+./src/factortrace/routes/admin.bak:493:# 🔧 REVIEW: possible unclosed bracket -> USERS = {}
+./src/factortrace/routes/admin.bak:494:# 🔧 REVIEW: possible unclosed bracket ->     "admin"FIXME"
+./src/factortrace/routes/admin.bak:495:#            "password_hash": hashlib.sha256("admin123"FIXME")
+./src/factortrace/routes/admin.bak:496:#            "roles": ["admin", "auditor"FIXME"]
+./src/factortrace/routes/admin.bak:497:#            "full_name": "Admin User"FIXME"
+./src/factortrace/routes/admin.bak:499:# 🔧 REVIEW: possible unclosed bracket ->     "auditor"FIXME"
+./src/factortrace/routes/admin.bak:500:#            "password_hash": hashlib.sha256("audit123"FIXME")
+./src/factortrace/routes/admin.bak:501:#            "roles": ["auditor"FIXME"]
+./src/factortrace/routes/admin.bak:502:#            "full_name": "External Auditor"FIXME"
+./src/factortrace/routes/admin.bak:511:# 🔧 REVIEW: possible unclosed bracket ->         raise HTTPException()
+./src/factortrace/routes/admin.bak:518:# 🔧 REVIEW: possible unclosed bracket ->     audit_logger.info()
+./src/factortrace/routes/admin.bak:533:# 🔧 REVIEW: possible unclosed bracket -> async def render_admin_dashboard()
+./src/factortrace/routes/admin.bak:545:# 🔧 REVIEW: possible unclosed bracket ->     return templates.TemplateResponse("admin_dashboard.html"FIXME")
+./src/factortrace/routes/admin.bak:547:#            "request"FIXME"
+./src/factortrace/routes/admin.bak:548:#            "user"FIXME"
+./src/factortrace/routes/admin.bak:549:#            "page"FIXME"
+./src/factortrace/routes/admin.bak:550:#            "per_page"FIXME"
+./src/factortrace/routes/admin.bak:551:#            "sort_by"FIXME"
+./src/factortrace/routes/admin.bak:552:#            "sort_order"FIXME"
+./src/factortrace/routes/admin.bak:553:#            "filter_status"FIXME"
+./src/factortrace/routes/admin.bak:554:#            "filter_supplier"FIXME"
+./src/factortrace/routes/admin.bak:555:#            "show_missing"FIXME"
+./src/factortrace/routes/admin.bak:565:# 🔧 REVIEW: possible unclosed bracket ->     audit_logger.info()
+./src/factortrace/routes/admin.bak:597:# 🔧 REVIEW: possible unclosed bracket ->     stats = {}
+./src/factortrace/routes/admin.bak:598:#            "total_vouchers"FIXME"
+./src/factortrace/routes/admin.bak:599:# 🔧 REVIEW: possible unclosed bracket ->         "compliant"FIXME"
+./src/factortrace/routes/admin.bak:602:# 🔧 REVIEW: possible unclosed bracket ->         "non_compliant"FIXME"
+./src/factortrace/routes/admin.bak:605:# 🔧 REVIEW: possible unclosed bracket ->         "average_completeness"FIXME"
+./src/factortrace/routes/admin.bak:619:# 🔧 REVIEW: possible unclosed bracket ->     return templates.TemplateResponse("admin_dashboard.html"FIXME")
+./src/factortrace/routes/admin.bak:621:#            "request"FIXME"
+./src/factortrace/routes/admin.bak:622:#            "user"FIXME"
+./src/factortrace/routes/admin.bak:623:#            "vouchers"FIXME"
+./src/factortrace/routes/admin.bak:624:#            "stats"FIXME"
+./src/factortrace/routes/admin.bak:625:#            "page"FIXME"
+./src/factortrace/routes/admin.bak:626:#            "per_page"FIXME"
+./src/factortrace/routes/admin.bak:627:#            "total_pages"FIXME"
+./src/factortrace/routes/admin.bak:628:#            "total_count"FIXME"
+./src/factortrace/routes/admin.bak:629:#            "sort_by"FIXME"
+./src/factortrace/routes/admin.bak:630:#            "sort_order"FIXME"
+./src/factortrace/routes/admin.bak:631:#            "filter_status"FIXME"
+./src/factortrace/routes/admin.bak:632:#            "filter_supplier"FIXME"
+./src/factortrace/routes/admin.bak:633:#            "show_missing"FIXME"
+./src/factortrace/routes/admin.bak:638:# 🔧 REVIEW: possible unclosed bracket -> async def view_voucher_detail()
+./src/factortrace/routes/admin.bak:656:# 🔧 REVIEW: possible unclosed bracket ->     audit_logger.info()
+./src/factortrace/routes/admin.bak:663:# 🔧 REVIEW: possible unclosed bracket ->     flags_by_severity = {}
+./src/factortrace/routes/admin.bak:664:#            "error"FIXME"
+./src/factortrace/routes/admin.bak:665:#            "warning"FIXME"
+./src/factortrace/routes/admin.bak:666:#            "info"FIXME"
+./src/factortrace/routes/admin.bak:672:# 🔧 REVIEW: possible unclosed bracket ->     return templates.TemplateResponse("voucher_detail.html"FIXME")
+./src/factortrace/routes/admin.bak:674:#            "request"FIXME"
+./src/factortrace/routes/admin.bak:675:#            "user"FIXME"
+./src/factortrace/routes/admin.bak:676:#            "voucher"FIXME"
+./src/factortrace/routes/admin.bak:677:#            "flags_by_severity"FIXME"
+./src/factortrace/routes/admin.bak:682:# 🔧 REVIEW: possible unclosed bracket -> async def revalidate_voucher()
+./src/factortrace/routes/admin.bak:702:# 🔧 REVIEW: possible unclosed bracket ->     audit_logger.info()
+./src/factortrace/routes/admin.bak:722:# 🔧 REVIEW: possible unclosed bracket ->     return {}
+./src/factortrace/routes/admin.bak:723:#            "status": "success"FIXME"
+./src/factortrace/routes/admin.bak:724:#            "voucher_id"FIXME"
+./src/factortrace/routes/admin.bak:725:#            "compliance_status": validation_result["compliance_status"FIXME"]
+./src/factortrace/routes/admin.bak:726:#            "completeness_score": validation_result["completeness_score"FIXME"]
+./src/factortrace/routes/admin.bak:731:# 🔧 REVIEW: possible unclosed bracket -> async def export_compliance_report()
+./src/factortrace/routes/admin.bak:743:# 🔧 REVIEW: possible unclosed bracket ->     audit_logger.info()
+./src/factortrace/routes/admin.bak:755:# 🔧 REVIEW: possible unclosed bracket ->         export_data.append({)}
+./src/factortrace/routes/admin.bak:757:#                "voucher_id"FIXME"
+./src/factortrace/routes/admin.bak:758:#                "supplier_id"FIXME"
+./src/factortrace/routes/admin.bak:759:#                "supplier_name"FIXME"
+./src/factortrace/routes/admin.bak:760:#                "lei"FIXME"
+./src/factortrace/routes/admin.bak:761:#                "product_cn_code"FIXME"
+./src/factortrace/routes/admin.bak:762:#                "reporting_period": f"{v.reporting_period_start} to {v.reporting_period_end}"FIXME"
+./src/factortrace/routes/admin.bak:763:#                "total_emissions_tco2e"FIXME"
+./src/factortrace/routes/admin.bak:764:#                "compliance_status"FIXME"
+./src/factortrace/routes/admin.bak:765:#                "completeness_score"FIXME"
+./src/factortrace/routes/admin.bak:766:#                "data_quality_score"FIXME"
+./src/factortrace/routes/admin.bak:767:#                "submission_timestamp"FIXME"
+./src/factortrace/routes/admin.bak:768:#                "last_validated"FIXME"
+./src/factortrace/routes/admin.bak:769:#                "validated_by"FIXME"
+./src/factortrace/routes/admin.bak:780:# 🔧 REVIEW: possible unclosed bracket ->         return StreamingResponse()
+./src/factortrace/routes/admin.bak:797:            format_compliant = workbook.add_format({'bg_color': '#C6EFCE', 'font_color': '#006100'FIXME')}
+./src/factortrace/routes/admin.bak:798:            format_partial = workbook.add_format({'bg_color': '#FFEB9C', 'font_color': '#9C5700'FIXME')}
+./src/factortrace/routes/admin.bak:799:            format_non_compliant = workbook.add_format({'bg_color': '#FFC7CE', 'font_color': '#9C0006'FIXME')}
+./src/factortrace/routes/admin.bak:802:# 🔧 REVIEW: possible unclosed bracket ->             worksheet.conditional_format(f'H2:H{len(df)+1}'FIXME'
+./src/factortrace/routes/admin.bak:810:# 🔧 REVIEW: possible unclosed bracket ->         return StreamingResponse()
+./src/factortrace/routes/admin.bak:819:# 🔧 REVIEW: possible unclosed bracket -> async def import_vouchers_batch()
+./src/factortrace/routes/admin.bak:850:# 🔧 REVIEW: possible unclosed bracket ->                 existing = db.query(VoucherRecord).filter()
+./src/factortrace/routes/admin.bak:862:# 🔧 REVIEW: possible unclosed bracket ->                 voucher = VoucherRecord()
+./src/factortrace/routes/admin.bak:891:# 🔧 REVIEW: possible unclosed bracket ->     audit_logger.info()
+./src/factortrace/routes/admin.bak:898:# 🔧 REVIEW: possible unclosed bracket ->     return {}
+./src/factortrace/routes/admin.bak:899:#            "status": "success"FIXME"
+./src/factortrace/routes/admin.bak:900:#            "imported"FIXME"
+./src/factortrace/routes/admin.bak:901:#            "errors"FIXME"
+./src/factortrace/routes/admin.bak:986:# 🔧 REVIEW: possible unclosed bracket -> async def admin_home()
+./src/factortrace/routes/admin.bak:992:# 🔧 REVIEW: possible unclosed bracket ->     return templates.TemplateResponse("admin_dashboard.html"FIXME")
+./src/factortrace/routes/admin.bak:994:#            "request"FIXME"
+./src/factortrace/routes/admin.bak:995:#            "user"FIXME"
+./src/factortrace/routes/admin.bak:996:#            "vouchers"FIXME"
+./src/factortrace/routes/admin.bak:997:#            "total_count"FIXME"
+./src/factortrace/tracecalc.py.bak:55:# 🔧 REVIEW: possible unclosed bracket ->             results.append()
+./src/factortrace/tracecalc.py.bak:57:# 🔧 REVIEW: possible unclosed bracket ->                 ItemResult()
+./src/factortrace/tracecalc.py.bak:68:# 🔧 REVIEW: possible unclosed bracket ->         return CalcResult()
+./src/factortrace/tracecalc.py.bak:121:# 🔧 REVIEW: possible unclosed bracket ->             results.append()
+./src/factortrace/tracecalc.py.bak:123:# 🔧 REVIEW: possible unclosed bracket ->                 ItemResult()
+./src/factortrace/tracecalc.py.bak:134:# 🔧 REVIEW: possible unclosed bracket ->         return CalcResult()
+./src/factortrace/tracecalc.py.bak:148:# 🔧 REVIEW: possible unclosed bracket ->     demo_items = []
+./src/factortrace/services/audit.py.bak:6:# 🔧 REVIEW: possible unclosed bracket ->     return {}
+./src/factortrace/services/audit.bak:6:# 🔧 REVIEW: possible unclosed bracket ->     return {}
+./src/factortrace/services/audit.bak:7:#            "event": "Audit Entry Created"FIXME"
+./src/factortrace/services/audit.bak:8:#            "data"FIXME"
+./src/factortrace/schema_loader.py:2:# 🔧 REVIEW: possible unclosed bracket -> schema = {}
+./src/factortrace/schema_loader.py:5:    # 🔧 REVIEW: possible unclosed bracket -> "properties"
+./src/factortrace/utils.bak:20:    # Remove the hash key if it'FIXME'
+./src/factortrace/utils.bak:49:# 🔧 REVIEW: possible unclosed bracket ->         root = etree.Element()
+./src/factortrace/utils.bak:51:#            "{urn:iso:std:20022:tech:xsd:esrs.e1.001.01}EmissionVoucher"FIXME"
+./src/factortrace/utils.bak:52:# 🔧 REVIEW: possible unclosed bracket ->             nsmap={}
+./src/factortrace/utils.bak:54:#                    "cbam": "urn:eu:cbam:xsd:declaration:001.01"FIXME"
+./src/factortrace/utils.bak:249:# 🔧 REVIEW: possible unclosed bracket ->             return etree.tostring()
+./src/factortrace/utils.bak:258:# 🔧 REVIEW: possible unclosed bracket ->             return etree.tostring()
+./src/factortrace/utils.bak:357:# is_valid, errors = validate_against_xsd(xml_str, "voucher.xsd"FIXME")
+./src/factortrace/utils.bak:359:#     print("Validation errors:"FIXME")
+./src/generator/batch_runner.py:27:# 🔧 REVIEW: possible unclosed bracket -> logging.basicConfig()
+./src/generator/batch_runner.py:31:    # 🔧 REVIEW: possible unclosed bracket ->     handlers=[]
+./src/generator/batch_runner.py:91:        # 🔧 REVIEW: possible unclosed bracket ->         self.benchmarks = {}
+./src/generator/batch_runner.py:104:        # 🔧 REVIEW: possible unclosed bracket ->         self.mandatory_fields = {}
+./src/generator/batch_runner.py:123:                # 🔧 REVIEW: possible unclosed bracket ->                 feedback.append(DataQualityFeedback())
+./src/generator/batch_runner.py:135:                # 🔧 REVIEW: possible unclosed bracket ->                 feedback.append(DataQualityFeedback())
+./src/generator/batch_runner.py:146:                # 🔧 REVIEW: possible unclosed bracket ->                 feedback.append(DataQualityFeedback())
+./src/generator/batch_runner.py:157:                    # 🔧 REVIEW: possible unclosed bracket ->                     feedback.append(DataQualityFeedback())
+./src/generator/batch_runner.py:168:                # 🔧 REVIEW: possible unclosed bracket ->                 feedback.append(DataQualityFeedback())
+./src/generator/batch_runner.py:179:                # 🔧 REVIEW: possible unclosed bracket ->                 feedback.append(DataQualityFeedback())
+./src/generator/batch_runner.py:189:            # 🔧 REVIEW: possible unclosed bracket ->             feedback.append(DataQualityFeedback())
+./src/generator/batch_runner.py:209:                # 🔧 REVIEW: possible unclosed bracket ->                 feedback.append(DataQualityFeedback())
+./src/generator/batch_runner.py:221:                    # 🔧 REVIEW: possible unclosed bracket ->                     feedback.append(DataQualityFeedback())
+./src/generator/batch_runner.py:231:                # 🔧 REVIEW: possible unclosed bracket ->                 feedback.append(DataQualityFeedback())
+./src/generator/batch_runner.py:241:            # 🔧 REVIEW: possible unclosed bracket ->             feedback.append(DataQualityFeedback())
+./src/generator/batch_runner.py:261:                # 🔧 REVIEW: possible unclosed bracket ->                 feedback.append(DataQualityFeedback())
+./src/generator/batch_runner.py:273:                    # 🔧 REVIEW: possible unclosed bracket ->                     feedback.append(DataQualityFeedback())
+./src/generator/batch_runner.py:283:                # 🔧 REVIEW: possible unclosed bracket ->                 feedback.append(DataQualityFeedback())
+./src/generator/batch_runner.py:293:            # 🔧 REVIEW: possible unclosed bracket ->             feedback.append(DataQualityFeedback())
+./src/generator/batch_runner.py:313:            # 🔧 REVIEW: possible unclosed bracket ->             feedback.append(DataQualityFeedback())
+./src/generator/batch_runner.py:333:            # 🔧 REVIEW: possible unclosed bracket ->             all_feedback.append(DataQualityFeedback())
+./src/generator/batch_runner.py:344:            # 🔧 REVIEW: possible unclosed bracket ->             all_feedback.append(DataQualityFeedback())
+./src/generator/batch_runner.py:379:    # 🔧 REVIEW: possible unclosed bracket ->     REQUIRED_COLUMNS = {}
+./src/generator/batch_runner.py:388:    # 🔧 REVIEW: possible unclosed bracket ->     DEFAULTS = {}
+./src/generator/batch_runner.py:414:                # 🔧 REVIEW: possible unclosed bracket ->                 futures = {}
+./src/generator/batch_runner.py:430:                        # 🔧 REVIEW: possible unclosed bracket ->                         self.results.append(ProcessingResult())
+./src/generator/batch_runner.py:573:            # 🔧 REVIEW: possible unclosed bracket ->             return ProcessingResult()
+./src/generator/batch_runner.py:589:            # 🔧 REVIEW: possible unclosed bracket ->             return ProcessingResult()
+./src/generator/batch_runner.py:638:        # 🔧 REVIEW: possible unclosed bracket ->         voucher_data['narratives']
+./src/generator/batch_runner.py:654:        # 🔧 REVIEW: possible unclosed bracket ->         voucher_data['ai_data_quality_summary']
+./src/generator/batch_runner.py:748:                # 🔧 REVIEW: possible unclosed bracket ->                 result_dict['data_quality_feedback']
+./src/generator/batch_runner.py:750:                    # 🔧 REVIEW: possible unclosed bracket ->                     {}
+./src/generator/batch_runner.py:762:            # 🔧 REVIEW: possible unclosed bracket ->             json.dump({})
+./src/generator/batch_runner.py:764:                # 🔧 REVIEW: possible unclosed bracket ->                 'processing_summary'
+./src/generator/xhtml_generator.bak:118:#    """FIXME"""
+./src/generator/xhtml_generator.bak:457:            <p style="font-size:0.9em; color:#666; margin-top:10px;"FIXME"
+./src/generator/xhtml_generator.bak:482:# 🔧 REVIEW: possible unclosed bracket ->     sample_voucher_data = {}
+./src/generator/xhtml_generator.bak:483:#            "lei": "LEI:549300EXAMPLE12345"FIXME"
+./src/generator/xhtml_generator.bak:484:#            "total_emissions": "65800.7"FIXME"
+./src/generator/xhtml_generator.bak:485:#            "scope1_emissions": "12500.5"FIXME"
+./src/generator/xhtml_generator.bak:486:#            "scope2_emissions_location": "8300.2"FIXME"
+./src/generator/xhtml_generator.bak:487:#            "scope2_emissions_market": "6200.0"FIXME"
+./src/generator/xhtml_generator.bak:488:#            "scope3_emissions": "45000.0"FIXME"
+./src/generator/xhtml_generator.bak:489:#            "scope3_cat6_business_travel": "1200.5"FIXME"
+./src/generator/xhtml_generator.bak:490:#            "water_consumption": "250000.0"FIXME"
+./src/generator/xhtml_generator.bak:491:#            "water_withdrawal": "300000.0"FIXME"
+./src/generator/xhtml_generator.bak:492:#            "waste_generated": "1500.0"FIXME"
+./src/generator/xhtml_generator.bak:493:#            "waste_recycled": "1200.0"FIXME"
+./src/generator/batch_runner.py.bak:27:# 🔧 REVIEW: possible unclosed bracket -> logging.basicConfig()
+./src/generator/batch_runner.py.bak:31:# 🔧 REVIEW: possible unclosed bracket ->     handlers=[]
+./src/generator/batch_runner.py.bak:67:        ""# 🔧 REVIEW: possible unclosed bracket ->         return {}
+./src/generator/batch_runner.py.bak:87:# 🔧 REVIEW: possible unclosed bracket ->         self.benchmarks = {}
+./src/generator/batch_runner.py.bak:99:# 🔧 REVIEW: possible unclosed bracket ->         self.mandatory_fields = {}
+./src/generator/batch_runner.py.bak:116:# 🔧 REVIEW: possible unclosed bracket ->                 feedback.append(DataQualityFeedback()
+./src/generator/batch_runner.py.bak:127:# 🔧 REVIEW: possible unclosed bracket ->                 feedback.append(DataQualityFeedback()
+./src/generator/batch_runner.py.bak:137:# 🔧 REVIEW: possible unclosed bracket ->                 feedback.append(DataQualityFeedback()
+./src/generator/batch_runner.py.bak:147:# 🔧 REVIEW: possible unclosed bracket ->                     feedback.append(DataQualityFeedback()
+./src/generator/batch_runner.py.bak:157:# 🔧 REVIEW: possible unclosed bracket ->                 feedback.append(DataQualityFeedback()
+./src/generator/batch_runner.py.bak:167:# 🔧 REVIEW: possible unclosed bracket ->                 feedback.append(DataQualityFeedback()
+./src/generator/batch_runner.py.bak:176:# 🔧 REVIEW: possible unclosed bracket ->             feedback.append(DataQualityFeedback()
+./src/generator/batch_runner.py.bak:195:# 🔧 REVIEW: possible unclosed bracket ->                 feedback.append(DataQualityFeedback()
+./src/generator/batch_runner.py.bak:206:# 🔧 REVIEW: possible unclosed bracket ->                     feedback.append(DataQualityFeedback()
+./src/generator/batch_runner.py.bak:215:# 🔧 REVIEW: possible unclosed bracket ->                 feedback.append(DataQualityFeedback()
+./src/generator/batch_runner.py.bak:224:# 🔧 REVIEW: possible unclosed bracket ->             feedback.append(DataQualityFeedback()
+./src/generator/batch_runner.py.bak:242:# 🔧 REVIEW: possible unclosed bracket ->                 feedback.append(DataQualityFeedback()
+./src/generator/batch_runner.py.bak:253:# 🔧 REVIEW: possible unclosed bracket ->                     feedback.append(DataQualityFeedback()
+./src/generator/batch_runner.py.bak:262:# 🔧 REVIEW: possible unclosed bracket ->                 feedback.append(DataQualityFeedback()
+./src/generator/batch_runner.py.bak:271:# 🔧 REVIEW: possible unclosed bracket ->             feedback.append(DataQualityFeedback()
+./src/generator/batch_runner.py.bak:289:# 🔧 REVIEW: possible unclosed bracket ->             feedback.append(DataQualityFeedback()
+./src/generator/batch_runner.py.bak:305:# 🔧 REVIEW: possible unclosed bracket ->             all_feedback.append(DataQualityFeedback()
+./src/generator/batch_runner.py.bak:315:# 🔧 REVIEW: possible unclosed bracket ->             all_feedback.append(DataQualityFeedback()
+./src/generator/batch_runner.py.bak:349:# 🔧 REVIEW: possible unclosed bracket ->     REQUIRED_COLUMNS = {}
+./src/generator/batch_runner.py.bak:357:# 🔧 REVIEW: possible unclosed bracket ->     DEFAULTS = {}
+./src/generator/batch_runner.py.bak:380:# 🔧 REVIEW: possible unclosed bracket ->                 futures = {}
+./src/generator/batch_runner.py.bak:394:                        logger.error(f"Failed to process row {idx}: {str(e})# 🔧 REVIEW: possible unclosed bracket ->                         self.results.append(ProcessingResult()
+./src/generator/batch_runner.py.bak:528:# 🔧 REVIEW: possible unclosed bracket ->             return ProcessingResult()
+./src/generator/batch_runner.py.bak:543:# 🔧 REVIEW: possible unclosed bracket ->             return ProcessingResult()
+./src/generator/batch_runner.py.bak:557:        ""# 🔧 REVIEW: possible unclosed bracket ->         voucher_data = {}
+./src/generator/batch_runner.py.bak:590:# 🔧 REVIEW: possible unclosed bracket ->         voucher_data['narratives']'
+./src/generator/batch_runner.py.bak:610:# 🔧 REVIEW: possible unclosed bracket ->         voucher_data['ai_data_quality_summary']'
+./src/generator/batch_runner.py.bak:619:        ""# 🔧 REVIEW: possible unclosed bracket ->         base_narratives = {}
+./src/generator/batch_runner.py.bak:697:# 🔧 REVIEW: possible unclosed bracket ->                 result_dict['data_quality_feedback']'
+./src/generator/batch_runner.py.bak:699:# 🔧 REVIEW: possible unclosed bracket ->                     {}
+./src/generator/batch_runner.py.bak:710:# 🔧 REVIEW: possible unclosed bracket ->             json.dump({})
+./src/generator/batch_runner.py.bak:712:# 🔧 REVIEW: possible unclosed bracket ->                 'processing_summary'
+./src/generator/__init__.py:11:    # 🔧 REVIEW: possible unclosed bracket ->     raise AttributeError()
+./src/generator/batch_runner.bak:31:# 🔧 REVIEW: possible unclosed bracket -> logging.basicConfig()
+./src/generator/batch_runner.bak:35:# 🔧 REVIEW: possible unclosed bracket ->     handlers=[]
+./src/generator/batch_runner.bak:47:    severity: str  # 'critical', 'warning', 'suggestion'FIXME'
+./src/generator/batch_runner.bak:65:    validation_status: str  # 'success', 'failed', 'error'FIXME'
+./src/generator/batch_runner.bak:78:# 🔧 REVIEW: possible unclosed bracket ->         return {}
+./src/generator/batch_runner.bak:102:# 🔧 REVIEW: possible unclosed bracket ->         self.benchmarks = {}
+./src/generator/batch_runner.bak:114:# 🔧 REVIEW: possible unclosed bracket ->         self.mandatory_fields = {}
+./src/generator/batch_runner.bak:133:# 🔧 REVIEW: possible unclosed bracket ->                 feedback.append(DataQualityFeedback()
+./src/generator/batch_runner.bak:144:# 🔧 REVIEW: possible unclosed bracket ->                 feedback.append(DataQualityFeedback()
+./src/generator/batch_runner.bak:154:# 🔧 REVIEW: possible unclosed bracket ->                 feedback.append(DataQualityFeedback()
+./src/generator/batch_runner.bak:164:# 🔧 REVIEW: possible unclosed bracket ->                     feedback.append(DataQualityFeedback()
+./src/generator/batch_runner.bak:174:# 🔧 REVIEW: possible unclosed bracket ->                 feedback.append(DataQualityFeedback()
+./src/generator/batch_runner.bak:184:# 🔧 REVIEW: possible unclosed bracket ->                 feedback.append(DataQualityFeedback()
+./src/generator/batch_runner.bak:193:# 🔧 REVIEW: possible unclosed bracket ->             feedback.append(DataQualityFeedback()
+./src/generator/batch_runner.bak:214:# 🔧 REVIEW: possible unclosed bracket ->                 feedback.append(DataQualityFeedback()
+./src/generator/batch_runner.bak:225:# 🔧 REVIEW: possible unclosed bracket ->                     feedback.append(DataQualityFeedback()
+./src/generator/batch_runner.bak:234:# 🔧 REVIEW: possible unclosed bracket ->                 feedback.append(DataQualityFeedback()
+./src/generator/batch_runner.bak:243:# 🔧 REVIEW: possible unclosed bracket ->             feedback.append(DataQualityFeedback()
+./src/generator/batch_runner.bak:263:# 🔧 REVIEW: possible unclosed bracket ->                 feedback.append(DataQualityFeedback()
+./src/generator/batch_runner.bak:274:# 🔧 REVIEW: possible unclosed bracket ->                     feedback.append(DataQualityFeedback()
+./src/generator/batch_runner.bak:283:# 🔧 REVIEW: possible unclosed bracket ->                 feedback.append(DataQualityFeedback()
+./src/generator/batch_runner.bak:292:# 🔧 REVIEW: possible unclosed bracket ->             feedback.append(DataQualityFeedback()
+./src/generator/batch_runner.bak:312:# 🔧 REVIEW: possible unclosed bracket ->             feedback.append(DataQualityFeedback()
+./src/generator/batch_runner.bak:330:# 🔧 REVIEW: possible unclosed bracket ->             all_feedback.append(DataQualityFeedback()
+./src/generator/batch_runner.bak:340:# 🔧 REVIEW: possible unclosed bracket ->             all_feedback.append(DataQualityFeedback()
+./src/generator/batch_runner.bak:378:# 🔧 REVIEW: possible unclosed bracket ->     REQUIRED_COLUMNS = {}
+./src/generator/batch_runner.bak:386:# 🔧 REVIEW: possible unclosed bracket ->     DEFAULTS = {}
+./src/generator/batch_runner.bak:415:# 🔧 REVIEW: possible unclosed bracket ->                 futures = {}
+./src/generator/batch_runner.bak:430:# 🔧 REVIEW: possible unclosed bracket ->                         self.results.append(ProcessingResult()
+./src/generator/batch_runner.bak:575:# 🔧 REVIEW: possible unclosed bracket ->             return ProcessingResult()
+./src/generator/batch_runner.bak:591:# 🔧 REVIEW: possible unclosed bracket ->             return ProcessingResult()
+./src/generator/batch_runner.bak:607:# 🔧 REVIEW: possible unclosed bracket ->         voucher_data = {}
+./src/generator/batch_runner.bak:640:# 🔧 REVIEW: possible unclosed bracket ->         voucher_data['narratives'FIXME']
+./src/generator/batch_runner.bak:660:# 🔧 REVIEW: possible unclosed bracket ->         voucher_data['ai_data_quality_summary'FIXME']
+./src/generator/batch_runner.bak:671:# 🔧 REVIEW: possible unclosed bracket ->         base_narratives = {}
+./src/generator/batch_runner.bak:755:# 🔧 REVIEW: possible unclosed bracket ->                 result_dict['data_quality_feedback'FIXME']
+./src/generator/batch_runner.bak:757:# 🔧 REVIEW: possible unclosed bracket ->                     {}
+./src/generator/batch_runner.bak:768:# 🔧 REVIEW: possible unclosed bracket ->             json.dump({)}
+./src/generator/batch_runner.bak:770:# 🔧 REVIEW: possible unclosed bracket ->                 'processing_summary'FIXME'
+Binary file ./src/generator/__pycache__/xhtml_generator.cpython-311.pyc matches
+./src/generator/xhtml_generator.py:443:    # 🔧 REVIEW: possible unclosed bracket ->     sample_voucher_data = {}
+./src/generator/voucher_generator.bak:69:#    "cbam"FIXME"
+./src/generator/voucher_generator.bak:70:#    "xsi"FIXME"
+./src/generator/voucher_generator.bak:144:#    "CO2": Decimal("1"FIXME")
+./src/generator/voucher_generator.bak:145:#    "CH4": Decimal("29.8"FIXME")
+./src/generator/voucher_generator.bak:146:#    "CH4_BIO": Decimal("27.2"FIXME")
+./src/generator/voucher_generator.bak:147:#    "N2O": Decimal("273"FIXME")
+./src/generator/voucher_generator.bak:148:#    "SF6": Decimal("25200"FIXME")
+./src/generator/voucher_generator.bak:149:#    "NF3": Decimal("17400"FIXME")
+./src/generator/voucher_generator.bak:150:#    "HFC-23": Decimal("14600"FIXME")
+./src/generator/voucher_generator.bak:151:#    "HFC-32": Decimal("771"FIXME")
+./src/generator/voucher_generator.bak:152:#    "HFC-125": Decimal("3740"FIXME")
+./src/generator/voucher_generator.bak:153:#    "HFC-134a": Decimal("1530"FIXME")
+./src/generator/voucher_generator.bak:154:#    "HFC-143a": Decimal("5810"FIXME")
+./src/generator/voucher_generator.bak:155:#    "HFC-152a": Decimal("164"FIXME")
+./src/generator/voucher_generator.bak:156:#    "HFC-227ea": Decimal("3860"FIXME")
+./src/generator/voucher_generator.bak:157:#    "HFC-236fa": Decimal("8690"FIXME")
+./src/generator/voucher_generator.bak:158:#    "HFC-245fa": Decimal("962"FIXME")
+./src/generator/voucher_generator.bak:159:#    "HFC-365mfc": Decimal("914"FIXME")
+./src/generator/voucher_generator.bak:160:#    "HFC-43-10mee": Decimal("1650"FIXME")
+./src/generator/voucher_generator.bak:161:#    "PFC-14": Decimal("7380"FIXME")
+./src/generator/voucher_generator.bak:162:#    "PFC-116": Decimal("12400"FIXME")
+./src/generator/voucher_generator.bak:163:#    "PFC-218": Decimal("9290"FIXME")
+./src/generator/voucher_generator.bak:164:#    "PFC-318": Decimal("10300"FIXME")
+./src/generator/voucher_generator.bak:165:#    "PFC-3-1-10": Decimal("10300"FIXME")
+./src/generator/voucher_generator.bak:166:#    "PFC-4-1-12": Decimal("9430"FIXME")
+./src/generator/voucher_generator.bak:167:#    "PFC-5-1-14": Decimal("9710"FIXME")
+./src/generator/voucher_generator.bak:168:#    "PFC-6-1-16": Decimal("9920"FIXME")
+./src/generator/voucher_generator.bak:173:#    "CO2": Decimal("1"FIXME")
+./src/generator/voucher_generator.bak:174:#    "CH4": Decimal("28"FIXME")
+./src/generator/voucher_generator.bak:175:#    "N2O": Decimal("265"FIXME")
+./src/generator/voucher_generator.bak:176:#    "SF6": Decimal("23500"FIXME")
+./src/generator/voucher_generator.bak:186:#        "tier_1": Decimal("0.918"FIXME")
+./src/generator/voucher_generator.bak:187:#        "tier_2_eu": Decimal("0.766"FIXME")
+./src/generator/voucher_generator.bak:188:#        "tier_2_china": Decimal("0.944"FIXME")
+./src/generator/voucher_generator.bak:189:#        "tier_2_india": Decimal("0.931"FIXME")
+./src/generator/voucher_generator.bak:190:#        "tier_2_us": Decimal("0.818"FIXME")
+./src/generator/voucher_generator.bak:193:#        "tier_1": Decimal("2.134"FIXME")
+./src/generator/voucher_generator.bak:194:#        "tier_2_eu": Decimal("1.328"FIXME")
+./src/generator/voucher_generator.bak:195:#        "tier_2_china": Decimal("2.247"FIXME")
+./src/generator/voucher_generator.bak:196:#        "tier_2_india": Decimal("2.556"FIXME")
+./src/generator/voucher_generator.bak:197:#        "tier_2_brazil": Decimal("1.468"FIXME")
+./src/generator/voucher_generator.bak:200:#        "tier_1": Decimal("16.518"FIXME")
+./src/generator/voucher_generator.bak:201:#        "tier_2_eu": Decimal("6.743"FIXME")
+./src/generator/voucher_generator.bak:202:#        "tier_2_china": Decimal("13.398"FIXME")
+./src/generator/voucher_generator.bak:203:#        "tier_2_canada": Decimal("1.904"FIXME")
+./src/generator/voucher_generator.bak:204:#        "tier_2_middle_east": Decimal("15.234"FIXME")
+./src/generator/voucher_generator.bak:207:#        "tier_1": Decimal("0.493"FIXME")
+./src/generator/voucher_generator.bak:208:#        "tier_2_eu": Decimal("0.269"FIXME")
+./src/generator/voucher_generator.bak:209:#        "tier_2_china": Decimal("0.581"FIXME")
+./src/generator/voucher_generator.bak:210:#        "tier_2_india": Decimal("0.722"FIXME")
+./src/generator/voucher_generator.bak:211:#        "tier_2_france": Decimal("0.052"FIXME")
+./src/generator/voucher_generator.bak:212:#        "tier_2_poland": Decimal("0.773"FIXME")
+./src/generator/voucher_generator.bak:215:#        "tier_1": Decimal("10.125"FIXME")
+./src/generator/voucher_generator.bak:216:#        "tier_2_grey": Decimal("9.052"FIXME")
+./src/generator/voucher_generator.bak:217:#        "tier_2_blue": Decimal("3.621"FIXME")
+./src/generator/voucher_generator.bak:218:#        "tier_2_green": Decimal("0.336"FIXME")
+./src/generator/voucher_generator.bak:286:        default=None, alias="quantity")  # accept "cost"FIXME"
+./src/generator/voucher_generator.bak:289:#        "populate_by_name"FIXME"
+./src/generator/voucher_generator.bak:290:#        "str_strip_whitespace"FIXME"
+./src/generator/voucher_generator.bak:333:#                    "amount"FIXME"
+./src/generator/voucher_generator.bak:334:#                    "co2e"FIXME"
+./src/generator/voucher_generator.bak:335:#                    "gwp_factor"FIXME"
+./src/generator/voucher_generator.bak:346:#            "emissions_by_gas"FIXME"
+./src/generator/voucher_generator.bak:347:#            "total_co2e"FIXME"
+./src/generator/voucher_generator.bak:348:#            "uncertainty_range"FIXME"
+./src/generator/voucher_generator.bak:349:#            "confidence_level"FIXME"
+./src/generator/voucher_generator.bak:350:#            "gwp_version"FIXME"
+./src/generator/voucher_generator.bak:351:#            "calculation_method"FIXME"
+./src/generator/voucher_generator.bak:374:#            "EF-001"FIXME"
+./src/generator/voucher_generator.bak:677:#        "voucher_id"FIXME"
+./src/generator/voucher_generator.bak:678:#        "schema_version"FIXME"
+./src/generator/voucher_generator.bak:679:#        "submission_timestamp"FIXME"
+./src/generator/voucher_generator.bak:680:#        "tier"FIXME"
+./src/generator/voucher_generator.bak:683:#        "reporting_undertaking_id"FIXME"
+./src/generator/voucher_generator.bak:684:#        "supplier_id"FIXME"
+./src/generator/voucher_generator.bak:685:#        "supplier_name"FIXME"
+./src/generator/voucher_generator.bak:686:#        "legal_entity_identifier"FIXME"
+./src/generator/voucher_generator.bak:689:#        "emission_scope"FIXME"
+./src/generator/voucher_generator.bak:690:#        "scope3_category"FIXME"
+./src/generator/voucher_generator.bak:693:#        "product_cn_code"FIXME"
+./src/generator/voucher_generator.bak:694:#        "product_category"FIXME"
+./src/generator/voucher_generator.bak:695:#        "activity_description"FIXME"
+./src/generator/voucher_generator.bak:696:#        "material_type"FIXME"
+./src/generator/voucher_generator.bak:699:#        "quantity"FIXME"
+./src/generator/voucher_generator.bak:700:#        "quantity_unit"FIXME"
+./src/generator/voucher_generator.bak:701:#        "monetary_value"FIXME"
+./src/generator/voucher_generator.bak:702:#        "currency"FIXME"
+./src/generator/voucher_generator.bak:705:#        "installation_country"FIXME"
+./src/generator/voucher_generator.bak:706:#        "installation_id"FIXME"
+./src/generator/voucher_generator.bak:709:#        "emission_factor_id"FIXME"
+./src/generator/voucher_generator.bak:710:#        "emission_factor_value"FIXME"
+./src/generator/voucher_generator.bak:711:#        "emission_factor_source"FIXME"
+./src/generator/voucher_generator.bak:712:#        "emission_factor_unit"FIXME"
+./src/generator/voucher_generator.bak:715:#        "total_emissions_tco2e"FIXME"
+./src/generator/voucher_generator.bak:716:#        "gwp_version"FIXME"
+./src/generator/voucher_generator.bak:717:#        "calculation_methodology": calculation_details["calculation_method"FIXME"]
+./src/generator/voucher_generator.bak:718:#        "emissions_breakdown": calculation_details["emissions_by_gas"FIXME"]
+./src/generator/voucher_generator.bak:721:#        "data_quality_rating"FIXME"
+./src/generator/voucher_generator.bak:722:#        "data_quality_tier"FIXME"
+./src/generator/voucher_generator.bak:723:#        "uncertainty_lower": float(calculation_details["uncertainty_range"FIXME")]
+./src/generator/voucher_generator.bak:724:#        "uncertainty_upper": float(calculation_details["uncertainty_range"FIXME")]
+./src/generator/voucher_generator.bak:725:#        "confidence_level"FIXME"
+./src/generator/voucher_generator.bak:728:#        "fallback_factor_used"FIXME"
+./src/generator/voucher_generator.bak:729:#        "embedded_emissions_direct"FIXME"
+./src/generator/voucher_generator.bak:730:#        "embedded_emissions_indirect"FIXME"
+./src/generator/voucher_generator.bak:731:#        "carbon_price_paid"FIXME"
+./src/generator/voucher_generator.bak:734:#        "reporting_period_start"FIXME"
+./src/generator/voucher_generator.bak:735:#        "reporting_period_end"FIXME"
+./src/generator/voucher_generator.bak:738:#        "verifier_accreditation_id"FIXME"
+./src/generator/voucher_generator.bak:741:#        "calculation_hash"FIXME"
+./src/generator/voucher_generator.bak:743:#            "supplier_id"FIXME"
+./src/generator/voucher_generator.bak:744:#            "product_cn_code"FIXME"
+./src/generator/voucher_generator.bak:745:#            "quantity"FIXME"
+./src/generator/voucher_generator.bak:746:#            "emission_factor_value"FIXME"
+./src/generator/voucher_generator.bak:747:#            "reporting_period_start"FIXME"
+./src/generator/voucher_generator.bak:748:#            "reporting_period_end"FIXME"
+./src/generator/voucher_generator.bak:1053:#            "reporting_undertaking_id": "529900HNOAA1KXQJUQ27"FIXME"
+./src/generator/voucher_generator.bak:1054:#            "supplier_id": "SUP-2024-001"FIXME"
+./src/generator/voucher_generator.bak:1055:#            "supplier_name": "Example Supplier GmbH"FIXME"
+./src/generator/voucher_generator.bak:1056:#            "legal_entity_identifier": "529900T8BM49AURSDO55"FIXME"
+./src/generator/voucher_generator.bak:1057:#            "emission_scope": "scope_3"FIXME"
+./src/generator/voucher_generator.bak:1058:#            "scope3_category": "1_purchased_goods_services"FIXME"
+./src/generator/voucher_generator.bak:1059:#            "product_cn_code": "2523"FIXME"
+./src/generator/voucher_generator.bak:1060:#            "product_category": "Materials"FIXME"
+./src/generator/voucher_generator.bak:1061:#            "activity_description": "Portland cement CEM I 52.5"FIXME"
+./src/generator/voucher_generator.bak:1062:#            "material_type": "cement_portland"FIXME"
+./src/generator/voucher_generator.bak:1063:#            "quantity"FIXME"
+./src/generator/voucher_generator.bak:1064:#            "quantity_unit": "t"FIXME"
+./src/generator/voucher_generator.bak:1065:#            "monetary_value"FIXME"
+./src/generator/voucher_generator.bak:1066:#            "currency": "EUR"FIXME"
+./src/generator/voucher_generator.bak:1067:#            "installation_country": "DE"FIXME"
+./src/generator/voucher_generator.bak:1068:#            "installation_id": "DE-123456"FIXME"
+./src/generator/voucher_generator.bak:1069:#            "use_fallback_factor"FIXME"
+./src/generator/voucher_generator.bak:1070:#            "emission_factor_id": "EF_CEMENT_DE_2024"FIXME"
+./src/generator/voucher_generator.bak:1071:#            "reporting_period_start": "2024-01-01"FIXME"
+./src/generator/voucher_generator.bak:1072:#            "reporting_period_end": "2024-12-31"FIXME"
+./src/generator/voucher_generator.bak:1073:#            "embedded_emissions_direct"FIXME"
+./src/generator/voucher_generator.bak:1074:#            "carbon_price_paid"FIXME"
+./src/generator/voucher_generator.bak:1208:#        "impact_material"FIXME"
+./src/generator/voucher_generator.bak:1209:#        "financial_material"FIXME"
+./src/generator/voucher_generator.bak:1210:#        "emission_percentage"FIXME"
+./src/generator/voucher_generator.bak:1211:#        "materiality_type": "double"FIXME"
+./src/generator/voucher_generator.bak:1299:async def create_voucher(file):  # or however you'FIXME'
+./src/generator/voucher_generator.bak:1325:#            "amount": 100.0, "unit": "tCO2e"FIXME"
+./src/generator/__init__.bak:11:# 🔧 REVIEW: possible unclosed bracket ->     raise AttributeError()
+./src/generator/__init__.py.bak:9:# 🔧 REVIEW: possible unclosed bracket ->     raise AttributeError()
+./src/generator/xhtml_generator.py.bak:418:# 🔧 REVIEW: possible unclosed bracket ->     sample_voucher_data = {}
+./src/api/api.py.bak:84:# 🔧 REVIEW: possible unclosed bracket ->         return Response()
+./src/api/api.py.bak:95:# 🔧 REVIEW: possible unclosed bracket ->         item = {}
+./src/api/schemas.py.bak:19:    activity_data: float = Field(..., gt=0, description="e.g. 1000)    activity_unit: str = Field(..., json_schema_extra={"example": "kWh"})"# 🔧 REVIEW: possible unclosed bracket ->     emission_factor: str = Field()
+./src/api/schemas.py.bak:26:# 🔧 REVIEW: possible unclosed bracket ->     scope3_category: Optional[str] = Field()
+./src/api/api.py:105:        # 🔧 REVIEW: possible unclosed bracket ->         return Response()
+./src/api/api.py:118:        # 🔧 REVIEW: possible unclosed bracket ->         item = {}
+./src/api/schemas.bak:6:# Pydantic v2 exposes ConfigDict; v1 doesn'FIXME'
+./src/api/schemas.bak:24:# 🔧 REVIEW: possible unclosed bracket ->     emission_factor: str = Field()
+./src/api/schemas.bak:30:#        "3", pattern="^[123]$", description="GHG Protocol scope: 1, 2, or 3"FIXME"
+./src/api/schemas.bak:31:# 🔧 REVIEW: possible unclosed bracket ->     scope3_category: Optional[str] = Field()
+./src/api/schemas.py:22:    # 🔧 REVIEW: possible unclosed bracket ->     emission_factor: str = Field()
+./src/api/schemas.py:30:    # 🔧 REVIEW: possible unclosed bracket ->     scope3_category: Optional[str] = Field()
+./src/api/api.bak:46:#        "3", pattern="^[123]$", description="GHG Protocol scope: 1, 2, or 3"FIXME"
+./src/api/api.bak:93:# 🔧 REVIEW: possible unclosed bracket ->         return Response()
+./src/api/api.bak:106:# 🔧 REVIEW: possible unclosed bracket ->         item = {}
+./src/api/api.bak:107:#                "activity"FIXME"
+./src/api/api.bak:108:#                "quantity"FIXME"
+./src/api/api.bak:109:#                "unit"FIXME"
+./src/export/tracecalc_reporter.py.bak:27:# 🔧 REVIEW: possible unclosed bracket ->             body {{}
+./src/export/tracecalc_reporter.py.bak:33:# 🔧 REVIEW: possible unclosed bracket ->             h1 {{}
+./src/export/tracecalc_reporter.py.bak:38:# 🔧 REVIEW: possible unclosed bracket ->             h2 {{}
+./src/export/tracecalc_reporter.py.bak:42:# 🔧 REVIEW: possible unclosed bracket ->             .summary {{}
+./src/export/tracecalc_reporter.py.bak:49:# 🔧 REVIEW: possible unclosed bracket ->             .metric {{}
+./src/export/tracecalc_reporter.py.bak:54:# 🔧 REVIEW: possible unclosed bracket ->             .metric-value {{}
+./src/export/tracecalc_reporter.py.bak:59:# 🔧 REVIEW: possible unclosed bracket ->             .metric-label {{}
+./src/export/tracecalc_reporter.py.bak:63:# 🔧 REVIEW: possible unclosed bracket ->             table {{}
+./src/export/tracecalc_reporter.py.bak:70:# 🔧 REVIEW: possible unclosed bracket ->             th, td {{}
+./src/export/tracecalc_reporter.py.bak:75:# 🔧 REVIEW: possible unclosed bracket ->             th {{}
+./src/export/tracecalc_reporter.py.bak:87:# 🔧 REVIEW: possible unclosed bracket ->             .footer {{}
+./src/export/tracecalc_reporter.py.bak:95:# 🔧 REVIEW: possible unclosed bracket ->             .logo {{}
+./src/export/tracecalc_reporter.py.bak:99:# 🔧 REVIEW: possible unclosed bracket ->             @media print {{}
+./src/export/tracecalc_reporter.py.bak:142:# 🔧 REVIEW: possible unclosed bracket ->         confidence_class = ()
+./src/export/tracecalc_reporter.py.bak:193:# 🔧 REVIEW: possible unclosed bracket ->     options = {}
+./src/export/tracecalc_reporter.py.bak:250:# 🔧 REVIEW: possible unclosed bracket ->     demo_items = []
+Binary file ./src/export/__pycache__/tracecalc_reporter.cpython-311.pyc matches
+./src/export/tracecalc_reporter.bak:33:# 🔧 REVIEW: possible unclosed bracket ->             body {{}
+./src/export/tracecalc_reporter.bak:39:# 🔧 REVIEW: possible unclosed bracket ->             h1 {{}
+./src/export/tracecalc_reporter.bak:44:# 🔧 REVIEW: possible unclosed bracket ->             h2 {{}
+./src/export/tracecalc_reporter.bak:48:# 🔧 REVIEW: possible unclosed bracket ->             .summary {{}
+./src/export/tracecalc_reporter.bak:55:# 🔧 REVIEW: possible unclosed bracket ->             .metric {{}
+./src/export/tracecalc_reporter.bak:60:# 🔧 REVIEW: possible unclosed bracket ->             .metric-value {{}
+./src/export/tracecalc_reporter.bak:65:# 🔧 REVIEW: possible unclosed bracket ->             .metric-label {{}
+./src/export/tracecalc_reporter.bak:69:# 🔧 REVIEW: possible unclosed bracket ->             table {{}
+./src/export/tracecalc_reporter.bak:76:# 🔧 REVIEW: possible unclosed bracket ->             th, td {{}
+./src/export/tracecalc_reporter.bak:81:# 🔧 REVIEW: possible unclosed bracket ->             th {{}
+./src/export/tracecalc_reporter.bak:93:# 🔧 REVIEW: possible unclosed bracket ->             .footer {{}
+./src/export/tracecalc_reporter.bak:101:# 🔧 REVIEW: possible unclosed bracket ->             .logo {{}
+./src/export/tracecalc_reporter.bak:105:# 🔧 REVIEW: possible unclosed bracket ->             @media print {{}
+./src/export/tracecalc_reporter.bak:156:# 🔧 REVIEW: possible unclosed bracket ->         confidence_class = ()
+./src/export/tracecalc_reporter.bak:226:# 🔧 REVIEW: possible unclosed bracket ->     options = {}
+./src/export/tracecalc_reporter.bak:294:# 🔧 REVIEW: possible unclosed bracket ->     demo_items = []
+./src/main.py.bak:13:# 🔧 REVIEW: possible unclosed bracket -> sample_data = {}
+./src/main.py:13:# 🔧 REVIEW: possible unclosed bracket -> sample_data = {}
+./src/routes/report.py.bak:21:# 🔧 REVIEW: possible unclosed bracket ->     rendered = templates.get_template("report.xhtml.j2)
+./src/routes/report.bak:25:# 🔧 REVIEW: possible unclosed bracket ->     rendered = templates.get_template("report.xhtml.j2"FIXME")
+./src/routes/report.py:24:    # 🔧 REVIEW: possible unclosed bracket ->     rendered = templates.get_template("report.xhtml.j2)

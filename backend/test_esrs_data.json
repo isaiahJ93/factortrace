@@ -1,0 +1,48 @@
+{
+  "organization": "Your Company Name",
+  "lei": "529900HNOAA1KXQJUQ27",
+  "reporting_period": 2024,
+  "governance": {
+    "board_oversight": true,
+    "discussion_frequency": "Quarterly"
+  },
+  "transition_plan": {
+    "adopted": true,
+    "aligned_1_5c": true
+  },
+  "targets": {
+    "targets": [{
+      "type": "Absolute reduction",
+      "scope": "Scopes 1, 2 & 3",
+      "base_year": "2019",
+      "target_year": "2030",
+      "reduction_percent": 50,
+      "progress_percent": 25
+    }]
+  },
+  "emissions": {
+    "scope1": 100.5,
+    "scope2_location": 50.3,
+    "scope2_market": 45.2
+  },
+  "scope3_detailed": {
+    "category_1": {
+      "emissions_tco2e": 20.0,
+      "calculation_method": "Spend-based",
+      "data_quality": "Medium",
+      "emission_factor_source": "EPA 2024"
+    },
+    "category_3": {
+      "emissions_tco2e": 5.0,
+      "calculation_method": "Average-data",
+      "data_quality": "High",
+      "emission_factor_source": "DEFRA 2024"
+    },
+    "category_6": {
+      "emissions_tco2e": 12.15,
+      "calculation_method": "Distance-based",
+      "data_quality": "High",
+      "emission_factor_source": "DEFRA 2024"
+    }
+  }
+}

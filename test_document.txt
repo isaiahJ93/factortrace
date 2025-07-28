@@ -1,0 +1,13 @@
+ESRS Climate Disclosure Report 2024
+
+GHG Emissions Summary:
+GHG Emissions Scope 1: 5,000 tonnes CO2e
+GHG Emissions Scope 2: 3,000 tonnes CO2e  
+GHG Emissions Scope 3 - Total: 12,000 tonnes CO2e
+
+Scope 3 Breakdown:
+Purchased goods and services: 4,000 tCO2e
+Capital goods: 2,000 tCO2e
+
+Financial Information:
+Revenue: EUR 150 million

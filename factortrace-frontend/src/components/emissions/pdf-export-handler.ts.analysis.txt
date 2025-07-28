@@ -1,0 +1,74 @@
+PDF Export Handler Analysis
+==========================
+
+Missing sections: Data Quality, Energy Consumption, Carbon Pricing, Climate Actions, GHG Breakdown, Uncertainty Analysis, Emissions by Scope, Top Categories
+
+File structure:
+/**
+ * Professional PDF Export Handler - Enterprise Production Edition
+ * ==============================================================
+ * 
+ * A production-ready PDF generation system for GHG emissions reporting
+ * following ESRS E1 compliance standards with robust data validation.
+ * 
+ * DATA CONSISTENCY PRINCIPLES:
+ * 1. Summary data (scope1, scope2, scope3, totalEmissions) is the SOURCE OF TRUTH
+ * 2. Activities are used for detailed breakdowns only, not for recalculation
+ * 3. All totals throughout the PDF match the summary data
+ * 4. Percentages are recalculated to ensure they sum to 100%
+ * 
+ * EMISSIONS CALCULATION:
+ * The PDF handler assumes emissions = (amount * factor) / 1000
+ * If your main app uses a different formula, update the calculation in:
+ * - processScope3Data() method
+ * - getScope1Breakdown() method
+ * - addActivityDetails() method
+ * 
+ * GOVERNANCE DATA:
+ * Board oversight, transition plans, and targets shown in the PDF are placeholders.
+ * In production, pass actual data via governanceData and transitionPlan objects.
+ * 
+ * @author Dr. Samantha Voronova-Patel
+ * @version 3.1.0
+ * @license MIT
+ */
+
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
+import html2canvas from 'html2canvas';
+import { useState } from 'react';
+
+// Extend jsPDF type for autoTable
+declare module 'jspdf' {
+  interface jsPDF {
+    autoTable: (options: any) => jsPDF;
+    lastAutoTable: { finalY: number };
+  }
+}
+
+// Enhanced type definitions with validation
+interface EmissionActivity {
+  id?: string;
+  name: string;
+  categoryName: string;
+  scopeCategory?: string; // "scope1", "scope2", "scope3"
+  amount: number | string;
+  unit: string;
+  factor: number | string;
+  emissions?: number | string;
+  evidence?: Array<{
+    id: string;
+    filename: string;
+    type: string;
+  }>;
+  dataQuality?: 'high' | 'medium' | 'low';
+  calculationMethod?: string;
+}
+
+interface Scope3Category {
+  category: string;
+  categoryNumber: number;
+  emissions: number;
+  activities: number;
+  ha
+... (truncated)

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<voucher xmlns="http://scope3.dev/voucher/2025-06/v1.0">
+  <supplier_id>ABC123</supplier_id>
+  <supplier_name>Eco Corp</supplier_name>
+  <legal_entity_identifier>5493001KJTIIGC8Y1R12</legal_entity_identifier>
+  <tier>1</tier>
+  <product_category>Steel</product_category>
+  <cost>10000.00</cost>
+  <material_type>Hot Rolled Coil</material_type>
+  <origin_country>DE</origin_country>
+  <emission_factor>2.4</emission_factor>
+  <fallback_factor_used>false</fallback_factor_used>
+  <total_co2e>24000.00</total_co2e>
+  <submission_date>2025-06-26</submission_date>
+  <voucher_uuid>550e8400-e29b-41d4-a716-446655440000</voucher_uuid>
+  <hash>abc123hash</hash>
+</voucher>
