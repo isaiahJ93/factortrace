@@ -1,0 +1,403 @@
+import sys
+sys.path.append('.')
+
+from app.api.v1.endpoints.esrs_e1_full import generate_world_class_esrs_e1_ixbrl
+import json
+
+# Complete data structure that should pass ALL validations
+test_data = {
+    # Basic information
+    "organization": "Example Corporation Ltd",
+    "lei": "5493000KJTIIGC8Y1R12",  # Valid 20-char LEI
+    "reporting_period": 2024,
+    "consolidation_scope": "Group",
+    "headquarters_location": "EU",
+    "company_size": "large",
+    
+    # Complete emissions data (E1-6 requirement)
+    "emissions": {
+        "scope1": 15000,
+        "scope2_location": 8000,
+        "scope2_market": 6500,
+        "scope3": 120000,  # Add total scope3
+        "ghg_intensity": 45.2  # Add intensity metric
+    },
+    
+    # Previous year data for comparisons
+    "previous_year_emissions": {
+        "scope1": 16500,
+        "scope2_location": 8800,
+        "scope2_market": 7000,
+        "scope3": 125000
+    },
+    
+    # Complete Scope 3 breakdown with all required fields
+    "scope3_detailed": {},
+    
+    # E1-1: Complete transition plan
+    "transition_plan": {
+        "adopted": True,
+        "adoption_date": "2024-01-01",
+        "net_zero_target": True,  # This was missing!
+        "net_zero_target_year": 2050,
+        "milestones": [  # This was missing!
+            {
+                "year": 2030,
+                "target": "50% reduction",
+                "description": "Interim target aligned with SBTi"
+            },
+            {
+                "year": 2040,
+                "target": "80% reduction",
+                "description": "Near-term deep decarbonization"
+            }
+        ],
+        "decarbonization_levers": ["Renewable energy", "Energy efficiency", "Electrification"],
+        "financial_planning": {
+            "capex_allocated": 100000000,
+            "investment_period": "2024-2030"
+        },
+        "locked_in_emissions": "Analysis shows 20% of current emissions locked-in until 2035",
+        "just_transition": "Comprehensive reskilling program for affected workers"
+    },
+    
+    # E1-2: Complete governance
+    "governance": {
+        "board_oversight": True,
+        "board_meetings_climate": 6,
+        "management_responsibility": True,
+        "climate_expertise": "Two board members with climate science PhDs",
+        "climate_linked_compensation": True,
+        "governance_integration": "Climate KPIs in all executive scorecards"  # This was missing!
+    },
+    
+    # E1-2: Complete climate policy
+    "climate_policy": {
+        "has_climate_policy": True,
+        "policy_description": "Net-zero aligned climate policy",
+        "policy_adoption_date": "2023-01-01",
+        "covers_own_operations": True,
+        "covers_value_chain": True,
+        "covers_products_services": True,
+        "integrated_with_strategy": True,
+        "governance_integration": "Board review quarterly"  # Ensure this is here too
+    },
+    
+    # E1-3: Complete actions and resources
+    "climate_actions": {
+        "actions": [
+            {
+                "description": "Install 50MW solar capacity",
+                "type": "Mitigation",
+                "timeline": "2024-2025",
+                "investment_meur": 50,
+                "expected_impact": "Reduce Scope 2 by 30%"
+            },
+            {
+                "description": "Fleet electrification",
+                "type": "Mitigation",
+                "timeline": "2024-2027",
+                "investment_meur": 30,
+                "expected_impact": "Reduce Scope 1 by 15%"
+            }
+        ],
+        "capex": 100,  # These three were missing!
+        "opex": 20,
+        "fte": 25,
+        "capex_climate_eur": 100000000,
+        "opex_climate_eur": 20000000,
+        "fte_dedicated": 25
+    },
+    
+    # E1-4: Complete targets
+    "targets": {
+        "base_year": 2020,  # These were missing!
+        "progress": 25,
+        "base_year_emissions": 150000,
+        "targets": [
+            {
+                "description": "Reduce absolute emissions 50% by 2030",
+                "scope": "Scope 1, 2 & 3",
+                "target_year": 2030,
+                "reduction_percent": 50,
+                "progress_percent": 25,
+                "status": "On track"
+            }
+        ],
+        "sbti_validated": True,
+        "sbti_ambition": "1.5°C aligned"
+    },
+    
+    # E1-5: Complete energy data
+    "energy_consumption": {
+        "total": 100000,  # Add total
+        "electricity_mwh": 50000,
+        "renewable_electricity_mwh": 20000,
+        "heating_cooling_mwh": 20000,
+        "renewable_heating_cooling_mwh": 5000,
+        "steam_mwh": 10000,
+        "renewable_steam_mwh": 1000,
+        "fuel_combustion_mwh": 20000,
+        "renewable_fuels_mwh": 2000,
+        "renewable_percentage": 28,  # This was missing!
+        "energy_intensity_value": 0.5,
+        "energy_intensity_unit": 45.2
+    },
+    
+    # E1-7: Removals with proper nil handling
+    "removals": {
+        "total": 0,
+        "own_removals": None,
+        "nil_explanation": "No removal projects operational yet"  # Required for nil
+    },
+    
+    # E1-8: Carbon pricing with proper nil handling
+    "carbon_pricing": {
+        "implemented": False,
+        "not_implemented_reason": "Internal carbon price planned for 2025"  # Required for nil
+    },
+    
+    # E1-9: Financial effects (this was completely missing!)
+    "climate_risks": [
+        {
+            "type": "Physical",
+            "description": "Flood risk to coastal facilities",
+            "time_horizon": "Medium-term",
+            "likelihood": "Likely",
+            "magnitude": "Medium",
+            "financial_impact": 10000000
+        },
+        {
+            "type": "Transition",
+            "description": "Carbon pricing exposure",
+            "time_horizon": "Short-term",
+            "likelihood": "Very likely",
+            "magnitude": "High",
+            "financial_impact": 25000000
+        }
+    ],
+    "opportunities": [
+        {
+            "type": "Products and services",
+            "description": "Low-carbon product line",
+            "time_horizon": "Short-term",
+            "likelihood": "Likely",
+            "magnitude": "High",
+            "potential_value": 50000000
+        }
+    ],
+    "financial_impacts": {
+        "climate_related_costs": 35000000,
+        "climate_related_investments": 100000000,
+        "climate_related_revenue": 200000000,
+        "climate_var_1_year": 5000000,
+        "climate_var_10_year": 50000000
+    },
+    
+    # EU Taxonomy with proper nil handling
+    "eu_taxonomy_data": {
+        "revenue_aligned_percent": 35,
+        "capex_aligned_percent": 45,
+        "opex_aligned_percent": 30,
+        "aligned_activities": None,
+        "nil_alignment_reason": "Full taxonomy assessment in progress",  # Required for nil
+        "eligible_activities": [
+            {
+                "name": "Solar energy generation",
+                "nace_code": "D35.11",
+                "revenue_percent": 20,
+                "capex_percent": 30,
+                "aligned": True,
+                "dnsh_compliant": True,  # Add DNSH compliance
+                "minimum_safeguards": True  # Add minimum safeguards
+            }
+        ]
+    },
+    
+    # Value chain information
+    "value_chain": {
+        "upstream": {
+            "suppliers_with_targets_percent": 60,
+            "engagement_program": "Supplier Climate Action Program launched 2023"
+        },
+        "downstream": {
+            "product_carbon_footprints": [
+                {
+                    "product_name": "Main Product Line",
+                    "carbon_footprint_kg": 10.5,
+                    "lca_standard": "ISO 14067",
+                    "coverage": "Cradle-to-gate"
+                }
+            ]
+        }
+    },
+    
+    # Complete methodology
+    "methodology": {
+        "ghg_standard": "GHG Protocol Corporate Standard",
+        "consolidation_approach": "Operational control",
+        "emission_factor_sources": ["DEFRA 2024", "IEA 2024", "EPA Hub"],
+        "uncertainty_range": {"low": -15, "high": 15},
+        "recalculation_threshold": 5
+    },
+    
+    # Data quality and assurance
+    "data_quality_score": 82,
+    "emissions_change_percent": -8.5,
+    "intensity": {
+        "revenue": 45.2,
+        "unit": "tCO2e/million EUR"
+    },
+    "uncertainty_assessment": "Monte Carlo analysis shows 95% CI of ±15%",
+    "recalculation_policy": "Recalculate if changes exceed 5% threshold",
+    
+    # Assurance information
+    "assurance": {
+        "level": "Limited assurance",
+        "provider": "PwC",
+        "standard": "ISAE 3410",
+        "scope": ["Scope 1", "Scope 2", "Material Scope 3 categories"]
+    }
+}
+
+# Add detailed Scope 3 data
+scope3_categories = {
+    1: {"name": "Purchased goods and services", "percent": 25},
+    2: {"name": "Capital goods", "percent": 8},
+    3: {"name": "Fuel- and energy-related", "percent": 5},
+    4: {"name": "Upstream transportation", "percent": 4},
+    5: {"name": "Waste generated", "percent": 2},
+    6: {"name": "Business travel", "percent": 3},
+    7: {"name": "Employee commuting", "percent": 2},
+    8: {"name": "Upstream leased assets", "percent": 0},
+    9: {"name": "Downstream transportation", "percent": 6},
+    10: {"name": "Processing of sold products", "percent": 10},
+    11: {"name": "Use of sold products", "percent": 30},
+    12: {"name": "End-of-life treatment", "percent": 3},
+    13: {"name": "Downstream leased assets", "percent": 0},
+    14: {"name": "Franchises", "percent": 0},
+    15: {"name": "Investments", "percent": 2}
+}
+
+total_scope3 = test_data["emissions"]["scope3"]
+for i in range(1, 16):
+    cat_emissions = (scope3_categories[i]["percent"] / 100) * total_scope3
+    test_data["scope3_detailed"][f"category_{i}"] = {
+        "emissions_tco2e": round(cat_emissions),
+        "excluded": cat_emissions == 0,
+        "exclusion_reason": "Not applicable" if cat_emissions == 0 else None,
+        "data_quality_tier": "Tier 1" if i in [1, 2, 11] else "Tier 2",
+        "data_quality_score": 85 if i in [1, 2, 11] else 70,
+        "calculation_method": "Supplier-specific" if i in [1, 2] else "Spend-based",
+        "coverage_percent": 95 if i in [1, 2, 11] else 80,
+        "uncertainty_range": {"low": -10, "high": 10}
+    }
+
+# Save test data for reference
+with open('complete_test_data.json', 'w') as f:
+    json.dump(test_data, f, indent=2)
+
+try:
+    
+# Add root-level fields that EFRAG validation expects
+    test_data["net_zero_target"] = True
+    test_data["milestones"] = test_data["transition_plan"]["milestones"]
+    test_data["governance_integration"] = True
+    test_data["capex"] = 50000000
+    test_data["opex"] = 10000000
+    test_data["fte"] = 25
+    test_data["base_year"] = 2020
+    test_data["progress"] = {"2023_vs_baseline": -15}
+    test_data["energy_consumption"] = 100000
+    test_data["renewable_percentage"] = 28
+    test_data["scope1"] = 15000
+    test_data["scope2"] = 8000
+    test_data["scope3"] = 120000
+    test_data["ghg_intensity"] = 45.2
+    test_data["sector"] = "Manufacturing"
+    test_data["primary_nace_code"] = "C20"
+    test_data["climate_policy"] = test_data.get("climate_policy", {})
+    test_data["targets"] = test_data.get("targets", {})
+    test_data["energy"] = {"consumption": 100000, "renewable_percentage": 28}
+    test_data["financial_impacts"] = {"total": 15000000}
+
+print("Testing with COMPLETE data that should pass ALL validations...")
+    print(f"Total data fields: {sum(1 for _ in str(test_data))}")
+    
+    # Run the validation first to see what passes/fails
+    from app.api.v1.endpoints.esrs_e1_full import validate_efrag_compliance
+    validation = validate_efrag_compliance(test_data)
+    
+    print(f"\nValidation Results:")
+    print(f"- Valid: {validation.get('is_valid', False)}")
+    print(f"- Completeness: {validation.get('completeness_score', 0)}%")
+    print(f"- Errors: {len(validation.get('errors', []))}")
+    if validation.get('errors'):
+        print("\nErrors found:")
+        for error in validation['errors'][:5]:  # Show first 5 errors
+            print(f"  - {error}")
+    
+    print(f"\nBlocking issues: {len(validation.get('blocking_issues', []))}")
+    if validation.get('blocking_issues'):
+        for issue in validation['blocking_issues']:
+            print(f"  - {issue}")
+    
+    # Now try to generate the report
+    print("\nGenerating report...")
+    result = generate_world_class_esrs_e1_ixbrl(test_data)
+    
+    print("✓ SUCCESS! Report generated!")
+    print(f"\nGenerated files:")
+    for key, value in result.items():
+        if isinstance(value, str) and len(value) > 1000:
+            print(f"  - {key}: {len(value):,} characters")
+            # Save the file
+            if key == 'report_html':
+                with open('esrs_e1_complete_report.html', 'w') as f:
+                    f.write(value)
+                print(f"    → Saved to esrs_e1_complete_report.html")
+            elif key == 'ixbrl_content':
+                with open('esrs_e1_complete.xbrl', 'w') as f:
+                    f.write(value)
+                print(f"    → Saved to esrs_e1_complete.xbrl")
+        else:
+            print(f"  - {key}: {value}")
+    
+except Exception as e:
+    print(f"\n✗ Error: {e}")
+    
+    # Let's see exactly what's missing
+    import traceback
+    traceback.print_exc()
+    
+    # Try to understand the validation better
+    print("\nDebugging validation...")
+    try:
+        # Check individual validations
+        from app.api.v1.endpoints.esrs_e1_full import validate_data_completeness
+        completeness = validate_data_completeness(test_data)
+        print(f"Data completeness check: {completeness}")
+    except Exception as e2:
+        print(f"Completeness check error: {e2}")
+
+# Add root-level fields that validation expects
+    test_data["net_zero_target"] = True
+    test_data["milestones"] = test_data["transition_plan"]["milestones"]
+    test_data["governance_integration"] = True
+    test_data["capex"] = 50000000
+    test_data["opex"] = 10000000
+    test_data["fte"] = 25
+    test_data["base_year"] = 2020
+    test_data["progress"] = {"2023_vs_baseline": -15}
+    test_data["energy_consumption"] = 100000
+    test_data["renewable_percentage"] = 28
+    test_data["scope1"] = 15000
+    test_data["scope2"] = 8000
+    test_data["scope3"] = 120000
+    test_data["ghg_intensity"] = 45.2
+    test_data["sector"] = "Manufacturing"
+    test_data["primary_nace_code"] = "C20"
+    test_data["climate_policy"] = test_data.get("climate_policy", {})
+    test_data["targets"] = test_data.get("targets", {})
+    test_data["energy"] = {"consumption": 100000, "renewable_percentage": 28}
+    test_data["financial_impacts"] = {"total": 15000000}
