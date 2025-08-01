@@ -9,7 +9,7 @@ import {
   CheckCircle, BarChart3
 } from 'lucide-react';
 // import { EvidenceUpload } from '../../components/EvidenceUpload';
-import { apiClient } from '../../lib/api-client';
+import { apiClient } from '../../../lib/api-client';
 import { EmissionData, QualityScores } from '../../types/emissions';
 
 export default function EmissionsListPage() {
@@ -195,7 +195,7 @@ export default function EmissionsListPage() {
     );
   };
 
-  const totalEmissions = filteredEmissions.reduce((sum, e) => sum + (e.emission_amount || 0), 0);
+  const totalEmissions = (filteredEmissions || []).reduce((sum, e) => sum + (e.emission_amount || 0), 0);
 
   return (
     <div className="min-h-screen bg-gray-50">

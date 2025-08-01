@@ -3,13 +3,14 @@
 API v1 Router - Smart endpoint loading with graceful degradation
 Prioritizes critical endpoints and provides detailed status reporting
 """
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Body
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from typing import List, Dict, Any, Optional, Tuple
 import logging
 import importlib
 import time
 from datetime import datetime
+from typing import Dict, Any
 from app.api.v1.endpoints import (
     emissions,
     emission_factors,
@@ -418,6 +419,22 @@ api_router.include_router(
     tags=["ghg-calculator"]
 )
 api_router.include_router(verify_voucher.router, prefix="/verify", tags=["voucher"])
+
+# Direct iXBRL export route for frontend compatibility
+@api_router.post("/export/ixbrl")
+async def export_ixbrl_direct(data: Dict[str, Any] = Body(...)):
+    """
+    Direct iXBRL export endpoint that forwards to compliance export.
+    This matches the URL that the frontend is expecting.
+    """
+    from app.api.v1.endpoints.compliance import export_ixbrl
+    
+    # Forward to the compliance endpoint with the correct format
+    return await export_ixbrl({
+        "format": "ixbrl",
+        "data": data
+    })
+
 @api_router.get("/ready", tags=["health", "monitoring"])
 async def readiness_check():
     """Kubernetes readiness probe - checks if API is ready to serve traffic"""

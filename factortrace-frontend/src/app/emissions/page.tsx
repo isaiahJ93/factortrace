@@ -8,7 +8,6 @@ import {
   ChevronUp, ChevronDown, FileText, AlertCircle, 
   CheckCircle, BarChart3
 } from 'lucide-react';
-import { EvidenceUpload } from '@/components/EvidenceUpload';
 import { apiClient } from '@/lib/api-client';
 import { EmissionData, QualityScores } from '@/types/emissions';
 
@@ -377,14 +376,6 @@ export default function EmissionsListPage() {
                               )}
                               
                               {/* Evidence Upload Button */}
-                              <EvidenceUpload
-                                emissionId={emission.id}
-                                factorName={`${getCategoryLabel(emission.category || '')} - ${emission.activity_type || 'Emission'}`}
-                                currentScore={emission.quality_score}
-                                currentEvidenceType={emission.evidence_type}
-                                onScoreUpdate={(scores) => handleScoreUpdate(emission.id, scores)}
-                                onUploadComplete={fetchEmissions}
-                              />
                             </div>
                           </div>
                         </div>

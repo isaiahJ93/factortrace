@@ -490,8 +490,8 @@ const extractAllTaxonomyTags = async (exportData: any, apiUrl: string = 'http://
     
     const result = await response.json();
     
-    // Use result.content instead of result.ixbrl
-    const ixbrlContent = result.content;
+    // Use result.xhtml_content instead of result.ixbrl
+    const ixbrlContent = result.xhtml_content;
     
     // Extract all name attributes from taxonomy tags
     const namePattern = /name=["']([^"']+)["']/g;
@@ -1728,7 +1728,8 @@ const EliteGHGCalculator: React.FC<EliteGHGCalculatorProps> = ({
       
       const exportData = {
         organization: companyName,
-        reporting_period: new Date(reportingPeriod).getFullYear(),
+        lei: "529900HNOAA1KXQJUQ27",  // Add a valid LEI
+        lei: "529900HNOAA1KXQJUQ27",  // Dummy LEI for testing        reporting_period: new Date(reportingPeriod).getFullYear(),
         force_generation: true, // Remove when you have complete data
         scope3_detailed: scope3_detailed,
         // Add other required fields based on your results
@@ -1757,7 +1758,7 @@ const EliteGHGCalculator: React.FC<EliteGHGCalculatorProps> = ({
       const result = await response.json();
       
       // Create a download link for the iXBRL file
-      const blob = new Blob([result.content], { type: 'application/xhtml+xml' });
+      const blob = new Blob([result.xhtml_content], { type: 'application/xhtml+xml' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -1811,7 +1812,8 @@ const EliteGHGCalculator: React.FC<EliteGHGCalculatorProps> = ({
       
       const exportData = {
         organization: companyName,
-        reporting_period: new Date(reportingPeriod).getFullYear(),
+        lei: "529900HNOAA1KXQJUQ27",  // Add a valid LEI
+        lei: "529900HNOAA1KXQJUQ27",  // Dummy LEI for testing        reporting_period: new Date(reportingPeriod).getFullYear(),
         force_generation: true,
         scope3_detailed: scope3_detailed,
         total_emissions: results?.summary?.total_emissions_tons_co2e || 0,
@@ -1840,7 +1842,7 @@ const EliteGHGCalculator: React.FC<EliteGHGCalculatorProps> = ({
       const result = await response.json();
       
       // Create downloads for both the iXBRL file and taxonomy analysis
-      const blob = new Blob([result.content], { type: 'application/xhtml+xml' });
+      const blob = new Blob([result.xhtml_content], { type: 'application/xhtml+xml' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;

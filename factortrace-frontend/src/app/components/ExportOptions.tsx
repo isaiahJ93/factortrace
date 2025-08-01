@@ -9,7 +9,7 @@ import {
 , X } from 'lucide-react';
 
 // Progress indicator component
-const ExportProgress = ({ progress, stage }) => {
+const ExportProgress = ({ progress, stage }: { progress: number; stage: string }) => {
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
       <div className="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl">
@@ -55,7 +55,7 @@ const ExportProgress = ({ progress, stage }) => {
 };
 
 // Preview modal component
-const PreviewModal = ({ format, data, onClose, onConfirm }) => {
+const PreviewModal = ({ format, data, onClose, onConfirm }: { format: string; data: any; onClose: () => void; onConfirm: () => void }) => {
   const renderPreview = () => {
     switch (format) {
       case 'xbrl':
@@ -189,7 +189,7 @@ export function ExportOptions({ voucherData, onExport }: ExportOptionsProps) {
   const [exportStage, setExportStage] = useState('');
   const [showPreview, setShowPreview] = useState(false);
   const [selectedFormat, setSelectedFormat] = useState('');
-  const [recentExports, setRecentExports] = useState([]);
+  const [recentExports, setRecentExports] = useState<{ format: string; timestamp: Date; filename: string; status: string; }[]>([]);
   const [exportSettings, setExportSettings] = useState({
     includeCharts: true,
     includeAppendix: true,

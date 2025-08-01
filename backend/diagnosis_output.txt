@@ -1,0 +1,116 @@
+🔍 Deep iXBRL Implementation Diagnosis
+=====================================
+
+📍 Active Endpoint Check:
+Which file is imported in api.py?
+24:    esrs_e1_full,
+43:from app.api.v1.endpoints import esrs_e1_full
+229:    name="esrs_e1_full",
+230:    module_path="esrs_e1_full",
+231:    prefix="/esrs-e1",
+232:    tags=["esrs-e1", "compliance"],
+414:api_router.include_router(esrs_e1_full.router, prefix="/esrs-e1", tags=["ESRS E1"])
+
+📄 Main Implementation Analysis:
+Checking esrs_e1_full.py for iXBRL generation...
+4830:def generate_world_class_esrs_e1_ixbrl(data: Dict[str, Any]) -> Dict[str, Any]:
+
+🏷️ iXBRL Element Creation:
+            
+            # Risk type
+            td_type = ET.SubElement(tr, 'td')
+            create_enhanced_xbrl_tag(
+                td_type,
+                'nonNumeric',
+                f'esrs-e1:ClimateRisk{idx+1}Type',
+                'c-current',
+                risk['type'],  # Physical or Transition
+                xml_lang='en'
+            )
+            
+            # Description
+            td_desc = ET.SubElement(tr, 'td')
+            create_enhanced_xbrl_tag(
+                td_desc,
+                'nonNumeric',
+                f'esrs-e1:ClimateRisk{idx+1}Description',
+                'c-current',
+                risk['description'],
+                xml_lang='en'
+            )
+--
+            # Financial impact
+            td_impact = ET.SubElement(tr, 'td')
+            if risk.get('financial_impact_meur'):
+                create_enhanced_xbrl_tag(
+                    td_impact,
+                    'nonFraction',
+                    f'esrs-e1:ClimateRisk{idx+1}FinancialImpact',
+
+📊 Fact Creation Methods:
+156:            "api_endpoint": "https://api.defra.gov.uk/emission-factors/v1",
+419:    TIER_4 = ("Default data", 40, "Estimated data with default emission factors", "Documentation check")
+4216:def map_activity_to_emission_factor(
+4228:                'default': {'factor': 0.255, 'unit': 'tCO2e/MWh', 'source': 'AIB 2024', 'quality': 'High'},
+4232:                'default': {'factor': 0.386, 'unit': 'tCO2e/MWh', 'source': 'EPA eGRID 2024', 'quality': 'High'},
+4236:                'default': {'factor': 0.581, 'unit': 'tCO2e/MWh', 'source': 'MEE China 2024', 'quality': 'Medium'},
+4240:                'default': {'factor': 0.436, 'unit': 'tCO2e/MWh', 'source': 'IEA Global Average', 'quality': 'Low'}
+4836:    def _safe(parent, tag, attrib=None, **extra):
+5596:def count_xbrl_elements(xml_content: str) -> int:
+7781:def create_enhanced_xbrl_tag(
+
+🌐 XHTML Generation:
+
+📤 Response Format:
+        for header in ['Risk Type', 'Description', 'Time Horizon', 'Likelihood', 'Financial Impact (M€)', 'Management Response']:
+            th = ET.SubElement(tr_header, 'th')
+            th.text = header
+        
+        tbody = ET.SubElement(risks_table, 'tbody')
+        
+        for idx, risk in enumerate(financial_data['risks']):
+            tr = ET.SubElement(tbody, 'tr')
+            
+            # Risk type
+            td_type = ET.SubElement(tr, 'td')
+
+📈 ESRS Data Processing:
+188:        "mandatory_if": "scope3_material"
+1561:def validate_scope3_data_enhanced(data: Dict[str, Any]) -> Dict[str, Any]:
+1575:    scope3_data = data.get("scope3_detailed", {})
+1586:        cat_data = scope3_data.get(cat_key, {})
+1794:def validate_scope2_dual_reporting(emissions: Dict[str, Any]) -> Dict[str, Any]:
+1803:    if not emissions.get('scope2_location'):
+1811:        if not emissions.get('scope2_market'):
+1817:    if (emissions.get('scope2_market', 0) > emissions.get('scope2_location', 0) and 
+1818:        emissions.get('scope2_location', 0) > 0):
+1825:def validate_scope3_screening_thresholds(cat_data: Dict[str, Any]) -> Dict[str, Any]:
+
+🆕 New Implementation Check (esrs_e1_full_new.py):
+        create_fact(xbrl, 'esrs-e1:GrossScope1Emissions', 'c-duration', 'u-tCO2e',
+                   emissions['scope1'], 3, namespaces)
+    
+    # Scope 2 emissions (both location and market-based)
+    if emissions.get('scope2_location') is not None:
+        create_fact(xbrl, 'esrs-e1:GrossScope2LocationBased', 'c-duration', 'u-tCO2e',
+                   emissions['scope2_location'], 3, namespaces)
+    
+    if emissions.get('scope2_market') is not None:
+        create_fact(xbrl, 'esrs-e1:GrossScope2MarketBased', 'c-duration', 'u-tCO2e',
+                   emissions['scope2_market'], 3, namespaces)
+    
+    # Scope 3 categories
+    add_scope3_facts(xbrl, data, namespaces)
+    
+--
+def create_fact(xbrl: ET.Element, concept: str, context_ref: str, unit_ref: str,
+                value: Any, decimals: int, namespaces: Dict[str, str]) -> None:
+    """Create a single XBRL fact"""
+    namespace, local_name = concept.split(':')
+
+🔒 XML Escaping:
+
+📝 Sample Output Check:
+Checking latest generated file structure...
+
+✅ Diagnosis Complete!

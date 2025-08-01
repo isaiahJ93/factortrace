@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+        <html xmlns="http://www.w3.org/1999/xhtml"
+              xmlns:ix="http://www.xbrl.org/2013/inlineXBRL"
+              xmlns:xbrli="http://www.xbrl.org/2003/instance"
+              xmlns:xlink="http://www.w3.org/1999/xlink"
+              xmlns:iso4217="http://www.xbrl.org/2003/iso4217"
+              xmlns:esrs="http://www.efrag.org/esrs/2023">
+        <head>
+            <title>ESRS E1 Climate Report - Green Energy Corp</title>
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        </head>
+        <body>
+            <div class="header">
+                <h1>ESRS E1 Climate-related Disclosures</h1>
+                <h2>Green Energy Corp</h2>
+                <p>Reporting Period: 2024</p>
+            </div>
+            
+            <div class="emissions-section">
+                <h3>GHG Emissions</h3>
+                <table>
+                    <tr>
+                        <td>Scope 1 Emissions:</td>
+                        <td><ix:nonFraction name="esrs:scope1-emissions" contextRef="current-period" unitRef="tCO2e" decimals="2" format="ixt:numdotdecimal">1250.5</ix:nonFraction> tCO2e</td>
+                    </tr>
+                    <tr>
+                        <td>Scope 2 Location-based:</td>
+                        <td><ix:nonFraction name="esrs:scope2-location-emissions" contextRef="current-period" unitRef="tCO2e" decimals="2" format="ixt:numdotdecimal">580.25</ix:nonFraction> tCO2e</td>
+                    </tr>
+                    <tr>
+                        <td>Scope 3 Emissions:</td>
+                        <td><ix:nonFraction name="esrs:scope3-emissions" contextRef="current-period" unitRef="tCO2e" decimals="2" format="ixt:numdotdecimal">2890.75</ix:nonFraction> tCO2e</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <ix:hidden>
+                <ix:header>
+                    <xbrli:context id="current-period">
+                        <xbrli:entity>
+                            <xbrli:identifier scheme="http://www.lei-identifier.org">12345678901234567890</xbrli:identifier>
+                        </xbrli:entity>
+                        <xbrli:period>
+                            <xbrli:instant>2024-12-31</xbrli:instant>
+                        </xbrli:period>
+                    </xbrli:context>
+                    
+                    <xbrli:unit id="tCO2e">
+                        <xbrli:measure>iso4217:tCO2e</xbrli:measure>
+                    </xbrli:unit>
+                </ix:header>
+            </ix:hidden>
+        </body>
+        </html>
