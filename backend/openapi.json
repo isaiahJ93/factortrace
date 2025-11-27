@@ -1,1 +1,6098 @@
-{"detail":"Not Found"}
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "FactorTrace API",
+    "description": "\n# FactorTrace - Enterprise Carbon Accounting Platform\n\nFactorTrace is a bank-grade SaaS platform for GHG emissions management and\nregulatory compliance reporting (ESRS, CDP, TCFD, SBTi).\n\n## Key Features\n\n- **Emissions Tracking**: Calculate and track Scope 1, 2, and 3 emissions\n- **Database-backed Factors**: Region-specific emission factors from DEFRA, EPA, and custom sources\n- **Regulatory Reporting**: Generate ESRS E1 compliant iXBRL reports\n- **Data Quality**: GHG Protocol compliant uncertainty analysis\n\n## Authentication\n\nAll endpoints require Bearer token authentication:\n```\nAuthorization: Bearer <your_jwt_token>\n```\n\nObtain a token via `POST /api/v1/auth/login`.\n\n## Rate Limiting\n\n- Standard tier: 100 requests/minute\n- Enterprise tier: 1000 requests/minute\n\n## Support\n\n- Documentation: https://docs.factortrace.com\n- Issues: https://github.com/factortrace/api/issues\n",
+    "version": "1.0.0",
+    "contact": {
+      "name": "FactorTrace Support",
+      "email": "support@factortrace.com",
+      "url": "https://factortrace.com"
+    },
+    "license": {
+      "name": "Proprietary",
+      "url": "https://factortrace.com/terms"
+    }
+  },
+  "paths": {
+    "/api/v1/health/": {
+      "get": {
+        "tags": [
+          "health",
+          "monitoring"
+        ],
+        "summary": "Health Check",
+        "description": "Basic health check - always returns 200 if service is up",
+        "operationId": "health_check_api_v1_health__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "title": "Response Health Check Api V1 Health  Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/health/live": {
+      "get": {
+        "tags": [
+          "health",
+          "monitoring"
+        ],
+        "summary": "Liveness Check",
+        "description": "Kubernetes liveness probe endpoint.\nReturns 200 if service is alive, 503 if not.",
+        "operationId": "liveness_check_api_v1_health_live_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "title": "Response Liveness Check Api V1 Health Live Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/health/ready": {
+      "get": {
+        "tags": [
+          "health",
+          "monitoring"
+        ],
+        "summary": "Readiness Check",
+        "description": "Kubernetes readiness probe endpoint.\nChecks if service is ready to handle requests.",
+        "operationId": "readiness_check_api_v1_health_ready_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "title": "Response Readiness Check Api V1 Health Ready Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/health/detailed": {
+      "get": {
+        "tags": [
+          "health",
+          "monitoring"
+        ],
+        "summary": "Detailed Health Check",
+        "description": "Detailed health check with comprehensive system information.\nUse this for monitoring dashboards.",
+        "operationId": "detailed_health_check_api_v1_health_detailed_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "title": "Response Detailed Health Check Api V1 Health Detailed Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/health/dependencies": {
+      "get": {
+        "tags": [
+          "health",
+          "monitoring"
+        ],
+        "summary": "Check Dependencies",
+        "description": "Check all external dependencies status.\nUseful for debugging integration issues.",
+        "operationId": "check_dependencies_api_v1_health_dependencies_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "title": "Response Check Dependencies Api V1 Health Dependencies Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/vouchers/checkout": {
+      "post": {
+        "tags": [
+          "vouchers",
+          "payments"
+        ],
+        "summary": "Create Checkout Session",
+        "description": "Create a Stripe checkout session for voucher purchase",
+        "operationId": "create_checkout_session_api_v1_vouchers_checkout_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckoutRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckoutResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/vouchers/test": {
+      "get": {
+        "tags": [
+          "vouchers",
+          "payments"
+        ],
+        "summary": "Test Endpoint",
+        "description": "Test endpoint",
+        "operationId": "test_endpoint_api_v1_vouchers_test_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/vouchers/": {
+      "get": {
+        "tags": [
+          "vouchers",
+          "payments"
+        ],
+        "summary": "List Vouchers",
+        "description": "List vouchers endpoint",
+        "operationId": "list_vouchers_api_v1_vouchers__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "tags": [
+          "authentication"
+        ],
+        "summary": "Login",
+        "description": "User login",
+        "operationId": "login_api_v1_auth_login_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/verify": {
+      "get": {
+        "tags": [
+          "authentication"
+        ],
+        "summary": "Verify Token",
+        "description": "Verify API is working",
+        "operationId": "verify_token_api_v1_auth_verify_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/users/": {
+      "get": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Users",
+        "operationId": "users_api_v1_users__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/emission-factors/categories": {
+      "get": {
+        "tags": [
+          "emission-factors"
+        ],
+        "summary": "Get Categories",
+        "description": "Get all unique categories grouped by scope",
+        "operationId": "get_categories_api_v1_emission_factors_categories_get",
+        "parameters": [
+          {
+            "name": "scope",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "maximum": 3,
+                  "minimum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by specific scope",
+              "title": "Scope"
+            },
+            "description": "Filter by specific scope"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/emission-factors/": {
+      "get": {
+        "tags": [
+          "emission-factors"
+        ],
+        "summary": "Get Emission Factors",
+        "description": "Get emission factors with optional filtering",
+        "operationId": "get_emission_factors_api_v1_emission_factors__get",
+        "parameters": [
+          {
+            "name": "scope",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "maximum": 3,
+                  "minimum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Scope"
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Category"
+            }
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Skip"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 1000,
+              "minimum": 1,
+              "default": 100,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/emission-factors/calculate": {
+      "post": {
+        "tags": [
+          "emission-factors"
+        ],
+        "summary": "Calculate Emission",
+        "description": "Calculate emissions based on activity data and emission factor",
+        "operationId": "calculate_emission_api_v1_emission_factors_calculate_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "title": "Request Body"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/emission-factors/search": {
+      "get": {
+        "tags": [
+          "emission-factors"
+        ],
+        "summary": "Search Factors",
+        "description": "Search emission factors by name",
+        "operationId": "search_factors_api_v1_emission_factors_search_get",
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Search term",
+              "title": "Query"
+            },
+            "description": "Search term"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/emissions/categories": {
+      "get": {
+        "tags": [
+          "emissions"
+        ],
+        "summary": "Get Emission Categories",
+        "description": "Get emission categories - redirect to emission-factors endpoint",
+        "operationId": "get_emission_categories_api_v1_emissions_categories_get",
+        "parameters": [
+          {
+            "name": "scope",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Scope"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/emissions/factors": {
+      "get": {
+        "tags": [
+          "emissions"
+        ],
+        "summary": "Get Emission Factors",
+        "description": "Get emission factors for a category",
+        "operationId": "get_emission_factors_api_v1_emissions_factors_get",
+        "parameters": [
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Category"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/emissions/upload-evidence": {
+      "post": {
+        "tags": [
+          "emissions"
+        ],
+        "summary": "Upload Evidence",
+        "description": "Upload evidence document for an emission entry.",
+        "operationId": "upload_evidence_api_v1_emissions_upload_evidence_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_evidence_api_v1_emissions_upload_evidence_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/emissions/evidence/{evidence_id}": {
+      "delete": {
+        "tags": [
+          "emissions"
+        ],
+        "summary": "Delete Evidence",
+        "description": "Delete evidence document.",
+        "operationId": "delete_evidence_api_v1_emissions_evidence__evidence_id__delete",
+        "parameters": [
+          {
+            "name": "evidence_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Evidence Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/emissions/": {
+      "get": {
+        "tags": [
+          "emissions",
+          "Emissions"
+        ],
+        "summary": "List all Emission records",
+        "description": "Retrieve a paginated list of emission records with optional filtering.\n\n## Filtering Options\n- **scope**: Filter by GHG Protocol scope (1, 2, or 3)\n- **category**: Filter by emission category (exact match)\n- **start_date / end_date**: Filter by creation date range\n\n## Pagination\n- **skip**: Number of records to skip (default: 0)\n- **limit**: Maximum records to return (default: 100, max: 1000)\n\nResults are sorted by creation date (newest first).",
+        "operationId": "get_emissions_api_v1_emissions__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "scope",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "maximum": 3,
+                  "minimum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by GHG Protocol scope",
+              "title": "Scope"
+            },
+            "description": "Filter by GHG Protocol scope"
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by emission category (exact match)",
+              "title": "Category"
+            },
+            "description": "Filter by emission category (exact match)"
+          },
+          {
+            "name": "start_date",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter records created after this date (ISO 8601)",
+              "title": "Start Date"
+            },
+            "description": "Filter records created after this date (ISO 8601)"
+          },
+          {
+            "name": "end_date",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter records created before this date (ISO 8601)",
+              "title": "End Date"
+            },
+            "description": "Filter records created before this date (ISO 8601)"
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Number of records to skip for pagination",
+              "default": 0,
+              "title": "Skip"
+            },
+            "description": "Number of records to skip for pagination"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 1000,
+              "minimum": 1,
+              "description": "Maximum number of records to return",
+              "default": 100,
+              "title": "Limit"
+            },
+            "description": "Maximum number of records to return"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of emission records",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EmissionResponse"
+                  },
+                  "title": "Response Get Emissions Api V1 Emissions  Get"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "emissions",
+          "Emissions"
+        ],
+        "summary": "Create a new Emission record",
+        "description": "Creates a new emission entry and automatically calculates the CO2e amount.\n\n## Factor Resolution Logic\n1. **Manual Override**: If `emission_factor` is provided in the payload, it will be used directly\n2. **Database Lookup**: Otherwise, the API looks up the emission factor using the combination of:\n   - `scope` (1, 2, or 3)\n   - `category` (e.g., \"Purchased Electricity\")\n   - `activity_type` (e.g., \"Electricity\")\n   - `country_code` (e.g., \"DE\" for Germany)\n3. **Error**: If no matching factor is found, returns 422 with the lookup key for debugging\n\n## Calculation\nThe emission amount is calculated as:\n```\namount (tCO2e) = activity_data × emission_factor / 1000\n```\n\n## Example Use Cases\n- **Scope 1 Diesel**: 1000 liters of diesel in DE → ~2.65 tCO2e\n- **Scope 2 Electricity**: 10000 kWh in DE → ~3.5 tCO2e\n- **Scope 3 Business Travel**: 5000 km flight → varies by class",
+        "operationId": "create_emission_api_v1_emissions__post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmissionCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Emission created successfully",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "example": {
+                  "id": 1,
+                  "scope": 2,
+                  "category": "Purchased Electricity",
+                  "activity_type": "Electricity",
+                  "activity_data": 10000.0,
+                  "unit": "kWh",
+                  "country_code": "DE",
+                  "emission_factor": 0.35,
+                  "emission_factor_source": "Database",
+                  "amount": 3.5,
+                  "created_at": "2024-03-15T10:30:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated - Bearer token missing or invalid"
+          },
+          "422": {
+            "description": "Emission factor not found - The combination of scope/category/activity_type/country_code has no matching entry in the database",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "No emission factor found for key: (scope_2, Purchased Electricity, Electricity, XX)"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/emissions/summary": {
+      "get": {
+        "tags": [
+          "emissions",
+          "Emissions"
+        ],
+        "summary": "Get Emissions Summary",
+        "description": "Returns aggregated emission totals for dashboard displays and reporting.\n\n## Response includes:\n- **scope1_total**: Total direct emissions (tCO2e)\n- **scope2_total**: Total purchased energy emissions (tCO2e)\n- **scope3_total**: Total value chain emissions (tCO2e)\n- **total_emissions**: Sum of all scopes (tCO2e)\n- **by_category**: Breakdown by emission category\n\nUseful for:\n- Dashboard KPI widgets\n- Executive summaries\n- ESRS E1 reporting data",
+        "operationId": "get_emissions_summary_api_v1_emissions_summary_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "reporting_period",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by reporting period (e.g., '2024', '2024-Q1')",
+              "title": "Reporting Period"
+            },
+            "description": "Filter by reporting period (e.g., '2024', '2024-Q1')"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Aggregated emissions summary",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmissionsSummary"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/emissions/calculate/advanced": {
+      "post": {
+        "tags": [
+          "emissions"
+        ],
+        "summary": "Calculate Emissions Advanced",
+        "description": "Advanced emissions calculation with uncertainty analysis\n\nUses the sophisticated calculation engine with Monte Carlo simulation",
+        "operationId": "calculate_emissions_advanced_api_v1_emissions_calculate_advanced_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_calculate_emissions_advanced_api_v1_emissions_calculate_advanced_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/emissions/calculate/scope3/{category}": {
+      "post": {
+        "tags": [
+          "emissions"
+        ],
+        "summary": "Calculate Scope3 Category",
+        "description": "Calculate emissions for a specific Scope 3 category\n\nCategories: purchased_goods_services, capital_goods, fuel_energy_activities,\nupstream_transportation, waste_operations, business_travel, employee_commuting,\nupstream_leased_assets, downstream_transportation, processing_sold_products,\nuse_of_sold_products, end_of_life_treatment, downstream_leased_assets,\nfranchises, investments",
+        "operationId": "calculate_scope3_category_api_v1_emissions_calculate_scope3__category__post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "category",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Category"
+            }
+          },
+          {
+            "name": "method",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "activity_based",
+                "spend_based"
+              ],
+              "default": "activity_based",
+              "title": "Method"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object"
+                },
+                "title": "Activity Data"
+              },
+              "example": {
+                "steel": {
+                  "amount": 1000,
+                  "unit": "kg",
+                  "region": "EU"
+                },
+                "aluminum": {
+                  "amount": 500,
+                  "unit": "kg"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/emissions/scope3/categories": {
+      "get": {
+        "tags": [
+          "emissions"
+        ],
+        "summary": "Get Scope3 Categories",
+        "description": "Get all Scope 3 categories with metadata",
+        "operationId": "get_scope3_categories_api_v1_emissions_scope3_categories_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/emissions/materiality/assess": {
+      "post": {
+        "tags": [
+          "emissions"
+        ],
+        "summary": "Assess Materiality",
+        "description": "Assess materiality of Scope 3 categories for your sector\n\nHelps identify which categories should be prioritized for calculation",
+        "operationId": "assess_materiality_api_v1_emissions_materiality_assess_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__api__v1__endpoints__emissions__MaterialityAssessmentRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/emissions/emissions/scope3/calculate": {
+      "post": {
+        "tags": [
+          "emissions"
+        ],
+        "summary": "Calculate Scope3",
+        "description": "Calculate Scope 3 emissions for a specific category",
+        "operationId": "calculate_scope3_api_v1_emissions_emissions_scope3_calculate_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__api__v1__endpoints__emissions__Scope3CalculationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/emissions/reports/compliance": {
+      "post": {
+        "tags": [
+          "emissions"
+        ],
+        "summary": "Generate Compliance Report",
+        "description": "Generate compliance report for specific standard (ESRS, CDP, TCFD, SBTi)",
+        "operationId": "generate_compliance_report_api_v1_emissions_reports_compliance_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "standard",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ESRS",
+                "CDP",
+                "TCFD",
+                "SBTi"
+              ],
+              "title": "Standard"
+            }
+          },
+          {
+            "name": "reporting_period",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "2025",
+              "title": "Reporting Period"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "number"
+                },
+                "title": "Emissions By Category"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/emissions/factors/search": {
+      "get": {
+        "tags": [
+          "emissions"
+        ],
+        "summary": "Search Emission Factors",
+        "description": "Search emission factors in the database",
+        "operationId": "search_emission_factors_api_v1_emissions_factors_search_get",
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "Search term",
+              "title": "Query"
+            },
+            "description": "Search term"
+          },
+          {
+            "name": "scope",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "maximum": 3,
+                  "minimum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Scope"
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Category"
+            }
+          },
+          {
+            "name": "region",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Region"
+            }
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Skip"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 200,
+              "minimum": 1,
+              "default": 50,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/emissions/calculate/simple": {
+      "post": {
+        "tags": [
+          "emissions"
+        ],
+        "summary": "Calculate Emissions Simple",
+        "description": "Simple emissions calculation without database lookup\n\nQuick calculation for testing or when you have your own emission factors",
+        "operationId": "calculate_emissions_simple_api_v1_emissions_calculate_simple_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_calculate_emissions_simple_api_v1_emissions_calculate_simple_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/emissions/{emission_id}": {
+      "get": {
+        "tags": [
+          "emissions"
+        ],
+        "summary": "Get Emission",
+        "description": "Get a specific emission by ID",
+        "operationId": "get_emission_api_v1_emissions__emission_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "emission_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Emission Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmissionResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "emissions"
+        ],
+        "summary": "Update Emission",
+        "description": "Update an existing emission entry",
+        "operationId": "update_emission_api_v1_emissions__emission_id__put",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "emission_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Emission Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmissionUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmissionResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "emissions"
+        ],
+        "summary": "Delete Emission",
+        "description": "Delete an emission entry",
+        "operationId": "delete_emission_api_v1_emissions__emission_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "emission_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Emission Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/emissions/export/csv": {
+      "get": {
+        "tags": [
+          "emissions"
+        ],
+        "summary": "Export Emissions Csv",
+        "description": "Export emissions data as CSV with optional uncertainty data",
+        "operationId": "export_emissions_csv_api_v1_emissions_export_csv_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "scope",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "maximum": 3,
+                  "minimum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Scope"
+            }
+          },
+          {
+            "name": "start_date",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Start Date"
+            }
+          },
+          {
+            "name": "end_date",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "End Date"
+            }
+          },
+          {
+            "name": "include_uncertainty",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false,
+              "title": "Include Uncertainty"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/emissions/bulk-upload": {
+      "post": {
+        "tags": [
+          "emissions"
+        ],
+        "summary": "Bulk Upload Emissions",
+        "description": "Bulk upload emissions from CSV file.",
+        "operationId": "bulk_upload_emissions_api_v1_emissions_bulk_upload_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_bulk_upload_emissions_api_v1_emissions_bulk_upload_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/emissions/esrs-e1/export/esrs-e1-world-class": {
+      "post": {
+        "tags": [
+          "emissions"
+        ],
+        "summary": "Generate Esrs E1 Report",
+        "description": "Generate ESRS E1 compliant iXBRL report",
+        "operationId": "generate_esrs_e1_report_api_v1_emissions_esrs_e1_export_esrs_e1_world_class_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "title": "Data"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/data-quality/data-quality": {
+      "get": {
+        "tags": [
+          "data-quality"
+        ],
+        "summary": "Get Emissions Quality",
+        "description": "Get all emissions with their data quality scores.",
+        "operationId": "get_emissions_quality_api_v1_data_quality_data_quality_get",
+        "parameters": [
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0,
+              "title": "Skip"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 100,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/data-quality/data-quality/{emission_id}": {
+      "get": {
+        "tags": [
+          "data-quality"
+        ],
+        "summary": "Get Emission Quality",
+        "description": "Get data quality score for a specific emission.",
+        "operationId": "get_emission_quality_api_v1_data_quality_data_quality__emission_id__get",
+        "parameters": [
+          {
+            "name": "emission_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Emission Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/data-quality/improve-quality/{emission_id}": {
+      "post": {
+        "tags": [
+          "data-quality"
+        ],
+        "summary": "Improve Quality Suggestions",
+        "description": "Get suggestions to improve data quality score.",
+        "operationId": "improve_quality_suggestions_api_v1_data_quality_improve_quality__emission_id__post",
+        "parameters": [
+          {
+            "name": "emission_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Emission Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/compliance/export": {
+      "post": {
+        "tags": [
+          "compliance",
+          "reporting"
+        ],
+        "summary": "Export Ixbrl",
+        "description": "Export emissions data as iXBRL report",
+        "operationId": "export_ixbrl_api_v1_compliance_export_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "title": "Data"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/compliance/standards": {
+      "get": {
+        "tags": [
+          "compliance",
+          "reporting"
+        ],
+        "summary": "List Supported Standards",
+        "description": "List supported reporting standards",
+        "operationId": "list_supported_standards_api_v1_compliance_standards_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/compliance/validate": {
+      "post": {
+        "tags": [
+          "compliance",
+          "reporting"
+        ],
+        "summary": "Validate Emissions Data",
+        "description": "Validate emissions data for compliance",
+        "operationId": "validate_emissions_data_api_v1_compliance_validate_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "title": "Data"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/xbrl/validate": {
+      "post": {
+        "tags": [
+          "xbrl",
+          "export"
+        ],
+        "summary": "Validate Xbrl",
+        "description": "Validate XBRL document against schemas",
+        "operationId": "validate_xbrl_api_v1_xbrl_validate_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_validate_xbrl_api_v1_xbrl_validate_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/xbrl/generate": {
+      "post": {
+        "tags": [
+          "xbrl",
+          "export"
+        ],
+        "summary": "Generate Xbrl",
+        "description": "Generate XBRL document from data",
+        "operationId": "generate_xbrl_api_v1_xbrl_generate_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "template",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "emissions_report",
+              "title": "Template"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "title": "Data"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/scope3/calculate/{category}": {
+      "post": {
+        "tags": [
+          "scope3",
+          "emissions"
+        ],
+        "summary": "Calculate Category Emissions",
+        "description": "Calculate Scope 3 emissions for a specific category",
+        "operationId": "calculate_category_emissions_api_v1_scope3_calculate__category__post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "category",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Category"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__api__v1__endpoints__scope3__Scope3CalculationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/scope3/materiality-assessment": {
+      "post": {
+        "tags": [
+          "scope3",
+          "emissions"
+        ],
+        "summary": "Assess Materiality",
+        "description": "Assess materiality of Scope 3 categories",
+        "operationId": "assess_materiality_api_v1_scope3_materiality_assessment_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__api__v1__endpoints__scope3__MaterialityAssessmentRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/scope3/emission-factors/{category}": {
+      "get": {
+        "tags": [
+          "scope3",
+          "emissions"
+        ],
+        "summary": "Get Category Factors",
+        "description": "Get available emission factors for a category",
+        "operationId": "get_category_factors_api_v1_scope3_emission_factors__category__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "category",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Category"
+            }
+          },
+          {
+            "name": "calculation_method",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Calculation Method"
+            }
+          },
+          {
+            "name": "region",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Region"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/scope3/compliance-report/{standard}": {
+      "get": {
+        "tags": [
+          "scope3",
+          "emissions"
+        ],
+        "summary": "Generate Compliance Report",
+        "description": "Generate compliance report for specified standard",
+        "operationId": "generate_compliance_report_api_v1_scope3_compliance_report__standard__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "standard",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Standard"
+            }
+          },
+          {
+            "name": "reporting_period",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Reporting Period"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/esrs-e1/generate-xbrl": {
+      "post": {
+        "tags": [
+          "ESRS E1"
+        ],
+        "summary": "Generate Esrs E1 Xbrl",
+        "description": "Generate ESRS E1 compliant XBRL report",
+        "operationId": "generate_esrs_e1_xbrl_api_v1_esrs_e1_generate_xbrl_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "title": "Data"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/esrs-e1/validate": {
+      "post": {
+        "tags": [
+          "ESRS E1"
+        ],
+        "summary": "Validate Esrs E1",
+        "description": "Validate data against ESRS E1 requirements",
+        "operationId": "validate_esrs_e1_api_v1_esrs_e1_validate_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "title": "Data"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "title": "Response Validate Esrs E1 Api V1 Esrs E1 Validate Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/esrs-e1/analyze-climate-risks": {
+      "post": {
+        "tags": [
+          "ESRS E1"
+        ],
+        "summary": "Analyze Climate Risks",
+        "description": "Perform comprehensive climate risk analysis",
+        "operationId": "analyze_climate_risks_api_v1_esrs_e1_analyze_climate_risks_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "title": "Data"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "title": "Response Analyze Climate Risks Api V1 Esrs E1 Analyze Climate Risks Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/esrs-e1/generate-scenario-analysis": {
+      "post": {
+        "tags": [
+          "ESRS E1"
+        ],
+        "summary": "Generate Scenario Analysis",
+        "description": "Generate comprehensive scenario analysis",
+        "operationId": "generate_scenario_analysis_api_v1_esrs_e1_generate_scenario_analysis_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "title": "Data"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "title": "Response Generate Scenario Analysis Api V1 Esrs E1 Generate Scenario Analysis Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/esrs-e1/materiality-assessment": {
+      "post": {
+        "tags": [
+          "ESRS E1"
+        ],
+        "summary": "Perform Materiality Assessment",
+        "description": "Perform double materiality assessment for climate matters",
+        "operationId": "perform_materiality_assessment_api_v1_esrs_e1_materiality_assessment_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "title": "Data"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "title": "Response Perform Materiality Assessment Api V1 Esrs E1 Materiality Assessment Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/esrs-e1/export-ixbrl": {
+      "post": {
+        "tags": [
+          "ESRS E1"
+        ],
+        "summary": "Export Ixbrl",
+        "description": "Export ESRS E1 data as iXBRL - Wired to live database",
+        "operationId": "export_ixbrl_api_v1_esrs_e1_export_ixbrl_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "title": "Data"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/esrs-e1/benchmark-analysis": {
+      "post": {
+        "tags": [
+          "ESRS E1"
+        ],
+        "summary": "Export Ixbrl",
+        "description": "Export ESRS E1 data as iXBRL - Wired to live database",
+        "operationId": "export_ixbrl_api_v1_esrs_e1_benchmark_analysis_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "title": "Data"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/esrs-e1/reporting-templates": {
+      "get": {
+        "tags": [
+          "ESRS E1"
+        ],
+        "summary": "Get Reporting Templates",
+        "description": "Get ESRS E1 reporting templates and guidance",
+        "operationId": "get_reporting_templates_api_v1_esrs_e1_reporting_templates_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "title": "Response Get Reporting Templates Api V1 Esrs E1 Reporting Templates Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ghg/calculations/": {
+      "post": {
+        "tags": [
+          "ghg-protocol",
+          "scope3",
+          "calculations"
+        ],
+        "summary": "Create Calculation",
+        "description": "Submit a new GHG calculation request",
+        "operationId": "create_calculation_api_v1_ghg_calculations__post",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CalculationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CalculationResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "ghg-protocol",
+          "scope3",
+          "calculations"
+        ],
+        "summary": "List Calculations",
+        "description": "List calculations",
+        "operationId": "list_calculations_api_v1_ghg_calculations__get",
+        "parameters": [
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0,
+              "title": "Skip"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 100,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ghg/calculations/{calculation_id}": {
+      "get": {
+        "tags": [
+          "ghg-protocol",
+          "scope3",
+          "calculations"
+        ],
+        "summary": "Get Calculation",
+        "description": "Get calculation results",
+        "operationId": "get_calculation_api_v1_ghg_calculations__calculation_id__get",
+        "parameters": [
+          {
+            "name": "calculation_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Calculation Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ghg/emission-factors/": {
+      "get": {
+        "tags": [
+          "ghg-protocol",
+          "emission-factors"
+        ],
+        "summary": "Get Emission Factors",
+        "description": "Get emission factors",
+        "operationId": "get_emission_factors_api_v1_ghg_emission_factors__get",
+        "parameters": [
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/Scope3Category"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Category"
+            }
+          },
+          {
+            "name": "region",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Region"
+            }
+          },
+          {
+            "name": "year",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Year"
+            }
+          },
+          {
+            "name": "source",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/EmissionFactorSource"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Source"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Search"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 1000,
+              "minimum": 1,
+              "default": 100,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ghg/emission-factors/providers": {
+      "get": {
+        "tags": [
+          "ghg-protocol",
+          "emission-factors"
+        ],
+        "summary": "Get Providers",
+        "description": "Get available emission factor providers",
+        "operationId": "get_providers_api_v1_ghg_emission_factors_providers_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ghg/activity-data/": {
+      "get": {
+        "tags": [
+          "ghg-protocol",
+          "activity-data"
+        ],
+        "summary": "List Items",
+        "description": "List items",
+        "operationId": "list_items_api_v1_ghg_activity_data__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "ghg-protocol",
+          "activity-data"
+        ],
+        "summary": "Create Item",
+        "description": "Create item",
+        "operationId": "create_item_api_v1_ghg_activity_data__post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ghg/reports/": {
+      "get": {
+        "tags": [
+          "ghg-protocol",
+          "reports",
+          "cdp",
+          "tcfd"
+        ],
+        "summary": "List Items",
+        "description": "List items",
+        "operationId": "list_items_api_v1_ghg_reports__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "ghg-protocol",
+          "reports",
+          "cdp",
+          "tcfd"
+        ],
+        "summary": "Create Item",
+        "description": "Create item",
+        "operationId": "create_item_api_v1_ghg_reports__post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ghg/analytics/": {
+      "get": {
+        "tags": [
+          "ghg-protocol",
+          "analytics",
+          "insights"
+        ],
+        "summary": "List Items",
+        "description": "List items",
+        "operationId": "list_items_api_v1_ghg_analytics__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "ghg-protocol",
+          "analytics",
+          "insights"
+        ],
+        "summary": "Create Item",
+        "description": "Create item",
+        "operationId": "create_item_api_v1_ghg_analytics__post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ghg/inventory/": {
+      "get": {
+        "tags": [
+          "ghg-protocol",
+          "inventory"
+        ],
+        "summary": "List Items",
+        "description": "List items",
+        "operationId": "list_items_api_v1_ghg_inventory__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "ghg-protocol",
+          "inventory"
+        ],
+        "summary": "Create Item",
+        "description": "Create item",
+        "operationId": "create_item_api_v1_ghg_inventory__post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/stats": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Get Admin Stats",
+        "description": "Get admin statistics",
+        "operationId": "get_admin_stats_api_v1_admin_stats_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/": {
+      "get": {
+        "tags": [
+          "api"
+        ],
+        "summary": "Api Root",
+        "description": "API v1 root - provides API information and endpoint directory",
+        "operationId": "api_root_api_v1__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/status": {
+      "get": {
+        "tags": [
+          "api",
+          "monitoring"
+        ],
+        "summary": "Api Status",
+        "description": "Detailed API status with endpoint health information",
+        "operationId": "api_status_api_v1_status_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/endpoints": {
+      "get": {
+        "tags": [
+          "api"
+        ],
+        "summary": "List Endpoints",
+        "description": "List all registered endpoints with their status",
+        "operationId": "list_endpoints_api_v1_endpoints_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ghg-calculator/calculate": {
+      "post": {
+        "tags": [
+          "ghg-calculator"
+        ],
+        "summary": "Calculate Emissions",
+        "description": "Calculate GHG emissions with complete Scope 3 coverage for ESRS E1 compliance",
+        "operationId": "calculate_emissions_api_v1_ghg_calculator_calculate_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CalculateEmissionsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CalculateEmissionsResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ghg-calculator/health": {
+      "get": {
+        "tags": [
+          "ghg-calculator"
+        ],
+        "summary": "Health Check",
+        "description": "Health check endpoint",
+        "operationId": "health_check_api_v1_ghg_calculator_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ghg-calculator/activity-types": {
+      "get": {
+        "tags": [
+          "ghg-calculator"
+        ],
+        "summary": "Get Activity Types",
+        "description": "Get all supported activity types with enhanced metadata",
+        "operationId": "get_activity_types_api_v1_ghg_calculator_activity_types_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ghg-calculator/activity-categories": {
+      "get": {
+        "tags": [
+          "ghg-calculator"
+        ],
+        "summary": "Get Activity Categories",
+        "description": "Get activity types organized by Scope 3 categories",
+        "operationId": "get_activity_categories_api_v1_ghg_calculator_activity_categories_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ghg-calculator/test-calculation": {
+      "post": {
+        "tags": [
+          "ghg-calculator"
+        ],
+        "summary": "Test Calculation",
+        "description": "Test endpoint to verify emission calculations",
+        "operationId": "test_calculation_api_v1_ghg_calculator_test_calculation_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ghg-calculator/emission-factors": {
+      "get": {
+        "tags": [
+          "ghg-calculator"
+        ],
+        "summary": "Get Emission Factors",
+        "description": "Get all emission factors with enhanced metadata",
+        "operationId": "get_emission_factors_api_v1_ghg_calculator_emission_factors_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/verify/verify-access": {
+      "post": {
+        "tags": [
+          "voucher"
+        ],
+        "summary": "Verify Voucher Access",
+        "description": "Verify JWT token from voucher system",
+        "operationId": "verify_voucher_access_api_v1_verify_verify_access_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VoucherVerification"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerificationResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/export/ixbrl": {
+      "post": {
+        "summary": "Export Ixbrl Direct",
+        "description": "Direct iXBRL export endpoint that forwards to compliance export.\nThis matches the URL that the frontend is expecting.",
+        "operationId": "export_ixbrl_direct_api_v1_export_ixbrl_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "title": "Data"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ready": {
+      "get": {
+        "tags": [
+          "health",
+          "monitoring"
+        ],
+        "summary": "Readiness Check",
+        "description": "Kubernetes readiness probe - checks if API is ready to serve traffic",
+        "operationId": "readiness_check_api_v1_ready_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/": {
+      "get": {
+        "tags": [
+          "root"
+        ],
+        "summary": "Root",
+        "description": "Root endpoint - API information",
+        "operationId": "root__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "tags": [
+          "health"
+        ],
+        "summary": "Health Check",
+        "description": "Basic health check for load balancers",
+        "operationId": "health_check_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health/detailed": {
+      "get": {
+        "tags": [
+          "health"
+        ],
+        "summary": "Detailed Health Check",
+        "description": "Detailed health check with dependency status",
+        "operationId": "detailed_health_check_health_detailed_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "title": "Response Detailed Health Check Health Detailed Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/metrics": {
+      "get": {
+        "tags": [
+          "monitoring"
+        ],
+        "summary": "Metrics",
+        "description": "Prometheus-compatible metrics endpoint",
+        "operationId": "metrics_metrics_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/emissions": {
+      "get": {
+        "summary": "Get Emissions",
+        "description": "Temporary emissions endpoint",
+        "operationId": "get_emissions_api_v1_emissions_get",
+        "parameters": [
+          {
+            "name": "scope",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 3,
+              "title": "Scope"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/emissions/{emission_id}/evidence": {
+      "post": {
+        "summary": "Upload Evidence",
+        "description": "Temporary evidence upload endpoint",
+        "operationId": "upload_evidence_api_v1_emissions__emission_id__evidence_post",
+        "parameters": [
+          {
+            "name": "emission_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Emission Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/health": {
+      "get": {
+        "summary": "Api Health",
+        "operationId": "api_health_api_v1_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ActivityDataItem": {
+        "properties": {
+          "factor_name": {
+            "type": "string",
+            "title": "Factor Name"
+          },
+          "quantity": {
+            "type": "number",
+            "title": "Quantity"
+          },
+          "unit": {
+            "type": "string",
+            "title": "Unit"
+          },
+          "calculation_method": {
+            "type": "string",
+            "title": "Calculation Method",
+            "default": "activity_based"
+          },
+          "region": {
+            "type": "string",
+            "title": "Region"
+          },
+          "allocation_factor": {
+            "type": "number",
+            "title": "Allocation Factor",
+            "default": 1.0
+          }
+        },
+        "type": "object",
+        "required": [
+          "factor_name",
+          "quantity",
+          "unit"
+        ],
+        "title": "ActivityDataItem"
+      },
+      "ActivityDataPoint": {
+        "properties": {
+          "description": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Description"
+          },
+          "quantity": {
+            "type": "number",
+            "exclusiveMinimum": 0.0,
+            "title": "Quantity"
+          },
+          "unit": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 1,
+            "title": "Unit"
+          },
+          "location": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 100
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location"
+          },
+          "data_source": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Data Source"
+          },
+          "data_quality": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DataQualityIndicator"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "metadata": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "object",
+            "title": "Metadata"
+          }
+        },
+        "type": "object",
+        "required": [
+          "description",
+          "quantity",
+          "unit",
+          "data_source"
+        ],
+        "title": "ActivityDataPoint",
+        "description": "Single activity data point for calculations"
+      },
+      "Body_bulk_upload_emissions_api_v1_emissions_bulk_upload_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "format": "binary",
+            "title": "File"
+          }
+        },
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "title": "Body_bulk_upload_emissions_api_v1_emissions_bulk_upload_post"
+      },
+      "Body_calculate_emissions_advanced_api_v1_emissions_calculate_advanced_post": {
+        "properties": {
+          "activity_data": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Activity Data"
+          },
+          "calculation_options": {
+            "type": "object",
+            "title": "Calculation Options",
+            "default": {
+              "uncertainty_method": "monte_carlo",
+              "confidence_level": 95,
+              "include_uncertainty": true
+            }
+          }
+        },
+        "type": "object",
+        "required": [
+          "activity_data"
+        ],
+        "title": "Body_calculate_emissions_advanced_api_v1_emissions_calculate_advanced_post"
+      },
+      "Body_calculate_emissions_simple_api_v1_emissions_calculate_simple_post": {
+        "properties": {
+          "activity_value": {
+            "type": "number",
+            "title": "Activity Value"
+          },
+          "emission_factor": {
+            "type": "number",
+            "title": "Emission Factor"
+          },
+          "unit": {
+            "type": "string",
+            "title": "Unit",
+            "default": "kgCO2e"
+          },
+          "uncertainty_percent": {
+            "type": "number",
+            "title": "Uncertainty Percent",
+            "default": 10.0
+          }
+        },
+        "type": "object",
+        "required": [
+          "activity_value",
+          "emission_factor"
+        ],
+        "title": "Body_calculate_emissions_simple_api_v1_emissions_calculate_simple_post"
+      },
+      "Body_upload_evidence_api_v1_emissions_upload_evidence_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "format": "binary",
+            "title": "File"
+          },
+          "emission_id": {
+            "type": "integer",
+            "title": "Emission Id"
+          },
+          "evidence_type": {
+            "type": "string",
+            "title": "Evidence Type"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          }
+        },
+        "type": "object",
+        "required": [
+          "file",
+          "emission_id",
+          "evidence_type"
+        ],
+        "title": "Body_upload_evidence_api_v1_emissions_upload_evidence_post"
+      },
+      "Body_validate_xbrl_api_v1_xbrl_validate_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "format": "binary",
+            "title": "File"
+          }
+        },
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "title": "Body_validate_xbrl_api_v1_xbrl_validate_post"
+      },
+      "CalculateEmissionsRequest": {
+        "properties": {
+          "company_id": {
+            "type": "string",
+            "title": "Company Id",
+            "default": "default"
+          },
+          "reporting_period": {
+            "type": "string",
+            "title": "Reporting Period"
+          },
+          "emissions_data": {
+            "items": {
+              "$ref": "#/components/schemas/EmissionInput"
+            },
+            "type": "array",
+            "title": "Emissions Data"
+          },
+          "company_profile": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CompanyProfile"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "esrs_e1_data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ESRSE1Metadata"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "include_gas_breakdown": {
+            "type": "boolean",
+            "title": "Include Gas Breakdown",
+            "default": false
+          },
+          "include_uncertainty": {
+            "type": "boolean",
+            "title": "Include Uncertainty",
+            "description": "Include Monte Carlo uncertainty analysis",
+            "default": false
+          },
+          "monte_carlo_iterations": {
+            "type": "integer",
+            "title": "Monte Carlo Iterations",
+            "description": "Number of Monte Carlo iterations",
+            "default": 1000
+          }
+        },
+        "type": "object",
+        "required": [
+          "reporting_period",
+          "emissions_data"
+        ],
+        "title": "CalculateEmissionsRequest"
+      },
+      "CalculateEmissionsResponse": {
+        "properties": {
+          "total_emissions_kg_co2e": {
+            "type": "number",
+            "title": "Total Emissions Kg Co2E",
+            "description": "Total in kg CO2e"
+          },
+          "total_emissions_tco2e": {
+            "type": "number",
+            "title": "Total Emissions Tco2E",
+            "description": "Total in tonnes CO2e"
+          },
+          "scope1_emissions_tco2e": {
+            "type": "number",
+            "title": "Scope1 Emissions Tco2E",
+            "description": "Scope 1 in tCO2e"
+          },
+          "scope2_emissions_tco2e": {
+            "type": "number",
+            "title": "Scope2 Emissions Tco2E",
+            "description": "Scope 2 in tCO2e"
+          },
+          "scope3_emissions_tco2e": {
+            "type": "number",
+            "title": "Scope3 Emissions Tco2E",
+            "description": "Scope 3 in tCO2e"
+          },
+          "scope3_category_breakdown": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Scope3CategoryBreakdown"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Breakdown by category in tCO2e"
+          },
+          "breakdown": {
+            "items": {
+              "$ref": "#/components/schemas/EmissionBreakdown"
+            },
+            "type": "array",
+            "title": "Breakdown",
+            "description": "Detailed breakdown in kg"
+          },
+          "reporting_period": {
+            "type": "string",
+            "title": "Reporting Period"
+          },
+          "calculation_date": {
+            "type": "string",
+            "title": "Calculation Date"
+          },
+          "ghg_breakdown": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/GHGBreakdown"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "GHG breakdown in tonnes"
+          },
+          "esrs_e1_metadata": {
+            "anyOf": [
+              {
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Esrs E1 Metadata"
+          },
+          "energy_consumption": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EnergyConsumption"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "calculation_metadata": {
+            "anyOf": [
+              {
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Calculation Metadata"
+          },
+          "uncertainty_analysis": {
+            "anyOf": [
+              {
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Uncertainty Analysis"
+          },
+          "scope3_detailed": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "object"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Scope3 Detailed",
+            "description": "Detailed Scope 3 in tCO2e"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total_emissions_kg_co2e",
+          "total_emissions_tco2e",
+          "scope1_emissions_tco2e",
+          "scope2_emissions_tco2e",
+          "scope3_emissions_tco2e",
+          "breakdown",
+          "reporting_period",
+          "calculation_date"
+        ],
+        "title": "CalculateEmissionsResponse"
+      },
+      "CalculationRequest": {
+        "properties": {
+          "category": {
+            "$ref": "#/components/schemas/Scope3Category"
+          },
+          "methodology": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MethodologyType"
+              }
+            ],
+            "default": "hybrid"
+          },
+          "activity_data": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityDataPoint"
+            },
+            "type": "array",
+            "minItems": 1,
+            "title": "Activity Data"
+          },
+          "emission_factor_source": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/EmissionFactorSource"
+              }
+            ],
+            "default": "epa"
+          },
+          "reporting_period": {
+            "type": "string",
+            "format": "date",
+            "title": "Reporting Period"
+          },
+          "include_uncertainty": {
+            "type": "boolean",
+            "title": "Include Uncertainty",
+            "default": true
+          },
+          "temporal_resolution": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TemporalResolution"
+              }
+            ],
+            "default": "annual"
+          },
+          "custom_emission_factors": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Custom Emission Factors"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 1000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          }
+        },
+        "type": "object",
+        "required": [
+          "category",
+          "activity_data",
+          "reporting_period"
+        ],
+        "title": "CalculationRequest",
+        "description": "Request to calculate emissions for a category",
+        "example": {
+          "activity_data": [
+            {
+              "data_source": "Purchasing records",
+              "description": "Steel procurement",
+              "location": "US",
+              "quantity": 1000,
+              "unit": "kg"
+            }
+          ],
+          "category": "purchased_goods_and_services",
+          "emission_factor_source": "epa",
+          "include_uncertainty": true,
+          "methodology": "hybrid",
+          "reporting_period": "2024-01-01"
+        }
+      },
+      "CalculationResponse": {
+        "properties": {
+          "calculation_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Calculation Id"
+          },
+          "status": {
+            "type": "string",
+            "pattern": "^(processing|completed|failed)$",
+            "title": "Status"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "estimated_completion_time": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Estimated Completion Time"
+          }
+        },
+        "type": "object",
+        "required": [
+          "calculation_id",
+          "status",
+          "message"
+        ],
+        "title": "CalculationResponse",
+        "description": "Response for calculation submission"
+      },
+      "CheckoutRequest": {
+        "properties": {
+          "company_email": {
+            "type": "string",
+            "title": "Company Email"
+          },
+          "company_name": {
+            "type": "string",
+            "title": "Company Name"
+          },
+          "success_url": {
+            "type": "string",
+            "title": "Success Url"
+          },
+          "cancel_url": {
+            "type": "string",
+            "title": "Cancel Url"
+          },
+          "package_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Package Type",
+            "default": "single"
+          }
+        },
+        "type": "object",
+        "required": [
+          "company_email",
+          "company_name",
+          "success_url",
+          "cancel_url"
+        ],
+        "title": "CheckoutRequest"
+      },
+      "CheckoutResponse": {
+        "properties": {
+          "checkout_url": {
+            "type": "string",
+            "title": "Checkout Url"
+          },
+          "session_id": {
+            "type": "string",
+            "title": "Session Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "checkout_url",
+          "session_id"
+        ],
+        "title": "CheckoutResponse"
+      },
+      "ClimateActions": {
+        "properties": {
+          "reporting_year": {
+            "type": "integer",
+            "title": "Reporting Year",
+            "description": "Reporting year"
+          },
+          "capex_climate_eur": {
+            "type": "number",
+            "title": "Capex Climate Eur",
+            "description": "CapEx for climate mitigation/adaptation",
+            "default": 0
+          },
+          "opex_climate_eur": {
+            "type": "number",
+            "title": "Opex Climate Eur",
+            "description": "OpEx for climate mitigation/adaptation",
+            "default": 0
+          },
+          "total_climate_finance_eur": {
+            "type": "number",
+            "title": "Total Climate Finance Eur",
+            "description": "Total climate finance",
+            "default": 0
+          },
+          "fte_dedicated": {
+            "type": "number",
+            "title": "Fte Dedicated",
+            "description": "FTEs dedicated to climate actions",
+            "default": 0
+          },
+          "key_projects": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Key Projects",
+            "description": "Key climate projects"
+          }
+        },
+        "type": "object",
+        "required": [
+          "reporting_year"
+        ],
+        "title": "ClimateActions",
+        "description": "E1-3: Actions and resources related to climate change"
+      },
+      "ClimatePolicy": {
+        "properties": {
+          "has_climate_policy": {
+            "type": "boolean",
+            "title": "Has Climate Policy",
+            "default": false
+          },
+          "policy_adoption_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Policy Adoption Date"
+          },
+          "policy_document_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Policy Document Url"
+          },
+          "policy_description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Policy Description"
+          },
+          "net_zero_target_year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Net Zero Target Year"
+          },
+          "interim_targets": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Interim Targets"
+          },
+          "board_oversight": {
+            "type": "boolean",
+            "title": "Board Oversight",
+            "default": false
+          },
+          "executive_compensation_linked": {
+            "type": "boolean",
+            "title": "Executive Compensation Linked",
+            "default": false
+          },
+          "covers_value_chain": {
+            "type": "boolean",
+            "title": "Covers Value Chain",
+            "default": false
+          }
+        },
+        "type": "object",
+        "title": "ClimatePolicy",
+        "description": "E1-2: Climate change mitigation and adaptation policies"
+      },
+      "CompanyProfile": {
+        "properties": {
+          "sector": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sector",
+            "description": "manufacturing/services/retail/technology/energy"
+          },
+          "revenue": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Revenue",
+            "description": "Annual revenue in EUR"
+          },
+          "employees": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Employees",
+            "description": "Number of employees"
+          },
+          "facility_size": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Facility Size",
+            "description": "m² of facilities"
+          },
+          "supply_chain_spend": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Supply Chain Spend",
+            "description": "Annual procurement spend"
+          },
+          "capital_expenditure": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Capital Expenditure",
+            "description": "Annual CapEx"
+          },
+          "has_manufacturing": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Has Manufacturing",
+            "default": false
+          },
+          "has_fleet": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Has Fleet",
+            "default": false
+          },
+          "business_travel_km": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Business Travel Km"
+          },
+          "product_sales_units": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Product Sales Units",
+            "description": "Units of products sold"
+          },
+          "average_product_lifetime_years": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Average Product Lifetime Years"
+          },
+          "waste_tonnes": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Waste Tonnes"
+          },
+          "investments_eur": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Investments Eur"
+          },
+          "leased_assets_value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Leased Assets Value"
+          },
+          "franchises_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Franchises Count"
+          }
+        },
+        "type": "object",
+        "title": "CompanyProfile",
+        "description": "Company profile for enhanced Scope 3 calculations"
+      },
+      "DataQualityIndicator": {
+        "properties": {
+          "reliability": {
+            "$ref": "#/components/schemas/DataQualityScore"
+          },
+          "completeness": {
+            "$ref": "#/components/schemas/DataQualityScore"
+          },
+          "temporal_correlation": {
+            "$ref": "#/components/schemas/DataQualityScore"
+          },
+          "geographical_correlation": {
+            "$ref": "#/components/schemas/DataQualityScore"
+          },
+          "technological_correlation": {
+            "$ref": "#/components/schemas/DataQualityScore"
+          }
+        },
+        "type": "object",
+        "required": [
+          "reliability",
+          "completeness",
+          "temporal_correlation",
+          "geographical_correlation",
+          "technological_correlation"
+        ],
+        "title": "DataQualityIndicator",
+        "description": "Pedigree matrix for data quality assessment"
+      },
+      "DataQualityScore": {
+        "type": "integer",
+        "enum": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "title": "DataQualityScore",
+        "description": "Data quality scoring per GHG Protocol"
+      },
+      "ESRSE1Metadata": {
+        "properties": {
+          "energy_consumption": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EnergyConsumption"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "ghg_breakdown": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/GHGBreakdown"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "internal_carbon_pricing": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/InternalCarbonPricing"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "climate_policy": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ClimatePolicy"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "climate_actions": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ClimateActions"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "title": "ESRSE1Metadata",
+        "description": "Complete ESRS E1 metadata structure"
+      },
+      "EmissionBreakdown": {
+        "properties": {
+          "activity_type": {
+            "type": "string",
+            "title": "Activity Type"
+          },
+          "scope": {
+            "type": "string",
+            "title": "Scope"
+          },
+          "emissions_kg_co2e": {
+            "type": "number",
+            "title": "Emissions Kg Co2E"
+          },
+          "unit": {
+            "type": "string",
+            "title": "Unit"
+          },
+          "calculation_method": {
+            "type": "string",
+            "title": "Calculation Method"
+          },
+          "gas_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gas Type",
+            "default": "CO2"
+          },
+          "gas_amount_tonnes": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gas Amount Tonnes"
+          },
+          "scope3_category": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Scope3 Category"
+          }
+        },
+        "type": "object",
+        "required": [
+          "activity_type",
+          "scope",
+          "emissions_kg_co2e",
+          "unit",
+          "calculation_method"
+        ],
+        "title": "EmissionBreakdown"
+      },
+      "EmissionCreate": {
+        "properties": {
+          "scope": {
+            "type": "integer",
+            "maximum": 3.0,
+            "minimum": 1.0,
+            "title": "Scope",
+            "description": "GHG Protocol emission scope. 1 = Direct emissions (fuel combustion, company vehicles). 2 = Indirect emissions (purchased electricity). 3 = Value chain emissions.",
+            "example": 2
+          },
+          "category": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Category",
+            "description": "Emission category as defined in the emission factors database. Must match exactly. Examples: 'Purchased Electricity', 'Mobile Combustion', 'Stationary Combustion'.",
+            "example": "Purchased Electricity"
+          },
+          "activity_type": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Activity Type",
+            "description": "Specific activity type within the category. Must match an entry in the emission factors database. Examples: 'Electricity', 'Diesel', 'Natural Gas'.",
+            "example": "Electricity"
+          },
+          "activity_data": {
+            "type": "number",
+            "exclusiveMinimum": 0.0,
+            "title": "Activity Data",
+            "description": "Quantity of the activity. The unit must match the emission factor's expected unit (e.g., kWh for electricity, liters for diesel).",
+            "example": 10000.0
+          },
+          "unit": {
+            "type": "string",
+            "maxLength": 20,
+            "minLength": 1,
+            "title": "Unit",
+            "description": "Unit of measurement for activity_data. Must be consistent with the emission factor. Common units: 'kWh', 'liters', 'kg', 'm³', 'km'.",
+            "example": "kWh"
+          },
+          "country_code": {
+            "type": "string",
+            "maxLength": 10,
+            "minLength": 2,
+            "title": "Country Code",
+            "description": "ISO 3166-1 alpha-2 country code for region-specific emission factors. Use 'GLOBAL' for generic factors. Examples: 'DE' (Germany), 'FR' (France), 'US' (United States), 'GB' (United Kingdom).",
+            "default": "GLOBAL",
+            "example": "DE"
+          },
+          "emission_factor": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Emission Factor",
+            "description": "Manual emission factor override in kgCO2e per unit. If provided, bypasses database lookup. Use only when you have a verified custom factor.",
+            "example": 0.4
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description",
+            "description": "Human-readable description of this emission entry. Useful for audit trails and reporting.",
+            "example": "Office building electricity consumption Q1 2024"
+          },
+          "location": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 200
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location",
+            "description": "Physical location or facility name associated with this emission.",
+            "example": "Berlin HQ - Building A"
+          },
+          "data_source": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 100
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data Source",
+            "description": "Source of the activity data. Examples: 'Utility Invoice', 'Meter Reading', 'Estimate'.",
+            "example": "Utility Invoice"
+          },
+          "calculation_method": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 50
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Calculation Method",
+            "description": "Method used for calculation. Values: 'activity_based', 'spend_based', 'average_data'.",
+            "example": "activity_based"
+          },
+          "data_quality_score": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 100.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data Quality Score",
+            "description": "Data quality score from 0-100 based on GHG Protocol guidance. Higher is better. Considers temporal, geographical, technological representativeness.",
+            "example": 85.0
+          },
+          "reporting_period": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 20
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reporting Period",
+            "description": "Reporting period identifier. Format: 'YYYY' for annual, 'YYYY-QN' for quarterly, 'YYYY-MM' for monthly.",
+            "example": "2024-Q1"
+          }
+        },
+        "type": "object",
+        "required": [
+          "scope",
+          "category",
+          "activity_type",
+          "activity_data",
+          "unit"
+        ],
+        "title": "EmissionCreate",
+        "description": "Schema for creating a new emission record.\n\nThe API will automatically look up the appropriate emission factor from the\ndatabase based on scope, category, activity_type, and country_code.\nIf no matching factor is found, a 422 error is returned.",
+        "example": {
+          "activity_data": 10000.0,
+          "activity_type": "Electricity",
+          "category": "Purchased Electricity",
+          "country_code": "DE",
+          "data_source": "Utility Invoice",
+          "description": "Office building electricity consumption Q1 2024",
+          "location": "Berlin HQ - Building A",
+          "reporting_period": "2024-Q1",
+          "scope": 2,
+          "unit": "kWh"
+        }
+      },
+      "EmissionFactorSource": {
+        "type": "string",
+        "enum": [
+          "epa",
+          "defra",
+          "ipcc",
+          "ecoinvent",
+          "iea",
+          "custom",
+          "supplier_specific"
+        ],
+        "title": "EmissionFactorSource",
+        "description": "Emission factor data sources"
+      },
+      "EmissionInput": {
+        "properties": {
+          "activity_type": {
+            "type": "string",
+            "title": "Activity Type"
+          },
+          "amount": {
+            "type": "number",
+            "exclusiveMinimum": 0.0,
+            "title": "Amount"
+          },
+          "unit": {
+            "type": "string",
+            "title": "Unit"
+          },
+          "uncertainty_percentage": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Uncertainty Percentage",
+            "default": 10.0
+          },
+          "gas_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gas Type",
+            "default": "CO2"
+          },
+          "custom_factor": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Custom Factor"
+          }
+        },
+        "type": "object",
+        "required": [
+          "activity_type",
+          "amount",
+          "unit"
+        ],
+        "title": "EmissionInput"
+      },
+      "EmissionResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id",
+            "description": "Unique identifier for this emission record.",
+            "example": 1
+          },
+          "scope": {
+            "type": "integer",
+            "title": "Scope",
+            "description": "GHG Protocol emission scope (1, 2, or 3).",
+            "example": 2
+          },
+          "category": {
+            "type": "string",
+            "title": "Category",
+            "description": "Emission category.",
+            "example": "Purchased Electricity"
+          },
+          "activity_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Activity Type",
+            "description": "Specific activity type within the category.",
+            "example": "Electricity"
+          },
+          "activity_data": {
+            "type": "number",
+            "title": "Activity Data",
+            "description": "Quantity of the activity.",
+            "example": 10000.0
+          },
+          "unit": {
+            "type": "string",
+            "title": "Unit",
+            "description": "Unit of measurement for activity_data.",
+            "example": "kWh"
+          },
+          "country_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Country Code",
+            "description": "ISO 3166-1 alpha-2 country code used for factor lookup.",
+            "example": "DE"
+          },
+          "emission_factor": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Emission Factor",
+            "description": "Emission factor used for calculation in kgCO2e per unit.",
+            "example": 0.35
+          },
+          "amount": {
+            "type": "number",
+            "title": "Amount",
+            "description": "Calculated emission amount in tonnes CO2 equivalent (tCO2e). This is the primary result of the calculation.",
+            "example": 3.5
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description",
+            "description": "Human-readable description of this emission entry.",
+            "example": "Office building electricity consumption Q1 2024"
+          },
+          "location": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location",
+            "description": "Physical location or facility name.",
+            "example": "Berlin HQ - Building A"
+          },
+          "data_quality_score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data Quality Score",
+            "description": "Data quality score from 0-100.",
+            "example": 85.0
+          },
+          "uncertainty_percentage": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Uncertainty Percentage",
+            "description": "Uncertainty percentage for the calculated emission (±%).",
+            "example": 10.0
+          },
+          "created_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created At",
+            "description": "Timestamp when this record was created (UTC).",
+            "example": "2024-03-15T10:30:00Z"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At",
+            "description": "Timestamp when this record was last updated (UTC).",
+            "example": "2024-03-15T10:30:00Z"
+          },
+          "user_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "User Id",
+            "description": "ID of the user who created this record.",
+            "example": 1
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "scope",
+          "category",
+          "activity_data",
+          "unit",
+          "amount"
+        ],
+        "title": "EmissionResponse",
+        "description": "Schema for emission record responses.\n\nContains the calculated emission amount and all associated metadata.\nThe 'amount' field contains the calculated CO2e in tonnes (tCO2e).",
+        "example": {
+          "activity_data": 10000.0,
+          "activity_type": "Electricity",
+          "amount": 3.5,
+          "category": "Purchased Electricity",
+          "country_code": "DE",
+          "created_at": "2024-03-15T10:30:00Z",
+          "data_quality_score": 85.0,
+          "description": "Office building electricity consumption Q1 2024",
+          "emission_factor": 0.35,
+          "id": 1,
+          "location": "Berlin HQ - Building A",
+          "scope": 2,
+          "uncertainty_percentage": 10.0,
+          "unit": "kWh",
+          "updated_at": "2024-03-15T10:30:00Z",
+          "user_id": 1
+        }
+      },
+      "EmissionUpdate": {
+        "properties": {
+          "scope": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 3.0,
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Scope",
+            "description": "GHG Protocol emission scope (1, 2, or 3).",
+            "example": 2
+          },
+          "category": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 100
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category",
+            "description": "Emission category. Must match an entry in the emission factors database.",
+            "example": "Purchased Electricity"
+          },
+          "activity_type": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 100
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Activity Type",
+            "description": "Specific activity type within the category.",
+            "example": "Electricity"
+          },
+          "activity_data": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Activity Data",
+            "description": "Quantity of the activity. Updating this will trigger recalculation.",
+            "example": 12000.0
+          },
+          "unit": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 20
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit",
+            "description": "Unit of measurement for activity_data.",
+            "example": "kWh"
+          },
+          "country_code": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 10
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Country Code",
+            "description": "ISO 3166-1 alpha-2 country code.",
+            "example": "DE"
+          },
+          "emission_factor": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Emission Factor",
+            "description": "Manual emission factor override in kgCO2e per unit.",
+            "example": 0.4
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description",
+            "description": "Human-readable description of this emission entry.",
+            "example": "Updated: Office building electricity consumption Q1 2024"
+          },
+          "location": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 200
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location",
+            "description": "Physical location or facility name.",
+            "example": "Berlin HQ - Building A"
+          },
+          "data_source": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 100
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data Source",
+            "description": "Source of the activity data.",
+            "example": "Utility Invoice"
+          }
+        },
+        "type": "object",
+        "title": "EmissionUpdate",
+        "description": "Schema for updating an existing emission record.\n\nAll fields are optional. Only provided fields will be updated.\nThe emission amount will be automatically recalculated if activity_data\nor emission_factor changes.",
+        "example": {
+          "activity_data": 12000.0,
+          "description": "Updated: Office building electricity consumption Q1 2024"
+        }
+      },
+      "EmissionsSummary": {
+        "properties": {
+          "scope1_total": {
+            "type": "number",
+            "title": "Scope1 Total",
+            "description": "Total Scope 1 emissions in tCO2e (direct emissions).",
+            "default": 0,
+            "example": 125.5
+          },
+          "scope2_total": {
+            "type": "number",
+            "title": "Scope2 Total",
+            "description": "Total Scope 2 emissions in tCO2e (purchased energy).",
+            "default": 0,
+            "example": 89.3
+          },
+          "scope3_total": {
+            "type": "number",
+            "title": "Scope3 Total",
+            "description": "Total Scope 3 emissions in tCO2e (value chain).",
+            "default": 0,
+            "example": 456.2
+          },
+          "total_emissions": {
+            "type": "number",
+            "title": "Total Emissions",
+            "description": "Total emissions across all scopes in tCO2e.",
+            "default": 0,
+            "example": 671.0
+          },
+          "by_category": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "type": "object",
+            "title": "By Category",
+            "description": "Emissions breakdown by category in tCO2e. Keys are category names, values are totals.",
+            "example": {
+              "Business Travel": 200.0,
+              "Mobile Combustion": 125.5,
+              "Purchased Electricity": 89.3
+            }
+          }
+        },
+        "type": "object",
+        "title": "EmissionsSummary",
+        "description": "Schema for aggregated emissions summary.\n\nProvides totals by scope and category breakdown for dashboard displays\nand regulatory reporting.",
+        "example": {
+          "by_category": {
+            "Business Travel": 200.0,
+            "Mobile Combustion": 125.5,
+            "Purchased Electricity": 89.3,
+            "Purchased Goods": 256.2
+          },
+          "scope1_total": 125.5,
+          "scope2_total": 89.3,
+          "scope3_total": 456.2,
+          "total_emissions": 671.0
+        }
+      },
+      "EnergyConsumption": {
+        "properties": {
+          "total_energy_mwh": {
+            "type": "number",
+            "title": "Total Energy Mwh",
+            "description": "Total energy consumption in MWh",
+            "default": 0
+          },
+          "electricity_mwh": {
+            "type": "number",
+            "title": "Electricity Mwh",
+            "description": "Electricity consumption",
+            "default": 0
+          },
+          "heating_cooling_mwh": {
+            "type": "number",
+            "title": "Heating Cooling Mwh",
+            "description": "Heating and cooling consumption",
+            "default": 0
+          },
+          "steam_mwh": {
+            "type": "number",
+            "title": "Steam Mwh",
+            "description": "Steam consumption",
+            "default": 0
+          },
+          "fuel_combustion_mwh": {
+            "type": "number",
+            "title": "Fuel Combustion Mwh",
+            "description": "Fuel combustion for energy",
+            "default": 0
+          },
+          "renewable_energy_mwh": {
+            "type": "number",
+            "title": "Renewable Energy Mwh",
+            "description": "Renewable energy consumption",
+            "default": 0
+          },
+          "renewable_percentage": {
+            "type": "number",
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Renewable Percentage",
+            "description": "Percentage renewable",
+            "default": 0
+          },
+          "energy_intensity_value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Energy Intensity Value"
+          },
+          "energy_intensity_unit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Energy Intensity Unit",
+            "default": "MWh/million_EUR"
+          },
+          "by_source": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "number"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "By Source"
+          }
+        },
+        "type": "object",
+        "title": "EnergyConsumption",
+        "description": "E1-5: Energy consumption and mix"
+      },
+      "GHGBreakdown": {
+        "properties": {
+          "CO2_tonnes": {
+            "type": "number",
+            "title": "Co2 Tonnes",
+            "description": "CO2 emissions in tonnes",
+            "default": 0
+          },
+          "CH4_tonnes": {
+            "type": "number",
+            "title": "Ch4 Tonnes",
+            "description": "CH4 emissions in tonnes",
+            "default": 0
+          },
+          "N2O_tonnes": {
+            "type": "number",
+            "title": "N2O Tonnes",
+            "description": "N2O emissions in tonnes",
+            "default": 0
+          },
+          "HFCs_tonnes_co2e": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hfcs Tonnes Co2E",
+            "description": "HFCs in tonnes CO2e",
+            "default": 0
+          },
+          "PFCs_tonnes_co2e": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pfcs Tonnes Co2E",
+            "description": "PFCs in tonnes CO2e",
+            "default": 0
+          },
+          "SF6_tonnes": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sf6 Tonnes",
+            "description": "SF6 in tonnes",
+            "default": 0
+          },
+          "NF3_tonnes": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nf3 Tonnes",
+            "description": "NF3 in tonnes",
+            "default": 0
+          },
+          "total_co2e": {
+            "type": "number",
+            "title": "Total Co2E",
+            "description": "Total CO2 equivalent",
+            "default": 0
+          },
+          "gwp_version": {
+            "type": "string",
+            "title": "Gwp Version",
+            "description": "GWP version used (AR6/AR5)",
+            "default": "AR6"
+          }
+        },
+        "type": "object",
+        "title": "GHGBreakdown",
+        "description": "Detailed GHG breakdown by gas type per ESRS E1"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "InternalCarbonPricing": {
+        "properties": {
+          "implemented": {
+            "type": "boolean",
+            "title": "Implemented",
+            "description": "Whether internal carbon pricing is implemented",
+            "default": false
+          },
+          "price_per_tco2e": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price Per Tco2E",
+            "description": "Price per tonne CO2e"
+          },
+          "currency": {
+            "type": "string",
+            "title": "Currency",
+            "description": "Currency for carbon price",
+            "default": "EUR"
+          },
+          "coverage_scope1": {
+            "type": "boolean",
+            "title": "Coverage Scope1",
+            "description": "Applies to Scope 1",
+            "default": false
+          },
+          "coverage_scope2": {
+            "type": "boolean",
+            "title": "Coverage Scope2",
+            "description": "Applies to Scope 2",
+            "default": false
+          },
+          "coverage_scope3_categories": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Coverage Scope3 Categories",
+            "description": "Scope 3 categories covered"
+          },
+          "pricing_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pricing Type",
+            "description": "shadow/internal/implicit"
+          },
+          "total_revenue_generated": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Total Revenue Generated",
+            "description": "Revenue from carbon pricing",
+            "default": 0
+          },
+          "revenue_allocation": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Revenue Allocation"
+          }
+        },
+        "type": "object",
+        "title": "InternalCarbonPricing",
+        "description": "E1-8: Internal carbon pricing mechanism"
+      },
+      "LoginRequest": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "title": "Email"
+          },
+          "password": {
+            "type": "string",
+            "title": "Password"
+          }
+        },
+        "type": "object",
+        "required": [
+          "email",
+          "password"
+        ],
+        "title": "LoginRequest"
+      },
+      "LoginResponse": {
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "title": "Access Token"
+          },
+          "token_type": {
+            "type": "string",
+            "title": "Token Type",
+            "default": "bearer"
+          }
+        },
+        "type": "object",
+        "required": [
+          "access_token"
+        ],
+        "title": "LoginResponse"
+      },
+      "MethodologyType": {
+        "type": "string",
+        "enum": [
+          "activity_based",
+          "spend_based",
+          "hybrid",
+          "average_data",
+          "supplier_specific"
+        ],
+        "title": "MethodologyType",
+        "description": "Calculation methodology approaches"
+      },
+      "Scope3Category": {
+        "type": "string",
+        "enum": [
+          "category_1",
+          "category_2",
+          "category_3",
+          "category_4",
+          "category_5",
+          "category_6",
+          "category_7",
+          "category_8",
+          "category_9",
+          "category_10",
+          "category_11",
+          "category_12",
+          "category_13",
+          "category_14",
+          "category_15"
+        ],
+        "title": "Scope3Category",
+        "description": "15 Scope 3 Categories per GHG Protocol"
+      },
+      "Scope3CategoryBreakdown": {
+        "properties": {
+          "category_1": {
+            "type": "number",
+            "title": "Category 1",
+            "description": "Purchased goods and services",
+            "default": 0
+          },
+          "category_2": {
+            "type": "number",
+            "title": "Category 2",
+            "description": "Capital goods",
+            "default": 0
+          },
+          "category_3": {
+            "type": "number",
+            "title": "Category 3",
+            "description": "Fuel and energy related activities",
+            "default": 0
+          },
+          "category_4": {
+            "type": "number",
+            "title": "Category 4",
+            "description": "Upstream transportation",
+            "default": 0
+          },
+          "category_5": {
+            "type": "number",
+            "title": "Category 5",
+            "description": "Waste generated",
+            "default": 0
+          },
+          "category_6": {
+            "type": "number",
+            "title": "Category 6",
+            "description": "Business travel",
+            "default": 0
+          },
+          "category_7": {
+            "type": "number",
+            "title": "Category 7",
+            "description": "Employee commuting",
+            "default": 0
+          },
+          "category_8": {
+            "type": "number",
+            "title": "Category 8",
+            "description": "Upstream leased assets",
+            "default": 0
+          },
+          "category_9": {
+            "type": "number",
+            "title": "Category 9",
+            "description": "Downstream transportation",
+            "default": 0
+          },
+          "category_10": {
+            "type": "number",
+            "title": "Category 10",
+            "description": "Processing of sold products",
+            "default": 0
+          },
+          "category_11": {
+            "type": "number",
+            "title": "Category 11",
+            "description": "Use of sold products",
+            "default": 0
+          },
+          "category_12": {
+            "type": "number",
+            "title": "Category 12",
+            "description": "End-of-life treatment",
+            "default": 0
+          },
+          "category_13": {
+            "type": "number",
+            "title": "Category 13",
+            "description": "Downstream leased assets",
+            "default": 0
+          },
+          "category_14": {
+            "type": "number",
+            "title": "Category 14",
+            "description": "Franchises",
+            "default": 0
+          },
+          "category_15": {
+            "type": "number",
+            "title": "Category 15",
+            "description": "Investments",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "title": "Scope3CategoryBreakdown",
+        "description": "Breakdown of Scope 3 emissions by category"
+      },
+      "TemporalResolution": {
+        "type": "string",
+        "enum": [
+          "annual",
+          "quarterly",
+          "monthly",
+          "daily"
+        ],
+        "title": "TemporalResolution",
+        "description": "Time granularity for calculations"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
+      "VerificationResponse": {
+        "properties": {
+          "valid": {
+            "type": "boolean",
+            "title": "Valid"
+          },
+          "email": {
+            "type": "string",
+            "title": "Email"
+          },
+          "company": {
+            "type": "string",
+            "title": "Company"
+          },
+          "packageType": {
+            "type": "string",
+            "title": "Packagetype"
+          },
+          "expiresAt": {
+            "type": "integer",
+            "title": "Expiresat"
+          },
+          "error": {
+            "type": "string",
+            "title": "Error"
+          }
+        },
+        "type": "object",
+        "required": [
+          "valid"
+        ],
+        "title": "VerificationResponse"
+      },
+      "VoucherVerification": {
+        "properties": {
+          "token": {
+            "type": "string",
+            "title": "Token"
+          },
+          "code": {
+            "type": "string",
+            "title": "Code"
+          }
+        },
+        "type": "object",
+        "required": [
+          "token",
+          "code"
+        ],
+        "title": "VoucherVerification"
+      },
+      "app__api__v1__endpoints__emissions__MaterialityAssessmentRequest": {
+        "properties": {
+          "sector": {
+            "type": "string",
+            "title": "Sector"
+          },
+          "annual_revenue": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Annual Revenue"
+          },
+          "current_emissions": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "number"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Emissions"
+          }
+        },
+        "type": "object",
+        "required": [
+          "sector"
+        ],
+        "title": "MaterialityAssessmentRequest"
+      },
+      "app__api__v1__endpoints__emissions__Scope3CalculationRequest": {
+        "properties": {
+          "category": {
+            "type": "string",
+            "title": "Category"
+          },
+          "activity_data": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Activity Data"
+          },
+          "reporting_period": {
+            "type": "string",
+            "title": "Reporting Period"
+          }
+        },
+        "type": "object",
+        "required": [
+          "category",
+          "activity_data",
+          "reporting_period"
+        ],
+        "title": "Scope3CalculationRequest"
+      },
+      "app__api__v1__endpoints__scope3__MaterialityAssessmentRequest": {
+        "properties": {
+          "sector": {
+            "type": "string",
+            "title": "Sector"
+          },
+          "total_emissions": {
+            "type": "number",
+            "title": "Total Emissions"
+          },
+          "category_emissions": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "type": "object",
+            "title": "Category Emissions"
+          }
+        },
+        "type": "object",
+        "required": [
+          "sector"
+        ],
+        "title": "MaterialityAssessmentRequest"
+      },
+      "app__api__v1__endpoints__scope3__Scope3CalculationRequest": {
+        "properties": {
+          "category": {
+            "type": "string",
+            "title": "Category"
+          },
+          "activity_data": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityDataItem"
+            },
+            "type": "array",
+            "title": "Activity Data"
+          },
+          "reporting_period": {
+            "type": "string",
+            "title": "Reporting Period"
+          }
+        },
+        "type": "object",
+        "required": [
+          "category",
+          "activity_data",
+          "reporting_period"
+        ],
+        "title": "Scope3CalculationRequest"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8000",
+      "description": "Local Development Server"
+    },
+    {
+      "url": "https://api.factortrace.com",
+      "description": "Production Server"
+    },
+    {
+      "url": "https://staging-api.factortrace.com",
+      "description": "Staging Server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Authentication",
+      "description": "User authentication and token management"
+    },
+    {
+      "name": "Emissions",
+      "description": "Core emission tracking and calculation endpoints. Create, read, update, and delete emission records with automatic CO2e calculation."
+    },
+    {
+      "name": "Emission Factors",
+      "description": "Manage emission factors database. Search and retrieve region-specific emission factors."
+    },
+    {
+      "name": "Reports",
+      "description": "Generate compliance reports for ESRS, CDP, TCFD, and SBTi standards."
+    },
+    {
+      "name": "ESRS E1",
+      "description": "European Sustainability Reporting Standards (ESRS) E1 Climate Change disclosures and iXBRL export."
+    },
+    {
+      "name": "Scope 3",
+      "description": "Advanced Scope 3 value chain emissions calculation with category-specific methodologies."
+    },
+    {
+      "name": "Data Quality",
+      "description": "Data quality scoring and uncertainty analysis per GHG Protocol guidance."
+    },
+    {
+      "name": "Health",
+      "description": "API health and status endpoints"
+    }
+  ]
+}

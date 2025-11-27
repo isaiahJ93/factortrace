@@ -4854,7 +4854,17 @@ def add_targets_section(parent: ET.Element, data: Dict[str, Any]) -> None:
             )
 
 def add_energy_consumption_section_enhanced(parent: ET.Element, data: Dict[str, Any]) -> None:
-    """Add E1-5 energy consumption and mix section"""
+    """Add E1-5 energy consumption and mix section
+
+    # TODO: Verify against EFRAG Taxonomy - Energy consumption tags used:
+    # - esrs:EnergyConsumptionRelatedToOwnOperations
+    # - esrs:EnergyConsumptionFromRenewableSources
+    # - esrs:PercentageOfRenewableSourcesInTotalEnergyConsumption
+    # - esrs:ElectricityConsumption
+    # - esrs:HeatingCoolingConsumption
+    # - esrs:SteamConsumption
+    # - esrs:FuelCombustionConsumption
+    """
     energy_section = ET.SubElement(parent, 'section', {
         'class': 'energy-consumption',
         'id': 'energy'
@@ -4993,7 +5003,17 @@ def add_energy_consumption_section_enhanced(parent: ET.Element, data: Dict[str, 
         p_intensity.tail = f' {energy_data.get("energy_intensity_unit", "MWh/million EUR")}'
 
 def add_ghg_emissions_section(parent: ET.Element, data: Dict[str, Any]) -> None:
-    """Add E1-6 GHG emissions section with complete breakdown"""
+    """Add E1-6 GHG emissions section with complete breakdown
+
+    Uses Official EFRAG Taxonomy tags (updated 2024-11):
+    - esrs:GrossScope1GreenhouseGasEmissions
+    - esrs:GrossLocationBasedScope2GreenhouseGasEmissions
+    - esrs:GrossMarketBasedScope2GreenhouseGasEmissions
+    - esrs:GrossScope3GreenhouseGasEmissions
+    - esrs:GrossGreenhouseGasEmissions
+
+    # TODO: Verify intensity ratio tags against EFRAG Taxonomy
+    """
     emissions_section = ET.SubElement(parent, 'section', {
         'class': 'ghg-emissions',
         'id': 'emissions'
@@ -5451,7 +5471,12 @@ def add_carbon_pricing_section_enhanced(parent: ET.Element, data: Dict[str, Any]
                 )
 
 def add_e1_9_financial_effects_section(parent: ET.Element, data: Dict[str, Any]) -> None:
-    """Add E1-9 financial effects section"""
+    """Add E1-9 financial effects section
+
+    # TODO: Verify against EFRAG Taxonomy - Financial effects tags used:
+    # - esrs:PhysicalRisksFinancialImpact
+    # - esrs:OpportunitiesFinancialImpact
+    """
     section = ET.SubElement(parent, 'section', {
         'class': 'financial-effects',
         'id': 'financial'
