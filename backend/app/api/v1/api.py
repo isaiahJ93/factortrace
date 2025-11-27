@@ -326,7 +326,7 @@ async def api_root():
             "failed": total_endpoints - active_endpoints
         },
         "available_endpoints": active_endpoint_list,
-        "documentation": "/docs" if settings.ENVIRONMENT != "production" else None,
+        "documentation": "/docs" if settings.environment != "production" else None,
         "support": "support@factortrace.com"
     }
 @api_router.get("/status", tags=["api", "monitoring"])
@@ -357,7 +357,7 @@ async def api_status():
         "health_score": round(health_score, 2),
         "timestamp": datetime.utcnow().isoformat(),
         "api_version": settings.VERSION,
-        "environment": settings.ENVIRONMENT,
+        "environment": settings.environment,
         "endpoints": {
             "summary": {
                 "total": total_endpoints,

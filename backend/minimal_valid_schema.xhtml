@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:ix="http://www.xbrl.org/2013/inlineXBRL"
+      xmlns:xbrli="http://www.xbrl.org/2003/instance"
+      xmlns:link="http://www.xbrl.org/2003/linkbase"
+      xmlns:xlink="http://www.w3.org/1999/xlink"
+      xmlns:us-gaap="http://fasb.org/us-gaap/2021-01-31">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Test iXBRL</title>
+</head>
+<body>
+    <h1>Test Report</h1>
+    <p>Assets: <ix:nonFraction name="us-gaap:Assets" 
+                              contextRef="current" 
+                              unitRef="usd" 
+                              decimals="-3">1000000</ix:nonFraction></p>
+    
+    <div style="display:none">
+        <ix:header>
+            <ix:references>
+                <link:schemaRef xlink:type="simple" 
+                               xlink:href="http://xbrl.fasb.org/us-gaap/2021/elts/us-gaap-2021-01-31.xsd"/>
+            </ix:references>
+            <ix:resources>
+                <xbrli:context id="current">
+                    <xbrli:entity>
+                        <xbrli:identifier scheme="http://www.sec.gov/CIK">0000000000</xbrli:identifier>
+                    </xbrli:entity>
+                    <xbrli:period>
+                        <xbrli:instant>2025-12-31</xbrli:instant>
+                    </xbrli:period>
+                </xbrli:context>
+                <xbrli:unit id="usd">
+                    <xbrli:measure>iso4217:USD</xbrli:measure>
+                </xbrli:unit>
+            </ix:resources>
+        </ix:header>
+    </div>
+</body>
+</html>

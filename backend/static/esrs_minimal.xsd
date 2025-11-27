@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:xbrli="http://www.xbrl.org/2003/instance"
+           xmlns:esrs="https://xbrl.efrag.org/taxonomy/esrs/2024-01-31"
+           targetNamespace="https://xbrl.efrag.org/taxonomy/esrs/2024-01-31"
+           elementFormDefault="qualified">
+  
+  <xs:import namespace="http://www.xbrl.org/2003/instance" 
+             schemaLocation="http://www.xbrl.org/2003/xbrl-instance-2003-12-31.xsd"/>
+  
+  <!-- ESRS Elements -->
+  <xs:element name="EntityName" type="xbrli:stringItemType" substitutionGroup="xbrli:item"/>
+  <xs:element name="GrossGreenhouseGasEmissions" type="xbrli:monetaryItemType" substitutionGroup="xbrli:item"/>
+  <xs:element name="MaterialityAssessmentImpact" type="xbrli:booleanItemType" substitutionGroup="xbrli:item"/>
+  <xs:element name="MaterialityAssessmentFinancial" type="xbrli:booleanItemType" substitutionGroup="xbrli:item"/>
+  <xs:element name="ClimatePolicyAdopted" type="xbrli:stringItemType" substitutionGroup="xbrli:item"/>
+  <xs:element name="ClimatePolicyDescription" type="xbrli:stringItemType" substitutionGroup="xbrli:item"/>
+  <xs:element name="DoubleMaterialityAssessmentNarrative" type="xbrli:stringItemType" substitutionGroup="xbrli:item"/>
+</xs:schema>

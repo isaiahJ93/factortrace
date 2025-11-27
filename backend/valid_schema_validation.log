@@ -1,0 +1,4 @@
+[xmlSchema:valueError] Element xbrli:measure type QName value error: iso4217:USD,  - minimal_valid_schema.xhtml 35
+[info] loaded in 18.53 secs at 2025-08-01T12:01:51 - /Users/isaiah/Documents/Scope3Tool/backend/minimal_valid_schema.xhtml 
+[xbrl.4.8.2:monetaryFactUnit-notSingleMeasure] Fact us-gaap:Assets context current must have a single unit measure which is monetary usd - minimal_valid_schema.xhtml 17
+[info] validated in 0.88 secs - /Users/isaiah/Documents/Scope3Tool/backend/minimal_valid_schema.xhtml 

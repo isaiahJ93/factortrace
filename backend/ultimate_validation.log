@@ -1,0 +1,46 @@
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name booleanfalse - fixed_report.xhtml 133
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - fixed_report.xhtml 186
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - fixed_report.xhtml 189
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - fixed_report.xhtml 196
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - fixed_report.xhtml 199
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - fixed_report.xhtml 206
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - fixed_report.xhtml 209
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - fixed_report.xhtml 216
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - fixed_report.xhtml 219
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - fixed_report.xhtml 226
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - fixed_report.xhtml 229
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - fixed_report.xhtml 244
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - fixed_report.xhtml 251
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - fixed_report.xhtml 255
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - fixed_report.xhtml 262
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - fixed_report.xhtml 279
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - fixed_report.xhtml 287
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - fixed_report.xhtml 295
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - fixed_report.xhtml 303
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - fixed_report.xhtml 311
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - fixed_report.xhtml 319
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - fixed_report.xhtml 327
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - fixed_report.xhtml 335
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - fixed_report.xhtml 343
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - fixed_report.xhtml 351
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - fixed_report.xhtml 359
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - fixed_report.xhtml 367
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - fixed_report.xhtml 375
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - fixed_report.xhtml 383
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - fixed_report.xhtml 391
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - fixed_report.xhtml 402
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - fixed_report.xhtml 438
+[xmlSchema:valueError] Element ix:nonNumeric fact esrs:GrossGreenhouseGasEmissions type decimal value error: true, lexical pattern mismatch - fixed_report.xhtml 141
+[xmlSchema:attributesRequired] Element esrs:GrossGreenhouseGasEmissions type decimal missing required attributes: unitRef - fixed_report.xhtml 141
+[xmlSchema:valueError] Element ix:nonNumeric fact esrs:GrossGreenhouseGasEmissions type decimal value error: true, lexical pattern mismatch - fixed_report.xhtml 145
+[xmlSchema:attributesRequired] Element esrs:GrossGreenhouseGasEmissions type decimal missing required attributes: unitRef - fixed_report.xhtml 145
+[info] loaded in 0.48 secs at 2025-08-01T17:39:06 - /Users/isaiah/Documents/Scope3Tool/backend/fixed_report.xhtml 
+[xbrl.4.6.2:numericUnit] Fact esrs:GrossGreenhouseGasEmissions context current-instant is numeric and must have a unit - fixed_report.xhtml 133
+[xbrl.4.7.2:contextPeriodType] Fact esrs:GrossGreenhouseGasEmissions context current-instant has period type duration conflict with context - fixed_report.xhtml 133
+[xbrl.4.6.3:missingPrecisionDecimals] Fact esrs:GrossGreenhouseGasEmissions context current-instant is a numeric concept and must have either precision or decimals - fixed_report.xhtml 133
+[xbrl.4.6.2:numericUnit] Fact esrs:GrossGreenhouseGasEmissions context current-period is numeric and must have a unit - fixed_report.xhtml 141
+[xbrl.4.6.3:missingPrecisionDecimals] Fact esrs:GrossGreenhouseGasEmissions context current-period is a numeric concept and must have either precision or decimals - fixed_report.xhtml 141
+[xbrl.4.6.2:numericUnit] Fact esrs:GrossGreenhouseGasEmissions context current-period is numeric and must have a unit - fixed_report.xhtml 145
+[xbrl.4.6.3:missingPrecisionDecimals] Fact esrs:GrossGreenhouseGasEmissions context current-period is a numeric concept and must have either precision or decimals - fixed_report.xhtml 145
+[ix11.10.1.2:unitReference] Fact esrs:GrossGreenhouseGasEmissions is missing a unit for unitRef (none) - fixed_report.xhtml 133
+[info] validated in 1.96 secs - /Users/isaiah/Documents/Scope3Tool/backend/fixed_report.xhtml 

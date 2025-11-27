@@ -1,0 +1,32 @@
+[xmlSchema:syntax] Attribute xmlns:ix redefined, test_output.xhtml, line 2, column 535 - test_output.xhtml 
+[xmlSchema:valueError] Element xbrli:startDate type XBRLI_DATEUNION value error: , lexical pattern mismatch - test_output.xhtml 32
+[xmlSchema:valueError] Element xbrli:endDate type XBRLI_DATEUNION value error: , lexical pattern mismatch - test_output.xhtml 32
+[xmlSchema:elementUnexpected] xbrli:contextPeriodType(['ModelChoice[4090, xbrl-instance-2003-12-31.xsd line 644)']) xbrli:startDate unexpected, within xbrli:period - test_output.xhtml 32
+[xmlSchema:valueError] Element xbrli:startDate type XBRLI_DATEUNION value error: , lexical pattern mismatch - test_output.xhtml 32
+[lxml.SCHEMAV_ELEMENT_CONTENT] XML file syntax error Element '{http://www.w3.org/1999/xhtml}head': This element is not expected. Expected is ( {http://www.w3.org/1999/xhtml}body )., line 32, path 'head[2]', xpath '/*/*[2]' - test_output.xhtml 
+[ix11.14.1.2:resourceIdDuplication] Inline XBRL ix:resources descendant id c-current duplicated in inline document set - test_output.xhtml 32
+[ix11.14.1.2:resourceIdDuplication] Inline XBRL ix:resources descendant id current-period duplicated in inline document set - test_output.xhtml 32
+[ix11.14.1.2:resourceIdDuplication] Inline XBRL ix:resources descendant id u-tCO2e duplicated in inline document set - test_output.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:GreenhouseGasEmissionsIntensity of Inline Element ix:nonFraction - test_output.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:DataQualityCharacteristics of Inline Element ix:nonFraction - test_output.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:EnvironmentalImpactMateriality of Inline Element ix:nonNumeric - test_output.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:FinancialImpactMateriality of Inline Element ix:nonNumeric - test_output.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-2:BoardOversightClimate of Inline Element ix:nonNumeric - test_output.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-2:ManagementResponsibilityClimate of Inline Element ix:nonNumeric - test_output.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:ClimateRelatedTransitionPlan of Inline Element ix:nonNumeric - test_output.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:PolicyRelatedToClimateChangeMitigation of Inline Element ix:nonNumeric - test_output.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:DescriptionOfPoliciesRelatedToClimateChangeMitigation of Inline Element ix:nonNumeric - test_output.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:TotalEnergyConsumption of Inline Element ix:nonFraction - test_output.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:TotalEnergyConsumptionFromRenewableSources of Inline Element ix:nonFraction - test_output.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:InternalCarbonPricingImplemented of Inline Element ix:nonNumeric - test_output.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:PhysicalRiskFinancialImpact of Inline Element ix:nonFraction - test_output.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:OpportunityFinancialImpact of Inline Element ix:nonFraction - test_output.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:GHGAccountingStandard of Inline Element ix:nonNumeric - test_output.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:ConsolidationApproach of Inline Element ix:nonNumeric - test_output.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:AverageDataQualityScore of Inline Element ix:nonFraction - test_output.xhtml 32
+[info] loaded in 0.49 secs at 2025-08-01T15:12:47 - /Users/isaiah/Documents/Scope3Tool/backend/test_output.xhtml 
+[ix11.8.1.2:headerDisplayNone] Warning, Inline XBRL ix:header is recommended to be nested in a <div> with style display:none - test_output.xhtml 32
+[xml.3.3.1:idMustBeUnique] Element xbrli:context id c-current is duplicated - test_output.xhtml 32
+[xml.3.3.1:idMustBeUnique] Element xbrli:unit id u-tCO2e is duplicated - test_output.xhtml 32
+[xml.3.3.1:idMustBeUnique] Element xbrli:context id current-period is duplicated - test_output.xhtml 32
+[info] validated in 2.06 secs - /Users/isaiah/Documents/Scope3Tool/backend/test_output.xhtml 

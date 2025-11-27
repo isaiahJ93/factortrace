@@ -1,0 +1,3 @@
+[lxml.SCHEMAV_ELEMENT_CONTENT] XML file syntax error Element '{http://www.w3.org/1999/xhtml}section': This element is not expected., line 42, path 'body/section[1]', xpath '/*/*[2]/*[3]' - esrs_e1_compliant_final.xhtml 
+[info] loaded in 0.51 secs at 2025-08-01T16:06:28 - /Users/isaiah/Documents/Scope3Tool/backend/esrs_e1_compliant_final.xhtml 
+[info] validated in 2.09 secs - /Users/isaiah/Documents/Scope3Tool/backend/esrs_e1_compliant_final.xhtml 

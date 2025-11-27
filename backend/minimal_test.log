@@ -1,0 +1,5 @@
+[lxml.SCHEMAV_CVC_COMPLEX_TYPE_4] XML file syntax error Element '{http://www.xbrl.org/2013/inlineXBRL}nonFraction': The attribute 'unitRef' is required but missing., line 10, path 'body/p/ix:nonFraction', xpath '/*/*[2]/*[1]/ix:nonFraction' - test_inline_taxonomy.xhtml 
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:EntityName of Inline Element ix:nonFraction - test_inline_taxonomy.xhtml 10
+[xmlSchema:valueError] Element ix:nonFraction fact esrs:EntityName error Invalid value for nonFraction number: 'Test Corp' value: Test Corp - test_inline_taxonomy.xhtml 10
+[info] loaded in 0.04 secs at 2025-08-02T00:50:56 - /Users/isaiah/Downloads/test_inline_taxonomy.xhtml 
+[info] validated in 0.00 secs - /Users/isaiah/Downloads/test_inline_taxonomy.xhtml 

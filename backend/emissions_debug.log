@@ -1,0 +1,47 @@
+2025-08-04 20:26:11,222 - __main__ - INFO - Starting emissions pipeline diagnostic...
+2025-08-04 20:26:11,222 - __main__ - INFO - === SEARCHING FOR CALCULATION FUNCTIONS ===
+2025-08-04 20:26:11,222 - __main__ - INFO - Searching for pattern: def.*calculate.*emission
+2025-08-04 20:26:11,222 - __main__ - INFO - Searching for pattern: def.*compute.*co2
+2025-08-04 20:26:11,222 - __main__ - INFO - Searching for pattern: def.*get.*emission
+2025-08-04 20:26:11,222 - __main__ - INFO - Searching for pattern: class.*Calculator
+2025-08-04 20:26:11,222 - __main__ - INFO - Searching for pattern: def.*scope.*calculation
+2025-08-04 20:26:11,222 - __main__ - INFO - === TRACING ACTIVITY DATA FLOW ===
+2025-08-04 20:26:11,222 - __main__ - INFO - Looking for activity values: {'natural_gas': 234, 'diesel': 234, 'petrol': 234, 'grid_electricity': 345, 'district_heating': 342, 'office_paper': 234, 'plastic_packaging': 234, 'steel_products': 2, 'machinery_equipment': 345344, 'upstream_electricity': 320, 'road_freight': 3454, 'rail_freight': 3421, 'landfill': 1, 'domestic_flights': 3432, 'long_haul_flights': 23434, 'car_average': 3454}
+2025-08-04 20:26:11,222 - __main__ - INFO - 
+=== EXPECTED EMISSIONS CALCULATIONS ===
+2025-08-04 20:26:11,222 - __main__ - INFO - Scope 1 - natural_gas: 0.043 tCO2e
+2025-08-04 20:26:11,222 - __main__ - INFO - Scope 1 - diesel_fleet: 0.629 tCO2e
+2025-08-04 20:26:11,222 - __main__ - INFO - Scope 1 - petrol_fleet: 0.541 tCO2e
+2025-08-04 20:26:11,222 - __main__ - INFO - TOTAL SCOPE 1: 1.212 tCO2e (NOT 1000!)
+2025-08-04 20:26:11,222 - __main__ - INFO - Scope 2 - grid_electricity: 0.080 tCO2e
+2025-08-04 20:26:11,222 - __main__ - INFO - TOTAL SCOPE 2: 0.080 tCO2e (NOT 500!)
+2025-08-04 20:26:11,222 - __main__ - INFO - Scope 3 - cat1_office_paper: 0.215 tCO2e
+2025-08-04 20:26:11,222 - __main__ - INFO - Scope 3 - cat4_road_freight: 0.361 tCO2e
+2025-08-04 20:26:11,222 - __main__ - INFO - Scope 3 - cat6_domestic_flights: 0.534 tCO2e
+2025-08-04 20:26:11,222 - __main__ - INFO - Scope 3 - cat6_long_haul_flights: 4.525 tCO2e
+2025-08-04 20:26:11,222 - __main__ - INFO - TOTAL SCOPE 3: 5.635 tCO2e (NOT 567!)
+2025-08-04 20:26:11,222 - __main__ - INFO - GRAND TOTAL: 6.928 tCO2e (NOT 1967!)
+2025-08-04 20:26:11,222 - __main__ - INFO - 
+=== CHECKING XBRL GENERATION ===
+2025-08-04 20:26:11,222 - __main__ - INFO - Searching for hardcoded values in XBRL generation...
+2025-08-04 20:26:11,222 - __main__ - INFO - 
+=== FINDING PIPELINE BREAK POINTS ===
+2025-08-04 20:26:11,222 - __main__ - INFO - Checking: 1. Activity data input/parsing
+2025-08-04 20:26:11,222 - __main__ - INFO - Checking: 2. Emission factor application
+2025-08-04 20:26:11,222 - __main__ - INFO - Checking: 3. Scope categorization
+2025-08-04 20:26:11,222 - __main__ - INFO - Checking: 4. Total calculation
+2025-08-04 20:26:11,222 - __main__ - INFO - Checking: 5. XBRL fact generation
+2025-08-04 20:26:11,222 - __main__ - INFO - Checking: 6. iXBRL template rendering
+2025-08-04 20:26:11,222 - __main__ - INFO - 
+=== GENERATING TEST CALCULATION ===
+2025-08-04 20:26:11,222 - __main__ - INFO - Test data saved to test_emissions_data.json
+2025-08-04 20:26:11,222 - __main__ - INFO - Use this to test your calculation pipeline
+2025-08-04 20:26:11,222 - __main__ - INFO - 
+=== DIAGNOSTIC COMPLETE ===
+2025-08-04 20:26:11,222 - __main__ - INFO - Check emissions_debug.log for full details
+2025-08-04 20:26:11,222 - __main__ - INFO - 
+NEXT STEPS:
+2025-08-04 20:26:11,222 - __main__ - INFO - 1. Look for functions returning hardcoded values
+2025-08-04 20:26:11,222 - __main__ - INFO - 2. Check if emission factors are being applied
+2025-08-04 20:26:11,222 - __main__ - INFO - 3. Verify data flow from form -> calculations -> XBRL
+2025-08-04 20:26:11,222 - __main__ - INFO - 4. Replace ALL hardcoded values with calculations

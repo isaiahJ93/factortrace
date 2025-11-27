@@ -8,7 +8,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from sqlalchemy import Integer, String, DateTime, Float, Text, ForeignKey, Enum, JSON
 from sqlalchemy import String, DateTime, Float, Text, ForeignKey, Enum, JSON
-from app.db.base import Base
+from app.core.database import Base
 import enum
 from typing import Optional
 from datetime import datetime

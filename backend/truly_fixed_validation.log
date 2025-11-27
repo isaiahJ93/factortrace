@@ -1,0 +1,63 @@
+[webCache:retrievalError] Not Found 
+retrieving https://www.esma.europa.eu/taxonomy/esrs/esrs_all_20231231.xsd - 
+[FileNotLoadable] File can not be loaded: https://www.esma.europa.eu/taxonomy/esrs/esrs_all_20231231.xsd - truly_fixed.xhtml 32
+[lxml.SCHEMAV_ELEMENT_CONTENT] XML file syntax error Element '{http://www.w3.org/1999/xhtml}head': This element is not expected. Expected is ( {http://www.w3.org/1999/xhtml}body )., line 32, path 'head[2]', xpath '/*/*[2]' - truly_fixed.xhtml 
+[ix11.14.1.2:resourceIdDuplication] Inline XBRL ix:resources descendant id c-current duplicated in inline document set - truly_fixed.xhtml 32
+[ix11.14.1.2:resourceIdDuplication] Inline XBRL ix:resources descendant id current-period duplicated in inline document set - truly_fixed.xhtml 32
+[ix11.14.1.2:resourceIdDuplication] Inline XBRL ix:resources descendant id u-tCO2e duplicated in inline document set - truly_fixed.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:TotalGHGEmissions of Inline Element ix:nonFraction - truly_fixed.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:EmissionsChangePercent of Inline Element ix:nonFraction - truly_fixed.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:DataQualityScore of Inline Element ix:nonFraction - truly_fixed.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:EnvironmentalImpactMaterial of Inline Element ix:nonNumeric - truly_fixed.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:FinancialImpactMaterial of Inline Element ix:nonNumeric - truly_fixed.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-2:BoardOversightClimate of Inline Element ix:nonNumeric - truly_fixed.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-2:ManagementResponsibilityClimate of Inline Element ix:nonNumeric - truly_fixed.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:TransitionPlanAdopted of Inline Element ix:nonNumeric - truly_fixed.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:ClimatePolicyAdopted of Inline Element ix:nonNumeric - truly_fixed.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:ClimatePolicyDescription of Inline Element ix:nonNumeric - truly_fixed.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:EnergyConsumptionElectricity of Inline Element ix:nonFraction - truly_fixed.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:RenewableEnergyElectricity of Inline Element ix:nonFraction - truly_fixed.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:RenewablePercentageElectricity of Inline Element ix:nonFraction - truly_fixed.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:EnergyConsumptionHeatingCooling of Inline Element ix:nonFraction - truly_fixed.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:RenewableEnergyHeatingCooling of Inline Element ix:nonFraction - truly_fixed.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:RenewablePercentageHeatingCooling of Inline Element ix:nonFraction - truly_fixed.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:EnergyConsumptionSteam of Inline Element ix:nonFraction - truly_fixed.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:RenewableEnergySteam of Inline Element ix:nonFraction - truly_fixed.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:RenewablePercentageSteam of Inline Element ix:nonFraction - truly_fixed.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:EnergyConsumptionFuelCombustion of Inline Element ix:nonFraction - truly_fixed.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:RenewableEnergyFuelCombustion of Inline Element ix:nonFraction - truly_fixed.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:RenewablePercentageFuelCombustion of Inline Element ix:nonFraction - truly_fixed.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:TotalEnergyConsumption of Inline Element ix:nonFraction - truly_fixed.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:TotalRenewableEnergy of Inline Element ix:nonFraction - truly_fixed.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:TotalRenewableEnergyPercentage of Inline Element ix:nonFraction - truly_fixed.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:GrossScope1Emissions of Inline Element ix:nonFraction - truly_fixed.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:GrossScope2LocationBased of Inline Element ix:nonFraction - truly_fixed.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:GrossScope3Emissions of Inline Element ix:nonFraction - truly_fixed.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:TotalGHGEmissions of Inline Element ix:nonFraction - truly_fixed.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:Scope3Category1 of Inline Element ix:nonFraction - truly_fixed.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:Scope3Category2 of Inline Element ix:nonFraction - truly_fixed.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:Scope3Category3 of Inline Element ix:nonFraction - truly_fixed.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:Scope3Category4 of Inline Element ix:nonFraction - truly_fixed.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:Scope3Category5 of Inline Element ix:nonFraction - truly_fixed.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:Scope3Category6 of Inline Element ix:nonFraction - truly_fixed.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:Scope3Category7 of Inline Element ix:nonFraction - truly_fixed.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:Scope3Category8 of Inline Element ix:nonFraction - truly_fixed.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:Scope3Category9 of Inline Element ix:nonFraction - truly_fixed.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:Scope3Category10 of Inline Element ix:nonFraction - truly_fixed.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:Scope3Category11 of Inline Element ix:nonFraction - truly_fixed.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:Scope3Category12 of Inline Element ix:nonFraction - truly_fixed.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:Scope3Category13 of Inline Element ix:nonFraction - truly_fixed.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:Scope3Category14 of Inline Element ix:nonFraction - truly_fixed.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:Scope3Category15 of Inline Element ix:nonFraction - truly_fixed.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:InternalCarbonPricingImplemented of Inline Element ix:nonNumeric - truly_fixed.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:PhysicalRiskFinancialImpact of Inline Element ix:nonFraction - truly_fixed.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:OpportunityFinancialImpact of Inline Element ix:nonFraction - truly_fixed.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:GHGAccountingStandard of Inline Element ix:nonNumeric - truly_fixed.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:ConsolidationApproach of Inline Element ix:nonNumeric - truly_fixed.xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:AverageDataQualityScore of Inline Element ix:nonFraction - truly_fixed.xhtml 32
+[info] loaded in 0.77 secs at 2025-08-01T12:30:44 - /Users/isaiah/Documents/Scope3Tool/backend/truly_fixed.xhtml 
+[ix11.8.1.2:headerDisplayNone] Warning, Inline XBRL ix:header is recommended to be nested in a <div> with style display:none - truly_fixed.xhtml 32
+[xml.3.3.1:idMustBeUnique] Element xbrli:context id c-current is duplicated - truly_fixed.xhtml 32
+[xml.3.3.1:idMustBeUnique] Element xbrli:unit id u-tCO2e is duplicated - truly_fixed.xhtml 32
+[xml.3.3.1:idMustBeUnique] Element xbrli:context id current-period is duplicated - truly_fixed.xhtml 32
+[info] validated in 0.00 secs - /Users/isaiah/Documents/Scope3Tool/backend/truly_fixed.xhtml 

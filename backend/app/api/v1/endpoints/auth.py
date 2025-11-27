@@ -26,7 +26,7 @@ async def login(request: LoginRequest, db: Session = Depends(get_db)):
         "sub": request.email,
         "exp": datetime.utcnow() + timedelta(days=7)
     }
-    access_token = jwt.encode(token_data, settings.SECRET_KEY, algorithm="HS256")
+    access_token = jwt.encode(token_data, settings.jwt_secret, algorithm="HS256")
     return LoginResponse(access_token=access_token)
 
 @router.get("/verify")

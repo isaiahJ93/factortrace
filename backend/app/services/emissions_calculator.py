@@ -217,6 +217,47 @@ MATERIALITY_THRESHOLDS = {
     "Default": 0.05,
 }
 
+# Hardcoded emission factor lookup database
+# Key: (scope, category, country) -> emission factor value (kgCO2e/unit)
+FACTOR_DB: Dict[Tuple[int, str, str], float] = {
+    # Scope 1 - Mobile Combustion
+    (1, 'Mobile Combustion', 'DE'): 2.31,
+    (1, 'Mobile Combustion', 'US'): 2.50,
+    (1, 'Mobile Combustion', 'FR'): 2.28,
+    (1, 'Mobile Combustion', 'UK'): 2.34,
+    (1, 'Mobile Combustion', 'Global'): 2.40,
+    # Scope 1 - Stationary Combustion
+    (1, 'Stationary Combustion', 'DE'): 2.02,
+    (1, 'Stationary Combustion', 'US'): 2.10,
+    (1, 'Stationary Combustion', 'Global'): 2.05,
+    # Scope 1 - Fugitive Emissions
+    (1, 'Fugitive Emissions', 'Global'): 0.025,
+    # Scope 2 - Purchased Electricity (kgCO2e/kWh)
+    (2, 'Purchased Electricity', 'DE'): 0.35,
+    (2, 'Purchased Electricity', 'FR'): 0.08,
+    (2, 'Purchased Electricity', 'PL'): 0.70,
+    (2, 'Purchased Electricity', 'US'): 0.42,
+    (2, 'Purchased Electricity', 'UK'): 0.23,
+    (2, 'Purchased Electricity', 'Global'): 0.45,
+    # Scope 2 - Purchased Heat/Steam
+    (2, 'Purchased Heat', 'DE'): 0.22,
+    (2, 'Purchased Heat', 'Global'): 0.25,
+    # Scope 3 - Business Travel (kgCO2e/km)
+    (3, 'Business Travel', 'DE'): 0.15,
+    (3, 'Business Travel', 'Global'): 0.255,
+    # Scope 3 - Water Supply (kgCO2e/m3)
+    (3, 'Water Supply', 'DE'): 0.30,
+    (3, 'Water Supply', 'Global'): 0.34,
+    # Scope 3 - Other Categories
+    (3, 'Employee Commuting', 'Global'): 0.21,
+    (3, 'Purchased Goods', 'Global'): 0.5,
+    (3, 'Upstream Transportation', 'Global'): 0.1,
+    (3, 'Waste', 'Global'): 0.7,
+}
+
+# Default emission factor when no match is found
+DEFAULT_EMISSION_FACTOR = 1.0
+
 logger = logging.getLogger(__name__)
 
 
@@ -1440,41 +1481,91 @@ class EliteEmissionsCalculator:
 # ==============================================================================
 
 
+def lookup_emission_factor(
+    scope: int,
+    category: str,
+    country: str = 'Global'
+) -> float:
+    """
+    Look up emission factor from FACTOR_DB with fallback logic.
+
+    Args:
+        scope: Emission scope (1, 2, or 3)
+        category: Emission category (e.g., 'Mobile Combustion', 'Purchased Electricity')
+        country: Country code (e.g., 'DE', 'US', 'FR') or 'Global'
+
+    Returns:
+        Emission factor value, with fallback to 'Global' then to DEFAULT_EMISSION_FACTOR
+    """
+    # Try specific country first
+    key = (scope, category, country)
+    if key in FACTOR_DB:
+        logger.debug(f"Found emission factor for {key}: {FACTOR_DB[key]}")
+        return FACTOR_DB[key]
+
+    # Fallback to Global
+    global_key = (scope, category, 'Global')
+    if global_key in FACTOR_DB:
+        logger.debug(f"Using Global fallback for {key}: {FACTOR_DB[global_key]}")
+        return FACTOR_DB[global_key]
+
+    # Fallback to default
+    logger.warning(f"No emission factor found for {key}, using default: {DEFAULT_EMISSION_FACTOR}")
+    return DEFAULT_EMISSION_FACTOR
+
+
 def calculate_emissions(
     activity_value: float,
-    emission_factor: float,
+    emission_factor: Optional[float] = None,
     uncertainty_percent: float = 10.0,
     tier: TierLevelEnum = TierLevelEnum.TIER_2,
+    scope: Optional[int] = None,
+    category: Optional[str] = None,
+    country: str = 'Global',
 ) -> float:
     """
     Simple convenience function for basic emissions calculation.
-    
+
     Args:
         activity_value: Amount of activity (e.g., kWh, tonnes)
-        emission_factor: Emission factor (e.g., kgCO2e/kWh)
+        emission_factor: Emission factor (e.g., kgCO2e/kWh). If not provided,
+                        will be looked up from FACTOR_DB using scope/category/country.
         uncertainty_percent: Uncertainty percentage (default 10%)
         tier: Data quality tier level
-    
+        scope: Emission scope (1, 2, or 3) - used for FACTOR_DB lookup
+        category: Emission category - used for FACTOR_DB lookup
+        country: Country code (default 'Global') - used for FACTOR_DB lookup
+
     Returns:
         Calculated emissions in same units as emission factor
     """
+    # Resolve emission factor
+    if emission_factor is None:
+        if scope is not None and category is not None:
+            # Look up from FACTOR_DB
+            emission_factor = lookup_emission_factor(scope, category, country)
+        else:
+            # Use default factor as fallback
+            logger.warning("No emission_factor provided and no scope/category for lookup, using default")
+            emission_factor = DEFAULT_EMISSION_FACTOR
+
     # Create minimal context
     context = CalculationContext(
         user_id="system",
         organization_id="default",
         gwp_version=GWPVersionEnum.AR6_100,
     )
-    
+
     # Create emission factor object
     ef = EmissionFactor(
         factor_id="SIMPLE_CALC",
         value=Decimal(str(emission_factor)),
         unit="tCO2e/unit",
-        source="User provided",
+        source="FACTOR_DB" if scope and category else "User provided",
         source_year=datetime.now().year,
         tier=tier,
     )
-    
+
     # Create input
     calc_input = CalculationInput(
         activity_data=Decimal(str(activity_value)),
@@ -1482,11 +1573,11 @@ def calculate_emissions(
         emission_factor=ef,
         uncertainty_override=Decimal(str(uncertainty_percent)),
     )
-    
+
     # Calculate
     calculator = EliteEmissionsCalculator(context)
     result = calculator.calculate_emissions([calc_input])
-    
+
     return float(result.emissions_tco2e)
 
 
@@ -1555,6 +1646,7 @@ __all__ = [
     "calculate_emissions",
     "calculate_scope3_emissions",
     "create_data_quality_from_factor",
+    "lookup_emission_factor",
     # Constants
     "GWP_FACTORS_AR6_100",
     "GWP_FACTORS_AR5_100",
@@ -1562,4 +1654,6 @@ __all__ = [
     "CBAM_DEFAULT_FACTORS",
     "SCOPE3_CATEGORIES",
     "MATERIALITY_THRESHOLDS",
+    "FACTOR_DB",
+    "DEFAULT_EMISSION_FACTOR",
 ]

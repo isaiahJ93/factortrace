@@ -1,0 +1,7 @@
+scope,category,activity_type,country_code,year,factor,source
+SCOPE_2,Purchased Electricity,Electricity,DE,2024,0.35,Hardcoded_Migration
+SCOPE_2,Purchased Electricity,Electricity,FR,2024,0.08,Hardcoded_Migration
+SCOPE_2,Purchased Electricity,Electricity,PL,2024,0.70,Hardcoded_Migration
+SCOPE_3,Water Supply,Water,DE,2024,0.30,Hardcoded_Migration
+SCOPE_3,Business Travel,Flight,DE,2024,0.15,Hardcoded_Migration
+SCOPE_3,Business Travel,Flight,US,2024,0.12,Hardcoded_Migration

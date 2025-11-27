@@ -1,0 +1,32 @@
+{
+  "company": "Test Company",
+  "reporting_period": "2025",
+  "activities": {
+    "scope1": {
+      "natural_gas": {
+        "value": 234,
+        "unit": "kWh"
+      },
+      "diesel_fleet": {
+        "value": 234,
+        "unit": "litres"
+      }
+    },
+    "scope2": {
+      "grid_electricity": {
+        "value": 345,
+        "unit": "kWh"
+      }
+    },
+    "scope3": {
+      "office_paper": {
+        "value": 234,
+        "unit": "kg"
+      },
+      "road_freight": {
+        "value": 3454,
+        "unit": "tonne.km"
+      }
+    }
+  }
+}

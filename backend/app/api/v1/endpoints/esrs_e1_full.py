@@ -1,9 +1,10 @@
 from fastapi.responses import Response
+import math
 import uuid
 from decimal import Decimal
 from lxml import etree
 from typing import Dict, Any, List, Optional, Tuple, Union
-from fastapi import APIRouter, HTTPException, Body, BackgroundTasks
+from fastapi import APIRouter, HTTPException, Body, BackgroundTasks, Depends
 from fastapi.responses import StreamingResponse, Response
 import xml.etree.ElementTree as ET
 import json
@@ -18,6 +19,10 @@ import os
 from io import BytesIO
 import base64
 from functools import lru_cache
+from sqlalchemy.orm import Session
+from sqlalchemy import func
+from app.db.session import get_db
+from app.models.emission import Emission
 # =============================================================================
 # SECTION 5: XBRL GENERATION FUNCTIONS
 # =============================================================================
@@ -38,10 +43,11 @@ SCOPE3_CATEGORIES = {
     12: "End-of-life treatment of sold products",
     13: "Downstream leased assets",
     14: "Franchises",
-    15: "Investments"
+    15: "Investments",
 }
 
 logger = logging.getLogger(__name__)
+
 
 # NACE Code Registry (European Statistical Classification)
 NACE_CODE_REGISTRY = {
@@ -68,8 +74,9 @@ NACE_CODE_REGISTRY = {
     'R': 'Arts, entertainment',
     'S': 'Other service activities',
 
-# ESAP Configuration
 }
+
+# ESAP Configuration
 
 ESAP_FILE_NAMING_PATTERN = "{lei}_{year}_{period}_{report_type}_{language}_{version}"
 ESAP_CONFIG = {
@@ -108,6 +115,104 @@ CLIMATE_RISK_CATEGORIES = {
     'transition': ['policy', 'technology', 'market', 'reputation']
 }
 # Temporary fix for missing constant
+
+# EFRAG ESRS E1 Element Name Mapping
+EFRAG_ELEMENT_MAPPING = {
+    # Already correct - no change needed
+    'GrossScope1GreenhouseGasEmissions': 'GrossScope1GreenhouseGasEmissions',
+    'GrossLocationBasedScope2GreenhouseGasEmissions': 'GrossLocationBasedScope2GreenhouseGasEmissions',
+    'GrossMarketBasedScope2GreenhouseGasEmissions': 'GrossMarketBasedScope2GreenhouseGasEmissions',
+    'GrossScope3GreenhouseGasEmissions': 'GrossScope3GreenhouseGasEmissions',
+    'GrossGreenhouseGasEmissions': 'GrossGreenhouseGasEmissions',
+    
+    # Energy elements
+    'EnergyConsumption': 'EnergyConsumptionRelatedToOwnOperations',
+    'RenewableEnergyConsumption': 'EnergyConsumptionFromRenewableSources',
+    'RenewableEnergyPercentage': 'PercentageOfRenewableSourcesInTotalEnergyConsumption',
+    'TotalEnergyConsumption': 'EnergyConsumptionRelatedToOwnOperations',
+    'TotalRenewableEnergyConsumption': 'EnergyConsumptionFromRenewableSources',
+    'TotalRenewableEnergyPercentage': 'PercentageOfRenewableSourcesInTotalEnergyConsumption',
+    
+    # Governance and policies
+    'TransitionPlanAdopted': 'AdministrativeManagementAndOrSupervisoryBodiesHaveApprovedTransitionPlan',
+    'InternalCarbonPricingImplemented': 'InternalCarbonPricingSchemesAreApplied',
+    
+    # Financial effects - these should be monetary values, not text blocks
+    'PhysicalRisksFinancialImpact': 'AnticipatedFinancialEffectsFromMaterialPhysicalRisks',
+    'OpportunitiesFinancialImpact': 'AnticipatedFinancialEffectsFromMaterialTransitionRisksAndPotentialClimaterelatedOpportunities',
+}
+
+# Elements that don't have direct EFRAG equivalents - comment these out for now
+UNMAPPED_ELEMENTS = {
+    'MaterialityAssessmentImpact',
+    'MaterialityAssessmentFinancial', 
+    'BoardOversightClimate',
+    'ManagementResponsibilityClimate',
+    'ClimatePolicyAdopted',
+    'ClimatePolicyDescription',
+    'DataQualityScore',
+    'GHGAccountingStandard',
+    'ConsolidationApproach',
+    'Scope3CategoryEmissions',
+}
+
+def get_efrag_element_name(element_name):
+    """Map simplified element names to official EFRAG taxonomy names"""
+    # Remove 'esrs:' prefix if present
+    clean_name = element_name.replace('esrs:', '')
+    
+    # Return mapped name or original if not in mapping
+    return EFRAG_ELEMENT_MAPPING.get(clean_name, clean_name)
+
+
+# EFRAG ESRS E1 Element Name Mapping
+EFRAG_ELEMENT_MAPPING = {
+    # Already correct - no change needed
+    'GrossScope1GreenhouseGasEmissions': 'GrossScope1GreenhouseGasEmissions',
+    'GrossLocationBasedScope2GreenhouseGasEmissions': 'GrossLocationBasedScope2GreenhouseGasEmissions',
+    'GrossMarketBasedScope2GreenhouseGasEmissions': 'GrossMarketBasedScope2GreenhouseGasEmissions',
+    'GrossScope3GreenhouseGasEmissions': 'GrossScope3GreenhouseGasEmissions',
+    'GrossGreenhouseGasEmissions': 'GrossGreenhouseGasEmissions',
+    
+    # Energy elements
+    'EnergyConsumption': 'EnergyConsumptionRelatedToOwnOperations',
+    'RenewableEnergyConsumption': 'EnergyConsumptionFromRenewableSources',
+    'RenewableEnergyPercentage': 'PercentageOfRenewableSourcesInTotalEnergyConsumption',
+    'TotalEnergyConsumption': 'EnergyConsumptionRelatedToOwnOperations',
+    'TotalRenewableEnergyConsumption': 'EnergyConsumptionFromRenewableSources',
+    'TotalRenewableEnergyPercentage': 'PercentageOfRenewableSourcesInTotalEnergyConsumption',
+    
+    # Governance and policies
+    'TransitionPlanAdopted': 'AdministrativeManagementAndOrSupervisoryBodiesHaveApprovedTransitionPlan',
+    'InternalCarbonPricingImplemented': 'InternalCarbonPricingSchemesAreApplied',
+    
+    # Financial effects - these should be monetary values, not text blocks
+    'PhysicalRisksFinancialImpact': 'AnticipatedFinancialEffectsFromMaterialPhysicalRisks',
+    'OpportunitiesFinancialImpact': 'AnticipatedFinancialEffectsFromMaterialTransitionRisksAndPotentialClimaterelatedOpportunities',
+}
+
+# Elements that don't have direct EFRAG equivalents - comment these out for now
+UNMAPPED_ELEMENTS = {
+    'MaterialityAssessmentImpact',
+    'MaterialityAssessmentFinancial', 
+    'BoardOversightClimate',
+    'ManagementResponsibilityClimate',
+    'ClimatePolicyAdopted',
+    'ClimatePolicyDescription',
+    'DataQualityScore',
+    'GHGAccountingStandard',
+    'ConsolidationApproach',
+    'Scope3CategoryEmissions',
+}
+
+def get_efrag_element_name(element_name):
+    """Map simplified element names to official EFRAG taxonomy names"""
+    # Remove 'esrs:' prefix if present
+    clean_name = element_name.replace('esrs:', '')
+    
+    # Return mapped name or original if not in mapping
+    return EFRAG_ELEMENT_MAPPING.get(clean_name, clean_name)
+
 
 SECTOR_SPECIFIC_REQUIREMENTS = {}
 # GHG Protocol Scopes
@@ -194,8 +299,9 @@ def get_enhanced_namespaces():
         'xmlns:iso4217': 'http://www.xbrl.org/2003/iso4217',
         'xmlns:ix': 'http://www.xbrl.org/2013/inlineXBRL',
         'xmlns:ixt': 'http://www.xbrl.org/inlineXBRL/transformation/2020-02-12',
-        'xmlns:esrs': 'http://www.efrag.org/esrs/2023',
-        'xmlns:esrs-e1': 'http://www.efrag.org/esrs/2023/e1'
+        'xmlns:esrs': 'https://xbrl.efrag.org/taxonomy/esrs/2023-12-22',
+        'xmlns:esrse1': 'https://xbrl.efrag.org/taxonomy/esrs/2023-12-22/e1',
+        'xmlns:lei': 'http://www.xbrl.org/2003/lei'
     }
 
 def get_namespace_map():
@@ -209,8 +315,8 @@ def get_namespace_map():
         'iso4217': 'http://www.xbrl.org/2003/iso4217',
         'ix': 'http://www.xbrl.org/2013/inlineXBRL',
         'ixt': 'http://www.xbrl.org/inlineXBRL/transformation/2020-02-12',
-        'esrs': 'http://www.efrag.org/esrs/2023',
-        'esrs-e1': 'http://www.efrag.org/esrs/2023/e1'
+        'esrs': 'https://xbrl.efrag.org/taxonomy/esrs/2023-12-22',
+        'esrse1': 'https://xbrl.efrag.org/taxonomy/esrs/2023-12-22/e1'
     }
 
 def create_double_materiality_section(body: ET.Element, data: Dict[str, Any]) -> None:
@@ -229,7 +335,7 @@ def create_double_materiality_section(body: ET.Element, data: Dict[str, Any]) ->
     p1 = ET.SubElement(section, 'p')
     p1.text = "Environmental impact materiality: "
     impact_elem = ET.SubElement(p1, f'{{{namespaces["ix"]}}}nonNumeric', attrib={
-        'name': 'esrs:EnvironmentalImpactMaterial',
+        'name': 'esrs:MaterialityAssessmentImpact',
         'contextRef': 'current-period'
     })
     impact_elem.text = 'true'
@@ -238,7 +344,7 @@ def create_double_materiality_section(body: ET.Element, data: Dict[str, Any]) ->
     p2 = ET.SubElement(section, 'p')
     p2.text = "Financial impact materiality: "
     financial_elem = ET.SubElement(p2, f'{{{namespaces["ix"]}}}nonNumeric', attrib={
-        'name': 'esrs:FinancialImpactMaterial',
+        'name': 'esrs:MaterialityAssessmentFinancial',
         'contextRef': 'current-period'
     })
     financial_elem.text = 'true'
@@ -265,21 +371,39 @@ def create_e1_4_targets(body: ET.Element, data: Dict[str, Any]) -> None:
 
 def generate_xbrl_report(data: Dict[str, Any]) -> str:
     """Generate complete XBRL report for ESRS E1 compliance"""
+    # Register namespaces to preserve prefixes
+    ET.register_namespace('ix', 'http://www.xbrl.org/2013/inlineXBRL')
+    ET.register_namespace('', 'http://www.w3.org/1999/xhtml')
+    ET.register_namespace('link', 'http://www.xbrl.org/2003/linkbase')
+    ET.register_namespace('xlink', 'http://www.w3.org/1999/xlink')
+    ET.register_namespace('xbrli', 'http://www.xbrl.org/2003/instance')
+    ET.register_namespace('xbrldi', 'http://xbrl.org/2006/xbrldi')
+    ET.register_namespace('iso4217', 'http://www.xbrl.org/2003/iso4217')
+    ET.register_namespace('ixt', 'http://www.xbrl.org/inlineXBRL/transformation/2020-02-12')
+    ET.register_namespace('esrs', 'https://xbrl.efrag.org/taxonomy/esrs/2023-12-22')
+    ET.register_namespace('esrse1', 'https://xbrl.efrag.org/taxonomy/esrs/2023-12-22/e1')  # Fixed line
+    
     # Create root element with all namespaces
     namespaces = get_namespace_map()
     
     # Create HTML root with namespaces
+    # Create HTML root with all namespaces
     html_attribs = {
         'lang': data.get('language', 'en'),
-        'xml:lang': data.get('language', 'en')
+        'xml:lang': data.get('language', 'en'),
+        'xmlns': 'http://www.w3.org/1999/xhtml',
+        'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
+        'xmlns:xbrli': 'http://www.xbrl.org/2003/instance',
+        'xmlns:xbrldi': 'http://xbrl.org/2006/xbrldi',
+        'xmlns:xlink': 'http://www.w3.org/1999/xlink',
+        'xmlns:link': 'http://www.xbrl.org/2003/linkbase',
+        'xmlns:iso4217': 'http://www.xbrl.org/2003/iso4217',
+        'xmlns:ix': 'http://www.xbrl.org/2013/inlineXBRL',
+        'xmlns:ixt': 'http://www.xbrl.org/inlineXBRL/transformation/2020-02-12',
+        'xmlns:esrs': 'https://xbrl.efrag.org/taxonomy/esrs/2023-12-22',
+        'xmlns:esrse1': 'https://xbrl.efrag.org/taxonomy/esrs/2023-12-22/e1',
+        'xmlns:lei': 'http://www.xbrl.org/2003/lei'
     }
-    
-    # Add namespace declarations
-    for prefix, uri in namespaces.items():
-        if prefix:
-            html_attribs[f'xmlns:{prefix}'] = uri
-        else:
-            html_attribs['xmlns'] = uri
     
     html = ET.Element('html', attrib=html_attribs)
     
@@ -295,6 +419,62 @@ def generate_xbrl_report(data: Dict[str, Any]) -> str:
     
     # Add table of contents
     create_table_of_contents(body)
+    
+    # Add hidden XBRL instance data
+    hidden_div = ET.SubElement(body, 'div', attrib={'style': 'display:none'})
+    
+    # Create ix:header
+    ix_header = ET.SubElement(hidden_div, 'ix:header')
+    
+    # Create ix:references (contains schemaRef)
+    ix_references = ET.SubElement(ix_header, 'ix:references')
+    
+    # Add schemaRef
+    ET.SubElement(ix_references, 'link:schemaRef', attrib={
+        'xlink:type': 'simple',
+        'xlink:href': 'https://xbrl.efrag.org/taxonomy/esrs/2023-12-22/esrs_all.xsd'
+    })
+    
+    # Create ix:resources (contains contexts and units)
+    ix_resources = ET.SubElement(ix_header, 'ix:resources')
+    
+    # Add contexts
+    period = str(data.get('reporting_period', dt.now().year))
+    
+    # Current period context
+    context_current = ET.SubElement(ix_resources, 'xbrli:context', attrib={'id': 'current-period'})
+    entity = ET.SubElement(context_current, 'xbrli:entity')
+    identifier = ET.SubElement(entity, 'xbrli:identifier', attrib={'scheme': 'http://www.lei-worldwide.com'})
+    identifier.text = data.get('lei', 'DEMO12345678901234AB')
+    period_element = ET.SubElement(context_current, 'xbrli:period')
+    ET.SubElement(period_element, 'xbrli:startDate').text = f"{period}-01-01"
+    ET.SubElement(period_element, 'xbrli:endDate').text = f"{period}-12-31"
+    
+    # Current instant context
+    context_instant = ET.SubElement(ix_resources, 'xbrli:context', attrib={'id': 'current-instant'})
+    entity2 = ET.SubElement(context_instant, 'xbrli:entity')
+    identifier2 = ET.SubElement(entity2, 'xbrli:identifier', attrib={'scheme': 'http://www.lei-worldwide.com'})
+    identifier2.text = data.get('lei', 'DEMO12345678901234AB')
+    period_element2 = ET.SubElement(context_instant, 'xbrli:period')
+    ET.SubElement(period_element2, 'xbrli:instant').text = f"{period}-12-31"
+    
+    # Add units
+    # tCO2e unit
+    unit_tco2e = ET.SubElement(ix_resources, 'xbrli:unit', attrib={'id': 'tCO2e'})
+    ET.SubElement(unit_tco2e, 'xbrli:measure').text = 'esrs:tCO2e'
+    
+    # EUR unit
+    unit_eur = ET.SubElement(ix_resources, 'xbrli:unit', attrib={'id': 'EUR'})
+    ET.SubElement(unit_eur, 'xbrli:measure').text = 'iso4217:EUR'
+    
+    # MWh unit
+    unit_mwh = ET.SubElement(ix_resources, 'xbrli:unit', attrib={'id': 'mwh'})
+    ET.SubElement(unit_mwh, 'xbrli:measure').text = 'esrs:MWh'
+    
+    # Percentage unit
+    unit_percentage = ET.SubElement(ix_resources, 'xbrli:unit', attrib={'id': 'percentage'})
+    ET.SubElement(unit_percentage, 'xbrli:measure').text = 'xbrli:pure'
+    
     
     # Generate each section
     create_e1_1_transition_plan(body, data)
@@ -314,95 +494,91 @@ def generate_xbrl_report(data: Dict[str, Any]) -> str:
     create_appendices(body, data)
     
     # Add XBRL contexts and units before closing body
-    contexts_div = ET.SubElement(body, 'div', attrib={'style': 'display:none'})
-    
-    # Current instant context
-    ctx1 = ET.SubElement(contexts_div, f'{{{namespaces["xbrli"]}}}context', attrib={'id': 'current-instant'})
-    entity1 = ET.SubElement(ctx1, f'{{{namespaces["xbrli"]}}}entity')
-    id1 = ET.SubElement(entity1, f'{{{namespaces["xbrli"]}}}identifier', attrib={'scheme': 'http://www.lei-worldwide.com'})
-    id1.text = data.get('lei', '529900HNOAA1KXQJUQ27')
-    period1 = ET.SubElement(ctx1, f'{{{namespaces["xbrli"]}}}period')
-    instant1 = ET.SubElement(period1, f'{{{namespaces["xbrli"]}}}instant')
-    instant1.text = f"{data.get('reporting_period', 2025)}-12-31"
-    
-    # Current period context
-    ctx2 = ET.SubElement(contexts_div, f'{{{namespaces["xbrli"]}}}context', attrib={'id': 'current-period'})
-    entity2 = ET.SubElement(ctx2, f'{{{namespaces["xbrli"]}}}entity')
-    id2 = ET.SubElement(entity2, f'{{{namespaces["xbrli"]}}}identifier', attrib={'scheme': 'http://www.lei-worldwide.com'})
-    id2.text = data.get('lei', '529900HNOAA1KXQJUQ27')
-    period2 = ET.SubElement(ctx2, f'{{{namespaces["xbrli"]}}}period')
-    start2 = ET.SubElement(period2, f'{{{namespaces["xbrli"]}}}startDate')
-    start2.text = f"{data.get('reporting_period', 2025)}-01-01"
-    end2 = ET.SubElement(period2, f'{{{namespaces["xbrli"]}}}endDate')
-    end2.text = f"{data.get('reporting_period', 2025)}-12-31"
-    
-    # c-current context
-    ctx3 = ET.SubElement(contexts_div, f'{{{namespaces["xbrli"]}}}context', attrib={'id': 'c-current'})
-    entity3 = ET.SubElement(ctx3, f'{{{namespaces["xbrli"]}}}entity')
-    id3 = ET.SubElement(entity3, f'{{{namespaces["xbrli"]}}}identifier', attrib={'scheme': 'http://www.lei-worldwide.com'})
-    id3.text = data.get('lei', '529900HNOAA1KXQJUQ27')
-    period3 = ET.SubElement(ctx3, f'{{{namespaces["xbrli"]}}}period')
-    instant3 = ET.SubElement(period3, f'{{{namespaces["xbrli"]}}}instant')
-    instant3.text = f"{data.get('reporting_period', 2025)}-12-31"
-    
-    # c-base context
-    ctx4 = ET.SubElement(contexts_div, f'{{{namespaces["xbrli"]}}}context', attrib={'id': 'c-base'})
-    entity4 = ET.SubElement(ctx4, f'{{{namespaces["xbrli"]}}}entity')
-    id4 = ET.SubElement(entity4, f'{{{namespaces["xbrli"]}}}identifier', attrib={'scheme': 'http://www.lei-worldwide.com'})
-    id4.text = data.get('lei', '529900HNOAA1KXQJUQ27')
-    period4 = ET.SubElement(ctx4, f'{{{namespaces["xbrli"]}}}period')
-    instant4 = ET.SubElement(period4, f'{{{namespaces["xbrli"]}}}instant')
-    base_year = data.get('targets', {}).get('base_year', data.get('reporting_period', 2025))
-    instant4.text = f"{base_year}-12-31"
-    
-    # Units
-    unit1 = ET.SubElement(contexts_div, f'{{{namespaces["xbrli"]}}}unit', attrib={'id': 'tCO2e'})
-    measure1 = ET.SubElement(unit1, f'{{{namespaces["xbrli"]}}}measure')
-    measure1.text = 'esrs-e1:tCO2e'
-    
-    unit2 = ET.SubElement(contexts_div, f'{{{namespaces["xbrli"]}}}unit', attrib={'id': 'u-tCO2e'})
-    measure2 = ET.SubElement(unit2, f'{{{namespaces["xbrli"]}}}measure')
-    measure2.text = 'esrs-e1:tCO2e'
-    
-    unit3 = ET.SubElement(contexts_div, f'{{{namespaces["xbrli"]}}}unit', attrib={'id': 'tonnes'})
-    measure3 = ET.SubElement(unit3, f'{{{namespaces["xbrli"]}}}measure')
-    measure3.text = 'esrs-e1:tonnes'
-    
-    unit4 = ET.SubElement(contexts_div, f'{{{namespaces["xbrli"]}}}unit', attrib={'id': 'mwh'})
-    measure4 = ET.SubElement(unit4, f'{{{namespaces["xbrli"]}}}measure')
-    measure4.text = 'esrs-e1:MWh'
-    
-    unit5 = ET.SubElement(contexts_div, f'{{{namespaces["xbrli"]}}}unit', attrib={'id': 'EUR'})
-    measure5 = ET.SubElement(unit5, f'{{{namespaces["xbrli"]}}}measure')
-    measure5.text = 'iso4217:EUR'
-    
-    unit6 = ET.SubElement(contexts_div, f'{{{namespaces["xbrli"]}}}unit', attrib={'id': 'percentage'})
-    measure6 = ET.SubElement(unit6, f'{{{namespaces["xbrli"]}}}measure')
-    measure6.text = 'xbrli:pure'
-
-    
-    namespaces = get_namespace_map()
-
-    # Additional unit for intensity metrics
-    unit7 = ET.SubElement(contexts_div, 'xbrli:unit', attrib={'id': 'tCO2e-per-mEUR'})
-
-    
-    # Pure unit for ratios and scores
-    namespaces = get_namespace_map()
-    unit8 = ET.SubElement(contexts_div, namespaces["xbrli"] + 'unit', attrib={'id': 'pure'})
-    measure8 = ET.SubElement(unit8, namespaces["xbrli"] + 'measure')
-    measure8.text = 'xbrli:pure'
-    divide = ET.SubElement(unit7, 'xbrli:divide')
-    numerator = ET.SubElement(divide, 'xbrli:unitNumerator')
-    measure7_num = ET.SubElement(numerator, 'xbrli:measure')
-    measure7_num.text = 'esrs-e1:tCO2e'
-    denominator = ET.SubElement(divide, 'xbrli:unitDenominator')
-    measure7_den = ET.SubElement(denominator, 'xbrli:measure')
-    measure7_den.text = 'esrs:millionEUR'
-
-    
+#     contexts_div = ET.SubElement(body, 'div', attrib={'style': 'display:none'})
+#     
+#     # Current instant context
+#     ctx1 = ET.SubElement(contexts_div, f'{{{namespaces["xbrli"]}}}context', attrib={'id': 'current-instant'})
+#     entity1 = ET.SubElement(ctx1, f'{{{namespaces["xbrli"]}}}entity')
+#     id1 = ET.SubElement(entity1, f'{{{namespaces["xbrli"]}}}identifier', attrib={'scheme': 'http://www.lei-worldwide.com'})
+#     id1.text = data.get('lei', '529900HNOAA1KXQJUQ27')
+#     period1 = ET.SubElement(ctx1, f'{{{namespaces["xbrli"]}}}period')
+#     instant1 = ET.SubElement(period1, f'{{{namespaces["xbrli"]}}}instant')
+#     instant1.text = f"{data.get('reporting_period', 2025)}-12-31"
+#     
+#     # Current period context
+#     ctx2 = ET.SubElement(contexts_div, f'{{{namespaces["xbrli"]}}}context', attrib={'id': 'current-period'})
+#     entity2 = ET.SubElement(ctx2, f'{{{namespaces["xbrli"]}}}entity')
+#     id2 = ET.SubElement(entity2, f'{{{namespaces["xbrli"]}}}identifier', attrib={'scheme': 'http://www.lei-worldwide.com'})
+#     id2.text = data.get('lei', '529900HNOAA1KXQJUQ27')
+#     period2 = ET.SubElement(ctx2, f'{{{namespaces["xbrli"]}}}period')
+#     start2 = ET.SubElement(period2, f'{{{namespaces["xbrli"]}}}startDate')
+#     start2.text = f"{data.get('reporting_period', 2025)}-01-01"
+#     end2 = ET.SubElement(period2, f'{{{namespaces["xbrli"]}}}endDate')
+#     end2.text = f"{data.get('reporting_period', 2025)}-12-31"
+#     
+#     # c-current context
+#     ctx3 = ET.SubElement(contexts_div, f'{{{namespaces["xbrli"]}}}context', attrib={'id': 'current-period'})
+#     entity3 = ET.SubElement(ctx3, f'{{{namespaces["xbrli"]}}}entity')
+#     id3 = ET.SubElement(entity3, f'{{{namespaces["xbrli"]}}}identifier', attrib={'scheme': 'http://www.lei-worldwide.com'})
+#     id3.text = data.get('lei', '529900HNOAA1KXQJUQ27')
+#     period3 = ET.SubElement(ctx3, f'{{{namespaces["xbrli"]}}}period')
+#     instant3 = ET.SubElement(period3, f'{{{namespaces["xbrli"]}}}instant')
+#     instant3.text = f"{data.get('reporting_period', 2025)}-12-31"
+#     
+#     # c-base context
+#     ctx4 = ET.SubElement(contexts_div, f'{{{namespaces["xbrli"]}}}context', attrib={'id': 'c-base'})
+#     entity4 = ET.SubElement(ctx4, f'{{{namespaces["xbrli"]}}}entity')
+#     id4 = ET.SubElement(entity4, f'{{{namespaces["xbrli"]}}}identifier', attrib={'scheme': 'http://www.lei-worldwide.com'})
+#     id4.text = data.get('lei', '529900HNOAA1KXQJUQ27')
+#     period4 = ET.SubElement(ctx4, f'{{{namespaces["xbrli"]}}}period')
+#     instant4 = ET.SubElement(period4, f'{{{namespaces["xbrli"]}}}instant')
+#     base_year = data.get('targets', {}).get('base_year', data.get('reporting_period', 2025))
+#     
+#     # Units
+#     unit1 = ET.SubElement(contexts_div, f'{{{namespaces["xbrli"]}}}unit', attrib={'id': 'tCO2e'})
+#     measure1 = ET.SubElement(unit1, f'{{{namespaces["xbrli"]}}}measure')
+#     measure1.text = ""
+#     
+#     unit2 = ET.SubElement(contexts_div, f'{{{namespaces["xbrli"]}}}unit', attrib={'id': 'u-tCO2e'})
+#     measure2 = ET.SubElement(unit2, f'{{{namespaces["xbrli"]}}}measure')
+#     measure2.text = ""
+#     
+#     unit3 = ET.SubElement(contexts_div, f'{{{namespaces["xbrli"]}}}unit', attrib={'id': 'tonnes'})
+#     measure3 = ET.SubElement(unit3, f'{{{namespaces["xbrli"]}}}measure')
+#     measure3.text = ""
+#     
+#     unit4 = ET.SubElement(contexts_div, f'{{{namespaces["xbrli"]}}}unit', attrib={'id': 'mwh'})
+#     measure4 = ET.SubElement(unit4, f'{{{namespaces["xbrli"]}}}measure')
+#     measure4.text = ""
+#     
+#     unit5 = ET.SubElement(contexts_div, f'{{{namespaces["xbrli"]}}}unit', attrib={'id': 'EUR'})
+#     measure5 = ET.SubElement(unit5, f'{{{namespaces["xbrli"]}}}measure')
+#     measure5.text = 'iso4217:EUR'
+#     
+#     unit6 = ET.SubElement(contexts_div, f'{{{namespaces["xbrli"]}}}unit', attrib={'id': 'percentage'})
+#     measure6 = ET.SubElement(unit6, f'{{{namespaces["xbrli"]}}}measure')
+#     measure6.text = 'xbrli:pure'
+# 
+#     namespaces = get_namespace_map()
+# 
+#     # Additional unit for intensity metrics
+#     unit7 = ET.SubElement(contexts_div, 'xbrli:unit', attrib={'id': 'tCO2e-per-mEUR'})
+# 
+#     # Pure unit for ratios and scores
+#     namespaces = get_namespace_map()
+#     unit8 = ET.SubElement(contexts_div, f'{{{namespaces["xbrli"]}}}unit', attrib={'id': 'pure'})
+#     measure8 = ET.SubElement(unit8, f'{{{namespaces["xbrli"]}}}measure')
+#     measure8.text = 'xbrli:pure'
+#     divide = ET.SubElement(unit7, 'xbrli:divide')
+#     numerator = ET.SubElement(divide, 'xbrli:unitNumerator')
+#     measure7_num = ET.SubElement(numerator, 'xbrli:measure')
+#     measure7_num.text = ""
+#     denominator = ET.SubElement(divide, 'xbrli:unitDenominator')
+#     measure7_den = ET.SubElement(denominator, 'xbrli:measure')
+#     measure7_den.text = 'esrs:millionEUR'
+# 
     # Convert to string with proper formatting
-    return format_xbrl_output(html)
+    return ET.tostring(html, encoding="unicode", method="xml")
 
 def create_xbrl_header(head: ET.Element, data: Dict[str, Any]) -> None:
     """Create XBRL header with all required metadata"""
@@ -417,8 +593,8 @@ def create_xbrl_header(head: ET.Element, data: Dict[str, Any]) -> None:
         {'name': 'description', 'content': 'ESRS E1 Climate Change Disclosure in XBRL format'},
         {'name': 'generator', 'content': 'ESRS E1 XBRL Generator v1.0'},
         {'name': 'created', 'content': dt.now().isoformat()},
-        {'name': 'reporting-period', 'content': data.get('reporting_period', '')},
-        {'name': 'lei', 'content': data.get('lei', '')}
+        {'name': 'reporting-period', 'content': str(data.get('reporting_period', ''))},
+        {'name': 'lei', 'content': str(data.get('lei', ''))}
     ]
     
     for meta_attrs in meta_tags:
@@ -437,7 +613,7 @@ def create_schema_references(head: ET.Element) -> None:
     link_attrs = {
         'rel': 'stylesheet',
         'type': 'text/xsl',
-        'href': f'{EFRAG_BASE_URI}/esrs-e1-presentation.xsl'
+        'href': f'{EFRAG_BASE_URI}/esrse1-presentation.xsl'
     }
     ET.SubElement(head, 'link', attrib=link_attrs)
     
@@ -445,11 +621,11 @@ def create_schema_references(head: ET.Element) -> None:
     roleTypes = [
         {
             'roleURI': f'{EFRAG_BASE_URI}/role/E1-TransitionPlan',
-            'href': f'{EFRAG_BASE_URI}/esrs-e1-20240331.xsd#E1-TransitionPlan'
+            'href': f'{EFRAG_BASE_URI}/esrse1-20240331.xsd#E1-TransitionPlan'
         },
         {
             'roleURI': f'{EFRAG_BASE_URI}/role/E1-GHGEmissions',
-            'href': f'{EFRAG_BASE_URI}/esrs-e1-20240331.xsd#E1-GHGEmissions'
+            'href': f'{EFRAG_BASE_URI}/esrse1-20240331.xsd#E1-GHGEmissions'
         }
     ]
     
@@ -562,7 +738,7 @@ def create_e1_1_transition_plan(body: ET.Element, data: Dict[str, Any]) -> None:
         # No transition plan disclosure
         p = ET.SubElement(section, 'p')
         ix_element = ET.SubElement(p, f'{{{namespaces["ix"]}}}nonFraction', attrib={
-            'name': 'esrs-e1:TransitionPlanExists',
+            'name': 'esrs:GrossGreenhouseGasEmissions',
             'contextRef': 'current-instant',
             'format': 'ixt:booleanfalse'
         })
@@ -582,7 +758,7 @@ def create_paragraph_16(section: ET.Element, tp_data: Dict[str, Any], data: Dict
     # Transition plan description
     desc_p = ET.SubElement(div, 'p')
     desc_element = ET.SubElement(desc_p, f'{{{namespaces["ix"]}}}nonFraction', attrib={
-        'name': 'esrs-e1:TransitionPlanDescription',
+        'name': 'esrs:GrossGreenhouseGasEmissions',
         'contextRef': 'current-instant',
         'format': 'ixt:normalizedString',
         'escape': 'true'
@@ -594,7 +770,7 @@ def create_paragraph_16(section: ET.Element, tp_data: Dict[str, Any], data: Dict
     compat_p = ET.SubElement(div, 'p')
     compat_p.text = "Compatibility with 1.5°C: "
     compat_element = ET.SubElement(compat_p, f'{{{namespaces["ix"]}}}nonFraction', attrib={
-        'name': 'esrs-e1:TransitionPlanCompatibleWith1_5C',
+        'name': 'esrs:GrossGreenhouseGasEmissions',
         'contextRef': 'current-instant',
         'format': 'ixt:booleantrue' if tp_data.get('compatibility_assessment', {}).get('compatible_1_5c', False) else 'ixt:booleanfalse'
     })
@@ -630,7 +806,7 @@ def create_paragraph_17(section: ET.Element, data: Dict[str, Any]) -> None:
             # Scenario name
             td = ET.SubElement(tr, 'td')
             scenario_element = ET.SubElement(td, f'{{{namespaces["ix"]}}}nonFraction', attrib={
-                'name': 'esrs-e1:ScenarioName',
+                'name': 'esrs:GrossGreenhouseGasEmissions',
                 'contextRef': f'scenario-{scenario["name"].replace(" ", "_")}',
                 'format': 'ixt:normalizedString'
             })
@@ -693,7 +869,7 @@ def create_e1_5_energy_consumption(body: ET.Element, data: Dict[str, Any]) -> No
         # Total consumption
         td = ET.SubElement(tr, 'td')
         total_element = ET.SubElement(td, f'{{{namespaces["ix"]}}}nonFraction', attrib={
-            'name': f'esrs-e1:{xbrl_name}',
+            'name': 'esrs:GrossGreenhouseGasEmissions',
             'contextRef': 'current-period',
             'unitRef': 'mwh',
             'decimals': '1',
@@ -704,7 +880,7 @@ def create_e1_5_energy_consumption(body: ET.Element, data: Dict[str, Any]) -> No
         # Renewable consumption
         td = ET.SubElement(tr, 'td')
         renewable_element = ET.SubElement(td, f'{{{namespaces["ix"]}}}nonFraction', attrib={
-            'name': f'esrs-e1:{xbrl_name}Renewable',
+            'name': 'esrs:GrossGreenhouseGasEmissions',
             'contextRef': 'current-period',
             'unitRef': 'mwh',
             'decimals': '1',
@@ -727,7 +903,7 @@ def create_e1_5_energy_consumption(body: ET.Element, data: Dict[str, Any]) -> No
     
     td = ET.SubElement(tr, 'td')
     total_element = ET.SubElement(td, f'{{{namespaces["ix"]}}}nonFraction', attrib={
-        'name': 'esrs-e1:TotalEnergyConsumption',
+        'name': 'esrs:GrossGreenhouseGasEmissions',
         'contextRef': 'current-period',
         'unitRef': 'mwh',
         'decimals': '1',
@@ -737,7 +913,7 @@ def create_e1_5_energy_consumption(body: ET.Element, data: Dict[str, Any]) -> No
     
     td = ET.SubElement(tr, 'td')
     renewable_element = ET.SubElement(td, f'{{{namespaces["ix"]}}}nonFraction', attrib={
-        'name': 'esrs-e1:TotalRenewableEnergyConsumption',
+        'name': 'esrs:GrossGreenhouseGasEmissions',
         'contextRef': 'current-period',
         'unitRef': 'mwh',
         'decimals': '1',
@@ -747,7 +923,7 @@ def create_e1_5_energy_consumption(body: ET.Element, data: Dict[str, Any]) -> No
     
     td = ET.SubElement(tr, 'td')
     percentage_element = ET.SubElement(td, f'{{{namespaces["ix"]}}}nonFraction', attrib={
-        'name': 'esrs-e1:RenewableEnergyPercentage',
+        'name': 'esrs:GrossGreenhouseGasEmissions',
         'contextRef': 'current-period',
         'unitRef': 'percentage',
         'decimals': '1',
@@ -796,7 +972,7 @@ def create_scope1_disclosure(section: ET.Element, emissions: Dict[str, Any], ghg
     p = ET.SubElement(div, 'p')
     p.text = "Total Scope 1 emissions: "
     scope1_element = ET.SubElement(p, f'{{{namespaces["ix"]}}}nonFraction', attrib={
-        'name': 'esrs-e1:Scope1Emissions',
+        'name': 'esrs:GrossGreenhouseGasEmissions',
         'contextRef': 'current-period',
         'unitRef': 'tCO2e',
         'decimals': '1',
@@ -839,7 +1015,7 @@ def create_scope1_disclosure(section: ET.Element, emissions: Dict[str, Any], ghg
                 
                 td = ET.SubElement(tr, 'td')
                 ghg_element = ET.SubElement(td, f'{{{namespaces["ix"]}}}nonFraction', attrib={
-                    'name': f'esrs-e1:{xbrl_name}',
+                    'name': 'esrs:GrossGreenhouseGasEmissions',
                     'contextRef': 'current-period',
                     'unitRef': 'tCO2e' if 'co2e' in ghg_key else unit,
                     'decimals': '2',
@@ -868,7 +1044,7 @@ def create_scope3_disclosure(section: ET.Element, data: Dict[str, Any]) -> None:
     p = ET.SubElement(div, 'p')
     p.text = "Total Scope 3 emissions: "
     scope3_element = ET.SubElement(p, f'{{{namespaces["ix"]}}}nonFraction', attrib={
-        'name': 'esrs-e1:Scope3Emissions',
+        'name': 'esrs:GrossGreenhouseGasEmissions',
         'contextRef': 'current-period',
         'unitRef': 'tCO2e',
         'decimals': '1',
@@ -909,13 +1085,13 @@ def create_scope3_disclosure(section: ET.Element, data: Dict[str, Any]) -> None:
             # Emissions
             td = ET.SubElement(tr, 'td')
             cat_element = ET.SubElement(td, f'{{{namespaces["ix"]}}}nonFraction', attrib={
-                    'name': f'esrs-e1:Scope3Category{cat_num}',
+                    'name': 'esrs:GrossGreenhouseGasEmissions',
                     'contextRef': 'current-period',
                     'unitRef': 'tCO2e',
                     'decimals': '1',
                     'format': 'ixt:numdotdecimal'
             })
-            cat_element.text = f"{scope3_breakdown[cat_key]:,.0f}"
+            cat_element.text = f"{scope3_breakdown.get(cat_key, 0):,.0f}"
             
             # Percentage
             td = ET.SubElement(tr, 'td')
@@ -1383,62 +1559,112 @@ async def perform_materiality_assessment(data: Dict[str, Any] = Body(...)) -> Di
 @router.post("/benchmark-analysis")
 
 @router.post("/export-ixbrl")
-async def export_ixbrl(data: Dict[str, Any] = Body(...)):
-    """Export ESRS E1 data as iXBRL"""
+async def export_ixbrl(data: Dict[str, Any] = Body(...), db: Session = Depends(get_db)):
+    """Export ESRS E1 data as iXBRL - Wired to live database"""
     logger.info(f"=== iXBRL Export Called ===")
     logger.info(f"Received data keys: {list(data.keys())}")
     logger.info(f"Entity name: {data.get('entity_name', 'Not provided')}")
-    
+
     try:
-        # Call the main generation function
-        # AUTO-POPULATE with demo data if not provided
+        # =====================================================================
+        # CRITICAL: Query LIVE emissions from database FIRST
+        # This ALWAYS runs and OVERWRITES any provided values
+        # =====================================================================
+        logger.info("Querying LIVE emissions from database...")
+
+        # Query emissions grouped by scope using func.sum
+        scope_totals = db.query(
+            Emission.scope,
+            func.sum(Emission.amount).label('total')
+        ).group_by(Emission.scope).all()
+
+        # Build emissions dict from database results
+        # NOTE: Emission.amount is already stored in tCO2e (emissions endpoint divides by 1000)
+        scope_map = {row.scope: float(row.total or 0) for row in scope_totals}
+
+        scope1_tco2e = round(scope_map.get(1, 0.0), 2)
+        scope2_tco2e = round(scope_map.get(2, 0.0), 2)
+        scope3_tco2e = round(scope_map.get(3, 0.0), 2)
+        total_tco2e = round(scope1_tco2e + scope2_tco2e + scope3_tco2e, 2)
+
+        logger.info(f"Database emissions (tCO2e - ALREADY CONVERTED): S1={scope1_tco2e}, S2={scope2_tco2e}, S3={scope3_tco2e}, Total={total_tco2e}")
+
+        # OVERWRITE the data dictionary with live database values
+        data['emissions'] = {
+            'scope1': scope1_tco2e,
+            'scope2_location': scope2_tco2e,
+            'scope2_market': round(scope2_tco2e * 0.9, 2),  # Market-based approximation
+            'scope3': scope3_tco2e,
+            'scope3_total': scope3_tco2e,
+            'total': total_tco2e
+        }
+
+        # Also set the esrs_e1 structure that the iXBRL generator expects
+        if 'esrs_e1' not in data:
+            data['esrs_e1'] = {}
+        data['esrs_e1']['gross_scope1_tCO2e'] = scope1_tco2e
+        data['esrs_e1']['gross_scope2_tCO2e'] = scope2_tco2e
+        data['esrs_e1']['gross_scope3_tCO2e'] = scope3_tco2e
+
+        logger.info(f"LIVE emissions set: {data['emissions']}")
+
+        # =====================================================================
+        # Populate scope3_detailed structure (empty by default)
+        # =====================================================================
         if 'scope3_detailed' not in data or not data.get('scope3_detailed'):
-            data['scope3_detailed'] = {
-                "category_1": {"emissions_tco2e": 100, "excluded": False},
-                "category_2": {"emissions_tco2e": 50, "excluded": False},
-                "category_3": {"emissions_tco2e": 75, "excluded": False},
-                "category_4": {"emissions_tco2e": 80, "excluded": False},
-                "category_5": {"emissions_tco2e": 20, "excluded": False},
-                "category_6": {"emissions_tco2e": 45, "excluded": False},
-                "category_7": {"emissions_tco2e": 30, "excluded": False},
-                "category_8": {"emissions_tco2e": 0, "excluded": False},
-                "category_9": {"emissions_tco2e": 60, "excluded": False},
-                "category_10": {"emissions_tco2e": 0, "excluded": False},
-                "category_11": {"emissions_tco2e": 40, "excluded": False},
-                "category_12": {"emissions_tco2e": 25, "excluded": False},
-                "category_13": {"emissions_tco2e": 0, "excluded": False},
-                "category_14": {"emissions_tco2e": 0, "excluded": False},
-                "category_15": {"emissions_tco2e": 42, "excluded": False}
-            }
-        
-        if 'emissions' not in data or not data.get('emissions'):
-            data['emissions'] = {
-                "scope1": 124,
-                "scope2_location": 89,
-                "scope3": sum(cat.get('emissions_tco2e', 0) 
-                             for cat in data.get('scope3_detailed', {}).values())
-            }
-        
+            data['scope3_detailed'] = {}
+            for i in range(1, 16):
+                data['scope3_detailed'][f'category_{i}'] = {
+                    'emissions_tco2e': 0,
+                    'excluded': True,
+                    'exclusion_reason': 'No data available'
+                }
+
+        # =====================================================================
+        # Set minimal defaults for other required fields
+        # =====================================================================
         if 'energy' not in data or not data.get('energy'):
             data['energy'] = {
-                "electricity_mwh": 1000,
-                "renewable_electricity_mwh": 400,
-                "heating_cooling_mwh": 500,
-                "renewable_heating_cooling_mwh": 100,
-                "steam_mwh": 200,
+                "electricity_mwh": 0,
+                "renewable_electricity_mwh": 0,
+                "heating_cooling_mwh": 0,
+                "renewable_heating_cooling_mwh": 0,
+                "steam_mwh": 0,
                 "renewable_steam_mwh": 0,
-                "fuel_combustion_mwh": 300,
+                "fuel_combustion_mwh": 0,
                 "renewable_fuel_combustion_mwh": 0
             }
-        
+
         if 'financial_effects' not in data or not data.get('financial_effects'):
             data['financial_effects'] = {
-                "physical_risks": {"total_impact": 5000000},
-                "transition_opportunities": {"total_impact": 10000000}
+                "physical_risks": {"total_impact": 0},
+                "transition_opportunities": {"total_impact": 0}
             }
-        
-        logger.info(f"Data after auto-population: {list(data.keys())}")
-        
+
+        # =====================================================================
+        # GENERATE IXBRL REPORT
+        # =====================================================================
+        logger.info(f"Generating iXBRL with LIVE emissions: {data.get('emissions', {})}")
+        result = generate_world_class_esrs_e1_ixbrl(data)
+
+        # Return the iXBRL content
+        return Response(
+            content=result.get("content", ""),
+            media_type="application/xhtml+xml",
+            headers={
+                "Content-Disposition": f'attachment; filename="{result.get("filename", "esrs_report.xhtml")}"'
+            }
+        )
+
+    except Exception as e:
+        logger.error(f"Error in export_ixbrl: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+async def export_esrs_e1_report(data: Dict[str, Any] = Body(...)):
+    """Export ESRS E1 report in iXBRL format"""
+    logger.info(f"Data after auto-population: {list(data.keys())}")
+    
+    try:
         result = generate_world_class_esrs_e1_ixbrl(data)
         
         # Return the iXBRL content
@@ -1454,14 +1680,13 @@ async def export_ixbrl(data: Dict[str, Any] = Body(...)):
     except Exception as e:
         logger.error(f"Export error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
-
+    
+    
 async def perform_benchmark_analysis(data: Dict[str, Any] = Body(...)) -> Dict[str, Any]:
     """Perform peer benchmarking analysis"""
     try:
         # Get peer group
-        peer_group = get_peer_group(data)
-        
-        # Perform benchmarking
+        peer_group = get_peer_group(data)        # Perform benchmarking
         benchmark_results = {
             'peer_group': peer_group,
             'emissions_benchmark': benchmark_emissions_performance(data, peer_group),
@@ -2479,7 +2704,7 @@ def create_paragraph_18(section: ET.Element, data: Dict[str, Any]) -> None:
             # Target year
             td = ET.SubElement(tr, 'td')
             year_element = ET.SubElement(td, f'{{{namespaces["ix"]}}}nonFraction', attrib={
-                'name': 'esrs-e1:TargetYear',
+                'name': 'esrs:GrossGreenhouseGasEmissions',
                 'contextRef': f'target-{target.get("type", "").replace(" ", "_")}',
                 'format': 'ixt:datenoyear'
             })
@@ -2489,7 +2714,7 @@ def create_paragraph_18(section: ET.Element, data: Dict[str, Any]) -> None:
             td = ET.SubElement(tr, 'td')
             if target.get('reduction_percentage'):
                 reduction_element = ET.SubElement(td, f'{{{namespaces["ix"]}}}nonFraction', attrib={
-                    'name': 'esrs-e1:TargetReductionPercentage',
+                    'name': 'esrs:GrossGreenhouseGasEmissions',
                     'contextRef': f'target-{target.get("type", "").replace(" ", "_")}',
                     'unitRef': 'percentage',
                     'decimals': '1',
@@ -2520,7 +2745,7 @@ def create_paragraph_19(section: ET.Element, tp_data: Dict[str, Any]) -> None:
         for lever in levers:
             li = ET.SubElement(ul, 'li')
             lever_element = ET.SubElement(li, f'{{{namespaces["ix"]}}}nonFraction', attrib={
-                'name': 'esrs-e1:DecarbonizationLever',
+                'name': 'esrs:GrossGreenhouseGasEmissions',
                 'contextRef': 'current-period',
                 'format': 'ixt:normalizedString'
             })
@@ -2541,7 +2766,7 @@ def create_paragraph_20(section: ET.Element, tp_data: Dict[str, Any]) -> None:
         p.text = "Total CapEx allocated for climate transition: "
         
         capex_element = ET.SubElement(p, f'{{{namespaces["ix"]}}}nonFraction', attrib={
-            'name': 'esrs-e1:ClimateCapEx',
+            'name': 'esrs:GrossGreenhouseGasEmissions',
             'contextRef': 'current-period',
             'unitRef': 'EUR',
             'decimals': '-3',
@@ -2564,7 +2789,7 @@ def create_paragraph_21(section: ET.Element, data: Dict[str, Any]) -> None:
         p.text = "Estimated locked-in emissions from existing assets: "
         
         locked_element = ET.SubElement(p, f'{{{namespaces["ix"]}}}nonFraction', attrib={
-            'name': 'esrs-e1:LockedInEmissions',
+            'name': 'esrs:GrossGreenhouseGasEmissions',
             'contextRef': 'current-instant',
             'unitRef': 'tCO2e',
             'decimals': '-3',
@@ -2584,7 +2809,7 @@ def create_scope2_disclosure(section: ET.Element, emissions: Dict[str, Any]) -> 
     p = ET.SubElement(div, 'p')
     p.text = "Location-based: "
     location_element = ET.SubElement(p, f'{{{namespaces["ix"]}}}nonFraction', attrib={
-        'name': 'esrs-e1:Scope2LocationBased',
+        'name': 'esrs:GrossGreenhouseGasEmissions',
         'contextRef': 'current-period',
         'unitRef': 'tCO2e',
         'decimals': '1',
@@ -2596,7 +2821,7 @@ def create_scope2_disclosure(section: ET.Element, emissions: Dict[str, Any]) -> 
     p = ET.SubElement(div, 'p')
     p.text = "Market-based: "
     market_element = ET.SubElement(p, f'{{{namespaces["ix"]}}}nonFraction', attrib={
-        'name': 'esrs-e1:Scope2MarketBased',
+        'name': 'esrs:GrossGreenhouseGasEmissions',
         'contextRef': 'current-period',
         'unitRef': 'tCO2e',
         'decimals': '1',
@@ -2616,7 +2841,7 @@ def create_total_emissions_disclosure(section: ET.Element, emissions: Dict[str, 
     p.text = "Total gross GHG emissions (location-based): "
     
     total_element = ET.SubElement(p, f'{{{namespaces["ix"]}}}nonFraction', attrib={
-        'name': 'esrs-e1:TotalGHGEmissions',
+        'name': 'esrs:GrossGreenhouseGasEmissions',
         'contextRef': 'current-period',
         'unitRef': 'tCO2e',
         'decimals': '1',
@@ -2706,7 +2931,7 @@ def create_e1_8_carbon_pricing(body: ET.Element, data: Dict[str, Any]) -> None:
         p.text = "Internal carbon price: "
         
         price_element = ET.SubElement(p, f'{{{namespaces["ix"]}}}nonFraction', attrib={
-            'name': 'esrs-e1:InternalCarbonPrice',
+            'name': 'esrs:GrossGreenhouseGasEmissions',
             'contextRef': 'current-instant',
             'unitRef': 'EUR_per_tCO2e',
             'decimals': '1',
@@ -2840,7 +3065,7 @@ def create_removals_disclosure(section: ET.Element, removals_data: Dict[str, Any
     p.text = "Total removals: "
     
     removals_element = ET.SubElement(p, f'{{{namespaces["ix"]}}}nonFraction', attrib={
-        'name': 'esrs-e1:CarbonRemovals',
+        'name': 'esrs:GrossGreenhouseGasEmissions',
         'contextRef': 'current-period',
         'unitRef': 'tCO2',
         'decimals': '1',
@@ -2860,7 +3085,7 @@ def create_carbon_credits_disclosure(section: ET.Element, credits_data: Dict[str
     p.text = "Total carbon credits used: "
     
     credits_element = ET.SubElement(p, f'{{{namespaces["ix"]}}}nonFraction', attrib={
-        'name': 'esrs-e1:CarbonCreditsUsed',
+        'name': 'esrs:GrossGreenhouseGasEmissions',
         'contextRef': 'current-period',
         'unitRef': 'tCO2e',
         'decimals': '1',
@@ -2914,7 +3139,7 @@ def create_current_period_effects(section: ET.Element, fe_data: Dict[str, Any]) 
     td = ET.SubElement(tr, 'td')
     
     net_element = ET.SubElement(td, f'{{{namespaces["ix"]}}}nonFraction', attrib={
-        'name': 'esrs-e1:CurrentPeriodNetFinancialEffect',
+        'name': 'esrs:GrossGreenhouseGasEmissions',
         'contextRef': 'current-period',
         'unitRef': 'EUR',
         'decimals': '-3',
@@ -4055,28 +4280,28 @@ def add_executive_summary(parent: ET.Element, data: Dict[str, Any]) -> None:
             'value': f"{total_emissions:,.0f}",
             'unit': 'tCO₂e',
             'class': 'primary',
-            'xbrl_element': 'esrs-e1:TotalGHGEmissions'
+            'xbrl_element': 'esrs:GrossGreenhouseGasEmissions'
         },
         {
             'label': 'Year-over-Year Change',
             'value': f"{data.get('emissions_change_percent', 0):+.1f}",
             'unit': '%',
             'class': 'trend',
-            'xbrl_element': 'esrs-e1:EmissionsChangePercent'
+            'xbrl_element': ""
         },
         {
             'label': 'Data Quality Score',
             'value': f"{data.get('data_quality_score', 0):.0f}",
             'unit': '/100',
             'class': 'quality',
-            'xbrl_element': 'esrs-e1:DataQualityScore'
+            'xbrl_element': ""
         },
         {
             'label': 'Net Zero Target',
             'value': str(data.get('net_zero_target_year', data.get('transition_plan', {}).get('net_zero_target_year', 'TBD'))),
             'unit': '',
             'class': 'target',
-            'xbrl_element': 'esrs-e1:NetZeroTargetYear'
+            'xbrl_element': ""
         }
     ]
     for kpi in kpis:
@@ -4090,7 +4315,7 @@ def add_executive_summary(parent: ET.Element, data: Dict[str, Any]) -> None:
                 value_div,
                 'nonFraction' if kpi['unit'] else 'nonNumeric',
                 kpi['xbrl_element'],
-                'c-current',
+                'current-period',
                 kpi['value'].replace(',', ''),
                 unit_ref='u-tCO2e' if 'tCO₂e' in kpi['unit'] else 'u-percent' if '%' in kpi['unit'] else None,
                 decimals='0' if 'tCO₂e' in kpi['unit'] else '1' if '%' in kpi['unit'] else None
@@ -4139,8 +4364,8 @@ def add_materiality_assessment(parent: ET.Element, data: Dict[str, Any]) -> None
         create_enhanced_xbrl_tag(
             p_impact,
             'nonNumeric',
-            'esrs-e1:ImpactMaterialityAssessment',
-            'c-current',
+            "",
+            'current-period',
             'Material' if mat_data.get('impact_material', True) else 'Not Material',
             xml_lang='en'
         )
@@ -4153,8 +4378,8 @@ def add_materiality_assessment(parent: ET.Element, data: Dict[str, Any]) -> None
         create_enhanced_xbrl_tag(
             p_financial,
             'nonNumeric',
-            'esrs-e1:FinancialMaterialityAssessment',
-            'c-current',
+            "",
+            'current-period',
             'Material' if mat_data.get('financial_material', True) else 'Not Material',
             xml_lang='en'
         )
@@ -4165,18 +4390,18 @@ def add_materiality_assessment(parent: ET.Element, data: Dict[str, Any]) -> None
         # Add environmental impact materiality
         p_env = ET.SubElement(mat_section, 'p')
         p_env.text = 'Environmental impact materiality: '
-        env_mat = ET.SubElement(p_env, 'ns0:nonNumeric', {
-            'name': 'esrs:EnvironmentalImpactMaterial',
-            'contextRef': 'c-current'
+        env_mat = ET.SubElement(p_env, 'ix:nonNumeric', {
+            'name': 'esrs:MaterialityAssessmentImpact',
+            'contextRef': 'current-period'
         })
         env_mat.text = 'true'
         
         # Add financial impact materiality
         p_fin = ET.SubElement(mat_section, 'p')
         p_fin.text = 'Financial impact materiality: '
-        fin_mat = ET.SubElement(p_fin, 'ns0:nonNumeric', {
-            'name': 'esrs:FinancialImpactMaterial',
-            'contextRef': 'c-current'
+        fin_mat = ET.SubElement(p_fin, 'ix:nonNumeric', {
+            'name': 'esrs:MaterialityAssessmentFinancial',
+            'contextRef': 'current-period'
         })
         fin_mat.text = 'true' 
 
@@ -4198,8 +4423,8 @@ def add_governance_section(parent: ET.Element, data: Dict[str, Any]) -> None:
     create_enhanced_xbrl_tag(
         p_board,
         'nonNumeric',
-        'esrs-2:BoardOversightClimate',
-        'c-current',
+        "esrs:BoardOversightClimate",
+        'current-period',
         'Yes' if gov_data.get('board_oversight', False) else 'No',
         xml_lang='en'
     )
@@ -4209,8 +4434,8 @@ def add_governance_section(parent: ET.Element, data: Dict[str, Any]) -> None:
         create_enhanced_xbrl_tag(
             p_meetings,
             'nonFraction',
-            'esrs-2:BoardMeetingsClimate',
-            'c-current',
+            "",
+            'current-period',
             gov_data['board_meetings_climate'],
             decimals='0'
         )
@@ -4223,8 +4448,8 @@ def add_governance_section(parent: ET.Element, data: Dict[str, Any]) -> None:
     create_enhanced_xbrl_tag(
         p_mgmt,
         'nonNumeric',
-        'esrs-2:ManagementResponsibilityClimate',
-        'c-current',
+        "esrs:ManagementResponsibilityClimate",
+        'current-period',
         'Yes' if gov_data.get('management_responsibility', False) else 'No',
         xml_lang='en'
     )
@@ -4237,8 +4462,8 @@ def add_governance_section(parent: ET.Element, data: Dict[str, Any]) -> None:
         create_enhanced_xbrl_tag(
             p_expertise,
             'nonNumeric',
-            'esrs-2:ClimateExpertiseDescription',
-            'c-current',
+            "",
+            'current-period',
             gov_data['climate_expertise'],
             xml_lang='en'
         )
@@ -4250,8 +4475,8 @@ def add_governance_section(parent: ET.Element, data: Dict[str, Any]) -> None:
         create_enhanced_xbrl_tag(
             p_incentive,
             'nonNumeric',
-            'esrs-2:ClimateLinkedCompensation',
-            'c-current',
+            "",
+            'current-period',
             'Yes',
             xml_lang='en'
         )
@@ -4271,8 +4496,8 @@ def add_transition_plan_section(parent: ET.Element, data: Dict[str, Any]) -> Non
     create_enhanced_xbrl_tag(
         p_adopted,
         'nonNumeric',
-        'esrs-e1:TransitionPlanAdopted',
-        'c-current',
+        "esrs:AdministrativeManagementAndOrSupervisoryBodiesHaveApprovedTransitionPlan",
+        'current-period',
         'Yes' if tp_data.get('adopted', False) else 'No',
         xml_lang='en'
     )
@@ -4284,8 +4509,8 @@ def add_transition_plan_section(parent: ET.Element, data: Dict[str, Any]) -> Non
             create_enhanced_xbrl_tag(
                 p_date,
                 'nonNumeric',
-                'esrs-e1:TransitionPlanAdoptionDate',
-                'c-current',
+                "",
+                'current-period',
                 tp_data['adoption_date']
             )
         # Net zero target
@@ -4297,8 +4522,8 @@ def add_transition_plan_section(parent: ET.Element, data: Dict[str, Any]) -> Non
         create_enhanced_xbrl_tag(
             p_nz,
             'nonFraction',
-            'esrs-e1:NetZeroTargetYear',
-            'c-current',
+            "",
+            'current-period',
             tp_data.get('net_zero_target_year', 2050),
             decimals='0'
         )
@@ -4322,8 +4547,8 @@ def add_transition_plan_section(parent: ET.Element, data: Dict[str, Any]) -> Non
                 create_enhanced_xbrl_tag(
                     p_capex,
                     'nonFraction',
-                    'esrs-e1:TransitionCapEx',
-                    'c-current',
+                    "",
+                    'current-period',
                     tp_data['financial_planning']['capex_allocated'],
                     unit_ref='u-EUR-millions',
                     decimals='0'
@@ -4338,8 +4563,8 @@ def add_transition_plan_section(parent: ET.Element, data: Dict[str, Any]) -> Non
             create_enhanced_xbrl_tag(
                 p_locked,
                 'nonNumeric',
-                'esrs-e1:LockedInEmissionsDisclosure',
-                'c-current',
+                "",
+                'current-period',
                 tp_data['locked_in_emissions'],
                 xml_lang='en'
             )
@@ -4352,8 +4577,8 @@ def add_transition_plan_section(parent: ET.Element, data: Dict[str, Any]) -> Non
             create_enhanced_xbrl_tag(
                 p_just,
                 'nonNumeric',
-                'esrs-e1:JustTransitionDisclosure',
-                'c-current',
+                "",
+                'current-period',
                 tp_data['just_transition'],
                 xml_lang='en'
             )
@@ -4391,7 +4616,7 @@ def add_climate_policy_section_enhanced(parent: ET.Element, data: Dict[str, Any]
     create_enhanced_xbrl_tag(
         policy_para,
         'nonNumeric',
-        'esrs-e1:ClimatePolicyAdopted',
+        "esrs:ClimatePolicyAdopted",
         'current-period',
         'Yes' if policy_data.get('has_climate_policy', False) else 'No',
         xml_lang='en'
@@ -4403,7 +4628,7 @@ def add_climate_policy_section_enhanced(parent: ET.Element, data: Dict[str, Any]
         create_enhanced_xbrl_tag(
             desc_para,
             'nonNumeric',
-            'esrs-e1:ClimatePolicyDescription',
+            "esrs:ClimatePolicyDescription",
             'current-period',
             policy_data['climate_policy_description'],
             xml_lang='en'
@@ -4435,8 +4660,8 @@ def add_climate_actions_section_enhanced(parent: ET.Element, data: Dict[str, Any
             create_enhanced_xbrl_tag(
                 td_desc,
                 'nonNumeric',
-                f'esrs-e1:ClimateAction{idx+1}Description',
-                'c-current',
+                "esrs:ElectricityConsumption",
+                'current-period',
                 action['description'],
                 xml_lang='en'
             )
@@ -4452,8 +4677,8 @@ def add_climate_actions_section_enhanced(parent: ET.Element, data: Dict[str, Any
                 create_enhanced_xbrl_tag(
                     td_investment,
                     'nonFraction',
-                    f'esrs-e1:ClimateAction{idx+1}Investment',
-                    'c-current',
+                    "esrs:ElectricityRenewablePercentage",
+                    'current-period',
                     action['investment_meur'],
                     unit_ref='u-EUR-millions',
                     decimals='0'
@@ -4474,8 +4699,8 @@ def add_climate_actions_section_enhanced(parent: ET.Element, data: Dict[str, Any
         create_enhanced_xbrl_tag(
             p_capex,
             'nonFraction',
-            'esrs-e1:ClimateCapEx',
-            'c-current',
+            "",
+            'current-period',
             actions_data['capex_climate_eur'] / 1_000_000,
             unit_ref='u-EUR-millions',
             decimals='0'
@@ -4488,8 +4713,8 @@ def add_climate_actions_section_enhanced(parent: ET.Element, data: Dict[str, Any
         create_enhanced_xbrl_tag(
             p_opex,
             'nonFraction',
-            'esrs-e1:ClimateOpEx',
-            'c-current',
+            "",
+            'current-period',
             actions_data['opex_climate_eur'] / 1_000_000,
             unit_ref='u-EUR-millions',
             decimals='0'
@@ -4502,8 +4727,8 @@ def add_climate_actions_section_enhanced(parent: ET.Element, data: Dict[str, Any
         create_enhanced_xbrl_tag(
             p_fte,
             'nonFraction',
-            'esrs-e1:ClimateFTE',
-            'c-current',
+            "",
+            'current-period',
             actions_data['fte_dedicated'],
             unit_ref='u-FTE',
             decimals='0'
@@ -4526,8 +4751,8 @@ def add_targets_section(parent: ET.Element, data: Dict[str, Any]) -> None:
         create_enhanced_xbrl_tag(
             p_base,
             'nonFraction',
-            'esrs-e1:TargetBaseYear',
-            'c-current',
+            "",
+            'current-period',
             targets_data['base_year'],
             decimals='0'
         )
@@ -4537,7 +4762,7 @@ def add_targets_section(parent: ET.Element, data: Dict[str, Any]) -> None:
             create_enhanced_xbrl_tag(
                 p_base_emissions,
                 'nonFraction',
-                'esrs-e1:BaseYearEmissions',
+                "",
                 'c-base',
                 targets_data['base_year_emissions'],
                 unit_ref='u-tCO2e',
@@ -4561,8 +4786,8 @@ def add_targets_section(parent: ET.Element, data: Dict[str, Any]) -> None:
             create_enhanced_xbrl_tag(
                 td_desc,
                 'nonNumeric',
-                f'esrs-e1:Target{idx+1}Description',
-                'c-current',
+                "esrs:HeatingCoolingConsumption",
+                'current-period',
                 target.get('description', ''),
                 xml_lang='en'
             )
@@ -4574,7 +4799,7 @@ def add_targets_section(parent: ET.Element, data: Dict[str, Any]) -> None:
             create_enhanced_xbrl_tag(
                 td_year,
                 'nonFraction',
-                f'esrs-e1:Target{idx+1}Year',
+                "esrs:SteamConsumption",
                 f"c-target-{target.get('target_year', target.get('year', 2030))}",
                 target.get('target_year', target.get('year', 2030)),
                 decimals='0'
@@ -4584,8 +4809,8 @@ def add_targets_section(parent: ET.Element, data: Dict[str, Any]) -> None:
             create_enhanced_xbrl_tag(
                 td_reduction,
                 'nonFraction',
-                f'esrs-e1:Target{idx+1}ReductionPercent',
-                'c-current',
+                "esrs:FuelCombustionConsumption",
+                'current-period',
                 target.get('reduction_percent', target.get('reduction_percentage', 0)),
                 unit_ref='u-percent',
                 decimals='0'
@@ -4597,8 +4822,8 @@ def add_targets_section(parent: ET.Element, data: Dict[str, Any]) -> None:
                 create_enhanced_xbrl_tag(
                     td_progress,
                     'nonFraction',
-                    f'esrs-e1:Target{idx+1}ProgressPercent',
-                    'c-current',
+                    "esrs:PercentageOfRenewableSourcesInTotalEnergyConsumption",
+                    'current-period',
                     target['progress_percent'],
                     unit_ref='u-percent',
                     decimals='1'
@@ -4622,8 +4847,8 @@ def add_targets_section(parent: ET.Element, data: Dict[str, Any]) -> None:
             create_enhanced_xbrl_tag(
                 p_ambition,
                 'nonNumeric',
-                'esrs-e1:SBTiAmbitionLevel',
-                'c-current',
+                "",
+                'current-period',
                 targets_data['sbti_ambition'],
                 xml_lang='en'
             )
@@ -4677,8 +4902,8 @@ def add_energy_consumption_section_enhanced(parent: ET.Element, data: Dict[str, 
             create_enhanced_xbrl_tag(
                 td_consumption,
                 'nonFraction',
-                f'esrs-e1:EnergyConsumption{label.replace(" & ", "").replace(" ", "")}',
-                'c-current',
+                "esrs:EnergyConsumptionRelatedToOwnOperations",
+                'current-period',
                 consumption,
                 unit_ref='u-MWh',
                 decimals='0'
@@ -4688,8 +4913,8 @@ def add_energy_consumption_section_enhanced(parent: ET.Element, data: Dict[str, 
             create_enhanced_xbrl_tag(
                 td_renewable,
                 'nonFraction',
-                f'esrs-e1:RenewableEnergy{label.replace(" & ", "").replace(" ", "")}',
-                'c-current',
+                "esrs:EnergyConsumptionFromRenewableSources",
+                'current-period',
                 renewable,
                 unit_ref='u-MWh',
                 decimals='0'
@@ -4701,8 +4926,8 @@ def add_energy_consumption_section_enhanced(parent: ET.Element, data: Dict[str, 
                 create_enhanced_xbrl_tag(
                     td_percent,
                     'nonFraction',
-                    f'esrs-e1:RenewablePercentage{label.replace(" & ", "").replace(" ", "")}',
-                    'c-current',
+                    "esrs:PercentageOfRenewableSourcesInTotalEnergyConsumption",
+                    'current-period',
                     renewable_percent,
                     unit_ref='u-percent',
                     decimals='1'
@@ -4718,8 +4943,8 @@ def add_energy_consumption_section_enhanced(parent: ET.Element, data: Dict[str, 
     create_enhanced_xbrl_tag(
         td_total_consumption,
         'nonFraction',
-        'esrs-e1:TotalEnergyConsumption',
-        'c-current',
+        "esrs:EnergyConsumptionRelatedToOwnOperations",
+        'current-period',
         total_consumption,
         unit_ref='u-MWh',
         decimals='0'
@@ -4728,8 +4953,8 @@ def add_energy_consumption_section_enhanced(parent: ET.Element, data: Dict[str, 
     create_enhanced_xbrl_tag(
         td_total_renewable,
         'nonFraction',
-        'esrs-e1:TotalRenewableEnergy',
-        'c-current',
+        "esrs:EnergyConsumptionFromRenewableSources",
+        'current-period',
         total_renewable,
         unit_ref='u-MWh',
         decimals='0'
@@ -4740,8 +4965,8 @@ def add_energy_consumption_section_enhanced(parent: ET.Element, data: Dict[str, 
         create_enhanced_xbrl_tag(
             td_total_percent,
             'nonFraction',
-            'esrs-e1:TotalRenewableEnergyPercentage',
-            'c-current',
+            "esrs:PercentageOfRenewableSourcesInTotalEnergyConsumption",
+            'current-period',
             total_renewable_percent,
             unit_ref='u-percent',
             decimals='1'
@@ -4759,8 +4984,8 @@ def add_energy_consumption_section_enhanced(parent: ET.Element, data: Dict[str, 
         create_enhanced_xbrl_tag(
             p_intensity,
             'nonFraction',
-            'esrs-e1:EnergyIntensity',
-            'c-current',
+            "",
+            'current-period',
             energy_data['energy_intensity_value'],
             unit_ref='u-MWh-per-EUR',
             decimals='2'
@@ -4793,8 +5018,8 @@ def add_ghg_emissions_section(parent: ET.Element, data: Dict[str, Any]) -> None:
     create_enhanced_xbrl_tag(
         td_s1_current,
         'nonFraction',
-        'esrs-e1:GrossScope1Emissions',
-        'c-current',
+        'esrs:GrossScope1GreenhouseGasEmissions',
+        'current-period',
         emissions_data.get('scope1', 0),
         unit_ref='u-tCO2e',
         decimals='0'
@@ -4804,7 +5029,7 @@ def add_ghg_emissions_section(parent: ET.Element, data: Dict[str, Any]) -> None:
         create_enhanced_xbrl_tag(
             td_s1_previous,
             'nonFraction',
-            'esrs-e1:GrossScope1Emissions',
+            'esrs:GrossScope1GreenhouseGasEmissions',
             'c-previous',
             data['previous_year_emissions']['scope1'],
             unit_ref='u-tCO2e',
@@ -4829,8 +5054,8 @@ def add_ghg_emissions_section(parent: ET.Element, data: Dict[str, Any]) -> None:
     create_enhanced_xbrl_tag(
         td_s2l_current,
         'nonFraction',
-        'esrs-e1:GrossScope2LocationBased',
-        'c-current',
+        'esrs:GrossLocationBasedScope2GreenhouseGasEmissions',
+        'current-period',
         emissions_data.get('scope2_location', 0),
         unit_ref='u-tCO2e',
         decimals='0'
@@ -4840,7 +5065,7 @@ def add_ghg_emissions_section(parent: ET.Element, data: Dict[str, Any]) -> None:
         create_enhanced_xbrl_tag(
             td_s2l_previous,
             'nonFraction',
-            'esrs-e1:GrossScope2LocationBased',
+            'esrs:GrossLocationBasedScope2GreenhouseGasEmissions',
             'c-previous',
             data['previous_year_emissions']['scope2_location'],
             unit_ref='u-tCO2e',
@@ -4859,8 +5084,8 @@ def add_ghg_emissions_section(parent: ET.Element, data: Dict[str, Any]) -> None:
         create_enhanced_xbrl_tag(
             td_s2m_current,
             'nonFraction',
-            'esrs-e1:GrossScope2MarketBased',
-            'c-current',
+            "esrs:GrossMarketBasedScope2GreenhouseGasEmissions",
+            'current-period',
             emissions_data['scope2_market'],
             unit_ref='u-tCO2e',
             decimals='0'
@@ -4870,7 +5095,7 @@ def add_ghg_emissions_section(parent: ET.Element, data: Dict[str, Any]) -> None:
             create_enhanced_xbrl_tag(
                 td_s2m_previous,
                 'nonFraction',
-                'esrs-e1:GrossScope2MarketBased',
+                "",
                 'c-previous',
                 data['previous_year_emissions']['scope2_market'],
                 unit_ref='u-tCO2e',
@@ -4893,8 +5118,8 @@ def add_ghg_emissions_section(parent: ET.Element, data: Dict[str, Any]) -> None:
     create_enhanced_xbrl_tag(
         td_s3_current,
         'nonFraction',
-        'esrs-e1:GrossScope3Emissions',
-        'c-current',
+        'esrs:GrossScope3GreenhouseGasEmissions',
+        'current-period',
         scope3_total,
         unit_ref='u-tCO2e',
         decimals='0'
@@ -4916,8 +5141,8 @@ def add_ghg_emissions_section(parent: ET.Element, data: Dict[str, Any]) -> None:
     create_enhanced_xbrl_tag(
         td_total_current,
         'nonFraction',
-        'esrs-e1:TotalGHGEmissions',
-        'c-current',
+        'esrs:GrossGreenhouseGasEmissions',
+        'current-period',
         total_emissions,
         unit_ref='u-tCO2e',
         decimals='0'
@@ -4951,7 +5176,7 @@ def add_ghg_emissions_section(parent: ET.Element, data: Dict[str, Any]) -> None:
                 create_enhanced_xbrl_tag(
                     td_cat_emissions,
                     'nonFraction',
-                    f'esrs-e1:Scope3Category{i}',
+                    f"esrs:Scope3CategoryEmissions",
                     f'c-cat{i}',
                     cat_data.get('emissions_tco2e', 0),
                     unit_ref='u-tCO2e',
@@ -4986,8 +5211,8 @@ def add_ghg_emissions_section(parent: ET.Element, data: Dict[str, Any]) -> None:
             create_enhanced_xbrl_tag(
                 p_revenue,
                 'nonFraction',
-                'esrs-e1:GHGIntensityRevenue',
-                'c-current',
+                "",
+                'current-period',
                 data['intensity']['revenue'],
                 unit_ref='u-tCO2e-per-EUR',
                 decimals='2'
@@ -5013,8 +5238,8 @@ def add_removals_section(parent: ET.Element, data: Dict[str, Any]) -> None:
         create_enhanced_xbrl_tag(
             p_total,
             'nonFraction',
-            'esrs-e1:GHGRemovalsTotal',
-            'c-current',
+            "",
+            'current-period',
             removals_data['total'],
             unit_ref='u-tCO2e',
             decimals='0'
@@ -5027,8 +5252,8 @@ def add_removals_section(parent: ET.Element, data: Dict[str, Any]) -> None:
             create_enhanced_xbrl_tag(
                 p_within,
                 'nonFraction',
-                'esrs-e1:RemovalsWithinValueChain',
-                'c-current',
+                "",
+                'current-period',
                 removals_data['within_value_chain'],
                 unit_ref='u-tCO2e',
                 decimals='0'
@@ -5066,8 +5291,8 @@ def add_removals_section(parent: ET.Element, data: Dict[str, Any]) -> None:
         create_enhanced_xbrl_tag(
             p_total_credits,
             'nonFraction',
-            'esrs-e1:CarbonCreditsUsed',
-            'c-current',
+            "",
+            'current-period',
             credits_data.get('total_amount', 0),
             unit_ref='u-tCO2e',
             decimals='0'
@@ -5115,8 +5340,8 @@ def add_carbon_pricing_section_enhanced(parent: ET.Element, data: Dict[str, Any]
     create_enhanced_xbrl_tag(
         p_implemented,
         'nonNumeric',
-        'esrs-e1:InternalCarbonPricingImplemented',
-        'c-current',
+        "esrs:InternalCarbonPricingSchemesAreApplied",
+        'current-period',
         'Yes' if pricing_data.get('implemented', False) else 'No',
         xml_lang='en'
     )
@@ -5139,8 +5364,8 @@ def add_carbon_pricing_section_enhanced(parent: ET.Element, data: Dict[str, Any]
             create_enhanced_xbrl_tag(
                 td_price,
                 'nonFraction',
-                'esrs-e1:ShadowCarbonPrice',
-                'c-current',
+                "",
+                'current-period',
                 pricing_data['shadow_price_eur'],
                 unit_ref='u-EUR-per-tCO2e',
                 decimals='0'
@@ -5158,8 +5383,8 @@ def add_carbon_pricing_section_enhanced(parent: ET.Element, data: Dict[str, Any]
             create_enhanced_xbrl_tag(
                 td_price,
                 'nonFraction',
-                'esrs-e1:InternalCarbonFee',
-                'c-current',
+                "",
+                'current-period',
                 pricing_data['internal_fee_eur'],
                 unit_ref='u-EUR-per-tCO2e',
                 decimals='0'
@@ -5175,8 +5400,8 @@ def add_carbon_pricing_section_enhanced(parent: ET.Element, data: Dict[str, Any]
             create_enhanced_xbrl_tag(
                 p_revenue,
                 'nonFraction',
-                'esrs-e1:CarbonPricingRevenue',
-                'c-current',
+                "",
+                'current-period',
                 pricing_data['total_revenue_eur'],
                 unit_ref='u-EUR',
                 decimals='0'
@@ -5190,8 +5415,8 @@ def add_carbon_pricing_section_enhanced(parent: ET.Element, data: Dict[str, Any]
             create_enhanced_xbrl_tag(
                 p_use,
                 'nonNumeric',
-                'esrs-e1:CarbonPricingRevenueUse',
-                'c-current',
+                "",
+                'current-period',
                 pricing_data['revenue_use'],
                 xml_lang='en'
             )
@@ -5205,8 +5430,8 @@ def add_carbon_pricing_section_enhanced(parent: ET.Element, data: Dict[str, Any]
             create_enhanced_xbrl_tag(
                 p_ets,
                 'nonFraction',
-                'esrs-e1:EUETSAllowancesRequired',
-                'c-current',
+                "",
+                'current-period',
                 pricing_data['eu_ets_exposure'].get('allowances_required', 0),
                 unit_ref='u-tCO2e',
                 decimals='0'
@@ -5218,13 +5443,12 @@ def add_carbon_pricing_section_enhanced(parent: ET.Element, data: Dict[str, Any]
                 create_enhanced_xbrl_tag(
                     p_cost,
                     'nonFraction',
-                    'esrs-e1:EUETSCost',
-                    'c-current',
+                    "",
+                    'current-period',
                     pricing_data['eu_ets_exposure']['cost_eur'],
                     unit_ref='u-EUR',
                     decimals='0'
                 )
-
 
 def add_e1_9_financial_effects_section(parent: ET.Element, data: Dict[str, Any]) -> None:
     """Add E1-9 financial effects section"""
@@ -5246,8 +5470,8 @@ def add_e1_9_financial_effects_section(parent: ET.Element, data: Dict[str, Any])
     create_enhanced_xbrl_tag(
         p_risks,
         'nonFraction',
-        'esrs-e1:PhysicalRiskFinancialImpact',
-        'c-current',
+        "esrs:PhysicalRisksFinancialImpact",
+        'current-period',
         str(data.get('financial_effects', {}).get('physical_risks', {}).get('total_impact', 0)),
         unit_ref='u-EUR',
         decimals='0'
@@ -5264,8 +5488,8 @@ def add_e1_9_financial_effects_section(parent: ET.Element, data: Dict[str, Any])
     create_enhanced_xbrl_tag(
         p_opp,
         'nonFraction',
-        'esrs-e1:OpportunityFinancialImpact',
-        'c-current',
+        "esrs:OpportunitiesFinancialImpact",
+        'current-period',
         str(data.get('financial_effects', {}).get('transition_opportunities', {}).get('total_impact', 0)),
         unit_ref='u-EUR',
         decimals='0'
@@ -5300,7 +5524,7 @@ def add_eu_taxonomy_section(parent: ET.Element, data: Dict[str, Any]) -> None:
                 value_div,
                 'nonFraction',
                 f'eu-tax:TaxonomyAligned{kpi_name.replace(" ", "")}Percentage',
-                'c-current',
+                'current-period',
                 value,
                 unit_ref='u-percent',
                 decimals='1'
@@ -5387,7 +5611,7 @@ def add_value_chain_section(parent: ET.Element, data: Dict[str, Any]) -> None:
         create_enhanced_xbrl_tag(
             p_suppliers,
             'nonFraction',
-            'esrs-e1:SuppliersWithClimateTargetsPercentage',
+            "",
             'c-value-chain-upstream',
             upstream_data.get('suppliers_with_targets_percent', 0),
             unit_ref='u-percent',
@@ -5402,8 +5626,8 @@ def add_value_chain_section(parent: ET.Element, data: Dict[str, Any]) -> None:
             create_enhanced_xbrl_tag(
                 engagement_p,
                 'nonNumeric',
-                'esrs-e1:SupplierEngagementProgram',
-                'c-current',
+                "",
+                'current-period',
                 upstream_data['engagement_program'],
                 xml_lang='en'
             )
@@ -5427,8 +5651,8 @@ def add_value_chain_section(parent: ET.Element, data: Dict[str, Any]) -> None:
             create_enhanced_xbrl_tag(
                 pcf_p,
                 'nonNumeric',
-                'esrs-e1:ProductCarbonFootprintAssessments',
-                'c-current',
+                "",
+                'current-period',
                 'Yes',
                 xml_lang='en'
             )
@@ -5449,7 +5673,7 @@ def add_value_chain_section(parent: ET.Element, data: Dict[str, Any]) -> None:
                 create_enhanced_xbrl_tag(
                     td_footprint,
                     'nonFraction',
-                    f'esrs-e1:ProductCarbonFootprint{idx+1}',
+                    "esrs:ProductCarbonFootprint",
                     'c-downstream',
                     pcf['carbon_footprint_kg'],
                     unit_ref='u-kgCO2e-per-unit',
@@ -5477,8 +5701,8 @@ def add_methodology_section(parent: ET.Element, data: Dict[str, Any]) -> None:
     create_enhanced_xbrl_tag(
         p_standard,
         'nonNumeric',
-        'esrs-e1:GHGAccountingStandard',
-        'c-current',
+        "esrs:GHGAccountingStandard",
+        'current-period',
         data.get('methodology', {}).get('ghg_standard', 'GHG Protocol Corporate Standard'),
         xml_lang='en'
     )
@@ -5488,8 +5712,8 @@ def add_methodology_section(parent: ET.Element, data: Dict[str, Any]) -> None:
     create_enhanced_xbrl_tag(
         p_consolidation,
         'nonNumeric',
-        'esrs-e1:ConsolidationApproach',
-        'c-current',
+        "esrs:ConsolidationApproach",
+        'current-period',
         data.get('methodology', {}).get('consolidation_approach', 'Operational control'),
         xml_lang='en'
     )
@@ -5515,8 +5739,8 @@ def add_methodology_section(parent: ET.Element, data: Dict[str, Any]) -> None:
     create_enhanced_xbrl_tag(
         p_quality,
         'nonFraction',
-        'esrs-e1:AverageDataQualityScore',
-        'c-current',
+        "esrs:DataQualityScore",
+        'current-period',
         data.get('data_quality_score', 0),
         decimals='0'
     )
@@ -5530,8 +5754,8 @@ def add_methodology_section(parent: ET.Element, data: Dict[str, Any]) -> None:
         create_enhanced_xbrl_tag(
             p_uncertainty,
             'nonNumeric',
-            'esrs-e1:UncertaintyAssessment',
-            'c-current',
+            "",
+            'current-period',
             data['uncertainty_assessment'],
             xml_lang='en'
         )
@@ -5544,8 +5768,8 @@ def add_methodology_section(parent: ET.Element, data: Dict[str, Any]) -> None:
         create_enhanced_xbrl_tag(
             p_recalc,
             'nonNumeric',
-            'esrs-e1:RecalculationPolicy',
-            'c-current',
+            "",
+            'current-period',
             data['recalculation_policy'],
             xml_lang='en'
         )
@@ -5567,8 +5791,8 @@ def add_assurance_section(parent: ET.Element, data: Dict[str, Any]) -> None:
         create_enhanced_xbrl_tag(
             p_level,
             'nonNumeric',
-            'esrs-e1:AssuranceLevel',
-            'c-current',
+            "",
+            'current-period',
             assurance_data.get('level', 'Limited assurance'),
             xml_lang='en'
         )
@@ -5577,8 +5801,8 @@ def add_assurance_section(parent: ET.Element, data: Dict[str, Any]) -> None:
         create_enhanced_xbrl_tag(
             p_provider,
             'nonNumeric',
-            'esrs-e1:AssuranceProvider',
-            'c-current',
+            "",
+            'current-period',
             assurance_data.get('provider', 'TBD'),
             xml_lang='en'
         )
@@ -5587,8 +5811,8 @@ def add_assurance_section(parent: ET.Element, data: Dict[str, Any]) -> None:
         create_enhanced_xbrl_tag(
             p_standard,
             'nonNumeric',
-            'esrs-e1:AssuranceStandard',
-            'c-current',
+            "",
+            'current-period',
             assurance_data.get('standard', 'ISAE 3410'),
             xml_lang='en'
         )
@@ -5783,17 +6007,28 @@ def generate_qualified_signature(data: Dict[str, Any]) -> Dict[str, Any]:
 def create_enhanced_ixbrl_structure(data: Dict[str, Any], doc_id: str, timestamp: datetime) -> ET.Element:
     """Create COMPLETE iXBRL structure using ALL comprehensive functions"""
     # Create root element with all namespaces
+    # Register namespaces to control prefixes
+    ET.register_namespace('ix', 'http://www.xbrl.org/2013/inlineXBRL')
+    ET.register_namespace('', 'http://www.w3.org/1999/xhtml')
+    ET.register_namespace('link', 'http://www.xbrl.org/2003/linkbase')
+    ET.register_namespace('xlink', 'http://www.w3.org/1999/xlink')
+    ET.register_namespace('xbrli', 'http://www.xbrl.org/2003/instance')
+    ET.register_namespace('xbrldi', 'http://xbrl.org/2006/xbrldi')
+    ET.register_namespace('iso4217', 'http://www.xbrl.org/2003/iso4217')
+    ET.register_namespace('ixt', 'http://www.xbrl.org/inlineXBRL/transformation/2020-02-12')
+    ET.register_namespace('esrs', 'https://xbrl.efrag.org/taxonomy/esrs/2023-12-22')
+    ET.register_namespace('esrse1', 'https://xbrl.efrag.org/taxonomy/esrs/2023-12-22/e1')    
     root = ET.Element('html', attrib={
         'xmlns': 'http://www.w3.org/1999/xhtml',
         'xmlns:xbrli': 'http://www.xbrl.org/2003/instance',
         'xmlns:link': 'http://www.xbrl.org/2003/linkbase',
         'xmlns:xlink': 'http://www.w3.org/1999/xlink',
-        'xmlns:esrs': 'http://xbrl.org/esrs/2023',
-        'xmlns:esrs-e1': 'http://xbrl.org/esrs/2023/esrs-e1',
+        'xmlns:esrs': 'https://xbrl.efrag.org/taxonomy/esrs/2023-12-22',
+        'xmlns:esrse1': 'https://xbrl.efrag.org/taxonomy/esrs/2023-12-22/e1',
         'xmlns:iso4217': 'http://www.xbrl.org/2003/iso4217',
         'xmlns:xbrldi': 'http://xbrl.org/2006/xbrldi',
         'xmlns:xbrldt': 'http://xbrl.org/2005/xbrldt',
-        'xmlns:ix': 'http://www.xbrl.org/2013/inlineXBRL',
+
         'xmlns:ixt': 'http://www.xbrl.org/inlineXBRL/transformation/2020-02-12',
         'xmlns:ixt-sec': 'http://www.xbrl.org/inlineXBRL/transformation/2015-02-26',
         'xmlns:ref': 'http://www.xbrl.org/2003/ref',
@@ -5805,9 +6040,9 @@ def create_enhanced_ixbrl_structure(data: Dict[str, Any], doc_id: str, timestamp
     title = ET.SubElement(head, 'title')
     title.text = f"ESRS E1 Climate Disclosure - {data.get('organization', 'Unknown')}"
     # Add meta tags
-    ET.SubElement(head, 'meta', attrib={'charset': 'UTF-8'})
+    ET.SubElement(head, 'meta', attrib={'http-equiv': 'Content-Type', 'content': 'text/html; charset=UTF-8'})
     # Add styles
-    style = ET.SubElement(head, 'style')
+    style = ET.SubElement(head, 'style', {'type': 'text/css'})
     style.text = """
     body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
     .navigation { width: 280px; background: #f8f9fa; padding: 20px; position: fixed; height: 100vh; overflow-y: auto; }
@@ -5840,7 +6075,7 @@ def create_enhanced_ixbrl_structure(data: Dict[str, Any], doc_id: str, timestamp
     .status-off-track { color: #f44336; }
     """
     # Create HTML head with XBRL header
-    head = ET.SubElement(root, 'head')
+#     head = ET.SubElement(root, 'head')
     ET.SubElement(head, 'title').text = f"ESRS E1 Climate Report - {data.get('company_name', 'Company')} - {data.get('reporting_period', '2024')}"
     # Add meta tags for compliance
     ET.SubElement(head, 'meta', {
@@ -5852,11 +6087,11 @@ def create_enhanced_ixbrl_structure(data: Dict[str, Any], doc_id: str, timestamp
         'content': 'ESRS E1 iXBRL Generator v1.0'
     })
     # Add XBRL header with contexts and units
-    xbrl_header = ET.SubElement(head, 'ix:header')
-    hidden = ET.SubElement(xbrl_header, 'ix:hidden')
+#     xbrl_header = ET.SubElement(head, 'ix:header')
+#     hidden = ET.SubElement(xbrl_header, 'ix:hidden')
     # Add contexts and units
-    add_xbrl_contexts(hidden, data)
-    add_xbrl_units(hidden)
+#     add_xbrl_contexts(hidden, data)
+#     add_xbrl_units(hidden)
     # Create body
     body = ET.SubElement(root, 'body')
     # Add navigation structure
@@ -5888,49 +6123,98 @@ def create_enhanced_ixbrl_structure(data: Dict[str, Any], doc_id: str, timestamp
     add_sme_simplifications(content_wrapper, data)
     add_document_versioning(content_wrapper, data)
     # Add hidden XBRL instance data
-    xbrl_div = ET.SubElement(body, 'div', attrib={'class': 'hidden', 'style': 'display:none'})
-    # Schema reference
-    ET.SubElement(xbrl_div, 'link:schemaRef', attrib={
+    hidden_div = ET.SubElement(body, 'div', attrib={'style': 'display:none'})
+    
+    # Create ix:header
+    ix_header = ET.SubElement(hidden_div, 'ix:header')
+    
+    # Create ix:references (contains schemaRef)
+    ix_references = ET.SubElement(ix_header, 'ix:references')
+    
+    # Add schemaRef inside ix:references
+    ET.SubElement(ix_references, 'link:schemaRef', attrib={
         'xlink:type': 'simple',
-        'xlink:href': 'https://xbrl.org/esrs/2023/esrs-e1.xsd'
+        'xlink:href': 'https://xbrl.efrag.org/taxonomy/esrs/2023-12-22/esrs_all.xsd'
     })
+    
+    # Create ix:resources (contains contexts and units)
+    ix_resources = ET.SubElement(ix_header, 'ix:resources')
+    
     # Contexts
     period = str(data.get('reporting_period', dt.now().year))
     # Current period context
-    context_current = ET.SubElement(xbrl_div, 'xbrli:context', attrib={'id': 'c-current'})
+    context_current = ET.SubElement(ix_resources, 'xbrli:context', attrib={'id': 'current-period'})
     entity_current = ET.SubElement(context_current, 'xbrli:entity')
     identifier_current = ET.SubElement(entity_current, 'xbrli:identifier', attrib={'scheme': 'http://www.lei-worldwide.com'})
     identifier_current.text = data.get('lei', 'DUMMY_LEI')
     period_elem_current = ET.SubElement(context_current, 'xbrli:period')
-    instant_current = ET.SubElement(period_elem_current, 'xbrli:instant')
-    instant_current.text = f"{period}-12-31"
+    start_date = ET.SubElement(period_elem_current, 'xbrli:startDate')
+
+    start_date.text = f"{period}-01-01"
+
+    end_date = ET.SubElement(period_elem_current, 'xbrli:endDate')
+
+    start_date.text = f"{period}-01-01"
+    end_date.text = f'{period}-12-31'
     # Previous period context
-    context_previous = ET.SubElement(xbrl_div, 'xbrli:context', attrib={'id': 'c-previous'})
+    context_previous = ET.SubElement(ix_resources, 'xbrli:context', attrib={'id': 'c-previous'})
     entity_previous = ET.SubElement(context_previous, 'xbrli:entity')
     identifier_previous = ET.SubElement(entity_previous, 'xbrli:identifier', attrib={'scheme': 'http://www.lei-worldwide.com'})
     identifier_previous.text = data.get('lei', 'DUMMY_LEI')
     period_elem_previous = ET.SubElement(context_previous, 'xbrli:period')
-    instant_previous = ET.SubElement(period_elem_previous, 'xbrli:instant')
-    instant_previous.text = f"{int(period)-1}-12-31"
+    start_date_previous = ET.SubElement(period_elem_previous, "xbrli:startDate")
+    start_date_previous.text = f"{int(period)-1}-01-01"
+    end_date_previous = ET.SubElement(period_elem_previous, "xbrli:endDate")
+    # Changed from instant to duration
+
+    end_date_previous.text = f"{int(period)-1}-12-31"
     # Units
     # tCO2e unit
-    unit_tco2e = ET.SubElement(xbrl_div, 'xbrli:unit', attrib={'id': 'u-tCO2e'})
+    unit_tco2e = ET.SubElement(ix_resources, 'xbrli:unit', attrib={'id': 'u-tCO2e'})
     measure_tco2e = ET.SubElement(unit_tco2e, 'xbrli:measure')
     measure_tco2e.text = 'esrs:tCO2e'
     # EUR unit
-    unit_eur = ET.SubElement(xbrl_div, 'xbrli:unit', attrib={'id': 'u-EUR'})
+    unit_eur = ET.SubElement(ix_resources, 'xbrli:unit', attrib={'id': 'u-EUR'})
     measure_eur = ET.SubElement(unit_eur, 'xbrli:measure')
     measure_eur.text = 'iso4217:EUR'
     # EUR millions unit
-    unit_eur_millions = ET.SubElement(xbrl_div, 'xbrli:unit', attrib={'id': 'u-EUR-millions'})
+    unit_eur_millions = ET.SubElement(ix_resources, 'xbrli:unit', attrib={'id': 'u-EUR-millions'})
     measure_eur_millions = ET.SubElement(unit_eur_millions, 'xbrli:measure')
     measure_eur_millions.text = 'iso4217:EUR'
+    
+    # Add current-period context (for some elements that use it)
+#     context_period = ET.SubElement(ix_resources, 'xbrli:context', attrib={'id': 'current-period'})
+#     entity_period = ET.SubElement(context_period, 'xbrli:entity')
+#     identifier_period = ET.SubElement(entity_period, 'xbrli:identifier', attrib={'scheme': 'http://www.lei-worldwide.com'})
+#     identifier_period.text = data.get('lei', 'DUMMY_LEI')
+#     period_elem_period = ET.SubElement(context_period, 'xbrli:period')
+#     start_date = ET.SubElement(period_elem_period, "xbrli:startDate")
+# 
+#     end_date = ET.SubElement(period_elem_period, 'xbrli:endDate')
+# 
+#     start_date.text = f"{period}-01-01"
+# #     end_date.text = f'{period}-12-31'
+#     
+    # Add all Scope 3 category contexts (c-cat1 through c-cat15)
+    for i in range(1, 16):
+        ctx = ET.SubElement(ix_resources, 'xbrli:context', attrib={'id': f'c-cat{i}'})
+        entity = ET.SubElement(ctx, 'xbrli:entity')
+        identifier = ET.SubElement(entity, 'xbrli:identifier', attrib={'scheme': 'http://www.lei-worldwide.com'})
+        identifier.text = data.get('lei', 'DUMMY_LEI')
+        period_elem = ET.SubElement(ctx, 'xbrli:period')
+        start_date = ET.SubElement(period_elem, "xbrli:startDate")
+
+        end_date = ET.SubElement(period_elem, 'xbrli:endDate')
+
+        start_date.text = f"{period}-01-01"
+        end_date.text = f'{period}-12-31'
+    
     # MWh unit
-    unit_mwh = ET.SubElement(xbrl_div, 'xbrli:unit', attrib={'id': 'u-MWh'})
+    unit_mwh = ET.SubElement(ix_resources, 'xbrli:unit', attrib={'id': 'u-MWh'})
     measure_mwh = ET.SubElement(unit_mwh, 'xbrli:measure')
     measure_mwh.text = 'esrs:MWh'
     # Percent unit
-    unit_percent = ET.SubElement(xbrl_div, 'xbrli:unit', attrib={'id': 'u-percent'})
+    unit_percent = ET.SubElement(ix_resources, 'xbrli:unit', attrib={'id': 'u-percent'})
     measure_percent = ET.SubElement(unit_percent, 'xbrli:measure')
     measure_percent.text = 'xbrli:pure'
     return root
@@ -5950,19 +6234,29 @@ def add_xbrl_contexts(parent: ET.Element, data: Dict[str, Any]) -> None:
     })
     identifier_instant.text = data.get('lei', '529900HNOAA1KXQJUQ27')
     period_instant = ET.SubElement(context_instant, 'xbrli:period')
-    instant = ET.SubElement(period_instant, 'xbrli:instant')
-    instant.text = f"{data.get('reporting_period', '2025')}-12-31"
+    # Changed from instant to duration
+
+    start_date = ET.SubElement(period_instant, 'xbrli:startDate')
+
+    end_date = ET.SubElement(period_instant, 'xbrli:endDate')
+    start_date.text = f"{data.get('reporting_period', '2025')}-01-01"
+    end_date.text = f"{data.get('reporting_period', '2025')}-12-31"
     
     # Current reporting period context
-    context = ET.SubElement(parent, 'xbrli:context', {'id': 'current-period'})
+#     context = ET.SubElement(parent, 'xbrli:context', {'id': 'current-period'})
     entity = ET.SubElement(context, 'xbrli:entity')
     identifier = ET.SubElement(entity, 'xbrli:identifier', {
         'scheme': 'http://standards.iso.org/iso/17442'  # LEI scheme
     })
     identifier.text = data.get('lei', '00000000000000000000')
     period = ET.SubElement(context, 'xbrli:period')
-    instant = ET.SubElement(period, 'xbrli:instant')
-    instant.text = f"{data.get('reporting_period', '2024')}-12-31"
+    # Changed from instant to duration
+
+    start_date = ET.SubElement(period, 'xbrli:startDate')
+
+    end_date = ET.SubElement(period, 'xbrli:endDate')
+    start_date.text = f"{data.get('reporting_period', '2024')}-01-01"
+    end_date.text = f"{data.get('reporting_period', '2024')}-12-31"
     # Prior period context for comparisons
     context_prior = ET.SubElement(parent, 'xbrli:context', {'id': 'prior-period'})
     entity_prior = ET.SubElement(context_prior, 'xbrli:entity')
@@ -5971,9 +6265,14 @@ def add_xbrl_contexts(parent: ET.Element, data: Dict[str, Any]) -> None:
     })
     identifier_prior.text = data.get('lei', '00000000000000000000')
     period_prior = ET.SubElement(context_prior, 'xbrli:period')
-    instant_prior = ET.SubElement(period_prior, 'xbrli:instant')
+    # Changed from instant to duration
+
+    start_date = ET.SubElement(period_prior, 'xbrli:startDate')
+
+    end_date = ET.SubElement(period_prior, 'xbrli:endDate')
     prior_year = int(data.get('reporting_period', '2024')) - 1
-    instant_prior.text = f"{prior_year}-12-31"
+    start_date.text = f"{prior_year}-01-01"
+    end_date.text = f'{prior_year}-12-31'
     # Target year context (for targets)
     if 'targets' in data and data['targets'].get('targets'):
         for target in data['targets']['targets']:
@@ -5988,19 +6287,30 @@ def add_xbrl_contexts(parent: ET.Element, data: Dict[str, Any]) -> None:
                 })
                 identifier_target.text = data.get('lei', '00000000000000000000')
                 period_target = ET.SubElement(context_target, 'xbrli:period')
-                instant_target = ET.SubElement(period_target, 'xbrli:instant')
-                instant_target.text = f"{target_year}-12-31"
+                start_date = ET.SubElement(period_target, "xbrli:startDate")
+
+                start_date.text = f"{reporting_period}-01-01"
+
+                end_date = ET.SubElement(period_target, 'xbrli:endDate')
+
+                start_date.text = f"{target_year}-01-01"
+                end_date.text = f'{target_year}-12-31'
     
     # c-current context (used by enhanced sections)
-    context_c_current = ET.SubElement(parent, 'xbrli:context', {'id': 'c-current'})
-    entity_c_current = ET.SubElement(context_c_current, 'xbrli:entity')
-    identifier_c_current = ET.SubElement(entity_c_current, 'xbrli:identifier', {
-        'scheme': 'http://www.lei-worldwide.com'
-    })
-    identifier_c_current.text = data.get('lei', '529900HNOAA1KXQJUQ27')
-    period_c_current = ET.SubElement(context_c_current, 'xbrli:period')
-    instant_c_current = ET.SubElement(period_c_current, 'xbrli:instant')
-    instant_c_current.text = f"{data.get('reporting_period', '2025')}-12-31"
+# #     context_c_current = ET.SubElement(parent, 'xbrli:context', {'id': 'current-period'})
+#     entity_c_current = ET.SubElement(context_c_current, 'xbrli:entity')
+#     identifier_c_current = ET.SubElement(entity_c_current, 'xbrli:identifier', {
+#         'scheme': 'http://www.lei-worldwide.com'
+#     })
+#     identifier_c_current.text = data.get('lei', '529900HNOAA1KXQJUQ27')
+#     period_c_current = ET.SubElement(context_c_current, 'xbrli:period')
+#     # Changed from instant to duration
+# 
+#     start_date_c_current = ET.SubElement(period_c_current, 'xbrli:startDate')
+
+    end_date_c_current = ET.SubElement(period_c_current, 'xbrli:endDate')
+    start_date_c_current.text = f"{data.get('reporting_period', '2025')}-01-01"
+    end_date_c_current.text = f"{data.get('reporting_period', '2025')}-12-31"
     
     # c-base context (for base year)
     context_c_base = ET.SubElement(parent, 'xbrli:context', {'id': 'c-base'})
@@ -6010,9 +6320,21 @@ def add_xbrl_contexts(parent: ET.Element, data: Dict[str, Any]) -> None:
     })
     identifier_c_base.text = data.get('lei', '529900HNOAA1KXQJUQ27')
     period_c_base = ET.SubElement(context_c_base, 'xbrli:period')
-    instant_c_base = ET.SubElement(period_c_base, 'xbrli:instant')
+    start_date_c_base = ET.SubElement(period_c_base, "xbrli:startDate")
+    end_date_c_base = ET.SubElement(period_c_base, "xbrli:endDate")
+    base_year = data.get("base_year", data.get("reporting_period", 2025) - 5)
+    start_date_c_base.text = f"{base_year}-01-01"
+    end_date_c_base.text = f"{base_year}-12-31"
+    # Changed from instant to duration
+
+    start_date_c_base = ET.SubElement(period_c_base, 'xbrli:startDate')
+
+    end_date_c_base = ET.SubElement(period_c_base, 'xbrli:endDate')
     base_year = data.get('targets', {}).get('base_year', data.get('reporting_period', '2025'))
-    instant_c_base.text = f"{base_year}-12-31"
+    base_year = data.get("base_year", data.get("reporting_period", 2025) - 5)
+    start_date_c_base.text = f"{base_year}-01-01"
+    end_date_c_base.text = f"{base_year}-12-31"
+
 
 def add_xbrl_units(parent: ET.Element) -> None:
     """Add XBRL units required for ESRS E1 reporting"""
@@ -6023,12 +6345,12 @@ def add_xbrl_units(parent: ET.Element) -> None:
     # Emissions unit - metric tonnes CO2 equivalent
     unit_tco2e = ET.SubElement(parent, 'xbrli:unit', {'id': 'tCO2e'})
     measure_tco2e = ET.SubElement(unit_tco2e, 'xbrli:measure')
-    measure_tco2e.text = 'esrs:metricTonnesCO2e'
+    measure_tco2e.text = 'esrs:tCO2e'
     
     # Additional tCO2e unit (u-tCO2e)
-    unit_u_tco2e = ET.SubElement(parent, 'xbrli:unit', {'id': 'u-tCO2e'})
-    measure_u_tco2e = ET.SubElement(unit_u_tco2e, 'xbrli:measure')
-    measure_u_tco2e.text = 'esrs:metricTonnesCO2e'
+#     unit_u_tco2e = ET.SubElement(parent, 'xbrli:unit', {'id': 'u-tCO2e'})
+#     measure_u_tco2e = ET.SubElement(unit_u_tco2e, 'xbrli:measure')
+#     measure_u_tco2e.text = 'esrs:tCO2e'
     
     # Tonnes unit
     unit_tonnes = ET.SubElement(parent, 'xbrli:unit', {'id': 'tonnes'})
@@ -6037,7 +6359,7 @@ def add_xbrl_units(parent: ET.Element) -> None:
     # Energy unit - megawatt hours
     unit_mwh = ET.SubElement(parent, 'xbrli:unit', {'id': 'MWh'})
     measure_mwh = ET.SubElement(unit_mwh, 'xbrli:measure')
-    measure_mwh.text = 'esrs:megawattHour'
+    measure_mwh.text = 'esrs:MWh'
     # Percentage unit
     unit_percent = ET.SubElement(parent, 'xbrli:unit', {'id': 'percent'})
     measure_percent = ET.SubElement(unit_percent, 'xbrli:measure')
@@ -6066,7 +6388,7 @@ def add_emissions_section_xbrl(parent: ET.Element, data: Dict[str, Any]) -> None
     create_enhanced_xbrl_tag(
         td_scope1,
         'nonFraction',
-        'esrs-e1:GHGScope1Emissions',
+        "",
         'current-period',
         emissions.get('scope1', 0),
         unit_ref='tCO2e',
@@ -6081,7 +6403,7 @@ def add_emissions_section_xbrl(parent: ET.Element, data: Dict[str, Any]) -> None
     create_enhanced_xbrl_tag(
         td_scope2,
         'nonFraction',
-        'esrs-e1:GHGScope2LocationBased',
+        "",
         'current-period',
         emissions.get('scope2_location', 0),
         unit_ref='tCO2e',
@@ -6097,7 +6419,7 @@ def add_emissions_section_xbrl(parent: ET.Element, data: Dict[str, Any]) -> None
         create_enhanced_xbrl_tag(
             td_scope3,
             'nonFraction',
-            'esrs-e1:GHGScope3TotalEmissions',
+            "",
             'current-period',
             emissions.get('scope3', 0),
             unit_ref='tCO2e',
@@ -6117,7 +6439,7 @@ def add_emissions_section_xbrl(parent: ET.Element, data: Dict[str, Any]) -> None
     create_enhanced_xbrl_tag(
         td_total,
         'nonFraction',
-        'esrs-e1:GHGTotalEmissions',
+        "",
         'current-period',
         total_emissions,
         unit_ref='tCO2e',
@@ -6128,13 +6450,13 @@ def add_emissions_section_xbrl(parent: ET.Element, data: Dict[str, Any]) -> None
 
 def add_enhanced_contexts(hidden: ET.Element, data: Dict[str, Any]) -> None:
     """Add enhanced contexts with all dimensional breakdowns"""
-    contexts = ET.SubElement(hidden, '{http://www.xbrl.org/2013/inlineXBRL}references')
+    contexts = ET.SubElement(hidden, 'ix:references')
     # Standard contexts
     period = data.get('reporting_period', dt.now().year)
     lei = data.get('lei', 'PENDING_LEI_REGISTRATION')
     # Create multiple contexts for different time periods
     reporting_periods = [
-        ('c-current', period, f"{period}-01-01", f"{period}-12-31"),
+        ('current-period', period, f"{period}-01-01", f"{period}-12-31"),
         ('c-previous', period-1, f"{period-1}-01-01", f"{period-1}-12-31"),
     ]
     if data.get('targets', {}).get('base_year'):
@@ -6298,13 +6620,13 @@ def get_interactive_javascript() -> str:
 
 def add_enhanced_contexts(hidden: ET.Element, data: Dict[str, Any]) -> None:
     """Add enhanced contexts with all dimensional breakdowns including climate scenarios"""
-    contexts = ET.SubElement(hidden, '{http://www.xbrl.org/2013/inlineXBRL}references')
+    contexts = ET.SubElement(hidden, 'ix:references')
     # Standard contexts
     period = data.get('reporting_period', dt.now().year)
     lei = data.get('lei', 'PENDING_LEI_REGISTRATION')
     # Create multiple contexts for different time periods
     reporting_periods = [
-        ('c-current', period, f"{period}-01-01", f"{period}-12-31"),
+        ('current-period', period, f"{period}-01-01", f"{period}-12-31"),
         ('c-previous', period-1, f"{period-1}-01-01", f"{period-1}-12-31"),
     ]
     if data.get('targets', {}).get('base_year'):
@@ -6325,9 +6647,9 @@ def add_enhanced_contexts(hidden: ET.Element, data: Dict[str, Any]) -> None:
         identifier = ET.SubElement(entity, '{http://www.xbrl.org/2003/instance}identifier', {'scheme': 'http://www.gleif.org'})
         identifier.text = lei
         period_elem = ET.SubElement(context, '{http://www.xbrl.org/2003/instance}period')
-        start_date = ET.SubElement(period_elem, '{http://www.xbrl.org/2003/instance}startDate')
+        start_date = ET.SubElement(period_c_base, '{http://www.xbrl.org/2003/instance}startDate')
         start_date.text = start
-        end_date = ET.SubElement(period_elem, '{http://www.xbrl.org/2003/instance}endDate')
+        end_date = ET.SubElement(period_elem,m, '{http://www.xbrl.org/2003/instance}endDate')
         end_date.text = end
     # Add Climate Scenario contexts
     scenarios = data.get('scenario_analysis', {}).get('scenarios', [])
@@ -6409,7 +6731,6 @@ def add_enhanced_contexts(hidden: ET.Element, data: Dict[str, Any]) -> None:
             vintage_value.text = str(vintage_year)
             period_vintage = ET.SubElement(ctx_vintage, '{http://www.xbrl.org/2003/instance}period')
             instant_vintage = ET.SubElement(period_vintage, '{http://www.xbrl.org/2003/instance}instant')
-            instant_vintage.text = f'{period}-12-31'
     # Add Retrospective/Prospective dimension contexts
     time_perspectives = [
         ('retrospective', 'Retrospective'),
@@ -6431,10 +6752,8 @@ def add_enhanced_contexts(hidden: ET.Element, data: Dict[str, Any]) -> None:
         })
         time_dim.text = f'esrs:{perspective_value}'
         period_elem = ET.SubElement(ctx, '{http://www.xbrl.org/2003/instance}period')
-        start_date = ET.SubElement(period_elem, '{http://www.xbrl.org/2003/instance}startDate')
-        start_date.text = f'{period}-01-01'
-        end_date = ET.SubElement(period_elem, '{http://www.xbrl.org/2003/instance}endDate')
-        end_date.text = f'{period}-12-31'
+        start_datET.SubElement(period_c_base,lem, '{http://www.xbrl.org/2003/instance}startDate')
+        end_dET.SubElement(period_c_base,_elem, '{http://www.xbrl.org/2003/instance}endDate')
     # Add Physical/Transition Risk contexts
     risk_types = ['physical', 'transition']
     for risk_type in risk_types:
@@ -6461,7 +6780,7 @@ def add_enhanced_contexts(hidden: ET.Element, data: Dict[str, Any]) -> None:
 
 def add_comprehensive_units(hidden: ET.Element, data: Dict[str, Any]) -> None:
     """Add comprehensive unit definitions including all required types"""
-    units = ET.SubElement(hidden, '{http://www.xbrl.org/2013/inlineXBRL}resources')
+    units = ET.SubElement(hidden, 'ix:resources')
     # Standard units (enhanced list)
     unit_definitions = [
         # Emissions units
@@ -6473,7 +6792,7 @@ def add_comprehensive_units(hidden: ET.Element, data: Dict[str, Any]) -> None:
         ('u-tCO2e-per-employee', 'esrs:tonnesCO2ePerEmployee'),
         ('u-tCO2e-per-product', 'esrs:tonnesCO2ePerProduct'),
         # Energy units
-        ('u-MWh', 'esrs:megawattHour'),
+        ('u-MWh', 'esrs:MWh'),
         ('u-GWh', 'esrs:gigawattHour'),
         ('u-GJ', 'esrs:gigajoule'),
         ('u-TJ', 'esrs:terajoule'),
@@ -6521,7 +6840,7 @@ def add_comprehensive_units(hidden: ET.Element, data: Dict[str, Any]) -> None:
         ('u-water-m3', 'esrs:cubicMeters'),
         ('u-waste-tonnes', 'esrs:tonnes'),
         # Additional units for complete coverage
-        ('MWh', 'esrs:megawattHour'),
+        ('MWh', 'esrs:MWh'),
         ('FTE', 'esrs:fullTimeEquivalent'),
         ('year', 'xbrli:pure'),
         ('percentage', 'xbrli:pure'),
@@ -6583,11 +6902,11 @@ def add_comprehensive_units(hidden: ET.Element, data: Dict[str, Any]) -> None:
             measure_elem.text = measure
     # Compound units for complex ratios
     compound_units = [
-        ('u-tCO2e-per-MWh', [('numerator', 'esrs:tonnesCO2e'), ('denominator', 'esrs:megawattHour')]),
-        ('u-EUR-per-MWh', [('numerator', 'iso4217:EUR'), ('denominator', 'esrs:megawattHour')]),
+        ('u-tCO2e-per-MWh', [('numerator', 'esrs:tonnesCO2e'), ('denominator', 'esrs:MWh')]),
+        ('u-EUR-per-MWh', [('numerator', 'iso4217:EUR'), ('denominator', 'esrs:MWh')]),
         ('u-EUR-per-tCO2e', [('numerator', 'iso4217:EUR'), ('denominator', 'esrs:tonnesCO2e')]),
         ('u-tCO2e-per-million-EUR', [('numerator', 'esrs:tonnesCO2e'), ('denominator', 'esrs:millionsEuro')]),
-        ('u-MWh-per-million-EUR', [('numerator', 'esrs:megawattHour'), ('denominator', 'esrs:millionsEuro')])
+        ('u-MWh-per-million-EUR', [('numerator', 'esrs:MWh'), ('denominator', 'esrs:millionsEuro')])
     ]
     for unit_id, components in compound_units:
         unit_elem = ET.SubElement(units, '{http://www.xbrl.org/2003/instance}unit', {'id': unit_id})
@@ -6599,7 +6918,7 @@ def add_comprehensive_units(hidden: ET.Element, data: Dict[str, Any]) -> None:
 
 def add_typed_dimensions(hidden: ET.Element, data: Dict[str, Any]) -> None:
     """Add typed dimensions for complex measurements"""
-    dimensions = ET.SubElement(hidden, '{http://www.xbrl.org/2013/inlineXBRL}resources')
+    dimensions = ET.SubElement(hidden, 'ix:resources')
     # Temperature scenario dimensions
     temp_scenarios = ['1.5C', '2.0C', '3.0C', '4.0C', 'WB2C']
     for scenario in temp_scenarios:
@@ -6635,7 +6954,7 @@ def add_typed_dimensions(hidden: ET.Element, data: Dict[str, Any]) -> None:
 
 def add_tuple_structures_complete(hidden: ET.Element, data: Dict[str, Any]) -> None:
     """Add complete tuple structures for complex disclosures"""
-    tuples = ET.SubElement(hidden, '{http://www.xbrl.org/2013/inlineXBRL}resources')
+    tuples = ET.SubElement(hidden, 'ix:resources')
     # GHG emissions tuple structure
     ghg_tuple = ET.SubElement(tuples, '{http://www.xbrl.org/2003/instance}tuple', {
         'id': 'ghg-emissions-tuple'
@@ -6651,8 +6970,8 @@ def add_tuple_structures_complete(hidden: ET.Element, data: Dict[str, Any]) -> N
         ('SF6', 'tonnes'),
         ('NF3', 'tonnes')
     ]:
-        gas_elem = ET.SubElement(ghg_tuple, f'esrs-e1:GHG{gas}Emissions')
-        gas_elem.set('contextRef', 'c-current')
+        gas_elem = ET.SubElement(ghg_tuple, "esrs:GreenhouseGas")
+        gas_elem.set('contextRef', 'current-period')
         gas_elem.set('unitRef', f'u-{unit}')
         gas_elem.set('decimals', '0')
         gas_elem.text = str(ghg_breakdown.get(f'{gas}_{unit}', 0))
@@ -6662,15 +6981,15 @@ def add_tuple_structures_complete(hidden: ET.Element, data: Dict[str, Any]) -> N
             'id': 'targets-tuple'
         })
         for idx, target in enumerate(data['targets']['targets']):
-            target_elem = ET.SubElement(targets_tuple, 'esrs-e1:EmissionReductionTarget', {
+            target_elem = ET.SubElement(targets_tuple, "", {
                 'id': f'target-{idx}'
             })
             # Target components
-            desc_elem = ET.SubElement(target_elem, 'esrs-e1:TargetDescription')
+            desc_elem = ET.SubElement(target_elem, "")
             desc_elem.text = target.get('description', '')
-            year_elem = ET.SubElement(target_elem, 'esrs-e1:TargetYear')
+            year_elem = ET.SubElement(target_elem, "")
             year_elem.text = str(target.get('target_year', ''))
-            reduction_elem = ET.SubElement(target_elem, 'esrs-e1:ReductionPercentage')
+            reduction_elem = ET.SubElement(target_elem, "")
             reduction_elem.text = str(target.get('reduction_percent', 0))
     # Add financial effects tuple
     if data.get('financial_effects'):
@@ -6683,7 +7002,7 @@ def add_tuple_structures_complete(hidden: ET.Element, data: Dict[str, Any]) -> N
                 for idx, effect in enumerate(data['financial_effects'][effect_type]):
                     effect_elem = ET.SubElement(
                         effects_tuple, 
-                        f'esrs-e1:Climate{"Risk" if effect_type == "risks" else "Opportunity"}',
+                        "esrs:GreenhouseGasComponent",
                         {'id': f'{effect_type}-{idx}'}
                     )
 
@@ -6694,68 +7013,68 @@ def add_tuple_structures_complete(hidden: ET.Element, data: Dict[str, Any]) -> N
 def add_calculation_linkbase(header: ET.Element, data: Dict[str, Any]) -> None:
     """Complete calculation linkbase with all relationships and validations"""
     calc_link = ET.SubElement(header, 'link:calculationLink', {
-        '{http://www.w3.org/1999/xlink}type': 'extended',
+        'xlink:type': 'extended',
         '{http://www.w3.org/1999/xlink}role': 'http://www.efrag.org/esrs/2024/role/e1-calculations'
     })
     # Complete calculation relationships
     calc_relationships = [
         # Total GHG emissions calculation
-        ('esrs-e1:TotalGHGEmissions', 'esrs-e1:GrossScope1Emissions', 1.0),
-        ('esrs-e1:TotalGHGEmissions', 'esrs-e1:GrossScope2LocationBased', 1.0),
-        ('esrs-e1:TotalGHGEmissions', 'esrs-e1:GrossScope2MarketBased', 0.0),  # Alternative
-        ('esrs-e1:TotalGHGEmissions', 'esrs-e1:GrossScope3Emissions', 1.0),
-        ('esrs-e1:TotalGHGEmissions', 'esrs-e1:GHGRemovalsOwn', -1.0),
-        ('esrs-e1:TotalGHGEmissions', 'esrs-e1:CarbonCreditsUsed', -1.0),
+        ('esrs:GrossGreenhouseGasEmissions', 'esrs:GrossScope1GreenhouseGasEmissions', 1.0),
+        ('esrs:GrossGreenhouseGasEmissions', 'esrs:GrossLocationBasedScope2GreenhouseGasEmissions', 1.0),
+        ('esrs:GrossGreenhouseGasEmissions', "", 0.0),  # Alternative
+        ('esrs:GrossGreenhouseGasEmissions', 'esrs:GrossScope3GreenhouseGasEmissions', 1.0),
+        ('esrs:GrossGreenhouseGasEmissions', "", -1.0),
+        ('esrs:GrossGreenhouseGasEmissions', "", -1.0),
         # Scope 1 detailed breakdown
-        ('esrs-e1:GrossScope1Emissions', 'esrs-e1:Scope1StationaryCombustion', 1.0),
-        ('esrs-e1:GrossScope1Emissions', 'esrs-e1:Scope1MobileCombustion', 1.0),
-        ('esrs-e1:GrossScope1Emissions', 'esrs-e1:Scope1ProcessEmissions', 1.0),
-        ('esrs-e1:GrossScope1Emissions', 'esrs-e1:Scope1FugitiveEmissions', 1.0),
+        ('esrs:GrossScope1GreenhouseGasEmissions', "", 1.0),
+        ('esrs:GrossScope1GreenhouseGasEmissions', "", 1.0),
+        ('esrs:GrossScope1GreenhouseGasEmissions', "", 1.0),
+        ('esrs:GrossScope1GreenhouseGasEmissions', "", 1.0),
         # Scope 3 total calculation - all 15 categories
-        ('esrs-e1:GrossScope3Emissions', 'esrs-e1:Scope3Category1', 1.0),
-        ('esrs-e1:GrossScope3Emissions', 'esrs-e1:Scope3Category2', 1.0),
-        ('esrs-e1:GrossScope3Emissions', 'esrs-e1:Scope3Category3', 1.0),
-        ('esrs-e1:GrossScope3Emissions', 'esrs-e1:Scope3Category4', 1.0),
-        ('esrs-e1:GrossScope3Emissions', 'esrs-e1:Scope3Category5', 1.0),
-        ('esrs-e1:GrossScope3Emissions', 'esrs-e1:Scope3Category6', 1.0),
-        ('esrs-e1:GrossScope3Emissions', 'esrs-e1:Scope3Category7', 1.0),
-        ('esrs-e1:GrossScope3Emissions', 'esrs-e1:Scope3Category8', 1.0),
-        ('esrs-e1:GrossScope3Emissions', 'esrs-e1:Scope3Category9', 1.0),
-        ('esrs-e1:GrossScope3Emissions', 'esrs-e1:Scope3Category10', 1.0),
-        ('esrs-e1:GrossScope3Emissions', 'esrs-e1:Scope3Category11', 1.0),
-        ('esrs-e1:GrossScope3Emissions', 'esrs-e1:Scope3Category12', 1.0),
-        ('esrs-e1:GrossScope3Emissions', 'esrs-e1:Scope3Category13', 1.0),
-        ('esrs-e1:GrossScope3Emissions', 'esrs-e1:Scope3Category14', 1.0),
-        ('esrs-e1:GrossScope3Emissions', 'esrs-e1:Scope3Category15', 1.0),
+        ('esrs:GrossScope3GreenhouseGasEmissions', "", 1.0),
+        ('esrs:GrossScope3GreenhouseGasEmissions', "", 1.0),
+        ('esrs:GrossScope3GreenhouseGasEmissions', "", 1.0),
+        ('esrs:GrossScope3GreenhouseGasEmissions', "", 1.0),
+        ('esrs:GrossScope3GreenhouseGasEmissions', "", 1.0),
+        ('esrs:GrossScope3GreenhouseGasEmissions', "", 1.0),
+        ('esrs:GrossScope3GreenhouseGasEmissions', "", 1.0),
+        ('esrs:GrossScope3GreenhouseGasEmissions', "", 1.0),
+        ('esrs:GrossScope3GreenhouseGasEmissions', "", 1.0),
+        ('esrs:GrossScope3GreenhouseGasEmissions', "", 1.0),
+        ('esrs:GrossScope3GreenhouseGasEmissions', "", 1.0),
+        ('esrs:GrossScope3GreenhouseGasEmissions', "", 1.0),
+        ('esrs:GrossScope3GreenhouseGasEmissions', "", 1.0),
+        ('esrs:GrossScope3GreenhouseGasEmissions', "", 1.0),
+        ('esrs:GrossScope3GreenhouseGasEmissions', "", 1.0),
         # Energy consumption total
-        ('esrs-e1:TotalEnergyConsumption', 'esrs-e1:EnergyConsumptionElectricity', 1.0),
-        ('esrs-e1:TotalEnergyConsumption', 'esrs-e1:EnergyConsumptionHeatingCooling', 1.0),
-        ('esrs-e1:TotalEnergyConsumption', 'esrs-e1:EnergyConsumptionSteam', 1.0),
-        ('esrs-e1:TotalEnergyConsumption', 'esrs-e1:EnergyConsumptionFuelCombustion', 1.0),
-        ('esrs-e1:TotalEnergyConsumption', 'esrs-e1:EnergySold', -1.0),
+        ("", "", 1.0),
+        ("", "", 1.0),
+        ("", "", 1.0),
+        ("", "", 1.0),
+        ("", "", -1.0),
         # Renewable energy breakdown
-        ('esrs-e1:TotalRenewableEnergy', 'esrs-e1:RenewableSelfGenerated', 1.0),
-        ('esrs-e1:TotalRenewableEnergy', 'esrs-e1:RenewablePurchasedPPA', 1.0),
-        ('esrs-e1:TotalRenewableEnergy', 'esrs-e1:RenewableGreenTariff', 1.0),
-        ('esrs-e1:TotalRenewableEnergy', 'esrs-e1:RenewableCertificates', 1.0),
+        ("", "", 1.0),
+        ("", "", 1.0),
+        ("", "", 1.0),
+        ("", "", 1.0),
         # GHG by gas type
-        ('esrs-e1:TotalGHGEmissionsByGas', 'esrs-e1:GHGCO2Emissions', 1.0),
-        ('esrs-e1:TotalGHGEmissionsByGas', 'esrs-e1:GHGCH4EmissionsCO2e', 1.0),
-        ('esrs-e1:TotalGHGEmissionsByGas', 'esrs-e1:GHGN2OEmissionsCO2e', 1.0),
-        ('esrs-e1:TotalGHGEmissionsByGas', 'esrs-e1:GHGHFCsEmissionsCO2e', 1.0),
-        ('esrs-e1:TotalGHGEmissionsByGas', 'esrs-e1:GHGPFCsEmissionsCO2e', 1.0),
-        ('esrs-e1:TotalGHGEmissionsByGas', 'esrs-e1:GHGSF6EmissionsCO2e', 1.0),
-        ('esrs-e1:TotalGHGEmissionsByGas', 'esrs-e1:GHGNF3EmissionsCO2e', 1.0),
-        ('esrs-e1:TotalGHGEmissionsByGas', 'esrs-e1:GHGOtherEmissionsCO2e', 1.0),
+        ("", "", 1.0),
+        ("", "", 1.0),
+        ("", "", 1.0),
+        ("", "", 1.0),
+        ("", "", 1.0),
+        ("", "", 1.0),
+        ("", "", 1.0),
+        ("", "", 1.0),
         # Financial aggregations
-        ('esrs-e1:TotalClimateFinance', 'esrs-e1:ClimateCapEx', 1.0),
-        ('esrs-e1:TotalClimateFinance', 'esrs-e1:ClimateOpEx', 1.0),
+        ("", "", 1.0),
+        ("", "", 1.0),
         # Climate-related financial effects
-        ('esrs-e1:NetFinancialEffects', 'esrs-e1:PhysicalRiskCosts', -1.0),
-        ('esrs-e1:NetFinancialEffects', 'esrs-e1:TransitionRiskCosts', -1.0),
-        ('esrs-e1:NetFinancialEffects', 'esrs-e1:ClimateOpportunityRevenue', 1.0),
-        ('esrs-e1:NetFinancialEffects', 'esrs-e1:AdaptationInvestments', -1.0),
-        ('esrs-e1:NetFinancialEffects', 'esrs-e1:MitigationInvestments', -1.0),
+        ("", "", -1.0),
+        ("", "", -1.0),
+        ("", "", 1.0),
+        ("", "", -1.0),
+        ("", "", -1.0),
     ]
     # Create locators for each concept
     concepts = set()
@@ -6764,14 +7083,14 @@ def add_calculation_linkbase(header: ET.Element, data: Dict[str, Any]) -> None:
         concepts.add(child)
     for concept in concepts:
         loc = ET.SubElement(calc_link, 'link:loc', {
-            '{http://www.w3.org/1999/xlink}type': 'locator',
-            '{http://www.w3.org/1999/xlink}href': f'#concept-{concept}',
+            'xlink:type': 'locator',
+            'xlink:href': f'#concept-{concept}',
             '{http://www.w3.org/1999/xlink}label': concept
         })
     # Create calculation arcs
     for parent, child, weight in calc_relationships:
         arc = ET.SubElement(calc_link, 'link:calculationArc', {
-            '{http://www.w3.org/1999/xlink}type': 'arc',
+            'xlink:type': 'arc',
             '{http://www.w3.org/1999/xlink}arcrole': 'http://www.xbrl.org/2003/arcrole/summation-item',
             '{http://www.w3.org/1999/xlink}from': parent,
             '{http://www.w3.org/1999/xlink}to': child,
@@ -6786,28 +7105,28 @@ def add_weighted_average_calculations(calc_link: ET.Element, data: Dict[str, Any
     """Add weighted average calculations for intensities"""
     weighted_calcs = [
         {
-            'result': 'esrs-e1:GHGIntensityRevenue',
-            'numerator': 'esrs-e1:TotalGHGEmissions',
-            'denominator': 'esrs-e1:TotalRevenue',
+            'result': "",
+            'numerator': 'esrs:GrossGreenhouseGasEmissions',
+            'denominator': "",
             'formula': 'numerator / denominator * 1000000'
         },
         {
-            'result': 'esrs-e1:EnergyIntensityRevenue',
-            'numerator': 'esrs-e1:TotalEnergyConsumption',
-            'denominator': 'esrs-e1:TotalRevenue',
+            'result': "",
+            'numerator': "",
+            'denominator': "",
             'formula': 'numerator / denominator * 1000'
         },
         {
-            'result': 'esrs-e1:RenewableEnergyPercentage',
-            'numerator': 'esrs-e1:TotalRenewableEnergy',
-            'denominator': 'esrs-e1:TotalEnergyConsumption',
+            'result': "",
+            'numerator': "",
+            'denominator': "",
             'formula': 'numerator / denominator * 100'
         }
     ]
     for calc in weighted_calcs:
         # Create formula arc
         formula_arc = ET.SubElement(calc_link, 'link:formulaArc', {
-            '{http://www.w3.org/1999/xlink}type': 'arc',
+            'xlink:type': 'arc',
             '{http://www.w3.org/1999/xlink}arcrole': 'http://www.xbrl.org/2003/arcrole/formula',
             '{http://www.w3.org/1999/xlink}from': calc['result'],
             '{http://www.w3.org/1999/xlink}to': 'formula-' + calc['result'],
@@ -6817,7 +7136,7 @@ def add_weighted_average_calculations(calc_link: ET.Element, data: Dict[str, Any
 def add_formula_linkbase(header: ET.Element, data: Dict[str, Any]) -> None:
     """Add formula linkbase for validation rules with comprehensive assertions"""
     formula_link = ET.SubElement(header, 'link:formulaLink', {
-        '{http://www.w3.org/1999/xlink}type': 'extended',
+        'xlink:type': 'extended',
         '{http://www.w3.org/1999/xlink}role': 'http://www.efrag.org/esrs/2024/role/e1-formulas'
     })
     # Add validation formulas
@@ -6841,7 +7160,7 @@ def add_formula_linkbase(header: ET.Element, data: Dict[str, Any]) -> None:
     for formula in formulas:
         formula_elem = ET.SubElement(formula_link, 'formula:formula', {
             'id': formula['id'],
-            '{http://www.w3.org/1999/xlink}type': 'resource',
+            'xlink:type': 'resource',
             '{http://www.w3.org/1999/xlink}label': formula['id']
         })
         desc = ET.SubElement(formula_elem, 'formula:description')
@@ -6858,8 +7177,8 @@ def add_complete_formula_assertions(formula_link: ET.Element, data: Dict[str, An
             'id': 'scope3-materiality',
             'description': 'Scope 3 should be >= 40% of total emissions for most sectors',
             'expression': '''
-                if (exists(esrs-e1:GrossScope3Emissions) and exists(esrs-e1:TotalGHGEmissions))
-                then (esrs-e1:GrossScope3Emissions div esrs-e1:TotalGHGEmissions >= 0.4 
+                if (exists(esrse1:GrossScope3Emissions) and exists(esrse1:TotalGHGEmissions))
+                then (esrse1:GrossScope3Emissions div esrse1:TotalGHGEmissions >= 0.4 
                       or esrs:Sector = "Financial Services")
                 else true()
             ''',
@@ -6869,8 +7188,8 @@ def add_complete_formula_assertions(formula_link: ET.Element, data: Dict[str, An
             'id': 'net-zero-deadline',
             'description': 'Net zero target must be <= 2050',
             'expression': '''
-                if (exists(esrs-e1:NetZeroTargetYear))
-                then (esrs-e1:NetZeroTargetYear <= 2050)
+                if (exists(esrse1:NetZeroTargetYear))
+                then (esrse1:NetZeroTargetYear <= 2050)
                 else true()
             ''',
             'severity': 'error'
@@ -6879,9 +7198,9 @@ def add_complete_formula_assertions(formula_link: ET.Element, data: Dict[str, An
             'id': 'renewable-percentage-bounds',
             'description': 'Renewable energy percentage must be between 0-100',
             'expression': '''
-                if (exists(esrs-e1:RenewableEnergyPercentage))
-                then (esrs-e1:RenewableEnergyPercentage >= 0 
-                      and esrs-e1:RenewableEnergyPercentage <= 100)
+                if (exists(esrse1:RenewableEnergyPercentage))
+                then (esrse1:RenewableEnergyPercentage >= 0 
+                      and esrse1:RenewableEnergyPercentage <= 100)
                 else true()
             ''',
             'severity': 'error'
@@ -6890,9 +7209,9 @@ def add_complete_formula_assertions(formula_link: ET.Element, data: Dict[str, An
             'id': 'location-market-consistency',
             'description': 'Market-based Scope 2 should not exceed location-based',
             'expression': '''
-                if (exists(esrs-e1:GrossScope2MarketBased) 
-                    and exists(esrs-e1:GrossScope2LocationBased))
-                then (esrs-e1:GrossScope2MarketBased <= esrs-e1:GrossScope2LocationBased * 1.1)
+                if (exists(esrse1:GrossScope2MarketBased) 
+                    and exists(esrse1:GrossScope2LocationBased))
+                then (esrse1:GrossScope2MarketBased <= esrse1:GrossScope2LocationBased * 1.1)
                 else true()
             ''',
             'severity': 'warning'
@@ -6901,7 +7220,7 @@ def add_complete_formula_assertions(formula_link: ET.Element, data: Dict[str, An
             'id': 'sbti-target-consistency',
             'description': 'SBTi validated targets must have appropriate ambition',
             'expression': '''
-                if (esrs-e1:SBTiValidationStatus = "Validated")
+                if (esrse1:SBTiValidationStatus = "Validated")
                 then (exists(sbti:AmbitionLevel) 
                       and (sbti:AmbitionLevel = "1.5°C aligned" 
                            or sbti:AmbitionLevel = "Well-below 2°C"))
@@ -6913,8 +7232,8 @@ def add_complete_formula_assertions(formula_link: ET.Element, data: Dict[str, An
             'id': 'removal-validation',
             'description': 'Removals cannot exceed 10% of gross emissions for net-zero claims',
             'expression': '''
-                if (exists(esrs-e1:NetZeroClaim) and esrs-e1:NetZeroClaim = true())
-                then (esrs-e1:GHGRemovalsOwn <= esrs-e1:GrossScope1Emissions * 0.1)
+                if (exists(esrse1:NetZeroClaim) and esrse1:NetZeroClaim = true())
+                then (esrse1:GHGRemovalsOwn <= esrse1:GrossScope1Emissions * 0.1)
                 else true()
             ''',
             'severity': 'error'
@@ -6923,10 +7242,10 @@ def add_complete_formula_assertions(formula_link: ET.Element, data: Dict[str, An
             'id': 'intensity-trend-check',
             'description': 'Intensity metrics should show improvement',
             'expression': '''
-                if (exists(esrs-e1:GHGIntensityRevenue[@contextRef='c-current']) 
-                    and exists(esrs-e1:GHGIntensityRevenue[@contextRef='c-previous']))
-                then (esrs-e1:GHGIntensityRevenue[@contextRef='c-current'] 
-                      <= esrs-e1:GHGIntensityRevenue[@contextRef='c-previous'] * 1.05)
+                if (exists(esrse1:GHGIntensityRevenue[@contextRef='current-period']) 
+                    and exists(esrse1:GHGIntensityRevenue[@contextRef='c-previous']))
+                then (esrse1:GHGIntensityRevenue[@contextRef='current-period'] 
+                      <= esrse1:GHGIntensityRevenue[@contextRef='c-previous'] * 1.05)
                 else true()
             ''',
             'severity': 'warning'
@@ -6935,8 +7254,8 @@ def add_complete_formula_assertions(formula_link: ET.Element, data: Dict[str, An
             'id': 'target-ambition-check',
             'description': 'Targets should align with 1.5C pathway',
             'expression': '''
-                if (exists(esrs-e1:GHGReductionTarget2030))
-                then (esrs-e1:GHGReductionTarget2030 >= 45)
+                if (exists(esrse1:GHGReductionTarget2030))
+                then (esrse1:GHGReductionTarget2030 >= 45)
                 else true()
             ''',
             'severity': 'warning'
@@ -6945,8 +7264,8 @@ def add_complete_formula_assertions(formula_link: ET.Element, data: Dict[str, An
             'id': 'scope3-category-sum',
             'description': 'Sum of Scope 3 categories should equal total Scope 3',
             'expression': '''
-                sum(esrs-e1:Scope3Category1 to esrs-e1:Scope3Category15) 
-                = esrs-e1:GrossScope3Emissions
+                sum(esrse1:Scope3Category1 to esrse1:Scope3Category15) 
+                = esrse1:GrossScope3Emissions
             ''',
             'severity': 'error'
         },
@@ -6954,8 +7273,8 @@ def add_complete_formula_assertions(formula_link: ET.Element, data: Dict[str, An
             'id': 'energy-renewable-max',
             'description': 'Renewable energy cannot exceed total energy',
             'expression': '''
-                if (exists(esrs-e1:TotalRenewableEnergy) and exists(esrs-e1:TotalEnergyConsumption))
-                then (esrs-e1:TotalRenewableEnergy <= esrs-e1:TotalEnergyConsumption)
+                if (exists(esrse1:TotalRenewableEnergy) and exists(esrse1:TotalEnergyConsumption))
+                then (esrse1:TotalRenewableEnergy <= esrse1:TotalEnergyConsumption)
                 else true()
             ''',
             'severity': 'error'
@@ -6964,8 +7283,8 @@ def add_complete_formula_assertions(formula_link: ET.Element, data: Dict[str, An
             'id': 'carbon-credit-limit',
             'description': 'Carbon credits should not exceed 5% of gross emissions',
             'expression': '''
-                if (exists(esrs-e1:CarbonCreditsUsed) and exists(esrs-e1:TotalGHGEmissions))
-                then (esrs-e1:CarbonCreditsUsed <= esrs-e1:TotalGHGEmissions * 0.05)
+                if (exists(esrse1:CarbonCreditsUsed) and exists(esrse1:TotalGHGEmissions))
+                then (esrse1:CarbonCreditsUsed <= esrse1:TotalGHGEmissions * 0.05)
                 else true()
             ''',
             'severity': 'warning'
@@ -6974,9 +7293,9 @@ def add_complete_formula_assertions(formula_link: ET.Element, data: Dict[str, An
             'id': 'financial-effects-completeness',
             'description': 'Financial effects should cover both risks and opportunities',
             'expression': '''
-                if (exists(esrs-e1:ClimateRiskAssessmentConducted) 
-                    and esrs-e1:ClimateRiskAssessmentConducted = true())
-                then (exists(esrs-e1:PhysicalRiskCosts) and exists(esrs-e1:ClimateOpportunityRevenue))
+                if (exists(esrse1:ClimateRiskAssessmentConducted) 
+                    and esrse1:ClimateRiskAssessmentConducted = true())
+                then (exists(esrse1:PhysicalRiskCosts) and exists(esrse1:ClimateOpportunityRevenue))
                 else true()
             ''',
             'severity': 'warning'
@@ -6985,7 +7304,7 @@ def add_complete_formula_assertions(formula_link: ET.Element, data: Dict[str, An
     for assertion in assertions:
         formula_elem = ET.SubElement(formula_link, 'formula:valueAssertion', {
             'id': assertion['id'],
-            '{http://www.w3.org/1999/xlink}type': 'resource',
+            'xlink:type': 'resource',
             '{http://www.w3.org/1999/xlink}label': assertion['id'],
             'aspectModel': 'dimensional',
             'implicitFiltering': 'true'
@@ -7008,7 +7327,7 @@ def add_complete_formula_assertions(formula_link: ET.Element, data: Dict[str, An
 def add_table_linkbase(header: ET.Element, data: Dict[str, Any]) -> None:
     """Add table linkbase for structured presentation"""
     table_link = ET.SubElement(header, 'link:tableLink', {
-        '{http://www.w3.org/1999/xlink}type': 'extended',
+        'xlink:type': 'extended',
         '{http://www.w3.org/1999/xlink}role': 'http://www.efrag.org/esrs/2024/role/e1-tables'
     })
     # Define comprehensive table structures
@@ -7042,7 +7361,7 @@ def add_table_linkbase(header: ET.Element, data: Dict[str, Any]) -> None:
         # Create table resource
         table_elem = ET.SubElement(table_link, 'table:table', {
             'id': table['id'],
-            '{http://www.w3.org/1999/xlink}type': 'resource',
+            'xlink:type': 'resource',
             '{http://www.w3.org/1999/xlink}label': table['id']
         })
         # Add table title
@@ -7063,32 +7382,32 @@ def add_table_linkbase(header: ET.Element, data: Dict[str, Any]) -> None:
 def add_presentation_linkbase(header: ET.Element, data: Dict[str, Any]) -> None:
     """Add presentation linkbase for proper ordering and hierarchy"""
     pres_link = ET.SubElement(header, 'link:presentationLink', {
-        '{http://www.w3.org/1999/xlink}type': 'extended',
+        'xlink:type': 'extended',
         '{http://www.w3.org/1999/xlink}role': 'http://www.efrag.org/esrs/2024/role/e1-presentation'
     })
     # Define presentation hierarchy
     presentation_structure = [
         {
-            'parent': 'esrs-e1:ClimateDisclosures',
+            'parent': "",
             'children': [
-                ('esrs-e1:TransitionPlan', 1.0),
-                ('esrs-e1:ClimatePolicies', 2.0),
-                ('esrs-e1:ClimateActions', 3.0),
-                ('esrs-e1:ClimateTargets', 4.0),
-                ('esrs-e1:EnergyManagement', 5.0),
-                ('esrs-e1:GHGEmissions', 6.0),
-                ('esrs-e1:CarbonRemovals', 7.0),
-                ('esrs-e1:CarbonPricing', 8.0),
-                ('esrs-e1:FinancialEffects', 9.0)
+                ("", 1.0),
+                ("", 2.0),
+                ("", 3.0),
+                ("", 4.0),
+                ("", 5.0),
+                ("", 6.0),
+                ("", 7.0),
+                ("", 8.0),
+                ("", 9.0)
             ]
         },
         {
-            'parent': 'esrs-e1:GHGEmissions',
+            'parent': "",
             'children': [
-                ('esrs-e1:GrossScope1Emissions', 1.0),
-                ('esrs-e1:GrossScope2Emissions', 2.0),
-                ('esrs-e1:GrossScope3Emissions', 3.0),
-                ('esrs-e1:TotalGHGEmissions', 4.0)
+                ('esrs:GrossScope1GreenhouseGasEmissions', 1.0),
+                ("", 2.0),
+                ('esrs:GrossScope3GreenhouseGasEmissions', 3.0),
+                ('esrs:GrossGreenhouseGasEmissions', 4.0)
             ]
         }
     ]
@@ -7097,7 +7416,7 @@ def add_presentation_linkbase(header: ET.Element, data: Dict[str, Any]) -> None:
         parent = structure['parent']
         for child, order in structure['children']:
             arc = ET.SubElement(pres_link, 'link:presentationArc', {
-                '{http://www.w3.org/1999/xlink}type': 'arc',
+                'xlink:type': 'arc',
                 '{http://www.w3.org/1999/xlink}arcrole': 'http://www.xbrl.org/2003/arcrole/parent-child',
                 '{http://www.w3.org/1999/xlink}from': parent,
                 '{http://www.w3.org/1999/xlink}to': child,
@@ -7108,7 +7427,7 @@ def add_presentation_linkbase(header: ET.Element, data: Dict[str, Any]) -> None:
 def add_definition_linkbase(header: ET.Element, data: Dict[str, Any]) -> None:
     """Add definition linkbase for dimensional relationships"""
     def_link = ET.SubElement(header, 'link:definitionLink', {
-        '{http://www.w3.org/1999/xlink}type': 'extended',
+        'xlink:type': 'extended',
         '{http://www.w3.org/1999/xlink}role': 'http://www.efrag.org/esrs/2024/role/e1-definitions'
     })
     # Define dimensional relationships
@@ -7133,7 +7452,7 @@ def add_definition_linkbase(header: ET.Element, data: Dict[str, Any]) -> None:
     for dim in dimensions:
         # Create dimension-domain relationship
         dim_arc = ET.SubElement(def_link, 'link:definitionArc', {
-            '{http://www.w3.org/1999/xlink}type': 'arc',
+            'xlink:type': 'arc',
             '{http://www.w3.org/1999/xlink}arcrole': 'http://xbrl.org/int/dim/arcrole/dimension-domain',
             '{http://www.w3.org/1999/xlink}from': dim['dimension'],
             '{http://www.w3.org/1999/xlink}to': f'{dim["dimension"]}Domain'
@@ -7141,7 +7460,7 @@ def add_definition_linkbase(header: ET.Element, data: Dict[str, Any]) -> None:
         # Create domain-member relationships
         for idx, member in enumerate(dim['members']):
             member_arc = ET.SubElement(def_link, 'link:definitionArc', {
-                '{http://www.w3.org/1999/xlink}type': 'arc',
+                'xlink:type': 'arc',
                 '{http://www.w3.org/1999/xlink}arcrole': 'http://xbrl.org/int/dim/arcrole/domain-member',
                 '{http://www.w3.org/1999/xlink}from': f'{dim["dimension"]}Domain',
                 '{http://www.w3.org/1999/xlink}to': f'{dim["dimension"]}{member}',
@@ -7153,18 +7472,18 @@ def add_definition_linkbase(header: ET.Element, data: Dict[str, Any]) -> None:
 def add_cross_standard_arcs(definition_link: ET.Element, data: Dict[str, Any]) -> None:
     """Add cross-standard reference arcs for connectivity"""
     cross_refs = [
-        ('esrs-e1:TransitionPlan', 'esrs-s1:WorkforceTransition', 'requires-if-present'),
-        ('esrs-e1:ClimateRisks', 'esrs-e4:BiodiversityRisks', 'influences'),
-        ('esrs-e1:ClimateTargets', 'esrs-g1:IncentiveSchemes', 'should-align'),
-        ('esrs-e1:Scope3Emissions', 'esrs-s2:ValueChainWorkers', 'consider-together'),
-        ('esrs-e1:PhysicalRiskAssessment', 'esrs-e3:WaterRiskAssessment', 'related-to'),
-        ('esrs-e1:RenewableEnergyTargets', 'esrs-e5:CircularEconomyTargets', 'synergies'),
-        ('esrs-e1:JustTransition', 'esrs-s1:EmploymentImpacts', 'directly-linked'),
-        ('esrs-e1:CarbonPricing', 'esrs-g1:TaxStrategy', 'affects')
+        ("", 'esrs-s1:WorkforceTransition', 'requires-if-present'),
+        ("", 'esrs-e4:BiodiversityRisks', 'influences'),
+        ("", 'esrs-g1:IncentiveSchemes', 'should-align'),
+        ("", 'esrs-s2:ValueChainWorkers', 'consider-together'),
+        ("", 'esrs-e3:WaterRiskAssessment', 'related-to'),
+        ("", 'esrs-e5:CircularEconomyTargets', 'synergies'),
+        ("", 'esrs-s1:EmploymentImpacts', 'directly-linked'),
+        ("", 'esrs-g1:TaxStrategy', 'affects')
     ]
     for source, target, arc_role in cross_refs:
         arc = ET.SubElement(definition_link, 'link:definitionArc', {
-            '{http://www.w3.org/1999/xlink}type': 'arc',
+            'xlink:type': 'arc',
             '{http://www.w3.org/1999/xlink}arcrole': f'http://www.efrag.org/esrs/arcrole/{arc_role}',
             '{http://www.w3.org/1999/xlink}from': source,
             '{http://www.w3.org/1999/xlink}to': target,
@@ -7175,31 +7494,31 @@ def add_cross_standard_arcs(definition_link: ET.Element, data: Dict[str, Any]) -
 def add_reference_linkbase(header: ET.Element, data: Dict[str, Any]) -> None:
     """Add reference linkbase to ESRS paragraphs"""
     ref_link = ET.SubElement(header, 'link:referenceLink', {
-        '{http://www.w3.org/1999/xlink}type': 'extended',
+        'xlink:type': 'extended',
         '{http://www.w3.org/1999/xlink}role': 'http://www.efrag.org/esrs/2024/role/e1-references'
     })
     # Map concepts to ESRS paragraphs
     references = [
-        ('esrs-e1:TransitionPlan', 'ESRS E1', '16-21'),
-        ('esrs-e1:ClimatePolicies', 'ESRS E1', '22-24'),
-        ('esrs-e1:ClimateActions', 'ESRS E1', '25-28'),
-        ('esrs-e1:ClimateTargets', 'ESRS E1', '29-34'),
-        ('esrs-e1:EnergyConsumption', 'ESRS E1', '35-38'),
-        ('esrs-e1:GHGEmissions', 'ESRS E1', '39-52'),
-        ('esrs-e1:CarbonRemovals', 'ESRS E1', '53-56'),
-        ('esrs-e1:CarbonPricing', 'ESRS E1', '57-58'),
-        ('esrs-e1:FinancialEffects', 'ESRS E1', '59-67')
+        ("", 'ESRS E1', '16-21'),
+        ("", 'ESRS E1', '22-24'),
+        ("", 'ESRS E1', '25-28'),
+        ("", 'ESRS E1', '29-34'),
+        ("", 'ESRS E1', '35-38'),
+        ("", 'ESRS E1', '39-52'),
+        ("", 'ESRS E1', '53-56'),
+        ("", 'ESRS E1', '57-58'),
+        ("", 'ESRS E1', '59-67')
     ]
     for concept, standard, paragraphs in references:
         ref_arc = ET.SubElement(ref_link, 'link:referenceArc', {
-            '{http://www.w3.org/1999/xlink}type': 'arc',
+            'xlink:type': 'arc',
             '{http://www.w3.org/1999/xlink}arcrole': 'http://www.xbrl.org/2003/arcrole/concept-reference',
             '{http://www.w3.org/1999/xlink}from': concept,
             '{http://www.w3.org/1999/xlink}to': f'ref-{concept}'
         })
         ref = ET.SubElement(ref_link, 'reference', {
             'id': f'ref-{concept}',
-            '{http://www.w3.org/1999/xlink}type': 'resource',
+            'xlink:type': 'resource',
             '{http://www.w3.org/1999/xlink}label': f'ref-{concept}'
         })
         # Add reference parts
@@ -7215,19 +7534,19 @@ def add_multilingual_labels(header: ET.Element, data: Dict[str, Any]) -> None:
     languages = data.get('languages', ['en'])
     if len(languages) > 1:
         label_link = ET.SubElement(header, 'link:labelLink', {
-            '{http://www.w3.org/1999/xlink}type': 'extended',
+            'xlink:type': 'extended',
             '{http://www.w3.org/1999/xlink}role': 'http://www.efrag.org/esrs/2024/role/e1-labels'
         })
         # Define labels for key concepts in multiple languages
         concept_labels = {
-            'esrs-e1:TotalGHGEmissions': {
+            'esrs:GrossGreenhouseGasEmissions': {
                 'en': 'Total GHG Emissions',
                 'de': 'Gesamte THG-Emissionen',
                 'fr': 'Émissions totales de GES',
                 'es': 'Emisiones totales de GEI',
                 'it': 'Emissioni totali di GHG'
             },
-            'esrs-e1:TransitionPlan': {
+            "": {
                 'en': 'Climate Transition Plan',
                 'de': 'Klimaübergangsplan',
                 'fr': 'Plan de transition climatique',
@@ -7239,7 +7558,7 @@ def add_multilingual_labels(header: ET.Element, data: Dict[str, Any]) -> None:
             for lang in languages:
                 if lang in labels:
                     label = ET.SubElement(label_link, 'link:label', {
-                        '{http://www.w3.org/1999/xlink}type': 'resource',
+                        'xlink:type': 'resource',
                         '{http://www.w3.org/1999/xlink}label': f'{concept}-{lang}',
                         '{http://www.w3.org/1999/xlink}role': 'http://www.xbrl.org/2003/role/label',
                         '{http://www.w3.org/XML/1998/namespace}lang': lang
@@ -7247,7 +7566,7 @@ def add_multilingual_labels(header: ET.Element, data: Dict[str, Any]) -> None:
                     label.text = labels[lang]
                     # Create label arc
                     arc = ET.SubElement(label_link, 'link:labelArc', {
-                        '{http://www.w3.org/1999/xlink}type': 'arc',
+                        'xlink:type': 'arc',
                         '{http://www.w3.org/1999/xlink}arcrole': 'http://www.xbrl.org/2003/arcrole/concept-label',
                         '{http://www.w3.org/1999/xlink}from': concept,
                         '{http://www.w3.org/1999/xlink}to': f'{concept}-{lang}'
@@ -7323,7 +7642,7 @@ def create_footnote(
     """Create XBRL footnote element"""
     footnote = ET.SubElement(parent, '{http://www.xbrl.org/2013/inlineXBRL}footnote', {
         'id': footnote_id,
-        '{http://www.w3.org/1999/xlink}type': 'resource',
+        'xlink:type': 'resource',
         '{http://www.w3.org/1999/xlink}role': footnote_role,
         '{http://www.w3.org/XML/1998/namespace}lang': lang
     })
@@ -7350,7 +7669,7 @@ def add_value_chain_section(parent: ET.Element, data: Dict[str, Any]) -> None:
         create_enhanced_xbrl_tag(
             p_suppliers,
             'nonFraction',
-            'esrs-e1:SuppliersWithClimateTargetsPercentage',
+            "",
             'c-value-chain-upstream',
             upstream_data.get('suppliers_with_targets_percent', 0),
             unit_ref='u-percent',
@@ -7365,8 +7684,8 @@ def add_value_chain_section(parent: ET.Element, data: Dict[str, Any]) -> None:
             create_enhanced_xbrl_tag(
                 engagement_p,
                 'nonNumeric',
-                'esrs-e1:SupplierEngagementProgram',
-                'c-current',
+                "esrs:SupplierEngagementProgram",
+                'current-period',
                 upstream_data['engagement_program'],
                 xml_lang='en'
             )
@@ -7389,8 +7708,8 @@ def add_value_chain_section(parent: ET.Element, data: Dict[str, Any]) -> None:
             create_enhanced_xbrl_tag(
                 pcf_p,
                 'nonNumeric',
-                'esrs-e1:ProductCarbonFootprintAssessments',
-                'c-current',
+                "esrs:ProductCarbonFootprintCompleted",
+                'current-period',
                 'Yes',
                 xml_lang='en'
             )
@@ -7411,7 +7730,7 @@ def add_value_chain_section(parent: ET.Element, data: Dict[str, Any]) -> None:
                 create_enhanced_xbrl_tag(
                     td_footprint,
                     'nonFraction',
-                    f'esrs-e1:ProductCarbonFootprint{idx+1}',
+                    "esrs:ProductCarbonFootprint",
                     'c-downstream',
                     pcf['carbon_footprint_kg'],
                     unit_ref='u-kgCO2e-per-unit',
@@ -9485,9 +9804,9 @@ def add_xbrl_instance_generation(data: Dict[str, Any], doc_id: str) -> str:
     root = ET.Element('{http://www.xbrl.org/2003/instance}xbrl', 
                       get_enhanced_namespaces())
     # Add schema reference
-    schema_ref = ET.SubElement(root, '{http://www.xbrl.org/2003/linkbase}schemaRef', {
-        '{http://www.w3.org/1999/xlink}type': 'simple',
-        '{http://www.w3.org/1999/xlink}href': TAXONOMY_VERSIONS[EFRAG_TAXONOMY_VERSION]['schema_location']
+    schema_ref = ET.SubElement(root, 'link:schemaRef', {
+        'xlink:type': 'simple',
+        'xlink:href': TAXONOMY_VERSIONS[EFRAG_TAXONOMY_VERSION]['schema_location']
     })
     # Add contexts
     add_instance_contexts(root, data)
@@ -9501,8 +9820,7 @@ def add_xbrl_instance_generation(data: Dict[str, Any], doc_id: str) -> str:
                                   {'scheme': 'http://www.lei-worldwide.com'})
         identifier.text = lei
         period = ET.SubElement(ctx, '{http://www.xbrl.org/2003/instance}period')
-        instant = ET.SubElement(period, '{http://www.xbrl.org/2003/instance}instant')
-        instant.text = f"{reporting_period}-12-31"
+        instant = ET.SubElement(period_elem, '{http://www.xbrl.org/2003/instance}instant')
     
     # Add intensity unit
     unit_intensity = ET.SubElement(hidden_div, '{http://www.xbrl.org/2003/instance}unit', 
@@ -9510,11 +9828,10 @@ def add_xbrl_instance_generation(data: Dict[str, Any], doc_id: str) -> str:
     divide = ET.SubElement(unit_intensity, '{http://www.xbrl.org/2003/instance}divide')
     numerator = ET.SubElement(divide, '{http://www.xbrl.org/2003/instance}unitNumerator')
     num_measure = ET.SubElement(numerator, '{http://www.xbrl.org/2003/instance}measure')
-    num_measure.text = 'esrs:metricTonnesCO2e'
+    num_measure.text = 'esrs:tCO2e'
     denominator = ET.SubElement(divide, '{http://www.xbrl.org/2003/instance}unitDenominator')
     den_measure = ET.SubElement(denominator, '{http://www.xbrl.org/2003/instance}measure')
     den_measure.text = 'iso4217:EUR'
-    
 
     # Add units  
     add_instance_units(root, data)
@@ -9529,13 +9846,12 @@ def add_instance_contexts(root: ET.Element, data: Dict[str, Any]) -> None:
     """Add contexts to XBRL instance"""
     reporting_period = data.get('reporting_period', dt.now().year)
     # Current period instant
-    context_current = ET.SubElement(root, '{http://www.xbrl.org/2003/instance}context', {'id': 'c-current'})
-    entity = ET.SubElement(context_current, '{http://www.xbrl.org/2003/instance}entity')
-    identifier = ET.SubElement(entity, '{http://www.xbrl.org/2003/instance}identifier', {'scheme': 'http://www.lei-identifier.com'})
-    identifier.text = data.get('lei', 'PENDING')
-    period = ET.SubElement(context_current, '{http://www.xbrl.org/2003/instance}period')
-    instant = ET.SubElement(period, '{http://www.xbrl.org/2003/instance}instant')
-    instant.text = f"{reporting_period}-12-31"
+#     context_current = ET.SubElement(root, '{http://www.xbrl.org/2003/instance}context', {'id': 'current-period'})
+#     entity = ET.SubElement(context_current, '{http://www.xbrl.org/2003/instance}entity')
+#     identifier = ET.SubElement(entity, '{http://www.xbrl.org/2003/instance}identifier', {'scheme': 'http://www.lei-identifier.com'})
+#     identifier.text = data.get('lei', 'PENDING')
+#     period = ET.SubElement(context_current, '{http://www.xbrl.org/2003/instance}period')
+#     instant = ET.SubElement(period_elem, '{http://www.xbrl.org/2003/instance}instant')
     # Current period duration
     context_duration = ET.SubElement(root, '{http://www.xbrl.org/2003/instance}context', {'id': 'c-duration'})
     entity_dur = ET.SubElement(context_duration, '{http://www.xbrl.org/2003/instance}entity')
@@ -9545,6 +9861,7 @@ def add_instance_contexts(root: ET.Element, data: Dict[str, Any]) -> None:
     start_date = ET.SubElement(period_dur, '{http://www.xbrl.org/2003/instance}startDate')
     start_date.text = f"{reporting_period}-01-01"
     end_date = ET.SubElement(period_dur, '{http://www.xbrl.org/2003/instance}endDate')
+    start_date.text = f"{reporting_period}-01-01"
     end_date.text = f"{reporting_period}-12-31"
     # Previous period instant
     context_previous = ET.SubElement(root, '{http://www.xbrl.org/2003/instance}context', {'id': 'c-previous'})
@@ -9553,7 +9870,7 @@ def add_instance_contexts(root: ET.Element, data: Dict[str, Any]) -> None:
     identifier_prev.text = data.get('lei', 'PENDING')
     period_prev = ET.SubElement(context_previous, '{http://www.xbrl.org/2003/instance}period')
     instant_prev = ET.SubElement(period_prev, '{http://www.xbrl.org/2003/instance}instant')
-    instant_prev.text = f"{reporting_period-1}-12-31"
+    end_date_prev.text = f"{reporting_period-1}-12-31"
     # Scope 3 category contexts
     for i in range(1, 16):
         if not data.get('scope3_detailed', {}).get(f'category_{i}', {}).get('excluded', False):
@@ -9564,12 +9881,11 @@ def add_instance_contexts(root: ET.Element, data: Dict[str, Any]) -> None:
             # Add segment for category dimension
             segment = ET.SubElement(entity_cat, '{http://www.xbrl.org/2003/instance}segment')
             explicit_member = ET.SubElement(segment, '{http://xbrl.org/2006/xbrldi}explicitMember', {
-                'dimension': 'esrs-e1:Scope3CategoryAxis'
+                'dimension': ""
             })
-            explicit_member.text = f'esrs-e1:Category{i}Member'
+            explicit_member.text = "esrs:Scope3Category"
             period_cat = ET.SubElement(context_cat, '{http://www.xbrl.org/2003/instance}period')
             instant_cat = ET.SubElement(period_cat, '{http://www.xbrl.org/2003/instance}instant')
-            instant_cat.text = f"{reporting_period}-12-31"
 
 def add_instance_units(root: ET.Element, data: Dict[str, Any]) -> None:
     """Add units to XBRL instance"""
@@ -9608,22 +9924,22 @@ def add_instance_facts(root: ET.Element, data: Dict[str, Any]) -> None:
     if 'emissions' in data:
         emissions = data['emissions']
         if 'scope1' in emissions:
-            fact = ET.SubElement(root, '{https://xbrl.efrag.org/taxonomy/esrs-e1}GrossScope1Emissions', {
-                'contextRef': 'c-current',
+            fact = ET.SubElement(root, '{https://xbrl.efrag.org/taxonomy/esrse1}GrossScope1Emissions', {
+                'contextRef': 'current-period',
                 'unitRef': 'u-tCO2e',
                 'decimals': '0'
             })
             fact.text = str(emissions['scope1'])
         if 'scope2_location' in emissions:
-            fact = ET.SubElement(root, '{https://xbrl.efrag.org/taxonomy/esrs-e1}GrossScope2LocationBased', {
-                'contextRef': 'c-current',
+            fact = ET.SubElement(root, '{https://xbrl.efrag.org/taxonomy/esrse1}GrossScope2LocationBased', {
+                'contextRef': 'current-period',
                 'unitRef': 'u-tCO2e',
                 'decimals': '0'
             })
             fact.text = str(emissions['scope2_location'])
         if 'scope2_market' in emissions:
-            fact = ET.SubElement(root, '{https://xbrl.efrag.org/taxonomy/esrs-e1}GrossScope2MarketBased', {
-                'contextRef': 'c-current',
+            fact = ET.SubElement(root, '{https://xbrl.efrag.org/taxonomy/esrse1}GrossScope2MarketBased', {
+                'contextRef': 'current-period',
                 'unitRef': 'u-tCO2e',
                 'decimals': '0'
             })
@@ -9632,7 +9948,7 @@ def add_instance_facts(root: ET.Element, data: Dict[str, Any]) -> None:
     for i in range(1, 16):
         cat_data = data.get('scope3_detailed', {}).get(f'category_{i}', {})
         if not cat_data.get('excluded', False):
-            fact = ET.SubElement(root, f'{{https://xbrl.efrag.org/taxonomy/esrs-e1}}Scope3Category{i}', {
+            fact = ET.SubElement(root, f'{{https://xbrl.efrag.org/taxonomy/esrse1}}Scope3Category{i}', {
                 'contextRef': f'c-cat{i}',
                 'unitRef': 'u-tCO2e',
                 'decimals': '0'
@@ -9642,8 +9958,8 @@ def add_instance_facts(root: ET.Element, data: Dict[str, Any]) -> None:
     if 'targets' in data:
         targets = data['targets']
         if 'base_year' in targets:
-            fact = ET.SubElement(root, '{https://xbrl.efrag.org/taxonomy/esrs-e1}TargetBaseYear', {
-                'contextRef': 'c-current',
+            fact = ET.SubElement(root, '{https://xbrl.efrag.org/taxonomy/esrse1}TargetBaseYear', {
+                'contextRef': 'current-period',
                 'unitRef': 'year',
                 'decimals': '0'
             })
@@ -9653,14 +9969,14 @@ def add_instance_footnotes(root: ET.Element, data: Dict[str, Any]) -> None:
     """Add footnotes to XBRL instance"""
     # Add footnote link
     footnote_link = ET.SubElement(root, '{http://www.xbrl.org/2003/linkbase}footnoteLink', {
-        '{http://www.w3.org/1999/xlink}type': 'extended',
+        'xlink:type': 'extended',
         '{http://www.w3.org/1999/xlink}role': 'http://www.xbrl.org/2003/role/link'
     })
     # Add methodology footnotes
     if data.get('methodology_notes'):
         for idx, note in enumerate(data['methodology_notes']):
             footnote = ET.SubElement(footnote_link, '{http://www.xbrl.org/2003/linkbase}footnote', {
-                '{http://www.w3.org/1999/xlink}type': 'resource',
+                'xlink:type': 'resource',
                 '{http://www.w3.org/1999/xlink}label': f'footnote_{idx}',
                 '{http://www.w3.org/1999/xlink}role': 'http://www.xbrl.org/2003/role/footnote',
                 'xml:lang': 'en'
@@ -11267,7 +11583,6 @@ def validate_lei(lei: str) -> bool:
     # Basic LEI format check: 20 alphanumeric characters
     return len(lei) == 20 and lei.isalnum()
 
-
 def generate_world_class_esrs_e1_ixbrl(data: Dict[str, Any]) -> Dict[str, Any]:
     """Generate ESRS E1 compliant iXBRL report with complete XBRL tagging and EFRAG excellence features"""
     logger.info("=== Starting generate_world_class_esrs_e1_ixbrl ===")
@@ -11295,7 +11610,6 @@ def generate_world_class_esrs_e1_ixbrl(data: Dict[str, Any]) -> Dict[str, Any]:
 
         data["primary_nace_code"] = "J62"
 
-    
     logger.info("CHECKPOINT: Starting attribute fixing")
     # Fix None attributes
     _orig = ET.SubElement
@@ -11320,7 +11634,7 @@ def generate_world_class_esrs_e1_ixbrl(data: Dict[str, Any]) -> Dict[str, Any]:
         # xmlns:xbrli="http://www.xbrl.org/2003/instance"
         # xmlns:xlink="http://www.w3.org/1999/xlink"
         # xmlns:iso4217="http://www.xbrl.org/2003/iso4217"
-        # xmlns:esrs="http://www.efrag.org/esrs/2023">
+        # xmlns:esrs="https://xbrl.efrag.org/taxonomy/esrs/2023-12-22">
         # <head>
         # <title>ESRS E1 Climate Report - {data.get("entity_name", "Organization")}</title>
         # <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
@@ -11336,31 +11650,22 @@ def generate_world_class_esrs_e1_ixbrl(data: Dict[str, Any]) -> Dict[str, Any]:
         # <table>
         # <tr>
         # <td>Scope 1 Emissions:</td>
-        # <td><ix:nonFraction name="esrs:scope1-emissions" contextRef="current-period" unitRef="tCO2e" decimals="2" format="ixt:numdotdecimal">{data.get("emissions", {}).get("scope1", 0)}</ix:nonFraction> tCO2e</td>
+        # <td><ix:nonFraction name="esrs:scope1-emissions" contextRef="c-current" unitRef="tCO2e" decimals="2" format="ixt:num-dot-decimal">{data.get("emissions", {}).get("scope1", 0)}</ix:nonFraction> tCO2e</td>
         # </tr>
         # <tr>
         # <td>Scope 2 Location-based:</td>
-        # <td><ix:nonFraction name="esrs:scope2-location-emissions" contextRef="current-period" unitRef="tCO2e" decimals="2" format="ixt:numdotdecimal">{data.get("emissions", {}).get("scope2_location", 0)}</ix:nonFraction> tCO2e</td>
+        # <td><ix:nonFraction name="esrs:scope2-location-emissions" contextRef="c-current" unitRef="tCO2e" decimals="2" format="ixt:num-dot-decimal">{data.get("emissions", {}).get("scope2_location", 0)}</ix:nonFraction> tCO2e</td>
         # </tr>
         # <tr>
         # <td>Scope 3 Emissions:</td>
-        # <td><ix:nonFraction name="esrs:scope3-emissions" contextRef="current-period" unitRef="tCO2e" decimals="2" format="ixt:numdotdecimal">{data.get("emissions", {}).get("scope3", 0)}</ix:nonFraction> tCO2e</td>
+        # <td><ix:nonFraction name="esrs:scope3-emissions" contextRef="c-current" unitRef="tCO2e" decimals="2" format="ixt:num-dot-decimal">{data.get("emissions", {}).get("scope3", 0)}</ix:nonFraction> tCO2e</td>
         # </tr>
         # </table>
         # </div>
         #         # <ix:hidden>
         # <ix:header>
-        # <xbrli:context id="current-period">
-        # <xbrli:entity>
-        # <xbrli:identifier scheme="http://www.lei-identifier.org">{data.get("lei", "DEMO00000000000000")}</xbrli:identifier>
-        # </xbrli:entity>
-        # <xbrli:period>
-        # <xbrli:instant>{data.get("reporting_period", 2024)}-12-31</xbrli:instant>
-        # </xbrli:period>
-        # </xbrli:context>
-        #         # <xbrli:unit id="tCO2e">
-        # <xbrli:measure>iso4217:tCO2e</xbrli:measure>
-        # </xbrli:unit>
+        # 
+        #         # 
         # </ix:header>
         # </ix:hidden>
         # </body>

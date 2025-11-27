@@ -1,0 +1,9 @@
+[lxml.SCHEMAV_ELEMENT_CONTENT] XML file syntax error Element '{http://www.xbrl.org/2003/linkbase}schemaRef': This element is not expected., line 23, path 'body/div/link:schemaRef', xpath '/*/*[2]/*[3]/link:schemaRef' - minimal_simple.xhtml 
+[ix11.8.1.3:missingHeader] Inline XBRL ix:header element not found - minimal_simple.xhtml 
+[ix11.14.1.2:missingResources] Inline XBRL ix:resources element not found - minimal_simple.xhtml 
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs-e1:TotalGHGEmissions of Inline Element ix:nonFraction - minimal_simple.xhtml 18
+[ix11.12.1.2:missingReferences] There must be at least one reference - minimal_simple.xhtml 
+[ix11.12.1.2:missingReferenceTargets] Found no ix:references element having target '(default)' in IXDS. - minimal_simple.xhtml 
+[info] loaded in 0.04 secs at 2025-08-01T11:57:45 - /Users/isaiah/Documents/Scope3Tool/backend/minimal_simple.xhtml 
+[ix11.8.1.3:headerMissing] Inline XBRL document set must have at least one ix:header element - minimal_simple.xhtml 
+[info] validated in 0.00 secs - /Users/isaiah/Documents/Scope3Tool/backend/minimal_simple.xhtml 

@@ -1,0 +1,14 @@
+[xmlSchema:syntax] Unrecoverable error: Document is empty, line 1, column 1 (esrs_V22_COMPLETE.xhtml, line 1), esrs_V22_COMPLETE.xhtml - ../Documents/Scope3Tool/backend/esrs_V22_COMPLETE.xhtml , esrs_V22_COMPLETE.xhtml 
+Traceback (most recent call last):
+  File "/Users/isaiah/Library/Caches/pypoetry/virtualenvs/factortrace-x2M7jmhy-py3.13/lib/python3.13/site-packages/arelle/ModelDocument.py", line 186, in load
+    xmlDocument = etree.parse(file,parser=_parser,base_url=filepath)
+  File "src/lxml/etree.pyx", line 3590, in lxml.etree.parse
+  File "src/lxml/parser.pxi", line 1975, in lxml.etree._parseDocument
+  File "src/lxml/parser.pxi", line 1995, in lxml.etree._parseMemoryDocument
+  File "src/lxml/parser.pxi", line 1875, in lxml.etree._parseDoc
+  File "src/lxml/parser.pxi", line 1105, in lxml.etree._BaseParser._parseUnicodeDoc
+  File "src/lxml/parser.pxi", line 633, in lxml.etree._ParserContext._handleParseResultDoc
+  File "src/lxml/parser.pxi", line 743, in lxml.etree._handleParseResult
+  File "src/lxml/parser.pxi", line 672, in lxml.etree._raiseParseError
+  File "/Users/isaiah/Downloads/esrs_V22_COMPLETE.xhtml", line 1
+lxml.etree.XMLSyntaxError: Document is empty, line 1, column 1

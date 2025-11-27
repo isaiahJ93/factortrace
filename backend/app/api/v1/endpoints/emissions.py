@@ -51,6 +51,9 @@ from app.services.emissions_calculator import (
     GWPVersionEnum
 )
 
+# Import from centralized emission factor service
+from app.services.emission_factors import get_factor, normalize_scope
+
 # Create uploads directory
 UPLOAD_DIR = Path("uploads")
 UPLOAD_DIR.mkdir(exist_ok=True)
@@ -410,35 +413,38 @@ async def get_emissions_summary(
     if reporting_period:
         query = query.filter(Emission.reporting_period == reporting_period)
     
-    # Calculate totals by scope
-    scope1_total = query.filter(Emission.scope == 1).with_entities(
-        func.sum(Emission.co2e_total)
+    # Calculate totals by scope (using 'amount' field from Emission model)
+    # Import EmissionScope enum for proper comparison
+    from app.models.emission import EmissionScope
+
+    scope1_total = query.filter(Emission.scope == EmissionScope.SCOPE_1).with_entities(
+        func.sum(Emission.amount)
     ).scalar() or 0
-    
-    scope2_total = query.filter(Emission.scope == 2).with_entities(
-        func.sum(Emission.co2e_total)
+
+    scope2_total = query.filter(Emission.scope == EmissionScope.SCOPE_2).with_entities(
+        func.sum(Emission.amount)
     ).scalar() or 0
-    
-    scope3_total = query.filter(Emission.scope == 3).with_entities(
-        func.sum(Emission.co2e_total)
+
+    scope3_total = query.filter(Emission.scope == EmissionScope.SCOPE_3).with_entities(
+        func.sum(Emission.amount)
     ).scalar() or 0
-    
+
     # Get breakdown by category
     category_breakdown = {}
     categories = query.with_entities(
         Emission.category,
-        func.sum(Emission.co2e_total).label('total')
+        func.sum(Emission.amount).label('total')
     ).group_by(Emission.category).all()
-    
+
     for cat, total in categories:
         if cat:
             category_breakdown[cat] = float(total or 0)
-    
+
     return EmissionsSummary(
         total_emissions=float(scope1_total + scope2_total + scope3_total),
-        scope1_emissions=float(scope1_total),
-        scope2_emissions=float(scope2_total),
-        scope3_emissions=float(scope3_total),
+        scope1_total=float(scope1_total),
+        scope2_total=float(scope2_total),
+        scope3_total=float(scope3_total),
         by_category=category_breakdown
     )
 
@@ -901,48 +907,104 @@ async def calculate_emissions_simple(
         }
     }
 
-# Keep the existing endpoints
-@router.post("/", response_model=EmissionResponse)
+# Main emission creation endpoint
+@router.post("/")
 async def create_emission(
     emission: EmissionCreate,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """Create a new emission entry with automatic calculation"""
-    # Get emission factor
-    factor = db.query(EmissionFactor).filter(
-        EmissionFactor.id == emission.emission_factor_id
-    ).first()
-    
-    if not factor:
-        raise HTTPException(status_code=404, detail="Emission factor not found")
-    
-    # Calculate emissions
-    co2e_total = float(emission.activity_data) * float(factor.factor)
-    
+    """
+    Create a new emission entry with automatic calculation.
+
+    Factor Resolution Logic:
+    1. If `emission_factor` is provided in payload -> use it (Manual Override)
+    2. Otherwise -> lookup via get_factor(scope, category, activity_type, country_code)
+    3. If lookup fails -> return 422 error with the missing key for debugging
+    """
+    import logging
+    logger = logging.getLogger(__name__)
+
+    factor_value: float | None = None
+    factor_source: str = "Unknown"
+
+    # STEP 1: Check for manual override
+    if emission.emission_factor is not None:
+        factor_value = emission.emission_factor
+        factor_source = "Manual Override"
+        logger.info(f"Using manual emission factor override: {factor_value}")
+
+    # STEP 2: Lookup from centralized emission factor service (Database)
+    if factor_value is None:
+        scope_str = normalize_scope(emission.scope)
+        factor_value = get_factor(
+            scope=emission.scope,
+            category=emission.category,
+            activity_type=emission.activity_type,
+            country_code=emission.country_code,
+            db=db  # Pass database session for database lookup
+        )
+
+        if factor_value is not None:
+            factor_source = "Database"
+            logger.info(
+                f"Factor lookup success: ({scope_str}, {emission.category}, "
+                f"{emission.activity_type}, {emission.country_code}) -> {factor_value}"
+            )
+
+    # STEP 3: Error if no factor found
+    if factor_value is None:
+        scope_str = normalize_scope(emission.scope)
+        missing_key = f"({scope_str}, {emission.category}, {emission.activity_type}, {emission.country_code})"
+        logger.error(f"No emission factor found for key: {missing_key}")
+        raise HTTPException(
+            status_code=422,
+            detail=f"No emission factor found for key: {missing_key}"
+        )
+
+    # Calculate emissions (factor is in kgCO2e per unit, convert to tCO2e)
+    amount = float(emission.activity_data) * factor_value / 1000
+
+    # Create emission entry
     emission_entry = Emission(
-        organization_id=current_user.organization_id,
+        user_id=current_user.id if hasattr(current_user, 'id') else None,
         scope=emission.scope,
         category=emission.category,
-        activity_type=emission.activity_type,
         activity_data=emission.activity_data,
-        activity_unit=emission.activity_unit,
-        emission_factor_id=emission.emission_factor_id,
-        co2e_total=co2e_total,
-        calculation_method=emission.calculation_method or "activity_based",
-        data_quality_score=emission.data_quality_score,
-        uncertainty_percentage=factor.uncertainty_percentage if hasattr(factor, 'uncertainty_percentage') else None,
-        reporting_period=emission.reporting_period,
-        notes=getattr(emission, 'notes', None),
-        created_by=current_user.id,
-        quality_score=calculate_data_quality_score(emission_entry)['total_score'] if emission_entry else None
+        unit=emission.unit,
+        emission_factor=factor_value,
+        emission_factor_source=factor_source,
+        amount=amount,
+        data_quality_score=int(emission.data_quality_score) if emission.data_quality_score else None,
+        uncertainty_percentage=10.0,  # Default uncertainty
+        description=emission.description,
+        country_code=emission.country_code,
+        location=emission.location,
     )
-    
+
     db.add(emission_entry)
     db.commit()
     db.refresh(emission_entry)
-    
-    return emission_entry
+
+    # Return response
+    return {
+        "id": emission_entry.id,
+        "scope": emission_entry.scope.value if hasattr(emission_entry.scope, 'value') else emission_entry.scope,
+        "category": emission_entry.category,
+        "activity_type": emission.activity_type,
+        "activity_data": emission_entry.activity_data,
+        "unit": emission_entry.unit,
+        "country_code": emission_entry.country_code,
+        "emission_factor": emission_entry.emission_factor,
+        "emission_factor_source": factor_source,
+        "amount": emission_entry.amount,
+        "data_quality_score": emission_entry.data_quality_score,
+        "uncertainty_percentage": emission_entry.uncertainty_percentage,
+        "description": emission_entry.description,
+        "location": emission_entry.location,
+        "created_at": emission_entry.created_at,
+        "updated_at": emission_entry.updated_at
+    }
 
 @router.get("/{emission_id}", response_model=EmissionResponse)
 async def get_emission(

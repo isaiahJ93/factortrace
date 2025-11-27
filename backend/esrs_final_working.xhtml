@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:ix="http://www.xbrl.org/2013/inlineXBRL"
+      xmlns:xbrli="http://www.xbrl.org/2003/instance"
+      xmlns:link="http://www.xbrl.org/2003/linkbase"
+      xmlns:xlink="http://www.w3.org/1999/xlink"
+      xmlns:esrs="https://xbrl.efrag.org/taxonomy/esrs/2023-12-22"
+      xmlns:iso4217="http://www.xbrl.org/2003/iso4217">
+<head>
+<title>ESRS E1 Climate Report</title>
+</head>
+<body>
+<h1>ESRS E1 Climate Disclosures</h1>
+<div style="display:none">
+<ix:header>
+<ix:references>
+<link:schemaRef xlink:type="simple" xlink:href="https://xbrl.efrag.org/taxonomy/esrs/2023-12-22/common/esrs_cor.xsd"/>
+</ix:references>
+<ix:resources>
+<xbrli:context id="c2024">
+<xbrli:entity>
+<xbrli:identifier scheme="http://standards.iso.org/iso/17442">TESTENTITY000000000</xbrli:identifier>
+</xbrli:entity>
+<xbrli:period>
+<xbrli:startDate>2024-01-01</xbrli:startDate>
+<xbrli:endDate>2024-12-31</xbrli:endDate>
+</xbrli:period>
+</xbrli:context>
+<xbrli:unit id="tCO2e">
+<xbrli:measure>esrs:tCO2e</xbrli:measure>
+</xbrli:unit>
+<xbrli:unit id="EUR">
+<xbrli:measure>iso4217:EUR</xbrli:measure>
+</xbrli:unit>
+<xbrli:unit id="MWh">
+<xbrli:measure>esrs:MWh</xbrli:measure>
+</xbrli:unit>
+</ix:resources>
+</ix:header>
+</div>
+
+<h2>Greenhouse Gas Emissions</h2>
+<table>
+<tr>
+<td>Gross Scope 1 GHG emissions:</td>
+<td><ix:nonFraction name="esrs:GrossScope1GreenhouseGasEmissions" contextRef="c2024" unitRef="tCO2e" decimals="0">124325</ix:nonFraction> tCO2e</td>
+</tr>
+<tr>
+<td>Gross Scope 2 GHG emissions (location-based):</td>
+<td><ix:nonFraction name="esrs:GrossLocationBasedScope2GreenhouseGasEmissions" contextRef="c2024" unitRef="tCO2e" decimals="0">89234</ix:nonFraction> tCO2e</td>
+</tr>
+<tr>
+<td>Gross Scope 3 GHG emissions:</td>
+<td><ix:nonFraction name="esrs:GrossScope3GreenhouseGasEmissions" contextRef="c2024" unitRef="tCO2e" decimals="0">567123</ix:nonFraction> tCO2e</td>
+</tr>
+<tr>
+<td><strong>Total Gross GHG emissions:</strong></td>
+<td><strong><ix:nonFraction name="esrs:GrossGreenhouseGasEmissions" contextRef="c2024" unitRef="tCO2e" decimals="0">780682</ix:nonFraction> tCO2e</strong></td>
+</tr>
+</table>
+
+<h2>Energy Consumption</h2>
+<p>Energy from renewable sources: <ix:nonFraction name="esrs:EnergyConsumptionFromRenewableSources" contextRef="c2024" unitRef="MWh" decimals="0">45000</ix:nonFraction> MWh</p>
+<p>Energy from fossil sources: <ix:nonFraction name="esrs:EnergyConsumptionFromFossilSources" contextRef="c2024" unitRef="MWh" decimals="0">65000</ix:nonFraction> MWh</p>
+
+<h2>Financial Impact</h2>
+<p>Monetised total GHG emissions: <ix:nonFraction name="esrs:MonetisedTotalGHGEmissions" contextRef="c2024" unitRef="EUR" decimals="0">7800000</ix:nonFraction> EUR</p>
+
+</body>
+</html>

@@ -1,0 +1,53 @@
+[lxml.SCHEMAV_ELEMENT_CONTENT] XML file syntax error Element '{http://www.w3.org/1999/xhtml}head': This element is not expected. Expected is ( {http://www.w3.org/1999/xhtml}body )., line 32, path 'head[2]', xpath '/*/*[2]' - esrs_report_2025-08-01 (11).xhtml 
+[ix11.14.1.2:resourceIdDuplication] Inline XBRL ix:resources descendant id c-current duplicated in inline document set - esrs_report_2025-08-01 (11).xhtml 32
+[ix11.14.1.2:resourceIdDuplication] Inline XBRL ix:resources descendant id current-period duplicated in inline document set - esrs_report_2025-08-01 (11).xhtml 32
+[ix11.14.1.2:resourceIdDuplication] Inline XBRL ix:resources descendant id u-tCO2e duplicated in inline document set - esrs_report_2025-08-01 (11).xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:MaterialityAssessmentImpact of Inline Element ix:nonNumeric - esrs_report_2025-08-01 (11).xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:MaterialityAssessmentFinancial of Inline Element ix:nonNumeric - esrs_report_2025-08-01 (11).xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:BoardOversightClimate of Inline Element ix:nonNumeric - esrs_report_2025-08-01 (11).xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:ManagementResponsibilityClimate of Inline Element ix:nonNumeric - esrs_report_2025-08-01 (11).xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:TransitionPlanAdopted of Inline Element ix:nonNumeric - esrs_report_2025-08-01 (11).xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:ClimatePolicyAdopted of Inline Element ix:nonNumeric - esrs_report_2025-08-01 (11).xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:ClimatePolicyDescription of Inline Element ix:nonNumeric - esrs_report_2025-08-01 (11).xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:EnergyConsumption of Inline Element ix:nonFraction - esrs_report_2025-08-01 (11).xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:RenewableEnergyConsumption of Inline Element ix:nonFraction - esrs_report_2025-08-01 (11).xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:RenewableEnergyPercentage of Inline Element ix:nonFraction - esrs_report_2025-08-01 (11).xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:EnergyConsumption of Inline Element ix:nonFraction - esrs_report_2025-08-01 (11).xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:RenewableEnergyConsumption of Inline Element ix:nonFraction - esrs_report_2025-08-01 (11).xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:RenewableEnergyPercentage of Inline Element ix:nonFraction - esrs_report_2025-08-01 (11).xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:EnergyConsumption of Inline Element ix:nonFraction - esrs_report_2025-08-01 (11).xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:RenewableEnergyConsumption of Inline Element ix:nonFraction - esrs_report_2025-08-01 (11).xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:RenewableEnergyPercentage of Inline Element ix:nonFraction - esrs_report_2025-08-01 (11).xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:EnergyConsumption of Inline Element ix:nonFraction - esrs_report_2025-08-01 (11).xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:RenewableEnergyConsumption of Inline Element ix:nonFraction - esrs_report_2025-08-01 (11).xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:RenewableEnergyPercentage of Inline Element ix:nonFraction - esrs_report_2025-08-01 (11).xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:TotalEnergyConsumption of Inline Element ix:nonFraction - esrs_report_2025-08-01 (11).xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:TotalRenewableEnergyConsumption of Inline Element ix:nonFraction - esrs_report_2025-08-01 (11).xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:TotalRenewableEnergyPercentage of Inline Element ix:nonFraction - esrs_report_2025-08-01 (11).xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:Scope3CategoryEmissions of Inline Element ix:nonFraction - esrs_report_2025-08-01 (11).xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:Scope3CategoryEmissions of Inline Element ix:nonFraction - esrs_report_2025-08-01 (11).xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:Scope3CategoryEmissions of Inline Element ix:nonFraction - esrs_report_2025-08-01 (11).xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:Scope3CategoryEmissions of Inline Element ix:nonFraction - esrs_report_2025-08-01 (11).xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:Scope3CategoryEmissions of Inline Element ix:nonFraction - esrs_report_2025-08-01 (11).xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:Scope3CategoryEmissions of Inline Element ix:nonFraction - esrs_report_2025-08-01 (11).xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:Scope3CategoryEmissions of Inline Element ix:nonFraction - esrs_report_2025-08-01 (11).xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:Scope3CategoryEmissions of Inline Element ix:nonFraction - esrs_report_2025-08-01 (11).xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:Scope3CategoryEmissions of Inline Element ix:nonFraction - esrs_report_2025-08-01 (11).xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:Scope3CategoryEmissions of Inline Element ix:nonFraction - esrs_report_2025-08-01 (11).xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:Scope3CategoryEmissions of Inline Element ix:nonFraction - esrs_report_2025-08-01 (11).xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:Scope3CategoryEmissions of Inline Element ix:nonFraction - esrs_report_2025-08-01 (11).xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:Scope3CategoryEmissions of Inline Element ix:nonFraction - esrs_report_2025-08-01 (11).xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:Scope3CategoryEmissions of Inline Element ix:nonFraction - esrs_report_2025-08-01 (11).xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:Scope3CategoryEmissions of Inline Element ix:nonFraction - esrs_report_2025-08-01 (11).xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:InternalCarbonPricingImplemented of Inline Element ix:nonNumeric - esrs_report_2025-08-01 (11).xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:PhysicalRisksFinancialImpact of Inline Element ix:nonFraction - esrs_report_2025-08-01 (11).xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:OpportunitiesFinancialImpact of Inline Element ix:nonFraction - esrs_report_2025-08-01 (11).xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:GHGAccountingStandard of Inline Element ix:nonNumeric - esrs_report_2025-08-01 (11).xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:ConsolidationApproach of Inline Element ix:nonNumeric - esrs_report_2025-08-01 (11).xhtml 32
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:DataQualityScore of Inline Element ix:nonFraction - esrs_report_2025-08-01 (11).xhtml 32
+[info] loaded in 0.48 secs at 2025-08-01T19:16:41 - /Users/isaiah/Downloads/esrs_report_2025-08-01 (11).xhtml 
+[ix11.8.1.2:headerDisplayNone] Warning, Inline XBRL ix:header is recommended to be nested in a <div> with style display:none - esrs_report_2025-08-01 (11).xhtml 32
+[xml.3.3.1:idMustBeUnique] Element xbrli:context id c-current is duplicated - esrs_report_2025-08-01 (11).xhtml 32
+[xml.3.3.1:idMustBeUnique] Element xbrli:unit id u-tCO2e is duplicated - esrs_report_2025-08-01 (11).xhtml 32
+[xml.3.3.1:idMustBeUnique] Element xbrli:context id current-period is duplicated - esrs_report_2025-08-01 (11).xhtml 32
+[info] validated in 2.08 secs - /Users/isaiah/Downloads/esrs_report_2025-08-01 (11).xhtml 

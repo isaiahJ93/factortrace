@@ -1,0 +1,1500 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" prefix="og: https://ogp.me/ns#">
+  <head>
+    <meta charset="utf-8" />
+<noscript><style>form.antibot * :not(.antibot-message) { display: none !important; }</style>
+</noscript><link rel="canonical" href="https://www.efrag.org/en/amended-esrs" />
+<meta property="og:site_name" content="EFRAG" />
+<meta property="og:url" content="https://www.efrag.org/en/amended-esrs" />
+<meta property="og:title" content="Amended ESRS" />
+<meta property="og:description" content="View the webpage: Amended ESRS Exposure Drafts July 2025" />
+<meta name="MobileOptimized" content="width" />
+<meta name="HandheldFriendly" content="true" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<script type="application/javascript" src="https://www.efrag.org/themes/custom/dms_theme/dist/js/color-scheme-selector.js"></script>
+<meta name="format-detection" content="telephone=no" />
+<link rel="icon" href="/themes/custom/dms_theme/favicon.ico" type="image/vnd.microsoft.icon" />
+<link rel="alternate" hreflang="en" href="https://www.efrag.org/en/amended-esrs" />
+
+    <title>Amended ESRS | EFRAG</title>
+    <link rel="stylesheet" media="all" href="/sites/default/files/css/css_ucfeb5u6VCovQ8bwcuFQ9-0-NR6jT8z-hnReVOhjxA8.css?delta=0&amp;language=en&amp;theme=dms_theme&amp;include=eJx1jEEOgkAMRS9EnCM1nVKh2pliWxK5vegCXeDu5f38hzd8ghqO7AW_fMnZrVb2YWwBZM5lkj7EFsmtVAz-DDlz4yJkHa7WM37kpFZRIXJTPvPksuyHYHSaARcBXNPI2qKcXP74IyR9KmRqvpfe3eGxCt1V-r0cBNIlz4YXTephCA" />
+<link rel="stylesheet" media="all" href="/sites/default/files/css/css_hRWyZzxTc4nkdjaz8GjXzBOii6DIW7kCL0Dg3tx4yF8.css?delta=1&amp;language=en&amp;theme=dms_theme&amp;include=eJx1jEEOgkAMRS9EnCM1nVKh2pliWxK5vegCXeDu5f38hzd8ghqO7AW_fMnZrVb2YWwBZM5lkj7EFsmtVAz-DDlz4yJkHa7WM37kpFZRIXJTPvPksuyHYHSaARcBXNPI2qKcXP74IyR9KmRqvpfe3eGxCt1V-r0cBNIlz4YXTephCA" />
+<link rel="stylesheet" media="print" href="/sites/default/files/css/css_Nob1i7zRNOgKcfc1UQO01zxBzV-HzF-1H362ZPUZ3wI.css?delta=2&amp;language=en&amp;theme=dms_theme&amp;include=eJx1jEEOgkAMRS9EnCM1nVKh2pliWxK5vegCXeDu5f38hzd8ghqO7AW_fMnZrVb2YWwBZM5lkj7EFsmtVAz-DDlz4yJkHa7WM37kpFZRIXJTPvPksuyHYHSaARcBXNPI2qKcXP74IyR9KmRqvpfe3eGxCt1V-r0cBNIlz4YXTephCA" />
+<link rel="stylesheet" media="all" href="/sites/default/files/css/css_TcVBD0SzwwD7kgWDbqQiPqf13c88QwMpcJXAvDnLgk8.css?delta=3&amp;language=en&amp;theme=dms_theme&amp;include=eJx1jEEOgkAMRS9EnCM1nVKh2pliWxK5vegCXeDu5f38hzd8ghqO7AW_fMnZrVb2YWwBZM5lkj7EFsmtVAz-DDlz4yJkHa7WM37kpFZRIXJTPvPksuyHYHSaARcBXNPI2qKcXP74IyR9KmRqvpfe3eGxCt1V-r0cBNIlz4YXTephCA" />
+
+    
+  </head>
+  <body class="no-sidebars not-front lang-en logged-out path-sites node-type-system_page no-paragraphs mm-none">
+        <a href="#main-content" class="visually-hidden focusable">
+      Skip to main content
+    </a>
+    
+      <div class="dialog-off-canvas-main-canvas" data-off-canvas-main-canvas>
+    <div class="wrapper layout-container">
+
+  <div class="layout-top">
+    <div class="container container-max">
+        <div class="region region--top region-top" id="top">
+    
+
+
+<div id="block-dms-theme-branding" class="block block--system-branding-block block--system-branding-block-- block-dms-theme-branding block-system block-system-branding-block">
+  
+    
+        <a href="/en" rel="home">
+      <img src="/themes/custom/dms_theme/logo.svg" alt="Home" />
+    </a>
+      
+</div>
+
+
+
+<div class="views-exposed-form views-exposed-form-search block block--views-exposed-filter-block block--views-exposed-filter-block--search-api-search-block-autocomplete block-exposedformsearch-api-searchblock-autocomplete block-views block-views-exposed-filter-blocksearch-api-search-block-autocomplete" data-drupal-selector="views-exposed-form-search-api-search-block-autocomplete" id="block-exposedformsearch-api-searchblock-autocomplete">
+  
+    
+      <form action="/en/search" method="get" id="views-exposed-form-search-api-search-block-autocomplete" accept-charset="UTF-8">
+  <div class="js-form-item form-item js-form-type-search-api-autocomplete form-item-search js-form-item-search">
+      <label class="visually-hidden" for="edit-search">Search</label>
+        <input placeholder="Search" data-drupal-selector="edit-search" data-search-api-autocomplete-search="search_api_search" class="form-autocomplete form-text" data-autocomplete-path="/en/search_api_autocomplete/search_api_search?display=block_autocomplete&amp;&amp;filter=search" data-msg-maxlength="This field field has a maximum length of 128." type="text" id="edit-search" name="search" value="" size="30" maxlength="128" />
+
+        </div>
+  <div data-drupal-selector="edit-actions" class="form-actions js-form-wrapper form-wrapper" id="edit-actions"><input data-drupal-selector="edit-submit-search-api-search" type="submit" id="edit-submit-search-api-search" value="" class="button js-form-submit form-submit" />
+</div>
+
+
+</form>
+
+  </div>
+<nav role="navigation" aria-labelledby="block-menu-account-top-menu" id="block-menu-account-top" class="block block--menu-block block--menu-block--account block-menu-account-top">
+            
+  <h2 class="visually-hidden" id="block-menu-account-top-menu">Menu: Acount</h2>
+  
+
+        
+              <ul data-block="menu__account__top" class="menu menu--account menu__list">
+                    <li class="menu__item">
+        <a href="/en/user/login" class="menu__item__link--log-in menu__item__link btn" data-drupal-link-system-path="user/login">Log in</a>
+              </li>
+                <li class="menu__item">
+        <a href="https://survey.alchemer.eu/s3/90734358/Feedback-New-EFRAG-website" class="btn-outline-primary menu__item__link btn" target="_blank">Website feedback</a>
+              </li>
+                <li class="menu__item">
+        <a href="https://marketing.efrag.org/subscribe" class="btn-outline-primary menu__item__link btn" target="_blank">Subscribe</a>
+              </li>
+                <li class="menu__item">
+        <a href="/en/contact" class="btn-primary menu__item__link btn" data-drupal-link-system-path="node/55">Contact us</a>
+              </li>
+        </ul>
+  
+
+
+  </nav>
+
+
+
+<div id="block-dms-theming-mobile-menu-toggle" class="block block--dms-theming-mobile-menu-toggle block--dms-theming-mobile-menu-toggle-- block-dms-theming-mobile-menu-toggle block-dms-theming">
+  
+    
+      <span class="mobile-menu-toggle__toggle js-mega-menu-toggle"><i class="icon icon--bars"></i></span>
+  </div>
+
+
+
+<div id="block-dms-theme-dmsthemingcolorschemeselector" class="color-scheme-selector--block block block--dms-theming__color-scheme-selector block--dms-theming__color-scheme-selector-- block-dms-theme-dmsthemingcolorschemeselector block-dms-theming block-dms-theming__color-scheme-selector">
+  
+    
+      <button type="button" class="color-scheme-button no-animation" aria-label="Toggle color scheme">
+  <ul class="list">
+    <li class="light" data-color-scheme="light"></li>
+    <li class="dark" data-color-scheme="dark"></li>
+  </ul>
+</button>
+
+  </div>
+
+  </div>
+
+    </div>
+  </div>
+
+  <header role="banner" class="layout-header">
+    <div class="container">
+        <div class="region region--header region-header" id="header">
+
+      <nav role="navigation" aria-labelledby="block-menu-main-header-menu" id="block-menu-main-header" class="block block--menu-block block--menu-block--main block-menu-main-header">
+            
+  <h2 class="visually-hidden" id="block-menu-main-header-menu">Menu: Main</h2>
+  
+
+        
+
+  <ul data-region="header" data-block="menu__main__header" class="menu menu--main menu-level-0 menu__list">
+                  
+        <li class="menu__item menu__item--expanded">
+          <a href="/en/about-us" class="menu__item__link btn" data-drupal-link-system-path="node/3058">About us</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown menu-dropdown-0 menu-type-default">
+              
+<div  class="container">
+      
+<div  class="menu__content">
+      
+<div  class="menu__content__sidebar">
+      
+
+
+
+  <div class="field field--name-field-media field--type-entity-reference field--label-hidden">
+                    <img loading="lazy" src="/sites/default/files/styles/mega_menu/public/2024-03/a5_social_media_templates_2024_7.png?h=d28b8abe&amp;itok=JOsBvQrn" width="340" height="180" alt="coporate" />
+
+
+
+            </div>
+
+
+
+
+  <div class="field field--name-field-description field--type-text-long field--label-hidden">
+                  <h3 id="subtitle1">EFRAG</h3>
+
+<p> </p>
+            </div>
+
+  </div>
+
+<div  class="menu__content__children">
+      
+  <ul class="menu menu-level-1 menu__list">
+                  
+        <li class="menu__item menu__item--expanded">
+          <a href="/en/about-us" class="menu__item__link" data-drupal-link-system-path="node/3058">About EFRAG</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown menu-dropdown-1 menu-type-default">
+              
+<div  class="container">
+      
+<div  class="menu__content">
+      
+<div  class="menu__content__children">
+      
+  <ul class="menu menu-level-2 menu__list">
+                  
+        <li class="menu__item">
+          <a href="/en/about-us/governance/efrag-secretariat" class="menu__item__link" data-drupal-link-system-path="group/793">EFRAG Secretariat</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown">
+          </div>
+
+
+
+                  </li>
+                      
+        <li class="menu__item">
+          <a href="/en/about-us/efrag-facts" class="menu__item__link" data-drupal-link-system-path="node/3284">Elements of history and reforms</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown">
+          </div>
+
+
+
+                  </li>
+                      
+        <li class="menu__item">
+          <a href="/en/about-us/about-efrag/the-european-corporate-reporting-lab" class="menu__item__link" data-drupal-link-system-path="node/3285">European lab</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown">
+          </div>
+
+
+
+                  </li>
+                      
+        <li class="menu__item">
+          <a href="/en/ways-of-contributing-to-efrags-work" title="Ways of Contributing to EFRAG’s Work " class="menu__item__link">Ways of contributing to EFRAG Work </a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown">
+          </div>
+
+
+
+                  </li>
+          </ul>
+
+
+
+  </div>
+
+  </div>
+
+  </div>
+
+      </div>
+
+
+
+                  </li>
+                      
+        <li class="menu__item">
+          <a href="/en/about-us/working-groups-and-advisory-panels" class="menu__item__link" data-drupal-link-system-path="node/3104">Working groups and advisory panels</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown">
+          </div>
+
+
+
+                  </li>
+                      
+        <li class="menu__item">
+          <a href="/en/about-us/annual-reviews" class="menu__item__link" data-drupal-link-system-path="node/3262">Annual reviews</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown">
+          </div>
+
+
+
+                  </li>
+                      
+        <li class="menu__item">
+          <a href="/en/about-us/friends-of-efrag" class="menu__item__link" data-drupal-link-system-path="node/19627">Friends of EFRAG</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown">
+          </div>
+
+
+
+                  </li>
+                      
+        <li class="menu__item">
+          <a href="/en/about-us/legal-policies" class="menu__item__link" data-drupal-link-system-path="node/3273">Legal &amp; Policies</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown">
+          </div>
+
+
+
+                  </li>
+                      
+        <li class="menu__item menu__item--expanded">
+          <a href="/en/about-us/governance" class="menu__item__link" data-drupal-link-system-path="node/3105">Our structure and member organisations</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown menu-dropdown-1 menu-type-default">
+              
+<div  class="container">
+      
+<div  class="menu__content">
+      
+<div  class="menu__content__children">
+      
+  <ul class="menu menu-level-2 menu__list">
+                  
+        <li class="menu__item">
+          <a href="/en/about-us/our-structure-and-technical-bodies/efrag-administrative-board" title="EFRAG Administrative Board " class="menu__item__link">EFRAG Administrative Board </a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown">
+          </div>
+
+
+
+                  </li>
+                      
+        <li class="menu__item">
+          <a href="/en/about-us/governance/efrag-financial-reporting-board" class="menu__item__link" data-drupal-link-system-path="group/796">EFRAG Financial Reporting Board</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown">
+          </div>
+
+
+
+                  </li>
+                      
+        <li class="menu__item">
+          <a href="/en/about-us/working-groups/efrag-financial-reporting-technical-expert-group-efrag-fr-teg" class="menu__item__link">EFRAG Financial Reporting Technical Expert Group</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown">
+          </div>
+
+
+
+                  </li>
+                      
+        <li class="menu__item">
+          <a href="/en/about-us/governance/consultative-forum-of-standard-setters" class="menu__item__link" data-drupal-link-system-path="node/19145">EFRAG Consultative Forum of Standard Setters</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown">
+          </div>
+
+
+
+                  </li>
+                      
+        <li class="menu__item">
+          <a href="/en/about-us/governance/efrag-sustainability-reporting-board" class="menu__item__link" data-drupal-link-system-path="group/801">EFRAG Sustainability Reporting Board</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown">
+          </div>
+
+
+
+                  </li>
+                      
+        <li class="menu__item">
+          <a href="/en/about-us/governance/efrag-sustainability-reporting-technical-expert-group-efrag-sr-teg" class="menu__item__link" data-drupal-link-system-path="group/807">EFRAG Sustainability Reporting Technical Expert Group</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown">
+          </div>
+
+
+
+                  </li>
+          </ul>
+
+
+
+  </div>
+
+  </div>
+
+  </div>
+
+      </div>
+
+
+
+                  </li>
+                      
+        <li class="menu__item">
+          <a href="https://www.efrag.org/en/projects" title="All EFRAG projects" class="menu__item__link">All EFRAG projects</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown">
+          </div>
+
+
+
+                  </li>
+          </ul>
+
+
+
+  </div>
+
+  </div>
+
+  </div>
+
+      </div>
+
+
+
+                  </li>
+                      
+        <li class="menu__item menu__item--expanded">
+          <a href="/en/financial-reporting" class="menu__item__link btn" data-drupal-link-system-path="node/66">Financial reporting</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown menu-dropdown-0 menu-type-default">
+              
+<div  class="container">
+      
+<div  class="menu__content">
+      
+<div  class="menu__content__sidebar">
+      
+
+
+
+  <div class="field field--name-field-media field--type-entity-reference field--label-hidden">
+                    <img loading="lazy" src="/sites/default/files/styles/mega_menu/public/2024-03/A5%20Social%20media%20templates%202024%20%285%29.png?h=443b075b&amp;itok=JEBSsGD-" width="340" height="180" alt="FR" />
+
+
+
+            </div>
+
+
+
+
+  <div class="field field--name-field-description field--type-text-long field--label-hidden">
+                  <h2>Financial reporting</h2>
+            </div>
+
+  </div>
+
+<div  class="menu__content__children">
+      
+  <ul class="menu menu-level-1 menu__list">
+                  
+        <li class="menu__item">
+          <a href="/en/about-financial-reporting" class="menu__item__link" data-drupal-link-system-path="node/19319">About financial reporting and due process</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown">
+          </div>
+
+
+
+                  </li>
+                      
+        <li class="menu__item">
+          <a href="/en/financial-reporting/endorsement-status" class="menu__item__link" data-drupal-link-system-path="node/3279">Endorsement status</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown">
+          </div>
+
+
+
+                  </li>
+                      
+        <li class="menu__item">
+          <a href="/en/financial-reporting/meetings" class="menu__item__link" data-drupal-link-system-path="node/3061">Meetings</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown">
+          </div>
+
+
+
+                  </li>
+                      
+        <li class="menu__item">
+          <a href="/en/financial-reporting/news" class="menu__item__link" data-drupal-link-system-path="node/3062">News</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown">
+          </div>
+
+
+
+                  </li>
+                      
+        <li class="menu__item">
+          <a href="/en/financial-reporting/projects" class="menu__item__link" data-drupal-link-system-path="node/3060">Projects</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown">
+          </div>
+
+
+
+                  </li>
+                      
+        <li class="menu__item">
+          <a href="/en/financial-reporting/about-connectivity" class="menu__item__link" data-drupal-link-system-path="node/19152">Connectivity between FR and SR</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown">
+          </div>
+
+
+
+                  </li>
+                      
+        <li class="menu__item menu__item--expanded">
+          <a href="/en/financial-reporting/governance-and-technical-bodies" class="menu__item__link" data-drupal-link-system-path="node/19129">Governance and technical bodies</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown menu-dropdown-1 menu-type-default">
+              
+<div  class="container">
+      
+<div  class="menu__content">
+      
+<div  class="menu__content__children">
+      
+  <ul class="menu menu-level-2 menu__list">
+                  
+        <li class="menu__item">
+          <a href="/en/about-us/governance/efrag-financial-reporting-board" class="menu__item__link" data-drupal-link-system-path="group/796">EFRAG Financial Reporting Board</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown">
+          </div>
+
+
+
+                  </li>
+                      
+        <li class="menu__item">
+          <a href="/en/about-us/governance/efrag-financial-reporting-technical-expert-group-efrag-fr-teg" class="menu__item__link" data-drupal-link-system-path="group/791">EFRAG Financial Reporting Technical Expert Group</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown">
+          </div>
+
+
+
+                  </li>
+                      
+        <li class="menu__item">
+          <a href="/en/about-us/governance/consultative-forum-of-standard-setters" class="menu__item__link" data-drupal-link-system-path="node/19145">EFRAG Consultative Forum of Standard Setters</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown">
+          </div>
+
+
+
+                  </li>
+          </ul>
+
+
+
+  </div>
+
+  </div>
+
+  </div>
+
+      </div>
+
+
+
+                  </li>
+                      
+        <li class="menu__item">
+          <a href="/en/financial-reporting/fr-open-consultations" class="menu__item__link" data-drupal-link-system-path="node/19350">Open consultations</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown">
+          </div>
+
+
+
+                  </li>
+          </ul>
+
+
+
+  </div>
+
+  </div>
+
+  </div>
+
+      </div>
+
+
+
+                  </li>
+                      
+        <li class="menu__item menu__item--expanded">
+          <a href="/en/sustainability-reporting" class="menu__item__link btn" data-drupal-link-system-path="node/3054">Sustainability reporting</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown menu-dropdown-0 menu-type-default">
+              
+<div  class="container">
+      
+<div  class="menu__content">
+      
+<div  class="menu__content__sidebar">
+      
+
+
+
+  <div class="field field--name-field-media field--type-entity-reference field--label-hidden">
+                    <img loading="lazy" src="/sites/default/files/styles/mega_menu/public/2024-03/A5%20Social%20media%20templates%202024%20%286%29.png?h=d28b8abe&amp;itok=h_CpyVeE" width="340" height="180" alt="SR" />
+
+
+
+            </div>
+
+
+
+
+  <div class="field field--name-field-description field--type-text-long field--label-hidden">
+                  <h2>Sustainability reporting</h2>
+            </div>
+
+  </div>
+
+<div  class="menu__content__children">
+      
+  <ul class="menu menu-level-1 menu__list">
+                  
+        <li class="menu__item">
+          <a href="/en/sustainability-reporting/about-sustainability-reporting" class="menu__item__link" data-drupal-link-system-path="node/4150">About sustainability reporting and due process</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown">
+          </div>
+
+
+
+                  </li>
+                      
+        <li class="menu__item menu__item--expanded">
+          <a href="/en/sustainability-reporting/esrs-workstreams" class="menu__item__link" data-drupal-link-system-path="node/19085">ESRS workstreams</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown menu-dropdown-1 menu-type-default">
+              
+<div  class="container">
+      
+<div  class="menu__content">
+      
+<div  class="menu__content__children">
+      
+  <ul class="menu menu-level-2 menu__list">
+                  
+        <li class="menu__item">
+          <a href="https://www.efrag.org/en/amended-esrs" class="menu__item__link">Amended ESRS</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown">
+          </div>
+
+
+
+                  </li>
+                      
+        <li class="menu__item">
+          <a href="/en/sustainability-reporting/esrs-workstreams/sector-agnostic-standards-set-1-esrs" class="menu__item__link" data-drupal-link-system-path="node/19091">Sector agnostic</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown">
+          </div>
+
+
+
+                  </li>
+                      
+        <li class="menu__item">
+          <a href="/en/sustainability-reporting/esrs-workstreams/sectorspecific-esrs" class="menu__item__link" data-drupal-link-system-path="node/19088">Sector specific</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown">
+          </div>
+
+
+
+                  </li>
+                      
+        <li class="menu__item">
+          <a href="https://www.efrag.org/en/smes-and-sustainability-reporting" class="menu__item__link">SMEs</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown">
+          </div>
+
+
+
+                  </li>
+                      
+        <li class="menu__item">
+          <a href="/en/sustainability-reporting/esrs-workstreams/implementation-support" class="menu__item__link" data-drupal-link-system-path="node/19090">Implementation support</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown">
+          </div>
+
+
+
+                  </li>
+                      
+        <li class="menu__item">
+          <a href="/en/sustainability-reporting/esrs-workstreams/digital-reporting-with-xbrl" class="menu__item__link" data-drupal-link-system-path="node/19106">Digital Reporting </a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown">
+          </div>
+
+
+
+                  </li>
+                      
+        <li class="menu__item">
+          <a href="/en/sustainability-reporting/esrs-workstreams/issb-consultations" class="menu__item__link" data-drupal-link-system-path="node/19113">ISSB consultations</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown">
+          </div>
+
+
+
+                  </li>
+                      
+        <li class="menu__item">
+          <a href="/en/sustainability-reporting/esrs-workstreams/interoperability" class="menu__item__link" data-drupal-link-system-path="node/19116">Interoperability</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown">
+          </div>
+
+
+
+                  </li>
+                      
+        <li class="menu__item">
+          <a href="/en/node/4164/noneu-groups" class="menu__item__link">Non-EU Group(s)</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown">
+          </div>
+
+
+
+                  </li>
+          </ul>
+
+
+
+  </div>
+
+  </div>
+
+  </div>
+
+      </div>
+
+
+
+                  </li>
+                      
+        <li class="menu__item">
+          <a href="/en/projects/efrag-esrs-qa-platform" class="menu__item__link">ESRS Q&amp;A platform</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown">
+          </div>
+
+
+
+                  </li>
+                      
+        <li class="menu__item">
+          <a href="/en/sustainability-reporting/meetings" class="menu__item__link" data-drupal-link-system-path="node/19119">Meetings</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown">
+          </div>
+
+
+
+                  </li>
+                      
+        <li class="menu__item">
+          <a href="/en/sustainability-reporting/news" class="menu__item__link" data-drupal-link-system-path="node/19120">News</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown">
+          </div>
+
+
+
+                  </li>
+                      
+        <li class="menu__item">
+          <a href="/en/sustainability-reporting/projects" class="menu__item__link" data-drupal-link-system-path="node/19127">Projects</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown">
+          </div>
+
+
+
+                  </li>
+                      
+        <li class="menu__item">
+          <a href="/en/financial-reporting/about-connectivity" class="menu__item__link" data-drupal-link-system-path="node/19152">Connectivity between FR and SR</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown">
+          </div>
+
+
+
+                  </li>
+                      
+        <li class="menu__item menu__item--expanded">
+          <a href="/en/sustainability-reporting/governance-and-technical-bodies" class="menu__item__link" data-drupal-link-system-path="node/19128">Governance and technical bodies</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown menu-dropdown-1 menu-type-default">
+              
+<div  class="container">
+      
+<div  class="menu__content">
+      
+<div  class="menu__content__children">
+      
+  <ul class="menu menu-level-2 menu__list">
+                  
+        <li class="menu__item">
+          <a href="/en/about-us/governance/efrag-sustainability-reporting-board" class="menu__item__link" data-drupal-link-system-path="group/801">EFRAG Sustainability Reporting Board</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown">
+          </div>
+
+
+
+                  </li>
+                      
+        <li class="menu__item">
+          <a href="/en/about-us/governance/efrag-sustainability-reporting-technical-expert-group-efrag-sr-teg" class="menu__item__link" data-drupal-link-system-path="group/807">EFRAG Sustainability Reporting Technical Expert Group</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown">
+          </div>
+
+
+
+                  </li>
+          </ul>
+
+
+
+  </div>
+
+  </div>
+
+  </div>
+
+      </div>
+
+
+
+                  </li>
+                      
+        <li class="menu__item">
+          <a href="/en/sustainability-reporting/sr-open-consultations" class="menu__item__link" data-drupal-link-system-path="node/19351">Open consultations</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown">
+          </div>
+
+
+
+                  </li>
+          </ul>
+
+
+
+  </div>
+
+  </div>
+
+  </div>
+
+      </div>
+
+
+
+                  </li>
+                      
+        <li class="menu__item">
+          <a href="/en/updates" class="menu__item__link btn" data-drupal-link-system-path="node/3277">EFRAG update</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown">
+          </div>
+
+
+
+                  </li>
+                      
+        <li class="menu__item menu__item--expanded">
+          <a href="/en/news-and-calendar/news" class="menu__item__link btn" data-drupal-link-system-path="node/3108">News and calendar</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown menu-dropdown-0 menu-type-default">
+              
+<div  class="container">
+      
+<div  class="menu__content">
+      
+<div  class="menu__content__sidebar">
+      
+
+
+
+  <div class="field field--name-field-media field--type-entity-reference field--label-hidden">
+                    <img loading="lazy" src="/sites/default/files/styles/mega_menu/public/2024-06/pexels-photo-5505690.jpeg?h=790be497&amp;itok=mC5jacW3" width="340" height="180" alt="News " />
+
+
+
+            </div>
+
+
+
+
+  <div class="field field--name-field-description field--type-text-long field--label-hidden">
+                  <h3>News and Calendar</h3><p>Access the latest news, press releases and publications and explore our meeting calendar</p>
+            </div>
+
+  </div>
+
+<div  class="menu__content__children">
+      
+  <ul class="menu menu-level-1 menu__list">
+                  
+        <li class="menu__item">
+          <a href="/en/news-and-calendar/news" class="menu__item__link" data-drupal-link-system-path="node/3108">News</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown">
+          </div>
+
+
+
+                  </li>
+                      
+        <li class="menu__item">
+          <a href="/en/efrag-events" class="menu__item__link" data-drupal-link-system-path="node/6185">Events</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown menu-dropdown-1 menu-type-default">
+          </div>
+
+
+
+                  </li>
+                      
+        <li class="menu__item">
+          <a href="https://open.spotify.com/show/1Z2azSsMnoSYJLXlJG4GJz" class="menu__item__link">EFRAG Update Podcast</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown">
+          </div>
+
+
+
+                  </li>
+                      
+        <li class="menu__item">
+          <a href="/en/news-and-calendar/meetings-calendar" class="menu__item__link" data-drupal-link-system-path="node/3055">Meetings calendar</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown">
+          </div>
+
+
+
+                  </li>
+                      
+        <li class="menu__item">
+          <a href="https://vimeo.com/library/showcases" class="menu__item__link">Meetings Recordings</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown">
+          </div>
+
+
+
+                  </li>
+                      
+        <li class="menu__item">
+          <a href="/en/news-and-calendar/efrag-and-ifass" class="menu__item__link" data-drupal-link-system-path="node/19151">IFASS meetings</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown">
+          </div>
+
+
+
+                  </li>
+                      
+        <li class="menu__item">
+          <a href="/en/publications-sustainability-reporting" class="menu__item__link">Sustainability Reporting Publications </a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown">
+          </div>
+
+
+
+                  </li>
+                      
+        <li class="menu__item">
+          <a href="/en/news-and-calendar/financial-reporting-publications" class="menu__item__link" data-drupal-link-system-path="node/3057">Financial Reporting Publications</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown">
+          </div>
+
+
+
+                  </li>
+          </ul>
+
+
+
+  </div>
+
+  </div>
+
+  </div>
+
+      </div>
+
+
+
+                  </li>
+                      
+        <li class="menu__item">
+          <a href="/en/open-consultations" class="menu__item__link btn" data-drupal-link-system-path="node/3281">Open consultations</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown">
+          </div>
+
+
+
+                  </li>
+                      
+        <li class="menu__item">
+          <a href="https://www.efrag.org/en/join-efrag" class="menu__item__link btn">Vacancy</a>
+                                
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown">
+          </div>
+
+
+
+                  </li>
+          </ul>
+
+
+  </nav>
+
+
+      
+  </div>
+
+    </div>
+  </header>
+
+  
+
+    <div class="region region--system region-system" id="system">
+    <div class="container">
+      
+
+
+<div id="block-dms-theme-page-title" class="block block--page-title-block block--page-title-block-- block-dms-theme-page-title block-core block-page-title-block">
+  
+    
+      
+  <h1>Amended ESRS</h1>
+
+
+  </div>
+
+    </div>
+  </div>
+
+
+  <main role="main" id="main">
+    <a id="main-content" tabindex="-1"></a>
+    <div class="layout-content">
+        <div class="region region--content region-content" id="content">
+    <div data-drupal-messages-fallback class="hidden"></div>
+
+
+<div id="block-dms-theme-content" class="block block--system-main-block block--system-main-block-- block-dms-theme-content block-system block-system-main-block">
+  
+    
+      <article class="node node--system-page node--system-page--full node--full">
+  <div class="container">
+    <div class="node__content">
+      
+
+
+
+  <div class="field field--name-body field--type-text-with-summary field--label-hidden">
+                  <p><a class="btn btn-primary" href="https://www.efrag.org/en/amended-esrs-0" target="_blank">View the webpage: <span class="TextRun SCXW54520671 BCX8 NormalTextRun" lang="EN-US" xml:lang="EN-US" xml:lang="EN-US"><strong>Amended ESRS Exposure Drafts July 2025</strong></span></a><span class="EOP SCXW54520671 BCX8"> </span></p>
+            </div>
+
+    </div>
+  </div>
+
+  
+</article>
+
+  </div>
+
+  </div>
+
+    </div>
+
+    
+    
+  </main>
+
+  <footer class="layout-footer" role="contentinfo">
+    <div class="container">
+        <div class="region region--footer region-footer" id="footer">
+    
+
+
+<div id="block-site-branding-footer" class="block block--system-branding-block block--system-branding-block-- block-site-branding-footer block-system block-system-branding-block">
+  
+    
+        <a href="/en" rel="home">
+      <img src="/themes/custom/dms_theme/logo.svg" alt="Home" />
+    </a>
+      
+</div>
+
+
+
+<div id="block-dms-general-settings-address-footer" class="block block--dms-general-settings block--dms-general-settings-- block-dms-general-settings-address-footer block-dms-general-settings">
+  
+    
+      <div class="general-settings general-settings--address general_settings">
+  
+
+
+
+  <div class="field field--name-field-address field--type-text-long field--label-hidden">
+                  <p><strong>EFRAG </strong>(IVZW/AISBL)</p><p>35 Square de Meeûs<br />1000 Brussels (fifth floor)<br />BELGIUM</p><p><a href="tel:003222079300">T +32 (0)2 207 93 00</a></p><p><a class="btn btn-outline-primary" href="/en/how-to-reach-us" data-entity-type="node" data-entity-uuid="290d7ab7-d79e-4326-91a2-9ee74de4f9b7" data-entity-substitution="canonical" title="How to reach us? ">How to reach us</a></p><p><strong>European Transparency Register</strong>: 411098519407-76</p>
+            </div>
+</div>
+
+  </div>
+
+
+
+<div id="block-dms-general-settings-footer-newsletter" class="block block--dms-general-settings block--dms-general-settings-- block-dms-general-settings-footer-newsletter block-dms-general-settings">
+  
+    
+      <div class="general-settings general-settings--footer-newsletter general_settings">
+  
+
+
+
+  <div class="field field--name-field-footer-newsletter-title field--type-string field--label-hidden">
+                  Subscribe to our newsletter
+            </div>
+
+
+
+
+  <div class="field field--name-field-footer-newsletter-link field--type-link field--label-hidden">
+                  <a href="https://marketing.efrag.org/subscribe" target="_blank" class="btn btn-primary">Subscribe</a>
+            </div>
+</div>
+
+  </div>
+<nav role="navigation" aria-labelledby="block-menu-main-footer-menu" id="block-menu-main-footer" class="block block--menu-block block--menu-block--main block-menu-main-footer">
+            
+  <h2 class="visually-hidden" id="block-menu-main-footer-menu">Main navigation</h2>
+  
+
+        
+        <ul data-region="footer" data-block="menu_main_footer" class="menu menu--main menu__list">
+                  <li class="menu__item menu__item--collapsed">
+        <a href="/en/about-us" class="menu__item__link" data-drupal-link-system-path="node/3058">About us</a>
+              </li>
+                <li class="menu__item menu__item--collapsed">
+        <a href="/en/financial-reporting" class="menu__item__link" data-drupal-link-system-path="node/66">Financial reporting</a>
+              </li>
+                <li class="menu__item menu__item--collapsed">
+        <a href="/en/sustainability-reporting" class="menu__item__link" data-drupal-link-system-path="node/3054">Sustainability reporting</a>
+              </li>
+                <li class="menu__item">
+        <a href="/en/updates" class="menu__item__link" data-drupal-link-system-path="node/3277">EFRAG update</a>
+              </li>
+                <li class="menu__item menu__item--collapsed">
+        <a href="/en/news-and-calendar/news" class="menu__item__link" data-drupal-link-system-path="node/3108">News and calendar</a>
+              </li>
+                <li class="menu__item">
+        <a href="/en/open-consultations" class="menu__item__link" data-drupal-link-system-path="node/3281">Open consultations</a>
+              </li>
+                <li class="menu__item">
+        <a href="https://www.efrag.org/en/join-efrag" class="menu__item__link">Vacancy</a>
+              </li>
+      </ul>
+    
+
+
+  </nav>
+
+
+
+<div id="block-dms-general-settings-footer-socials" class="block block--dms-general-settings block--dms-general-settings-- block-dms-general-settings-footer-socials block-dms-general-settings">
+  
+    
+      <div class="general-settings general-settings--footer-socials general_settings">
+  
+
+
+
+  <div class="field field--name-field-footer-socials-title field--type-string field--label-hidden">
+                  Connect with us
+            </div>
+
+<div  class="socials__items">
+      
+
+
+
+  <div class="field field--name-field-gs-youtube field--type-link field--label-hidden">
+                  <a href="https://www.youtube.com/channel/UCxcljiiUM2JD02SMuFUTUwA" target="_blank"><span>Youtube</span> <i class="icon icon--youtube-simple"></i></a>
+            </div>
+
+
+
+
+  <div class="field field--name-field-gs-linkedin field--type-link field--label-hidden">
+                  <a href="https://www.linkedin.com/company/european-financial-reporting-advisory-group/" target="_blank"><span>Linkedin</span> <i class="icon icon--linkedin-square"></i></a>
+            </div>
+
+  </div>
+</div>
+
+  </div>
+
+  </div>
+
+    </div>
+  </footer>
+
+    <div class="region region--bottom region-bottom" id="bottom">
+    <div class="container">
+      <nav role="navigation" aria-labelledby="block-bottommenu-menu" id="block-bottommenu" class="bottom-menu block block--menu-block block--menu-block--bottom-menu block-bottommenu">
+            
+  <h2 class="visually-hidden" id="block-bottommenu-menu">Bottom menu</h2>
+  
+
+        
+              <ul data-block="bottommenu" class="menu menu--bottom-menu menu__list">
+                    <li class="menu__item">
+        <span class="menu__item__link">© EFRAG</span>
+              </li>
+                <li class="menu__item">
+        <a href="/en/privacy-policy" class="menu__item__link" data-drupal-link-system-path="node/4">Privacy policy</a>
+              </li>
+                <li class="menu__item">
+        <a href="/en/cookie-statement" class="menu__item__link" data-drupal-link-system-path="node/73">Cookie statement</a>
+              </li>
+                <li class="menu__item">
+        <a href="/en/disclaimer" class="menu__item__link" data-drupal-link-system-path="node/3">Disclaimer</a>
+              </li>
+        </ul>
+  
+
+
+  </nav>
+<nav role="navigation" aria-labelledby="block-dmsmenu-menu" id="block-dmsmenu" class="dms-menu block block--menu-block block--menu-block--dms-menu block-dmsmenu">
+            
+  <h2 class="visually-hidden" id="block-dmsmenu-menu">DMS menu</h2>
+  
+
+        
+              <ul data-block="dmsmenu" class="menu menu--dms-menu menu__list">
+                    <li class="menu__item">
+        <a href="https://www.dms.be" target="_blank" class="menu__item__link">Site by D’M&S</a>
+              </li>
+        </ul>
+  
+
+
+  </nav>
+
+    </div>
+  </div>
+
+
+</div>
+
+
+
+  <div class="region region--mobile-menu region-mobile-menu">
+    <nav role="navigation" aria-labelledby="block-menu-main-mobile-menu" id="block-menu-main-mobile" class="block block--menu-block block--menu-block--main block-menu-main-mobile">
+            
+  <h2 class="visually-hidden" id="block-menu-main-mobile-menu">Main navigation</h2>
+  
+
+        
+        <ul data-region="mobile_menu" data-block="menu_main_mobile" class="menu menu--main menu__list">
+                  <li class="menu__item menu__item--expanded">
+        <a href="/en/about-us" class="menu__item__link" data-drupal-link-system-path="node/3058">About us</a>
+                            <ul class="menu__list">
+                    <li class="menu__item menu__item--collapsed">
+        <a href="/en/about-us" class="menu__item__link" data-drupal-link-system-path="node/3058">About EFRAG</a>
+              </li>
+                <li class="menu__item">
+        <a href="/en/about-us/working-groups-and-advisory-panels" class="menu__item__link" data-drupal-link-system-path="node/3104">Working groups and advisory panels</a>
+              </li>
+                <li class="menu__item">
+        <a href="/en/about-us/annual-reviews" class="menu__item__link" data-drupal-link-system-path="node/3262">Annual reviews</a>
+              </li>
+                <li class="menu__item">
+        <a href="/en/about-us/friends-of-efrag" class="menu__item__link" data-drupal-link-system-path="node/19627">Friends of EFRAG</a>
+              </li>
+                <li class="menu__item">
+        <a href="/en/about-us/legal-policies" class="menu__item__link" data-drupal-link-system-path="node/3273">Legal & Policies</a>
+              </li>
+                <li class="menu__item menu__item--collapsed">
+        <a href="/en/about-us/governance" class="menu__item__link" data-drupal-link-system-path="node/3105">Our structure and member organisations</a>
+              </li>
+                <li class="menu__item">
+        <a href="https://www.efrag.org/en/projects" title="All EFRAG projects" class="menu__item__link">All EFRAG projects</a>
+              </li>
+      </ul>
+    
+              </li>
+                <li class="menu__item menu__item--expanded">
+        <a href="/en/financial-reporting" class="menu__item__link" data-drupal-link-system-path="node/66">Financial reporting</a>
+                            <ul class="menu__list">
+                    <li class="menu__item">
+        <a href="/en/about-financial-reporting" class="menu__item__link" data-drupal-link-system-path="node/19319">About financial reporting and due process</a>
+              </li>
+                <li class="menu__item">
+        <a href="/en/financial-reporting/endorsement-status" class="menu__item__link" data-drupal-link-system-path="node/3279">Endorsement status</a>
+              </li>
+                <li class="menu__item">
+        <a href="/en/financial-reporting/meetings" class="menu__item__link" data-drupal-link-system-path="node/3061">Meetings</a>
+              </li>
+                <li class="menu__item">
+        <a href="/en/financial-reporting/news" class="menu__item__link" data-drupal-link-system-path="node/3062">News</a>
+              </li>
+                <li class="menu__item">
+        <a href="/en/financial-reporting/projects" class="menu__item__link" data-drupal-link-system-path="node/3060">Projects</a>
+              </li>
+                <li class="menu__item">
+        <a href="/en/financial-reporting/about-connectivity" class="menu__item__link" data-drupal-link-system-path="node/19152">Connectivity between FR and SR</a>
+              </li>
+                <li class="menu__item menu__item--collapsed">
+        <a href="/en/financial-reporting/governance-and-technical-bodies" class="menu__item__link" data-drupal-link-system-path="node/19129">Governance and technical bodies</a>
+              </li>
+                <li class="menu__item">
+        <a href="/en/financial-reporting/fr-open-consultations" class="menu__item__link" data-drupal-link-system-path="node/19350">Open consultations</a>
+              </li>
+      </ul>
+    
+              </li>
+                <li class="menu__item menu__item--expanded">
+        <a href="/en/sustainability-reporting" class="menu__item__link" data-drupal-link-system-path="node/3054">Sustainability reporting</a>
+                            <ul class="menu__list">
+                    <li class="menu__item">
+        <a href="/en/sustainability-reporting/about-sustainability-reporting" class="menu__item__link" data-drupal-link-system-path="node/4150">About sustainability reporting and due process</a>
+              </li>
+                <li class="menu__item menu__item--collapsed">
+        <a href="/en/sustainability-reporting/esrs-workstreams" class="menu__item__link" data-drupal-link-system-path="node/19085">ESRS workstreams</a>
+              </li>
+                <li class="menu__item">
+        <a href="/en/projects/efrag-esrs-qa-platform" class="menu__item__link">ESRS Q&A platform</a>
+              </li>
+                <li class="menu__item">
+        <a href="/en/sustainability-reporting/meetings" class="menu__item__link" data-drupal-link-system-path="node/19119">Meetings</a>
+              </li>
+                <li class="menu__item">
+        <a href="/en/sustainability-reporting/news" class="menu__item__link" data-drupal-link-system-path="node/19120">News</a>
+              </li>
+                <li class="menu__item">
+        <a href="/en/sustainability-reporting/projects" class="menu__item__link" data-drupal-link-system-path="node/19127">Projects</a>
+              </li>
+                <li class="menu__item">
+        <a href="/en/financial-reporting/about-connectivity" class="menu__item__link" data-drupal-link-system-path="node/19152">Connectivity between FR and SR</a>
+              </li>
+                <li class="menu__item menu__item--collapsed">
+        <a href="/en/sustainability-reporting/governance-and-technical-bodies" class="menu__item__link" data-drupal-link-system-path="node/19128">Governance and technical bodies</a>
+              </li>
+                <li class="menu__item">
+        <a href="/en/sustainability-reporting/sr-open-consultations" class="menu__item__link" data-drupal-link-system-path="node/19351">Open consultations</a>
+              </li>
+      </ul>
+    
+              </li>
+                <li class="menu__item">
+        <a href="/en/updates" class="menu__item__link" data-drupal-link-system-path="node/3277">EFRAG update</a>
+              </li>
+                <li class="menu__item menu__item--expanded">
+        <a href="/en/news-and-calendar/news" class="menu__item__link" data-drupal-link-system-path="node/3108">News and calendar</a>
+                            <ul class="menu__list">
+                    <li class="menu__item">
+        <a href="/en/news-and-calendar/news" class="menu__item__link" data-drupal-link-system-path="node/3108">News</a>
+              </li>
+                <li class="menu__item">
+        <a href="/en/efrag-events" class="menu__item__link" data-drupal-link-system-path="node/6185">Events</a>
+              </li>
+                <li class="menu__item">
+        <a href="https://open.spotify.com/show/1Z2azSsMnoSYJLXlJG4GJz" class="menu__item__link">EFRAG Update Podcast</a>
+              </li>
+                <li class="menu__item">
+        <a href="/en/news-and-calendar/meetings-calendar" class="menu__item__link" data-drupal-link-system-path="node/3055">Meetings calendar</a>
+              </li>
+                <li class="menu__item">
+        <a href="https://vimeo.com/library/showcases" class="menu__item__link">Meetings Recordings</a>
+              </li>
+                <li class="menu__item">
+        <a href="/en/news-and-calendar/efrag-and-ifass" class="menu__item__link" data-drupal-link-system-path="node/19151">IFASS meetings</a>
+              </li>
+                <li class="menu__item">
+        <a href="/en/publications-sustainability-reporting" class="menu__item__link">Sustainability Reporting Publications </a>
+              </li>
+                <li class="menu__item">
+        <a href="/en/news-and-calendar/financial-reporting-publications" class="menu__item__link" data-drupal-link-system-path="node/3057">Financial Reporting Publications</a>
+              </li>
+      </ul>
+    
+              </li>
+                <li class="menu__item">
+        <a href="/en/open-consultations" class="menu__item__link" data-drupal-link-system-path="node/3281">Open consultations</a>
+              </li>
+                <li class="menu__item">
+        <a href="https://www.efrag.org/en/join-efrag" class="menu__item__link">Vacancy</a>
+              </li>
+      </ul>
+    
+
+
+  </nav>
+<nav role="navigation" aria-labelledby="block-menu-account-mobile-menu" id="block-menu-account-mobile" class="block block--menu-block block--menu-block--account block-menu-account-mobile">
+            
+  <h2 class="visually-hidden" id="block-menu-account-mobile-menu">User account menu</h2>
+  
+
+        
+              <ul data-block="menu_account_mobile" class="menu menu--account menu__list">
+                    <li class="menu__item">
+        <a href="/en/user/login" class="menu__item__link--log-in menu__item__link" data-drupal-link-system-path="user/login">Log in</a>
+              </li>
+                <li class="menu__item">
+        <a href="https://survey.alchemer.eu/s3/90734358/Feedback-New-EFRAG-website" class="btn-outline-primary menu__item__link btn" target="_blank">Website feedback</a>
+              </li>
+                <li class="menu__item">
+        <a href="https://marketing.efrag.org/subscribe" class="btn-outline-primary menu__item__link btn" target="_blank">Subscribe</a>
+              </li>
+                <li class="menu__item">
+        <a href="/en/contact" class="btn-primary menu__item__link btn" data-drupal-link-system-path="node/55">Contact us</a>
+              </li>
+        </ul>
+  
+
+
+  </nav>
+
+  </div>
+
+
+  </div>
+
+    
+    <script type="application/json" data-drupal-selector="drupal-settings-json">{"path":{"baseUrl":"\/","scriptPath":null,"pathPrefix":"en\/","currentPath":"","currentPathIsAdmin":false,"isFront":false,"currentLanguage":"en"},"pluralDelimiter":"\u0003","suppressDeprecationErrors":true,"ajaxPageState":{"libraries":"ajax_loader\/ajax_loader.throbber,dms_core\/gin,dms_theme\/global_scripts,dms_theme\/global_styles,dms_theme\/icon_fonts,dms_theming\/color_scheme,quicklink\/quicklink,quicklink\/quicklink_init,search_api_autocomplete\/search_api_autocomplete,system\/base","theme":"dms_theme","theme_token":null},"ajaxTrustedUrl":{"\/en\/search":true},"ajaxLoader":{"markup":"\u003Cdiv class=\u0022ajax-throbber sk-flow\u0022\u003E\n              \u003Cdiv class=\u0022sk-flow-dot\u0022\u003E\u003C\/div\u003E\n              \u003Cdiv class=\u0022sk-flow-dot\u0022\u003E\u003C\/div\u003E\n              \u003Cdiv class=\u0022sk-flow-dot\u0022\u003E\u003C\/div\u003E\n            \u003C\/div\u003E","hideAjaxMessage":false,"alwaysFullscreen":true,"throbberPosition":"body"},"ckeditorheight":{"offset":1,"line_height":1.5,"unit":"em","disable_autogrow":false},"field_group":{"html_element":{"mode":"default","context":"view","settings":{"classes":"menu__content__sidebar","show_empty_fields":false,"id":"","element":"div","show_label":false,"label_element":"h3","label_element_classes":"","attributes":"","effect":"none","speed":"fast"}}},"search_api_autocomplete":{"search_api_search":{"auto_submit":true,"min_length":3}},"quicklink":{"admin_link_container_patterns":["#block-local-tasks-block a",".block-local-tasks-block a","#drupal-off-canvas a","#toolbar-administration a"],"ignore_admin_paths":true,"ignore_ajax_links":true,"ignore_file_ext":true,"total_request_limit":0,"concurrency_throttle_limit":0,"idle_wait_timeout":2000,"viewport_delay":0,"debug":false,"url_patterns_to_ignore":["user\/logout","#","\/admin","\/edit"]},"user":{"uid":0,"permissionsHash":"a6dbc938de6d8e6679eb3366847f55e1781069689c4edb8d53cd618de88e3eee"}}</script>
+<script src="/sites/default/files/js/js_cwMhjdyst52NLwyuY84PmUinMf-ccgYpxl08shlxSUQ.js?scope=footer&amp;delta=0&amp;language=en&amp;theme=dms_theme&amp;include=eJx1jEEOgkAMRS9EnCM1nVKh2pliWxK5vegCXeDu5f38hzd8ghqO7AW_fMnZrVb2YWwBZM5lkj7EFsmtVAz-DDlz4yJkHa7WM37kpFZRIXJTPvPksuyHYHSaARcBXNPI2qKcXP74IyR9KmRqvpfe3eGxCt1V-r0cBNIlz4YXTephCA"></script>
+<script src="https://unpkg.com/quicklink@2.2.0/dist/quicklink.umd.js"></script>
+<script src="/sites/default/files/js/js_DLeTCvGvWWtItp6PsqtUF_j7kcmFboX1JrKpQpKh2no.js?scope=footer&amp;delta=2&amp;language=en&amp;theme=dms_theme&amp;include=eJx1jEEOgkAMRS9EnCM1nVKh2pliWxK5vegCXeDu5f38hzd8ghqO7AW_fMnZrVb2YWwBZM5lkj7EFsmtVAz-DDlz4yJkHa7WM37kpFZRIXJTPvPksuyHYHSaARcBXNPI2qKcXP74IyR9KmRqvpfe3eGxCt1V-r0cBNIlz4YXTephCA"></script>
+
+  </body>
+</html>

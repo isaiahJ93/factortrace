@@ -1,0 +1,89 @@
+[xmlSchema:syntax] Attribute xmlns:xlink redefined, esrs_FILE_SCHEMA.xhtml, line 1, column 392 - ../Documents/Scope3Tool/backend/esrs_FILE_SCHEMA.xhtml , esrs_FILE_SCHEMA.xhtml 
+[xmlSchema:syntax] Attribute xmlns:link redefined, esrs_FILE_SCHEMA.xhtml, line 1, column 439 - ../Documents/Scope3Tool/backend/esrs_FILE_SCHEMA.xhtml , esrs_FILE_SCHEMA.xhtml 
+[xmlSchema:syntax] Attribute xmlns:ix redefined, esrs_FILE_SCHEMA.xhtml, line 1, column 535 - ../Documents/Scope3Tool/backend/esrs_FILE_SCHEMA.xhtml , esrs_FILE_SCHEMA.xhtml 
+[lxml.SCHEMAV_CVC_COMPLEX_TYPE_3_2_1] XML file syntax error Element '{http://www.w3.org/1999/xhtml}html', attribute 'lang': The attribute 'lang' is not allowed., line 1, path '.', xpath '/*' - esrs_FILE_SCHEMA.xhtml 
+[lxml.SCHEMAV_CVC_COMPLEX_TYPE_3_2_1] XML file syntax error Element '{http://www.w3.org/1999/xhtml}meta', attribute 'charset': The attribute 'charset' is not allowed., line 1, path 'head/meta[1]', xpath '/*/*[1]/*[2]' - esrs_FILE_SCHEMA.xhtml 
+[lxml.SCHEMAV_CVC_COMPLEX_TYPE_4] XML file syntax error Element '{http://www.w3.org/1999/xhtml}meta': The attribute 'content' is required but missing., line 1, path 'head/meta[1]', xpath '/*/*[1]/*[2]' - esrs_FILE_SCHEMA.xhtml 
+[lxml.SCHEMAV_ELEMENT_CONTENT] XML file syntax error Element '{http://www.xbrl.org/2003/linkbase}roleType': This element is not expected. Expected is ( {http://www.w3.org/1999/xhtml}base )., line 1, path 'head/link:roleType[1]', xpath '/*/*[1]/link:roleType[1]' - esrs_FILE_SCHEMA.xhtml 
+[lxml.SCHEMAV_ELEMENT_CONTENT] XML file syntax error Element '{http://www.w3.org/1999/xhtml}section': This element is not expected., line 77, path 'body/section[1]', xpath '/*/*[2]/*[1]' - esrs_FILE_SCHEMA.xhtml 
+[ix11.8.1.3:missingHeader] Inline XBRL ix:header element not found - esrs_FILE_SCHEMA.xhtml 
+[ix11.14.1.2:missingResources] Inline XBRL ix:resources element not found - esrs_FILE_SCHEMA.xhtml 
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:EntityName of Inline Element ix:nonFraction - esrs_FILE_SCHEMA.xhtml 77
+[ix11.10.1.2:invalidTransformation] Fact esrs:EntityName has unrecognized transformation name normalizedString - esrs_FILE_SCHEMA.xhtml 77
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: lei:LEI of Inline Element ix:nonFraction - esrs_FILE_SCHEMA.xhtml 77
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:GrossGreenhouseGasEmissions of Inline Element ix:nonFraction - esrs_FILE_SCHEMA.xhtml 77
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name booleanfalse - esrs_FILE_SCHEMA.xhtml 77
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:MaterialityAssessmentImpact of Inline Element ix:nonNumeric - esrs_FILE_SCHEMA.xhtml 77
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:MaterialityAssessmentFinancial of Inline Element ix:nonNumeric - esrs_FILE_SCHEMA.xhtml 77
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:DoubleMaterialityAssessmentNarrative of Inline Element ix:nonNumeric - esrs_FILE_SCHEMA.xhtml 77
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:ClimatePolicyAdopted of Inline Element ix:nonNumeric - esrs_FILE_SCHEMA.xhtml 77
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:ClimatePolicyDescription of Inline Element ix:nonNumeric - esrs_FILE_SCHEMA.xhtml 77
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:GrossGreenhouseGasEmissions of Inline Element ix:nonFraction - esrs_FILE_SCHEMA.xhtml 77
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - esrs_FILE_SCHEMA.xhtml 77
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:GrossGreenhouseGasEmissions of Inline Element ix:nonFraction - esrs_FILE_SCHEMA.xhtml 77
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - esrs_FILE_SCHEMA.xhtml 77
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:GrossGreenhouseGasEmissions of Inline Element ix:nonFraction - esrs_FILE_SCHEMA.xhtml 77
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - esrs_FILE_SCHEMA.xhtml 77
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:GrossGreenhouseGasEmissions of Inline Element ix:nonFraction - esrs_FILE_SCHEMA.xhtml 77
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - esrs_FILE_SCHEMA.xhtml 77
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:GrossGreenhouseGasEmissions of Inline Element ix:nonFraction - esrs_FILE_SCHEMA.xhtml 77
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - esrs_FILE_SCHEMA.xhtml 77
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:GrossGreenhouseGasEmissions of Inline Element ix:nonFraction - esrs_FILE_SCHEMA.xhtml 77
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - esrs_FILE_SCHEMA.xhtml 77
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:GrossGreenhouseGasEmissions of Inline Element ix:nonFraction - esrs_FILE_SCHEMA.xhtml 77
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - esrs_FILE_SCHEMA.xhtml 77
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:GrossGreenhouseGasEmissions of Inline Element ix:nonFraction - esrs_FILE_SCHEMA.xhtml 77
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - esrs_FILE_SCHEMA.xhtml 77
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:GrossGreenhouseGasEmissions of Inline Element ix:nonFraction - esrs_FILE_SCHEMA.xhtml 77
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - esrs_FILE_SCHEMA.xhtml 77
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:GrossGreenhouseGasEmissions of Inline Element ix:nonFraction - esrs_FILE_SCHEMA.xhtml 77
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - esrs_FILE_SCHEMA.xhtml 77
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:GrossGreenhouseGasEmissions of Inline Element ix:nonFraction - esrs_FILE_SCHEMA.xhtml 77
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:GrossGreenhouseGasEmissions of Inline Element ix:nonFraction - esrs_FILE_SCHEMA.xhtml 77
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - esrs_FILE_SCHEMA.xhtml 77
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:GrossGreenhouseGasEmissions of Inline Element ix:nonFraction - esrs_FILE_SCHEMA.xhtml 77
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - esrs_FILE_SCHEMA.xhtml 77
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:GrossGreenhouseGasEmissions of Inline Element ix:nonFraction - esrs_FILE_SCHEMA.xhtml 77
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - esrs_FILE_SCHEMA.xhtml 77
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:GrossGreenhouseGasEmissions of Inline Element ix:nonFraction - esrs_FILE_SCHEMA.xhtml 77
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - esrs_FILE_SCHEMA.xhtml 77
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:GrossGreenhouseGasEmissions of Inline Element ix:nonFraction - esrs_FILE_SCHEMA.xhtml 77
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - esrs_FILE_SCHEMA.xhtml 77
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:GrossGreenhouseGasEmissions of Inline Element ix:nonFraction - esrs_FILE_SCHEMA.xhtml 77
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - esrs_FILE_SCHEMA.xhtml 77
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:GrossGreenhouseGasEmissions of Inline Element ix:nonFraction - esrs_FILE_SCHEMA.xhtml 77
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - esrs_FILE_SCHEMA.xhtml 77
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:GrossGreenhouseGasEmissions of Inline Element ix:nonFraction - esrs_FILE_SCHEMA.xhtml 77
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - esrs_FILE_SCHEMA.xhtml 77
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:GrossGreenhouseGasEmissions of Inline Element ix:nonFraction - esrs_FILE_SCHEMA.xhtml 77
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - esrs_FILE_SCHEMA.xhtml 77
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:GrossGreenhouseGasEmissions of Inline Element ix:nonFraction - esrs_FILE_SCHEMA.xhtml 77
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - esrs_FILE_SCHEMA.xhtml 77
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:GrossGreenhouseGasEmissions of Inline Element ix:nonFraction - esrs_FILE_SCHEMA.xhtml 77
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - esrs_FILE_SCHEMA.xhtml 77
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:GrossGreenhouseGasEmissions of Inline Element ix:nonFraction - esrs_FILE_SCHEMA.xhtml 77
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - esrs_FILE_SCHEMA.xhtml 77
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:GrossGreenhouseGasEmissions of Inline Element ix:nonFraction - esrs_FILE_SCHEMA.xhtml 77
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - esrs_FILE_SCHEMA.xhtml 77
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:GrossGreenhouseGasEmissions of Inline Element ix:nonFraction - esrs_FILE_SCHEMA.xhtml 77
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - esrs_FILE_SCHEMA.xhtml 77
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:GrossGreenhouseGasEmissions of Inline Element ix:nonFraction - esrs_FILE_SCHEMA.xhtml 77
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - esrs_FILE_SCHEMA.xhtml 77
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:GrossGreenhouseGasEmissions of Inline Element ix:nonFraction - esrs_FILE_SCHEMA.xhtml 77
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - esrs_FILE_SCHEMA.xhtml 77
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:GrossGreenhouseGasEmissions of Inline Element ix:nonFraction - esrs_FILE_SCHEMA.xhtml 77
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - esrs_FILE_SCHEMA.xhtml 77
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:GrossGreenhouseGasEmissions of Inline Element ix:nonFraction - esrs_FILE_SCHEMA.xhtml 77
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - esrs_FILE_SCHEMA.xhtml 77
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:GrossGreenhouseGasEmissions of Inline Element ix:nonFraction - esrs_FILE_SCHEMA.xhtml 77
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - esrs_FILE_SCHEMA.xhtml 77
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:GrossGreenhouseGasEmissions of Inline Element ix:nonFraction - esrs_FILE_SCHEMA.xhtml 77
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - esrs_FILE_SCHEMA.xhtml 77
+[ix11.12.1.2:missingReferences] Instance fact missing schema definition: esrs:GrossGreenhouseGasEmissions of Inline Element ix:nonFraction - esrs_FILE_SCHEMA.xhtml 77
+[ix11.10.1.2:invalidTransformation] Fact esrs:GrossGreenhouseGasEmissions has unrecognized transformation name numdotdecimal - esrs_FILE_SCHEMA.xhtml 77
+[ix11.12.1.2:missingReferences] There must be at least one reference - esrs_FILE_SCHEMA.xhtml 
+[ix11.12.1.2:missingReferenceTargets] Found no ix:references element having target '(default)' in IXDS. - esrs_FILE_SCHEMA.xhtml 
+[info] loaded in 0.04 secs at 2025-08-02T00:48:33 - /Users/isaiah/Downloads/esrs_FILE_SCHEMA.xhtml 
+[ix11.10.1.1:nonFraction] Inline XBRL ix:nonFraction The text node child, if present, MUST be a non-empty string. - esrs_FILE_SCHEMA.xhtml 77
+[ix11.8.1.3:headerMissing] Inline XBRL document set must have at least one ix:header element - esrs_FILE_SCHEMA.xhtml 
+[info] validated in 0.00 secs - /Users/isaiah/Downloads/esrs_FILE_SCHEMA.xhtml 

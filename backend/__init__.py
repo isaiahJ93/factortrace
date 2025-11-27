@@ -1,5 +1,9 @@
-from app.db.base import Base
-from app.db.session import engine
+"""
+FactorTrace backend root package.
 
-Base.metadata.create_all(bind=engine)
-print("✅ Database tables created!")
+Important:
+- Do NOT import app.db or create tables at import time.
+- Tools like pytest, alembic, uvicorn etc. may import this package
+  just to discover settings. Heavy side-effects here will break them.
+"""
+# Intentionally empty – keep imports inside scripts / app.startup instead.
