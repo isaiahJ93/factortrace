@@ -81,7 +81,21 @@ print(f"   Report Size: {len(content)} bytes")
 
 # 4. PARSE & VERIFY CONTENT
 # We verify if the engine effectively queried the DB and put the numbers in the XML.
-# We verify 'GrossScope1' and 'GrossScope2' tags.
+# We verify Official EFRAG Taxonomy tags (verified from esrs_taxonomy.xlsx):
+#   - esrs:GrossScope1GreenhouseGasEmissions
+#   - esrs:GrossLocationBasedScope2GreenhouseGasEmissions
+#   - esrs:GrossScope3GreenhouseGasEmissions
+
+print("\n--> Step 4: Verifying EFRAG Taxonomy Tags...")
+
+# Check for Official EFRAG tag names (full "GreenhouseGasEmissions" not "GHGEmissions")
+tag_scope1 = "GrossScope1GreenhouseGasEmissions" in content
+tag_scope2 = "GrossLocationBasedScope2GreenhouseGasEmissions" in content
+tag_scope3 = "GrossScope3GreenhouseGasEmissions" in content
+
+print(f"   esrs:GrossScope1GreenhouseGasEmissions: {'✅' if tag_scope1 else '❌'}")
+print(f"   esrs:GrossLocationBasedScope2GreenhouseGasEmissions: {'✅' if tag_scope2 else '❌'}")
+print(f"   esrs:GrossScope3GreenhouseGasEmissions: {'✅' if tag_scope3 else '❌'}")
 
 # Note: The XML might format numbers as "2.65" or "2.6500" or "2,65" depending on locale.
 # We search loosely.
@@ -91,16 +105,24 @@ s1_found = "2.65" in content or "2,65" in content
 # Check Scope 2 (Elec ~ 3.5)
 s2_found = "3.5" in content or "3,5" in content
 
-if s1_found and s2_found:
-    print(f"\n{GREEN}✨ SUCCESS: Database values found in iXBRL! ✨{RESET}")
-    print("   The pipeline is FULLY WIRED.")
-elif s1_found or s2_found:
-    print(f"\n{GREEN}⚠️  PARTIAL SUCCESS: Found some values but not all.{RESET}")
-    print(f"   Scope 1 (2.65) Found: {s1_found}")
-    print(f"   Scope 2 (3.5) Found: {s2_found}")
+print(f"\n--> Step 5: Verifying Database Values in Report...")
+print(f"   Scope 1 value (2.65): {'✅' if s1_found else '❌'}")
+print(f"   Scope 2 value (3.5): {'✅' if s2_found else '❌'}")
+
+# Final verdict
+all_tags_ok = tag_scope1 and tag_scope2 and tag_scope3
+all_values_ok = s1_found and s2_found
+
+if all_tags_ok and all_values_ok:
+    print(f"\n{GREEN}✨ SUCCESS: EFRAG taxonomy tags AND database values verified! ✨{RESET}")
+    print("   The pipeline is FULLY WIRED with Official EFRAG tags.")
+elif all_values_ok:
+    print(f"\n{GREEN}⚠️  PARTIAL SUCCESS: Database values found but check tag names.{RESET}")
+elif all_tags_ok:
+    print(f"\n{GREEN}⚠️  PARTIAL SUCCESS: Tags correct but values not found.{RESET}")
 else:
-    print(f"\n{RED}❌ FAILURE: Report contains generic/zero data.{RESET}")
-    print("   The reporting endpoint is ignoring the database.")
+    print(f"\n{RED}❌ FAILURE: Report has issues.{RESET}")
+    print("   Check tag names and database wiring.")
     print("   Snippet of report:")
     print(content[:500])
 

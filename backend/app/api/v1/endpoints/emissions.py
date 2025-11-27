@@ -341,18 +341,40 @@ async def delete_evidence(
 
 # ===== EXISTING ENDPOINTS (Enhanced) =====
 
-@router.get("/", response_model=List[EmissionResponse])
+@router.get(
+    "/",
+    response_model=List[EmissionResponse],
+    summary="List all Emission records",
+    description="""
+Retrieve a paginated list of emission records with optional filtering.
+
+## Filtering Options
+- **scope**: Filter by GHG Protocol scope (1, 2, or 3)
+- **category**: Filter by emission category (exact match)
+- **start_date / end_date**: Filter by creation date range
+
+## Pagination
+- **skip**: Number of records to skip (default: 0)
+- **limit**: Maximum records to return (default: 100, max: 1000)
+
+Results are sorted by creation date (newest first).
+    """,
+    responses={
+        200: {"description": "List of emission records"},
+        401: {"description": "Not authenticated"}
+    },
+    tags=["Emissions"]
+)
 async def get_emissions(
-    scope: Optional[int] = Query(None, ge=1, le=3),
-    category: Optional[str] = None,
-    start_date: Optional[datetime] = None,
-    end_date: Optional[datetime] = None,
-    skip: int = Query(0, ge=0),
-    limit: int = Query(100, ge=1, le=1000),
+    scope: Optional[int] = Query(None, ge=1, le=3, description="Filter by GHG Protocol scope"),
+    category: Optional[str] = Query(None, description="Filter by emission category (exact match)"),
+    start_date: Optional[datetime] = Query(None, description="Filter records created after this date (ISO 8601)"),
+    end_date: Optional[datetime] = Query(None, description="Filter records created before this date (ISO 8601)"),
+    skip: int = Query(0, ge=0, description="Number of records to skip for pagination"),
+    limit: int = Query(100, ge=1, le=1000, description="Maximum number of records to return"),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """Get emissions with filtering, pagination, and quality scores"""
     query = db.query(Emission)
     
     if scope:
@@ -398,13 +420,36 @@ async def get_emissions(
     
     return results
 
-@router.get("/summary", response_model=EmissionsSummary)
+@router.get(
+    "/summary",
+    response_model=EmissionsSummary,
+    summary="Get Emissions Summary",
+    description="""
+Returns aggregated emission totals for dashboard displays and reporting.
+
+## Response includes:
+- **scope1_total**: Total direct emissions (tCO2e)
+- **scope2_total**: Total purchased energy emissions (tCO2e)
+- **scope3_total**: Total value chain emissions (tCO2e)
+- **total_emissions**: Sum of all scopes (tCO2e)
+- **by_category**: Breakdown by emission category
+
+Useful for:
+- Dashboard KPI widgets
+- Executive summaries
+- ESRS E1 reporting data
+    """,
+    responses={
+        200: {"description": "Aggregated emissions summary"},
+        401: {"description": "Not authenticated"}
+    },
+    tags=["Emissions"]
+)
 async def get_emissions_summary(
-    reporting_period: Optional[str] = None,
+    reporting_period: Optional[str] = Query(None, description="Filter by reporting period (e.g., '2024', '2024-Q1')"),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """Get emissions summary with totals by scope and category"""
     query = db.query(Emission)
     
     if hasattr(current_user, 'organization_id'):
@@ -908,20 +953,75 @@ async def calculate_emissions_simple(
     }
 
 # Main emission creation endpoint
-@router.post("/")
+@router.post(
+    "/",
+    summary="Create a new Emission record",
+    description="""
+Creates a new emission entry and automatically calculates the CO2e amount.
+
+## Factor Resolution Logic
+1. **Manual Override**: If `emission_factor` is provided in the payload, it will be used directly
+2. **Database Lookup**: Otherwise, the API looks up the emission factor using the combination of:
+   - `scope` (1, 2, or 3)
+   - `category` (e.g., "Purchased Electricity")
+   - `activity_type` (e.g., "Electricity")
+   - `country_code` (e.g., "DE" for Germany)
+3. **Error**: If no matching factor is found, returns 422 with the lookup key for debugging
+
+## Calculation
+The emission amount is calculated as:
+```
+amount (tCO2e) = activity_data × emission_factor / 1000
+```
+
+## Example Use Cases
+- **Scope 1 Diesel**: 1000 liters of diesel in DE → ~2.65 tCO2e
+- **Scope 2 Electricity**: 10000 kWh in DE → ~3.5 tCO2e
+- **Scope 3 Business Travel**: 5000 km flight → varies by class
+    """,
+    response_description="The created emission record with calculated CO2e amount",
+    responses={
+        200: {
+            "description": "Emission created successfully",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "id": 1,
+                        "scope": 2,
+                        "category": "Purchased Electricity",
+                        "activity_type": "Electricity",
+                        "activity_data": 10000.0,
+                        "unit": "kWh",
+                        "country_code": "DE",
+                        "emission_factor": 0.35,
+                        "emission_factor_source": "Database",
+                        "amount": 3.5,
+                        "created_at": "2024-03-15T10:30:00Z"
+                    }
+                }
+            }
+        },
+        401: {
+            "description": "Not authenticated - Bearer token missing or invalid"
+        },
+        422: {
+            "description": "Emission factor not found - The combination of scope/category/activity_type/country_code has no matching entry in the database",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "detail": "No emission factor found for key: (scope_2, Purchased Electricity, Electricity, XX)"
+                    }
+                }
+            }
+        }
+    },
+    tags=["Emissions"]
+)
 async def create_emission(
     emission: EmissionCreate,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """
-    Create a new emission entry with automatic calculation.
-
-    Factor Resolution Logic:
-    1. If `emission_factor` is provided in payload -> use it (Manual Override)
-    2. Otherwise -> lookup via get_factor(scope, category, activity_type, country_code)
-    3. If lookup fails -> return 422 error with the missing key for debugging
-    """
     import logging
     logger = logging.getLogger(__name__)
 
