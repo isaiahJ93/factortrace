@@ -1,0 +1,28 @@
+# Dependency / Environment
+node_modules/
+.venv/
+__pycache__/
+*.pyc
+*.log
+logs/
+.pytest_cache/
+
+# Build / Artifacts
+dist/
+build/
+*.egg-info/
+
+# Large Data Files
+data/raw/*.csv
+data/raw/*.xlsx
+data/raw/*.xls
+data/raw/*.zip
+temp/
+/tmp/
+
+# Lock files / Secrets
+poetry.lock
+package-lock.json
+yarn.lock
+.env
+.env.*
