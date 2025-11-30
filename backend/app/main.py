@@ -15,6 +15,7 @@ import time
 import uuid
 import os
 from typing import Dict, Any, Optional
+from datetime import datetime
 
 # Import settings and database
 from app.core.config import settings
@@ -265,6 +266,14 @@ try:
     logger.info(f"API router mounted at {settings.api_prefix}")
 except ImportError as e:
     logger.error(f"Failed to import API router: {e}")
+
+# Include UI router for demo pages
+try:
+    from app.ui import ui_router
+    app.include_router(ui_router)
+    logger.info("UI router mounted for /demo/* routes")
+except ImportError as e:
+    logger.error(f"Failed to import UI router: {e}")
 
 # Root endpoint
 @app.get("/", tags=["root"])

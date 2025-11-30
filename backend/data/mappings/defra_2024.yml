@@ -1,0 +1,279 @@
+# DEFRA 2024 Emission Factors Mapping Configuration
+# ==================================================
+# Maps DEFRA UK Government GHG Conversion Factors CSV to EmissionFactor model
+# Used by scripts/ingest_factors_generic.py
+#
+# Data source: https://www.gov.uk/government/publications/greenhouse-gas-reporting-conversion-factors-2024
+# File: ghg-conversion-factors-2024-FlatFormat_v1_1.xlsx (Factors by Category sheet)
+#
+# DEFRA columns: ID, Scope, Level 1, Level 2, Level 3, Level 4, Column Text, UOM, GHG/Unit, GHG Conversion Factor 2024
+
+dataset: "DEFRA_2024"
+
+# Default values applied to all rows
+defaults:
+  year: 2024
+  country_code: "GB"
+  method: "average_data"
+  regulation: "GHG_PROTOCOL"
+  source: "UK DEFRA 2024 Conversion Factors"
+
+# Column mapping: raw CSV column name -> logical field name
+columns:
+  raw_scope: "Scope"                         # "Scope 1", "Scope 2", "Scope 3"
+  raw_category: "Level 1"                    # "Fuels", "Business travel- air", etc.
+  raw_subcategory: "Level 2"                 # "Gaseous fuels", "Flights", etc.
+  raw_activity: "Level 3"                    # "Butane", "Short-haul", etc.
+  raw_activity_detail: "Column Text"         # "Diesel", "CNG", etc.
+  raw_factor: "GHG Conversion Factor 2024"   # Numeric factor value
+  raw_unit: "UOM"                            # "tonnes", "litres", "km"
+  raw_external_id: "ID"                      # DEFRA internal ID
+
+# Filters: control which rows to include/exclude
+filters:
+  # Only include these scopes
+  include_scopes:
+    - "Scope 1"
+    - "Scope 2"
+    - "Scope 3"
+
+  # Only include total CO2e factors (not broken down by gas type)
+  include_values:
+    "GHG/Unit":
+      - "kg CO2e"
+
+  # No category filter - include all Level 1 categories
+  include_categories: []
+
+  # Exclude patterns (applied after include filters)
+  exclude_patterns: []
+
+# Transform rules
+transforms:
+  # Map DEFRA scope text to our SCOPE_1/SCOPE_2/SCOPE_3 format
+  scope_map:
+    "Scope 1": "SCOPE_1"
+    "Scope 2": "SCOPE_2"
+    "Scope 3": "SCOPE_3"
+
+  # Map DEFRA Level 1|Level 2 to canonical category names
+  # Format: "Level 1|Level 2" -> {"category": "...", "activity_type": "..."}
+  # activity_type can use placeholders: {raw_activity}, {raw_activity_detail}
+  category_map:
+    # ============================================
+    # SCOPE 1 - Stationary Combustion (Fuels)
+    # ============================================
+    "Fuels|Gaseous fuels": {"category": "stationary_combustion", "activity_type": "{raw_activity}"}
+    "Fuels|Liquid fuels": {"category": "stationary_combustion", "activity_type": "{raw_activity}"}
+    "Fuels|Solid fuels": {"category": "stationary_combustion", "activity_type": "{raw_activity}"}
+
+    # ============================================
+    # SCOPE 1 - Mobile Combustion (Vehicles)
+    # ============================================
+    "Passenger vehicles|Cars (by size)": {"category": "mobile_combustion", "activity_type": "Car - {raw_activity} - {raw_activity_detail}"}
+    "Passenger vehicles|Cars (by market segment)": {"category": "mobile_combustion", "activity_type": "Car - {raw_activity} - {raw_activity_detail}"}
+    "Passenger vehicles|Motorbike": {"category": "mobile_combustion", "activity_type": "Motorbike - {raw_activity}"}
+    "Delivery vehicles|Vans": {"category": "mobile_combustion", "activity_type": "Van - {raw_activity} - {raw_activity_detail}"}
+    "Delivery vehicles|HGV (all diesel)": {"category": "mobile_combustion", "activity_type": "HGV - {raw_activity} - {raw_activity_detail}"}
+    "Delivery vehicles|HGVs refrigerated (all diesel)": {"category": "mobile_combustion", "activity_type": "HGV Refrigerated - {raw_activity} - {raw_activity_detail}"}
+
+    # ============================================
+    # SCOPE 1 - Bioenergy
+    # ============================================
+    "Bioenergy|Biofuel": {"category": "bioenergy", "activity_type": "Biofuel - {raw_activity}"}
+    "Bioenergy|Biogas": {"category": "bioenergy", "activity_type": "Biogas - {raw_activity}"}
+    "Bioenergy|Biomass": {"category": "bioenergy", "activity_type": "Biomass - {raw_activity}"}
+
+    # ============================================
+    # SCOPE 1 - Refrigerants
+    # ============================================
+    "Refrigerant & other|Kyoto protocol products": {"category": "refrigerants", "activity_type": "{raw_activity}"}
+    "Refrigerant & other|Montreal protocol products": {"category": "refrigerants", "activity_type": "{raw_activity}"}
+    "Refrigerant & other|Blends": {"category": "refrigerants", "activity_type": "{raw_activity}"}
+    "Refrigerant & other|Fluorinated ethers": {"category": "refrigerants", "activity_type": "{raw_activity}"}
+    "Refrigerant & other|Other products": {"category": "refrigerants", "activity_type": "{raw_activity}"}
+
+    # ============================================
+    # SCOPE 2 - Purchased Electricity
+    # ============================================
+    "UK electricity|Electricity generated": {"category": "purchased_electricity", "activity_type": "UK Grid - Generation"}
+    "Heat and steam|Heat and steam": {"category": "purchased_heat", "activity_type": "Heat and Steam - {raw_activity}"}
+
+    # ============================================
+    # SCOPE 2 - Electricity for EVs
+    # ============================================
+    "UK electricity for EVs|Cars (by size)": {"category": "ev_electricity", "activity_type": "EV Car - {raw_activity} - {raw_activity_detail}"}
+    "UK electricity for EVs|Cars (by market segment)": {"category": "ev_electricity", "activity_type": "EV Car - {raw_activity} - {raw_activity_detail}"}
+    "UK electricity for EVs|Vans": {"category": "ev_electricity", "activity_type": "EV Van - {raw_activity} - {raw_activity_detail}"}
+
+    # ============================================
+    # SCOPE 3 - Business Travel (Air)
+    # ============================================
+    "Business travel- air|Flights": {"category": "business_travel", "activity_type": "Air - {raw_activity} - {raw_activity_detail}"}
+
+    # ============================================
+    # SCOPE 3 - Business Travel (Land)
+    # ============================================
+    "Business travel- land|Cars (by size)": {"category": "business_travel", "activity_type": "Car - {raw_activity} - {raw_activity_detail}"}
+    "Business travel- land|Cars (by market segment)": {"category": "business_travel", "activity_type": "Car - {raw_activity} - {raw_activity_detail}"}
+    "Business travel- land|Motorbike": {"category": "business_travel", "activity_type": "Motorbike - {raw_activity}"}
+    "Business travel- land|Rail": {"category": "business_travel", "activity_type": "Rail - {raw_activity}"}
+    "Business travel- land|Bus": {"category": "business_travel", "activity_type": "Bus - {raw_activity}"}
+    "Business travel- land|Taxis": {"category": "business_travel", "activity_type": "Taxi - {raw_activity}"}
+
+    # ============================================
+    # SCOPE 3 - Business Travel (Sea)
+    # ============================================
+    "Business travel- sea|Ferry": {"category": "business_travel", "activity_type": "Ferry - {raw_activity}"}
+
+    # ============================================
+    # SCOPE 3 - Freight (Upstream Transportation)
+    # ============================================
+    "Freighting goods|HGV (all diesel)": {"category": "upstream_transportation", "activity_type": "Road Freight HGV - {raw_activity} - {raw_activity_detail}"}
+    "Freighting goods|HGV refrigerated (all diesel)": {"category": "upstream_transportation", "activity_type": "Road Freight HGV Refrigerated - {raw_activity} - {raw_activity_detail}"}
+    "Freighting goods|Vans": {"category": "upstream_transportation", "activity_type": "Road Freight Van - {raw_activity} - {raw_activity_detail}"}
+    "Freighting goods|Rail": {"category": "upstream_transportation", "activity_type": "Rail Freight - {raw_activity}"}
+    "Freighting goods|Freight flights": {"category": "upstream_transportation", "activity_type": "Air Freight - {raw_activity} - {raw_activity_detail}"}
+    "Freighting goods|Cargo ship": {"category": "upstream_transportation", "activity_type": "Sea Freight Cargo - {raw_activity}"}
+    "Freighting goods|Sea tanker": {"category": "upstream_transportation", "activity_type": "Sea Freight Tanker - {raw_activity}"}
+
+    # ============================================
+    # SCOPE 3 - Hotel Stay
+    # ============================================
+    "Hotel stay|Hotel stay": {"category": "hotel_stay", "activity_type": "{raw_activity}"}
+
+    # ============================================
+    # SCOPE 3 - Homeworking
+    # ============================================
+    "Homeworking|Homeworking (office equipment + heating)": {"category": "homeworking", "activity_type": "Home Office - Combined"}
+    "Homeworking|Office Equipment": {"category": "homeworking", "activity_type": "Home Office - Equipment"}
+    "Homeworking|Heating": {"category": "homeworking", "activity_type": "Home Office - Heating"}
+
+    # ============================================
+    # SCOPE 3 - Managed Assets (Vehicles)
+    # ============================================
+    "Managed assets- vehicles|Managed cars (by size)": {"category": "managed_assets", "activity_type": "Managed Car - {raw_activity} - {raw_activity_detail}"}
+    "Managed assets- vehicles|Managed cars (by market segment)": {"category": "managed_assets", "activity_type": "Managed Car - {raw_activity} - {raw_activity_detail}"}
+    "Managed assets- vehicles|Managed vans": {"category": "managed_assets", "activity_type": "Managed Van - {raw_activity} - {raw_activity_detail}"}
+    "Managed assets- vehicles|Managed HGV (all diesel)": {"category": "managed_assets", "activity_type": "Managed HGV - {raw_activity} - {raw_activity_detail}"}
+    "Managed assets- vehicles|Managed HGV refrigerated (all diesel)": {"category": "managed_assets", "activity_type": "Managed HGV Refrigerated - {raw_activity} - {raw_activity_detail}"}
+    "Managed assets- vehicles|Managed motorbikes": {"category": "managed_assets", "activity_type": "Managed Motorbike - {raw_activity}"}
+    "Managed assets- electricity|Electricity generated": {"category": "managed_assets", "activity_type": "Managed Electricity - UK Grid"}
+
+    # ============================================
+    # SCOPE 3 - Material Use (Purchased Goods)
+    # ============================================
+    "Material use|Construction": {"category": "purchased_goods", "activity_type": "Material - Construction - {raw_activity}"}
+    "Material use|Organic": {"category": "purchased_goods", "activity_type": "Material - Organic - {raw_activity}"}
+    "Material use|Metal": {"category": "purchased_goods", "activity_type": "Material - Metal - {raw_activity}"}
+    "Material use|Plastic": {"category": "purchased_goods", "activity_type": "Material - Plastic - {raw_activity}"}
+    "Material use|Paper": {"category": "purchased_goods", "activity_type": "Material - Paper - {raw_activity}"}
+    "Material use|Electrical items": {"category": "purchased_goods", "activity_type": "Material - Electrical - {raw_activity}"}
+    "Material use|Other": {"category": "purchased_goods", "activity_type": "Material - Other - {raw_activity}"}
+
+    # ============================================
+    # SCOPE 3 - Waste Disposal
+    # ============================================
+    "Waste disposal|Construction": {"category": "waste", "activity_type": "Waste - Construction - {raw_activity}"}
+    "Waste disposal|Metal": {"category": "waste", "activity_type": "Waste - Metal - {raw_activity}"}
+    "Waste disposal|Plastic": {"category": "waste", "activity_type": "Waste - Plastic - {raw_activity}"}
+    "Waste disposal|Paper": {"category": "waste", "activity_type": "Waste - Paper - {raw_activity}"}
+    "Waste disposal|Electrical items": {"category": "waste", "activity_type": "Waste - Electrical - {raw_activity}"}
+    "Waste disposal|Other": {"category": "waste", "activity_type": "Waste - Other - {raw_activity}"}
+    "Waste disposal|Refuse": {"category": "waste", "activity_type": "Waste - Refuse - {raw_activity}"}
+
+    # ============================================
+    # SCOPE 3 - Water
+    # ============================================
+    "Water supply|Water supply": {"category": "water", "activity_type": "Water Supply - {raw_activity}"}
+    "Water treatment|Water treatment": {"category": "water", "activity_type": "Water Treatment - {raw_activity}"}
+
+    # ============================================
+    # SCOPE 3 - Transmission & Distribution Losses
+    # ============================================
+    "Transmission and distribution|T&D- UK electricity": {"category": "transmission_distribution", "activity_type": "T&D - UK Electricity"}
+    "Transmission and distribution|Distribution - district heat & steam": {"category": "transmission_distribution", "activity_type": "T&D - District Heat"}
+
+    # ============================================
+    # SCOPE 3 - T&D for EVs
+    # ============================================
+    "UK electricity T&D for EVs|Cars (by size)": {"category": "ev_td_losses", "activity_type": "EV T&D Car - {raw_activity} - {raw_activity_detail}"}
+    "UK electricity T&D for EVs|Cars (by market segment)": {"category": "ev_td_losses", "activity_type": "EV T&D Car - {raw_activity} - {raw_activity_detail}"}
+    "UK electricity T&D for EVs|Vans": {"category": "ev_td_losses", "activity_type": "EV T&D Van - {raw_activity} - {raw_activity_detail}"}
+
+    # ============================================
+    # SCOPE 3 - Well-to-Tank (WTT) Fuels
+    # ============================================
+    "WTT- fuels|Gaseous fuels": {"category": "wtt_fuels", "activity_type": "WTT - {raw_activity}"}
+    "WTT- fuels|Liquid fuels": {"category": "wtt_fuels", "activity_type": "WTT - {raw_activity}"}
+    "WTT- fuels|Solid fuels": {"category": "wtt_fuels", "activity_type": "WTT - {raw_activity}"}
+
+    # ============================================
+    # SCOPE 3 - WTT Bioenergy
+    # ============================================
+    "WTT- bioenergy|WTT- biofuel": {"category": "wtt_bioenergy", "activity_type": "WTT Biofuel - {raw_activity}"}
+    "WTT- bioenergy|WTT- biogas": {"category": "wtt_bioenergy", "activity_type": "WTT Biogas - {raw_activity}"}
+    "WTT- bioenergy|WTT- biomass": {"category": "wtt_bioenergy", "activity_type": "WTT Biomass - {raw_activity}"}
+
+    # ============================================
+    # SCOPE 3 - WTT Business Travel
+    # ============================================
+    "WTT- business travel- air|WTT- flights": {"category": "wtt_business_travel", "activity_type": "WTT Air - {raw_activity} - {raw_activity_detail}"}
+    "WTT- business travel- sea|WTT- ferry": {"category": "wtt_business_travel", "activity_type": "WTT Ferry - {raw_activity}"}
+
+    # ============================================
+    # SCOPE 3 - WTT Passenger Vehicles & Land Travel
+    # ============================================
+    "WTT- pass vehs & travel- land|WTT- cars (by size)": {"category": "wtt_vehicles", "activity_type": "WTT Car - {raw_activity} - {raw_activity_detail}"}
+    "WTT- pass vehs & travel- land|WTT- cars (by market segment)": {"category": "wtt_vehicles", "activity_type": "WTT Car - {raw_activity} - {raw_activity_detail}"}
+    "WTT- pass vehs & travel- land|WTT- motorbike": {"category": "wtt_vehicles", "activity_type": "WTT Motorbike - {raw_activity}"}
+    "WTT- pass vehs & travel- land|WTT- rail": {"category": "wtt_vehicles", "activity_type": "WTT Rail - {raw_activity}"}
+    "WTT- pass vehs & travel- land|WTT- bus": {"category": "wtt_vehicles", "activity_type": "WTT Bus - {raw_activity}"}
+    "WTT- pass vehs & travel- land|WTT- taxis": {"category": "wtt_vehicles", "activity_type": "WTT Taxi - {raw_activity}"}
+
+    # ============================================
+    # SCOPE 3 - WTT Delivery Vehicles & Freight
+    # ============================================
+    "WTT- delivery vehs & freight|WTT- vans": {"category": "wtt_freight", "activity_type": "WTT Van - {raw_activity} - {raw_activity_detail}"}
+    "WTT- delivery vehs & freight|WTT- HGV (all diesel)": {"category": "wtt_freight", "activity_type": "WTT HGV - {raw_activity} - {raw_activity_detail}"}
+    "WTT- delivery vehs & freight|WTT- HGV refrigerated (all diesel)": {"category": "wtt_freight", "activity_type": "WTT HGV Refrigerated - {raw_activity} - {raw_activity_detail}"}
+    "WTT- delivery vehs & freight|WTT- rail": {"category": "wtt_freight", "activity_type": "WTT Rail Freight - {raw_activity}"}
+    "WTT- delivery vehs & freight|WTT- freight flights": {"category": "wtt_freight", "activity_type": "WTT Air Freight - {raw_activity} - {raw_activity_detail}"}
+    "WTT- delivery vehs & freight|WTT- cargo ship": {"category": "wtt_freight", "activity_type": "WTT Sea Cargo - {raw_activity}"}
+    "WTT- delivery vehs & freight|WTT- sea tanker": {"category": "wtt_freight", "activity_type": "WTT Sea Tanker - {raw_activity}"}
+
+    # ============================================
+    # SCOPE 3 - WTT Electricity
+    # ============================================
+    "WTT- UK electricity|WTT- UK electricity (generation)": {"category": "wtt_electricity", "activity_type": "WTT UK Electricity - Generation"}
+    "WTT- UK electricity|WTT- UK electricity (T&D)": {"category": "wtt_electricity", "activity_type": "WTT UK Electricity - T&D"}
+
+    # ============================================
+    # SCOPE 3 - WTT Heat
+    # ============================================
+    "WTT- heat and steam|WTT- heat and steam": {"category": "wtt_heat", "activity_type": "WTT Heat - {raw_activity}"}
+    "WTT- heat and steam|WTT- district heat & steam distribution": {"category": "wtt_heat", "activity_type": "WTT District Heat - Distribution"}
+
+    # ============================================
+    # SECR kWh factors (for UK SECR reporting)
+    # ============================================
+    "SECR kWh pass & delivery vehs|Cars (by size)": {"category": "secr_kwh", "activity_type": "SECR Car - {raw_activity} - {raw_activity_detail}"}
+    "SECR kWh pass & delivery vehs|Cars (by market segment)": {"category": "secr_kwh", "activity_type": "SECR Car - {raw_activity} - {raw_activity_detail}"}
+    "SECR kWh pass & delivery vehs|Motorbike": {"category": "secr_kwh", "activity_type": "SECR Motorbike - {raw_activity}"}
+    "SECR kWh pass & delivery vehs|Vans": {"category": "secr_kwh", "activity_type": "SECR Van - {raw_activity} - {raw_activity_detail}"}
+    "SECR kWh pass & delivery vehs|HGV (all diesel)": {"category": "secr_kwh", "activity_type": "SECR HGV - {raw_activity} - {raw_activity_detail}"}
+    "SECR kWh pass & delivery vehs|HGVs refrigerated (all diesel)": {"category": "secr_kwh", "activity_type": "SECR HGV Refrigerated - {raw_activity} - {raw_activity_detail}"}
+    "SECR kWh UK electricity for EVs|Cars (by size)": {"category": "secr_ev_kwh", "activity_type": "SECR EV Car - {raw_activity} - {raw_activity_detail}"}
+    "SECR kWh UK electricity for EVs|Cars (by market segment)": {"category": "secr_ev_kwh", "activity_type": "SECR EV Car - {raw_activity} - {raw_activity_detail}"}
+    "SECR kWh UK electricity for EVs|Vans": {"category": "secr_ev_kwh", "activity_type": "SECR EV Van - {raw_activity} - {raw_activity_detail}"}
+
+  # Activity type rules: fallback templates (used if category_map entry has no activity_type)
+  activity_type_rules:
+    default: "{raw_activity}"
+
+# Skip rules: rows matching these patterns will be skipped entirely
+# Applied AFTER filters and BEFORE category_map lookup
+# Format: "Level 1|Level 2" patterns with wildcards
+skip_patterns:
+  - "END|*"                    # Skip END marker row
+  - "Outside of scopes|*"      # Skip outside-of-scopes emissions (biogenic CO2 etc)

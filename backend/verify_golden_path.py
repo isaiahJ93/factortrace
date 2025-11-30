@@ -30,16 +30,16 @@ token = token_data["access_token"]
 headers = {"Authorization": f"Bearer {token}"}
 print(f"   Token received: {token[:15]}...")
 
-# 2. CREATE EMISSION (Scope 1, Mobile Combustion)
-# Testing FACTOR_DB lookup: DE factor for Mobile Combustion is 2.31
+# 2. CREATE EMISSION (Scope 1, Mobile Combustion - Diesel)
+# Testing FACTOR_DB lookup: DE factor for Mobile Combustion/Diesel is 2.65 kgCO2e/liter
 print("\n--> Step 2: Creating Emission Record...")
 emission_payload = {
     "scope": 1,
     "category": "Mobile Combustion",
-    "country": "DE",
+    "country_code": "DE",
     "activity_data": 1000.0,
     "unit": "liters",
-    "activity_type": "Fuel Use",
+    "activity_type": "Diesel",
     "description": "Golden Path Test Fleet"
 }
 create_resp = requests.post(f"{BASE_URL}/emissions/", headers=headers, json=emission_payload)
@@ -54,14 +54,14 @@ if amount is None or float(amount) <= 0:
     print(f"{RED}❌ Calculation Error: Amount is {amount}{RESET}")
     sys.exit(1)
 
-# Verify calculation: 1000 liters * 2.31 factor = 2310, but expect ~2.31 tCO2e
-# (factor is tCO2e per 1000 liters, or kgCO2e per liter)
-expected_amount = 2.31
+# Verify calculation: 1000 liters * 2.65 factor = 2650 kgCO2e = 2.65 tCO2e
+# (factor is kgCO2e per liter, output is tCO2e)
+expected_amount = 2.65
 tolerance = 0.5  # Allow some variance for unit conversions
 if abs(float(amount) - expected_amount) > tolerance:
-    # Check if it's the raw multiplication (2310)
-    if abs(float(amount) - 2310.0) < 1.0:
-        print(f"   Note: Got {amount}, factor applied directly (no unit conversion)")
+    # Check if it's the raw multiplication (2650 kgCO2e, not divided by 1000)
+    if abs(float(amount) - 2650.0) < 10.0:
+        print(f"   Note: Got {amount}, factor applied directly (kgCO2e, not converted to tCO2e)")
     else:
         print(f"{RED}⚠️  Amount {amount} differs from expected ~{expected_amount}{RESET}")
 else:

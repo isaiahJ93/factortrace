@@ -1,37 +1,48 @@
 from fastapi import APIRouter, Query, Depends, HTTPException
 from sqlalchemy.orm import Session
-from typing import Optional, List, Dict
+from typing import Optional, List, Dict, Union
 from app.core.database import get_db
 
 router = APIRouter()
+
+# Categories organized by scope
+CATEGORIES_BY_SCOPE = {
+    1: ["stationary_combustion", "mobile_combustion", "process_emissions", "refrigerants"],
+    2: ["electricity", "heating_cooling", "steam"],
+    3: [
+        "purchased_goods_services",
+        "capital_goods",
+        "fuel_energy_activities",
+        "upstream_transportation",
+        "waste_operations",
+        "business_travel",
+        "employee_commuting",
+        "upstream_leased_assets",
+        "downstream_transportation",
+        "processing_sold_products",
+        "use_of_sold_products",
+        "end_of_life_treatment",
+        "downstream_leased_assets",
+        "franchises",
+        "investments"
+    ]
+}
 
 @router.get("/categories")
 def get_categories(
     scope: Optional[int] = Query(None, ge=1, le=3, description="Filter by specific scope"),
     db: Session = Depends(get_db)
-):
-    """Get all unique categories grouped by scope"""
-    return {
-        "1": ["stationary_combustion", "mobile_combustion", "process_emissions", "refrigerants"],
-        "2": ["electricity", "heating_cooling", "steam"],
-        "3": [
-            "purchased_goods_services",
-            "capital_goods", 
-            "fuel_energy_activities",
-            "upstream_transportation",
-            "waste_operations",
-            "business_travel",
-            "employee_commuting",
-            "upstream_leased_assets",
-            "downstream_transportation",
-            "processing_sold_products",
-            "use_of_sold_products",
-            "end_of_life_treatment",
-            "downstream_leased_assets",
-            "franchises",
-            "investments"
-        ]
-    }
+) -> List[str]:
+    """Get unique categories, optionally filtered by scope. Returns a flat array."""
+    if scope is not None:
+        # Return categories for the specific scope
+        return CATEGORIES_BY_SCOPE.get(scope, [])
+
+    # Return all categories (flattened, unique)
+    all_categories = []
+    for categories in CATEGORIES_BY_SCOPE.values():
+        all_categories.extend(categories)
+    return list(set(all_categories))
 
 @router.get("/")
 def get_emission_factors(

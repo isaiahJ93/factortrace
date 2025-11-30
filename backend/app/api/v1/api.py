@@ -290,6 +290,17 @@ loader.register_endpoint(
     dependencies=["ghg_calculations"],
     description="Complete GHG inventory management"
 )
+# ============= REPORTING ENDPOINTS =============
+# CSRD Summary Reports
+loader.register_endpoint(
+    name="reports",
+    module_path="reports",
+    prefix="/reports",
+    tags=["reports", "csrd", "esrs"],
+    dependencies=["emissions"],
+    description="CSRD/ESRS compliant report generation with iXBRL tags"
+)
+
 # ============= ADMINISTRATIVE ENDPOINTS =============
 # Admin endpoints
 loader.register_endpoint(

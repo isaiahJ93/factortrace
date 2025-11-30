@@ -1,294 +1,146 @@
-# FactorTrace – Implementation Plan (V1 Production & Beyond)
+# FactorTrace Development Plan
 
-This plan tracks the major phases to get FactorTrace from “engine works” to a **production-grade global regulatory SaaS** for Tier 1 & 2 suppliers.
+## Current Sprint: CSV Importer + Multi-Tenant Hardening
 
----
-
-## 0. Baseline & Tooling (DONE / KEEP STABLE)
-
-**Goal:** Have a clean, assisted dev environment where Claude can work reliably.
-
-- [x] `CLAUDE.md` with architecture, multi-tenancy rules, datasets, and scientific stack.
-- [x] `.claudeignore` to exclude huge logs, data files, and build artifacts.
-- [x] `.claude/commands`:
-  - `/csv-debug` for ingestion/import debugging.
-  - `/tenant-check` for multi-tenancy audits.
-  - `/emission-test` for emission factor tests.
-  - `/dockerize` for deployment artefacts.
-- [x] `.mcp.json` stub for GitHub integration (token later).
-- [ ] (Optional later) `.claude/skills` for automatic regulatory/CSV behaviors.
-
-> **Rule:** Don’t waste time tweaking tooling unless you hit a real pain point. The current setup is “good enough” to ship V1.
+**Duration**: 2 weeks (10 working days)  
+**Goal**: Production-ready CSV importer with bulletproof tenant isolation.
 
 ---
 
-## 1. Multi-Tenancy & Security Hardening (CRITICAL – DO FIRST)
+## Phase 1: Multi-Tenant Security Hardening (Days 1–2)
 
-**Goal:** Bulletproof tenant isolation so no customer can ever see another’s data.
+**Status**: 🔄 IN PROGRESS
 
-### 1.1 Models & Auth
+### Tasks
+- [ ] Audit all `/api/v1/emissions` endpoints for `tenant_id` filters.
+- [ ] Audit all `/api/v1/vouchers` endpoints for `tenant_id` filters.
+- [ ] Audit all `/api/v1/payments` endpoints for `tenant_id` filters.
+- [ ] Add cross-tenant access tests (create Tenant A/B data, assert isolation).
+- [ ] Run `/tenant-check` on all modified files.
+- [ ] (Optional) Add a pre-commit hook for `tenant_id` validation.
 
-- [ ] Add `tenant_id` (string, indexed) to all tenant-owned models:
-  - `User` (if not already).
-  - `Emission` / `Emissions`.
-  - `Voucher`.
-  - `Payment`.
-  - `Report` / `EmissionReport`.
-- [ ] Ensure `tenant_id` is:
-  - Set at user creation.
-  - Carried in the JWT payload.
-  - Exposed via `current_user.tenant_id` in dependencies.
-
-### 1.2 Query Enforcement
-
-- [ ] Run `/tenant-check` on:
-  - `app/api/v1/endpoints/emissions.py`
-  - `app/api/v1/endpoints/vouchers.py`
-  - `app/api/v1/endpoints/payments.py`
-  - Any other endpoints touching tenant-owned data.
-- [ ] For **every** query (GET/POST/PUT/DELETE):
-  - Add `.filter(Model.tenant_id == current_user.tenant_id)`.
-  - For UPDATE/DELETE, filter **by id + tenant_id**.
-
-### 1.3 Security Tests
-
-- [ ] Create `tests/test_security.py` with:
-  - Tenant A + Tenant B seeded data.
-  - Tests asserting:
-    - Tenant A cannot read Tenant B rows.
-    - List endpoints only return current tenant data.
-    - Writes/updates/deletes are tenant-scoped.
-
-### 1.4 Optional Hardening
-
-- [ ] Add a pre-commit hook to block commits with queries missing `tenant_id` filter.
-- [ ] Add logging for access-denied events (for audit trail).
-
-> **Exit Criteria (Phase 1):**  
-> All tests pass, `/tenant-check` returns clean, and you are comfortable calling the backend **multi-tenant production-ready**.
+### Success Criteria
+- All queries include a `tenant_id` filter.
+- Tests prove no cross-tenant leakage.
+- (If implemented) pre-commit hook catches violations.
 
 ---
 
-## 2. Scientific Engine & Core Calculation (ADVANCED STACK)
+## Phase 2: CSV Importer – File Upload (Days 3–4)
 
-**Goal:** Lock in a robust scientific foundation so you’re not patching maths later.
+**Status**: ⏸️ BLOCKED (waiting for Phase 1)
 
-### 2.1 Libraries & Canonical Units
+### Tasks
+- [ ] File size validation (< 50MB, reject with clear error).
+- [ ] Safari compatibility: chunked upload with progress bar.
+- [ ] Support `.csv`, `.xlsx`, `.xls` formats.
+- [ ] Handle encoding issues (UTF-8, ISO-8859-1).
+- [ ] Store upload metadata in DB (filename, size, `tenant_id`, timestamp).
 
-- [ ] Ensure the following are installed and wired:
-  - `pint` – unit normalization.
-  - `numpy` / `pandas` – core data handling.
-  - `scipy` – uncertainty, distributions, Monte Carlo-style logic.
-  - `xarray` / `pymrio` – for IO tables / EXIOBASE-style matrices (even if used lightly at first).
-  - `currencyconverter` or equivalent FX library – spend normalization.
-- [ ] Define **canonical units** in one place:
-  - Mass: `kg`
-  - Distance: `km`
-  - Energy: `kWh` and/or `MJ`
-  - Volume: `L`
-  - Spend: `EUR`
-
-### 2.2 Emissions Calculation Service
-
-- [ ] Centralize calculation logic in a service module (e.g., `app/services/emissions_calculator.py`):
-  - [ ] Takes **activity data + factor** and returns `kgCO2e` (and optionally `CO2e per unit`).
-  - [ ] Uses `pint` to normalize raw units into canonical units before applying factors.
-  - [ ] Handles **Scope 1, 2, and 3** (at least high-level).
-- [ ] Add **uncertainty hooks** (even if basic at first):
-  - [ ] Support simple ranges or standard deviation on factors.
-  - [ ] Use `scipy` for basic propagation / Monte Carlo where appropriate later.
-
-### 2.3 Tests
-
-- [ ] Add `tests/test_emissions_calculator.py`:
-  - [ ] Unit conversion sanity checks (e.g. `L` → `kg` via density for fuels, `kWh` ↔ `MJ`).
-  - [ ] Correct factor application for DEFRA, EPA, EXIOBASE examples.
-  - [ ] Edge cases: zero/negative values, missing units, invalid units.
-
-> **Exit Criteria (Phase 2):**  
-> You trust the calculation engine’s behavior enough to expose it to paying customers.
+### Success Criteria
+- 50MB file uploads work on Safari without freezing.
+- Clear error messages for rejected files.
+- All uploads scoped to `tenant_id`.
 
 ---
 
-## 3. Emission Factor Ingestion (DEFRA, EPA, EXIOBASE & FUTURE DATASETS)
+## Phase 3: CSV Importer – Column Mapping UI (Days 5–6)
 
-**Goal:** Have a generic, repeatable ingestion pipeline that can take any emission factor dataset and map it into `emission_factors`.
+**Status**: ⏸️ BLOCKED (waiting for Phase 2)
 
-### 3.1 Ingestion Strategy
+### Tasks
+- [ ] Auto-detect columns from CSV headers.
+- [ ] Drag-and-drop column mapping interface.
+- [ ] Preview first 10 rows with mapped columns.
+- [ ] Save mapping state to localStorage (auto-resume).
+- [ ] Validate mappings before processing (required fields present).
 
-- [ ] Use a **generic ingestion script** (e.g. `scripts/ingest_factors_generic.py`) that:
-  - [ ] Reads `data/raw/*.csv` or XLSX.
-  - [ ] Uses YAML mapping files in `data/mappings/*.yml` to map columns → standard fields.
-  - [ ] Writes into `emission_factors` with consistent fields.
+### Tech Stack
+- React with `useState` (or equivalent) for mapping state.
+- Web Workers for CSV parsing (prevent UI freeze).
+- localStorage for state persistence.
 
-### 3.2 Datasets
-
-- [ ] **DEFRA 2024**
-  - [ ] Clean/final CSV in `data/raw/defra_2024_clean.csv`.
-  - [ ] YAML mapping e.g. `data/mappings/defra_2024.yml`.
-- [ ] **EPA GHG Hub 2024**
-  - [ ] Clean CSV e.g. `epa_2024_hub_clean.csv`.
-  - [ ] Mapping file `epa_2024.yml`.
-- [ ] **EXIOBASE 3 (2020) Spend-Based**
-  - [ ] Raw data in `data/raw/exiobase_2020_*`.
-  - [ ] Mapping file `exiobase_2020.yml`.
-  - [ ] Ensure units align to `kgCO2e / EUR`.
-
-### 3.3 Ingestion Tests
-
-- [ ] Add `tests/test_ingestion_defra.py`, `test_ingestion_epa.py`, `test_ingestion_exiobase.py`:
-  - [ ] Verify expected row counts (min thresholds).
-  - [ ] Verify no negative factors.
-  - [ ] Verify scopes/categories/dataset names are correct.
-  - [ ] Ensure `GLOBAL` and key country codes (US, DE, CN, GB, etc.) exist where expected.
-
-> **Exit Criteria (Phase 3):**  
-> You can confidently re-run ingestion whenever datasets are updated and trust the factor table.
+### Success Criteria
+- User can map arbitrary CSV columns to FactorTrace fields.
+- Preview shows correct data.
+- Mapping state survives browser refresh.
 
 ---
 
-## 4. CSV Importer Boss Fight (User-Facing Data Ingestion)
+## Phase 4: CSV Importer – Validation Engine (Days 7–8)
 
-**Goal:** Let non-technical users upload messy spreadsheets and turn them into clean, validated emissions records.
+**Status**: ⏸️ BLOCKED (waiting for Phase 3)
 
-### 4.1 File Upload & Limits
+### Tasks
+- [ ] Sanitize numbers: German (1.234,56) vs US (1,234.56).
+- [ ] Validate units with Pint (reject unknown units).
+- [ ] Validate currency codes (ISO 4217).
+- [ ] Validate dates (DD/MM/YYYY, MM/DD/YYYY, YYYY-MM-DD).
+- [ ] Cell-level error display:  
+  `"Row 45, Column 'Diesel': Expected number, got 'N/A'"`.
+- [ ] "Fix automatically" suggestions for common errors.
 
-- [ ] Implement upload endpoint(s) with:
-  - [ ] File size limit (e.g. 50MB).
-  - [ ] Clear error message for oversized files.
-  - [ ] Support for CSV + basic Excel (.xlsx/.xls).
-  - [ ] Encoding handling (UTF-8, ISO-8859-1).
+### Backend Processing (sketch)
+```python
+# Use pandas with explicit dtype control
+df = pd.read_csv(file, dtype={"activity_value": str})
 
-### 4.2 Column Mapping Layer
+# Sanitize before Pint
+df["activity_value_clean"] = df["activity_value"].apply(sanitize_number)
 
-- [ ] Implement a mapping model:
-  - [ ] Arbitrary client column name → internal field (`date`, `activity_value`, `unit`, `currency`, `category`, etc.).
-  - [ ] Store mappings per tenant (so they can reuse templates).
-- [ ] Frontend:
-  - [ ] Auto-detect headers from upload.
-  - [ ] Drag-and-drop or dropdown mapping UI.
-  - [ ] Preview first 10 rows with mapped columns.
-  - [ ] Save mapping state to localStorage / DB for resume.
+# Validate with Pint
+for idx, value in df["activity_value_clean"].items():
+    try:
+        ureg.Quantity(value).to(canonical_unit)
+    except Exception as e:
+        errors.append({
+            "row": idx,
+            "column": "activity_value",
+            "message": str(e),
+        })
+```
 
-### 4.3 Sanitization & Validation
-
-- [ ] Number handling:
-  - [ ] Detect EU (`1.234,56`) vs US (`1,234.56`) formats.
-  - [ ] Normalize to `1234.56` before numeric conversion.
-- [ ] Units:
-  - [ ] Validate with `pint` (reject unknown units).
-  - [ ] Convert to canonical units.
-- [ ] Currency:
-  - [ ] Validate ISO 4217 codes.
-  - [ ] Use FX library to normalize to EUR.
-- [ ] Dates:
-  - [ ] Accept `YYYY-MM-DD`, `DD/MM/YYYY`, `MM/DD/YYYY` (if needed).
-  - [ ] Normalize to ISO.
-
-### 4.4 Error Reporting
-
-- [ ] Backend returns **structured error objects** like:
-  - `{ "row": 123, "column": "Unit", "value": "Tons", "message": "Unknown unit" }`
-- [ ] Frontend displays:
-  - [ ] Table under uploader with row/column/error.
-  - [ ] Totals: number of rows valid vs invalid.
-- [ ] Optional:
-  - [ ] “Fix automatically” suggestions for common issues (e.g. unit aliasing).
-
-### 4.5 CSV Import Tests
-
-- [ ] Add `tests/test_csv_importer.py`:
-  - [ ] Valid file → successful import.
-  - [ ] Malformed file → structured errors, no crash.
-  - [ ] Mixed EU/US number formats.
-  - [ ] Oversized file → proper rejection.
-
-> **Exit Criteria (Phase 4):**  
-> A typical procurement/sustainability manager can upload their sheet, fix a few red cells, and **get a valid import without needing you on a call**.
+### Success Criteria
+- All validation errors shown with specific row/column.
+- No silent failures.
+- Validation completes in < 5 seconds for 10,000 rows (target).
 
 ---
 
-## 5. Reporting, iXBRL & Multi-Regime Expansion
+## Phase 5: Testing & Production Hardening (Days 9–10)
 
-**Goal:** Turn calculated emissions into **saleable outputs**: CSRD/ESRS E1 reports, plus other regimes over time.
+**Status**: ⏸️ BLOCKED (waiting for Phase 4)
 
-### 5.1 CSRD/ESRS Scope 3 Reporting (Initial V1)
+### Tasks
+- [ ] End-to-end test: upload → map → validate → import.
+- [ ] Load test: 10,000 row CSV.
+- [ ] Edge case tests: malformed data, empty cells, wrong types.
+- [ ] Security test: attempt to upload malicious CSV.
+- [ ] Performance profiling: identify bottlenecks.
+- [ ] Add monitoring/logging for production.
 
-- [ ] Implement a report generation service:
-  - [ ] Uses Jinja2 templates to generate PDF-ready HTML.
-  - [ ] Exports:
-    - [ ] PDF (WeasyPrint or similar).
-    - [ ] XHTML/iXBRL with correct ESRS E1 tagging.
-- [ ] Map emissions and meta-data to ESRS fields:
-  - [ ] Scope 1, 2, 3 breakdown.
-  - [ ] Intensity metrics.
-  - [ ] Uncertainty / data quality tiers.
-
-### 5.2 Multi-Regime Hooks (Design, not full build yet)
-
-- [ ] Design entities and fields such that:
-  - [ ] Adding CBAM, ISSB, EUDR, FuelEU later reuses underlying data.
-  - [ ] A **single voucher/credit** can eventually generate multiple report types.
-- [ ] Add stubs/placeholders for:
-  - [ ] CBAM report generator.
-  - [ ] ISSB sustainability disclosures.
-  - [ ] EUDR / deforestation-related fields where relevant.
-
-> Full implementation of these can be Phase 6+, but the data model and architecture should **not block** expansion.
+### Success Criteria
+- All tests pass.
+- Performance acceptable (< 10s for 10k rows end-to-end).
+- Production-ready error handling.
 
 ---
 
-## 6. Deployment, Ops & Commercial Readiness
+## Known Risks & Mitigation
 
-**Goal:** Be able to run this as a **real SaaS** for paying customers.
-
-### 6.1 Deployment
-
-- [ ] Use `/dockerize` command to generate/refine:
-  - [ ] `Dockerfile` (FastAPI backend).
-  - [ ] `docker-compose.yml` with:
-    - Backend.
-    - Postgres.
-    - Optional migration/init service.
-- [ ] Ensure:
-  - [ ] `DATABASE_URL`, `ENVIRONMENT`, `CORS_ORIGINS` are environment-driven.
-  - [ ] Healthcheck route: `/api/v1/health`.
-  - [ ] Start-up runs `alembic upgrade head` safely.
-
-### 6.2 Monitoring & Logs
-
-- [ ] Add structured logging (JSON logs, at least for errors).
-- [ ] Add basic metrics hooks (requests, errors, latency).
-- [ ] Plan for Sentry / error monitoring integration later.
-
-### 6.3 Commercial Layer
-
-- [ ] Implement **credit-based** pricing:
-  - [ ] 5 credits = X reports for €1,500, etc.
-- [ ] Ensure:
-  - [ ] Usage tracking per tenant.
-  - [ ] Payment + invoice hooks (even if manual initially).
-  - [ ] Basic admin dashboard for you to see who is doing what.
+| Risk | Impact | Mitigation |
+|------|--------|------------|
+| Safari file upload fails > 40MB even with chunking | HIGH | Fall back to server-side chunking API |
+| German/US number detection is ambiguous | MEDIUM | Add manual format selector in UI |
+| Pint doesn't recognize obscure units | MEDIUM | Allow manual unit mapping with admin approval |
+| Validation too slow for large files | HIGH | Use Web Workers + streaming validation |
 
 ---
 
-## 7. Later / Strategic Phases (Not Needed for V1)
+## Post-Sprint: Next Features (Not in current 2-week scope)
 
-These are **deliberately postponed** to avoid scope creep now:
-
-- [ ] ML-based anomaly detection on activity data.
-- [ ] CUDA-accelerated large-scale Monte Carlo simulations.
-- [ ] Federated learning and on-prem “black box” deployments.
-- [ ] Digital product passports at full scale (beyond initial hooks).
-- [ ] Tenant-level analytics with heavy time-series/OLAP infra.
-
----
-
-## Current Focus (Right Now)
-
-1. **Finish Phase 1: Multi-Tenancy & Security** (no excuses).
-2. **Lock in Phase 2: Scientific Engine** (no maths regret later).
-3. **Enter Phase 4: CSV Importer Boss Fight** (this is where buyers feel the value).
-
-Everything else is secondary until those three are real and tested.
-
+1. **EXIOBASE integration** (spend-based factors).
+2. **Multi-regime reports** (CBAM, ISSB, EUDR).
+3. **Voucher workflow** (credit packs, supplier portals).
+4. **PDF generation** (e.g. WeasyPrint pipeline).
+5. **iXBRL export** (ESRS E1 compliance).

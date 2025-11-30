@@ -1,0 +1,337 @@
+# User Sector to EXIOBASE Mapping Configuration
+# ==============================================
+# Maps user-friendly sector labels to EXIOBASE 3 sector names.
+# Used by app/services/exiobase_mapping.py for spend-based calculations.
+#
+# Format:
+#   "user_label": "EXIOBASE_sector_name"
+#
+# The EXIOBASE sector names must exactly match activity_type values
+# in the emission_factors table where dataset = 'EXIOBASE_2020'.
+#
+# NOTE: EXIOBASE sectors often include NACE codes in parentheses.
+#       These must be included for exact matching.
+#
+# Adding new mappings:
+#   1. Query: SELECT DISTINCT activity_type FROM emission_factors WHERE dataset='EXIOBASE_2020'
+#   2. Add a user-friendly label that your frontend/users will use
+#   3. Test with: python scripts/test_exiobase_e2e.py
+
+# ============================================
+# IT & Professional Services
+# ============================================
+"IT Services": "Computer and related services (72)"
+"IT services": "Computer and related services (72)"
+"Software Development": "Computer and related services (72)"
+"Computer Services": "Computer and related services (72)"
+"Consulting": "Other business services (74)"
+"Legal Services": "Other business services (74)"
+"Accounting": "Other business services (74)"
+"Management Consulting": "Other business services (74)"
+"Business Services": "Other business services (74)"
+"Engineering Services": "Other business services (74)"
+"Architecture": "Other business services (74)"
+"Research & Development": "Research and development services (73)"
+"R&D": "Research and development services (73)"
+"Research": "Research and development services (73)"
+"Advertising": "Other business services (74)"
+"Marketing": "Other business services (74)"
+
+# ============================================
+# Manufacturing
+# ============================================
+"Car Manufacturing": "Motor vehicles, trailers and semi-trailers (34)"
+"Automotive": "Motor vehicles, trailers and semi-trailers (34)"
+"Vehicles": "Motor vehicles, trailers and semi-trailers (34)"
+"Motor Vehicles": "Motor vehicles, trailers and semi-trailers (34)"
+"Electronics Manufacturing": "Electrical machinery and apparatus n.e.c. (31)"
+"Electronics": "Electrical machinery and apparatus n.e.c. (31)"
+"Electrical Equipment": "Electrical machinery and apparatus n.e.c. (31)"
+"Machinery": "Machinery and equipment n.e.c. (29)"
+"Chemicals": "Chemicals nec"
+"Plastics": "Plastics, basic"
+"Rubber Products": "Rubber and plastic products (25)"
+"Rubber and Plastics": "Rubber and plastic products (25)"
+"Metals": "Fabricated metal products, except machinery and equipment (28)"
+"Metal Products": "Fabricated metal products, except machinery and equipment (28)"
+"Steel": "Basic iron and steel and of ferro-alloys and first products thereof"
+"Iron and Steel": "Basic iron and steel and of ferro-alloys and first products thereof"
+"Aluminum": "Aluminium and aluminium products"
+"Aluminium": "Aluminium and aluminium products"
+"Paper Products": "Paper and paper products"
+"Paper": "Paper and paper products"
+"Textiles": "Textiles (17)"
+"Clothing": "Wearing apparel; furs (18)"
+"Apparel": "Wearing apparel; furs (18)"
+"Fashion": "Wearing apparel; furs (18)"
+"Pharmaceuticals": "Chemicals nec"
+"Medical Equipment": "Medical, precision and optical instruments, watches and clocks (33)"
+"Medical Instruments": "Medical, precision and optical instruments, watches and clocks (33)"
+"Precision Instruments": "Medical, precision and optical instruments, watches and clocks (33)"
+"Tobacco": "Tobacco products (16)"
+"Leather": "Leather and leather products (19)"
+
+# ============================================
+# Office & Supplies
+# ============================================
+"Office Supplies": "Paper and paper products"
+"Office Equipment": "Office machinery and computers (30)"
+"Computers": "Office machinery and computers (30)"
+"Office Machinery": "Office machinery and computers (30)"
+"Furniture": "Furniture; other manufactured goods n.e.c. (36)"
+"Printing": "Printed matter and recorded media (22)"
+"Publishing": "Printed matter and recorded media (22)"
+"Media": "Printed matter and recorded media (22)"
+
+# ============================================
+# Construction & Real Estate
+# ============================================
+"Construction": "Construction work (45)"
+"Building": "Construction work (45)"
+"Building Materials": "Other non-metallic mineral products"
+"Cement": "Cement, lime and plaster"
+"Glass": "Glass and glass products"
+"Ceramics": "Ceramic goods"
+"Bricks": "Bricks, tiles and construction products, in baked clay"
+"Real Estate": "Real estate services (70)"
+"Property Services": "Real estate services (70)"
+"Rental Services": "Renting services of machinery and equipment without operator and of personal and household goods (71)"
+"Equipment Rental": "Renting services of machinery and equipment without operator and of personal and household goods (71)"
+"Wood Products": "Wood and products of wood and cork (except furniture); articles of straw and plaiting materials (20)"
+
+# ============================================
+# Transportation & Logistics
+# ============================================
+"Air Transport": "Air transport services (62)"
+"Aviation": "Air transport services (62)"
+"Airlines": "Air transport services (62)"
+"Shipping": "Sea and coastal water transportation services"
+"Maritime Transport": "Sea and coastal water transportation services"
+"Sea Transport": "Sea and coastal water transportation services"
+"Rail Transport": "Railway transportation services"
+"Railways": "Railway transportation services"
+"Road Transport": "Other land transportation services"
+"Trucking": "Other land transportation services"
+"Land Transport": "Other land transportation services"
+"Freight": "Supporting and auxiliary transport services; travel agency services (63)"
+"Logistics": "Supporting and auxiliary transport services; travel agency services (63)"
+"Warehousing": "Supporting and auxiliary transport services; travel agency services (63)"
+"Travel Agency": "Supporting and auxiliary transport services; travel agency services (63)"
+"Inland Water Transport": "Inland water transportation services"
+"Pipeline Transport": "Transportation services via pipelines"
+"Other Transport": "Other transport equipment (35)"
+
+# ============================================
+# Telecommunications
+# ============================================
+"Telecommunications": "Post and telecommunication services (64)"
+"Telecom": "Post and telecommunication services (64)"
+"Postal Services": "Post and telecommunication services (64)"
+"Communications": "Post and telecommunication services (64)"
+"Radio and TV Equipment": "Radio, television and communication equipment and apparatus (32)"
+
+# ============================================
+# Energy & Utilities
+# ============================================
+"Electricity": "Electricity nec"
+"Electricity Distribution": "Distribution and trade services of electricity"
+"Electricity Transmission": "Transmission services of electricity"
+"Natural Gas": "Natural gas and services related to natural gas extraction, excluding surveying"
+"Gas Distribution": "Distribution services of gaseous fuels through mains"
+"Water Supply": "Collected and purified water, distribution services of water (41)"
+"Water Services": "Collected and purified water, distribution services of water (41)"
+"Steam and Hot Water": "Steam and hot water supply services"
+"District Heating": "Steam and hot water supply services"
+"Nuclear Fuel": "Nuclear fuel"
+
+# Electricity by source (for more specific tracking)
+"Solar Electricity": "Electricity by solar photovoltaic"
+"Wind Electricity": "Electricity by wind"
+"Hydro Electricity": "Electricity by hydro"
+"Nuclear Electricity": "Electricity by nuclear"
+"Coal Electricity": "Electricity by coal"
+"Gas Electricity": "Electricity by gas"
+"Biomass Electricity": "Electricity by biomass and waste"
+"Geothermal Electricity": "Electricity by Geothermal"
+
+# ============================================
+# Waste Management
+# ============================================
+"Waste Management": "Inert/metal/hazardous waste for treatment: landfill"
+"Landfill": "Inert/metal/hazardous waste for treatment: landfill"
+"Waste Incineration": "Intert/metal waste for treatment: incineration"
+"Food Waste Composting": "Food waste for treatment: composting and land application"
+"Food Waste Landfill": "Food waste for treatment: landfill"
+"Food Waste Biogas": "Food waste for treatment: biogasification and land application"
+"Paper Waste": "Paper for treatment: landfill"
+"Plastic Waste": "Plastic waste for treatment: landfill"
+"Wood Waste": "Wood waste for treatment: landfill"
+"Textile Waste": "Textiles waste for treatment: landfill"
+
+# ============================================
+# Recycling
+# ============================================
+"Glass Recycling": "Secondary glass for treatment, Re-processing of secondary glass into new glass"
+"Paper Recycling": "Secondary paper for treatment, Re-processing of secondary paper into new pulp"
+"Plastic Recycling": "Secondary plastic for treatment, Re-processing of secondary plastic into new plastic"
+"Steel Recycling": "Secondary steel for treatment, Re-processing of secondary steel into new steel"
+"Aluminium Recycling": "Secondary aluminium for treatment, Re-processing of secondary aluminium into new aluminium"
+"Copper Recycling": "Secondary copper for treatment, Re-processing of secondary copper into new copper"
+"Bottle Recycling": "Bottles for treatment, Recycling of bottles by direct reuse"
+
+# ============================================
+# Food & Agriculture
+# ============================================
+"Food Products": "Food products nec"
+"Food Processing": "Food products nec"
+"Beverages": "Beverages"
+"Drinks": "Beverages"
+"Agriculture": "Crops nec"
+"Farming": "Crops nec"
+"Dairy": "Dairy products"
+"Dairy Products": "Dairy products"
+"Meat": "Meat products nec"
+"Meat Products": "Meat products nec"
+"Fish": "Fish products"
+"Seafood": "Fish products"
+"Fish Products": "Fish products"
+"Fishing": "Fish and other fishing products; services incidental of fishing (05)"
+"Sugar": "Sugar"
+"Sugar Production": "Sugar"
+"Vegetable Oils": "products of Vegetable oils and fats"
+"Rice": "Processed rice"
+"Wheat": "Wheat"
+"Cereals": "Cereal grains nec"
+"Forestry": "Products of forestry, logging and related services (02)"
+"Logging": "Products of forestry, logging and related services (02)"
+
+# Livestock
+"Cattle": "Cattle"
+"Cattle Farming": "Cattle"
+"Beef": "Products of meat cattle"
+"Pigs": "Pigs"
+"Pig Farming": "Pigs"
+"Pork": "Products of meat pigs"
+"Poultry": "Poultry"
+"Poultry Farming": "Poultry"
+"Chicken": "Products of meat poultry"
+
+# ============================================
+# Retail & Wholesale
+# ============================================
+"Retail": "Retail  trade services, except of motor vehicles and motorcycles; repair services of personal and household goods (52)"
+"Retail Trade": "Retail  trade services, except of motor vehicles and motorcycles; repair services of personal and household goods (52)"
+"Wholesale": "Wholesale trade and commission trade services, except of motor vehicles and motorcycles (51)"
+"Wholesale Trade": "Wholesale trade and commission trade services, except of motor vehicles and motorcycles (51)"
+"Motor Vehicle Sales": "Sale, maintenance, repair of motor vehicles, motor vehicles parts, motorcycles, motor cycles parts and accessoiries"
+"Car Dealership": "Sale, maintenance, repair of motor vehicles, motor vehicles parts, motorcycles, motor cycles parts and accessoiries"
+"Fuel Retail": "Retail trade services of motor fuel"
+"Petrol Stations": "Retail trade services of motor fuel"
+
+# ============================================
+# Financial Services
+# ============================================
+"Banking": "Financial intermediation services, except insurance and pension funding services (65)"
+"Financial Services": "Financial intermediation services, except insurance and pension funding services (65)"
+"Finance": "Financial intermediation services, except insurance and pension funding services (65)"
+"Insurance": "Insurance and pension funding services, except compulsory social security services (66)"
+"Pension Funds": "Insurance and pension funding services, except compulsory social security services (66)"
+"Financial Auxiliary": "Services auxiliary to financial intermediation (67)"
+
+# ============================================
+# Hospitality & Tourism
+# ============================================
+"Hotels": "Hotel and restaurant services (55)"
+"Hospitality": "Hotel and restaurant services (55)"
+"Restaurants": "Hotel and restaurant services (55)"
+"Catering": "Hotel and restaurant services (55)"
+"Food Service": "Hotel and restaurant services (55)"
+"Travel": "Supporting and auxiliary transport services; travel agency services (63)"
+"Entertainment": "Recreational, cultural and sporting services (92)"
+"Recreation": "Recreational, cultural and sporting services (92)"
+"Sports": "Recreational, cultural and sporting services (92)"
+"Cultural Services": "Recreational, cultural and sporting services (92)"
+
+# ============================================
+# Healthcare & Social Services
+# ============================================
+"Healthcare": "Health and social work services (85)"
+"Health Services": "Health and social work services (85)"
+"Hospital Services": "Health and social work services (85)"
+"Medical Services": "Health and social work services (85)"
+"Social Work": "Health and social work services (85)"
+
+# ============================================
+# Education
+# ============================================
+"Education": "Education services (80)"
+"Schools": "Education services (80)"
+"Universities": "Education services (80)"
+"Training": "Education services (80)"
+
+# ============================================
+# Public Administration
+# ============================================
+"Public Administration": "Public administration and defence services; compulsory social security services (75)"
+"Government": "Public administration and defence services; compulsory social security services (75)"
+"Defence": "Public administration and defence services; compulsory social security services (75)"
+"Social Security": "Public administration and defence services; compulsory social security services (75)"
+
+# ============================================
+# Membership Organizations
+# ============================================
+"Membership Organizations": "Membership organisation services n.e.c. (91)"
+"Associations": "Membership organisation services n.e.c. (91)"
+"NGOs": "Membership organisation services n.e.c. (91)"
+
+# ============================================
+# Other Services
+# ============================================
+"Other Services": "Other services (93)"
+"Personal Services": "Other services (93)"
+"Household Services": "Private households with employed persons (95)"
+"Domestic Services": "Private households with employed persons (95)"
+
+# ============================================
+# Mining & Extraction
+# ============================================
+"Mining": "Chemical and fertilizer minerals, salt and other mining and quarrying products n.e.c."
+"Quarrying": "Sand and clay"
+"Stone Quarrying": "Stone"
+"Iron Mining": "Iron ores"
+"Copper Mining": "Copper ores and concentrates"
+"Aluminium Mining": "Aluminium ores and concentrates"
+"Lead Mining": "Lead, zinc and tin ores and concentrates"
+"Nickel Mining": "Nickel ores and concentrates"
+"Precious Metals Mining": "Precious metal ores and concentrates"
+"Uranium Mining": "Uranium and thorium ores (12)"
+"Oil Extraction": "Crude petroleum and services related to crude oil extraction, excluding surveying"
+
+# ============================================
+# Fuels & Petroleum Products
+# ============================================
+"Diesel": "Gas/Diesel Oil"
+"Gasoline": "Motor Gasoline"
+"Petrol": "Motor Gasoline"
+"Jet Fuel": "Kerosene Type Jet Fuel"
+"Kerosene": "Kerosene"
+"LPG": "Liquefied Petroleum Gases (LPG)"
+"Bitumen": "Bitumen"
+"Lubricants": "Lubricants"
+"Coke": "Coke Oven Coke"
+"Coal": "Other Bituminous Coal"
+
+# ============================================
+# Biofuels
+# ============================================
+"Biodiesel": "Biodiesels"
+"Bioethanol": "Biogasoline"
+"Biogas": "Biogas"
+"Biofuels": "Other Liquid Biofuels"
+
+# ============================================
+# Fertilizers
+# ============================================
+"Nitrogen Fertilizer": "N-fertiliser"
+"Phosphate Fertilizer": "P- and other fertiliser"
+"Fertilizers": "P- and other fertiliser"

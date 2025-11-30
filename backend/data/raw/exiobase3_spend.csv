@@ -1,0 +1,19 @@
+# EXIOBASE3 Spend-based Emission Factors - PLACEHOLDER
+# =====================================================
+# This is a placeholder file. Replace with actual EXIOBASE data.
+# Source: https://exiobase.eu/
+#
+# Note: EXIOBASE uses sector codes (NACE-based) and provides
+# kgCO2e per EUR/USD of spending in each sector.
+#
+SectorCode,SectorName,Region,Unit,GHG Factor
+A01,Crop and animal production,WW,kgCO2e/EUR,0.85
+C10-12,Food products,WW,kgCO2e/EUR,0.62
+C13-15,Textiles and apparel,WW,kgCO2e/EUR,0.45
+C20,Chemicals,WW,kgCO2e/EUR,1.25
+C26,Electronics and computers,WW,kgCO2e/EUR,0.38
+C29,Motor vehicles,WW,kgCO2e/EUR,0.55
+J62_63,IT Services,WW,kgCO2e/EUR,0.12
+K64,Financial services,WW,kgCO2e/EUR,0.08
+M69_70,Legal and accounting,WW,kgCO2e/EUR,0.15
+F,Construction,WW,kgCO2e/EUR,0.72

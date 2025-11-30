@@ -6,6 +6,10 @@
       "env": {
         "GITHUB_TOKEN": "REPLACE_WITH_YOUR_TOKEN"
       }
+    },
+    "factortrace": {
+      "command": "node",
+      "args": ["scripts/mcp-factortrace.js"]
     }
   }
 }

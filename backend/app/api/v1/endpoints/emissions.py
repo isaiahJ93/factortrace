@@ -28,12 +28,22 @@ from app.models.user import User
 from app.models.emission_factor import EmissionFactor
 from app.models.evidence_document import EvidenceDocument
 from app.schemas.emission import (
-    EmissionCreate, 
-    EmissionResponse, 
+    EmissionCreate,
+    EmissionResponse,
     EmissionsSummary,
-    EmissionUpdate
+    EmissionUpdate,
+    EmissionCalculationRequest,
+    EmissionCalculationResponse,
+    EmissionCalculationMethod,
+    EmissionDatasetPreference,
 )
 from app.schemas.api_schemas import EmissionFactorInput
+
+# Import spend-based calculation service
+from app.services.spend_based_calculation import (
+    calculate_spend_based_emissions,
+    SpendBasedCalculationError,
+)
 
 # Import data quality calculation
 from app.api.v1.endpoints.data_quality import calculate_data_quality_score
@@ -198,6 +208,239 @@ class MaterialityAssessmentRequest(BaseModel):
 
 router = APIRouter()
 
+
+# =============================================================================
+# UNIFIED CALCULATION ENDPOINT (Production-Grade)
+# =============================================================================
+
+def _resolve_dataset_for_country(country_code: str, method: str) -> str:
+    """Resolve dataset based on country code when AUTO is specified."""
+    if method == "spend_based":
+        return "EXIOBASE_2020"
+
+    country_upper = country_code.upper() if country_code else "GLOBAL"
+    if country_upper == "GB":
+        return "DEFRA_2024"
+    elif country_upper == "US":
+        return "EPA_2024"
+    else:
+        return "DEFRA_2024"  # Default to DEFRA for other countries
+
+
+@router.post(
+    "/calculate",
+    response_model=EmissionCalculationResponse,
+    summary="Unified Emission Calculation",
+    description="""
+Calculate emissions using either activity-based or spend-based methods.
+
+## Activity-Based Calculation (DEFRA/EPA)
+For physical activity data like electricity consumption, fuel usage, travel distances.
+
+**Required fields:**
+- `method`: "activity_data"
+- `scope`: 1, 2, or 3
+- `country_code`: ISO country code (e.g., "DE", "GB", "US")
+- `amount`: Activity quantity (e.g., kWh, liters)
+- `unit`: Unit of measurement
+- `category`: Emission category (e.g., "electricity", "stationary_combustion")
+- `activity_type`: Specific activity (e.g., "Electricity - Grid Average")
+
+**Dataset selection:**
+- AUTO: GB→DEFRA_2024, US→EPA_2024, others→DEFRA_2024
+- DEFRA_2024: UK Government factors
+- EPA_2024: US EPA factors
+
+## Spend-Based Calculation (EXIOBASE)
+For financial data (spend in EUR) when activity data is unavailable.
+
+**Required fields:**
+- `method`: "spend_based"
+- `scope`: 3 (typically)
+- `country_code`: ISO country code
+- `amount`: Spend in EUR
+- `unit`: "EUR"
+- `sector_label`: User-friendly sector (e.g., "IT Services") OR
+- `exiobase_activity_type`: Exact EXIOBASE sector name
+
+**Notes:**
+- EXIOBASE factors with values >100 kgCO2e/EUR are flagged as potential outliers
+- Country fallback: country → ROW_region → GLOBAL
+    """,
+    responses={
+        200: {"description": "Calculation successful"},
+        422: {
+            "description": "Factor not found or validation error",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "error": "FACTOR_NOT_FOUND",
+                        "lookup_key": {
+                            "scope": "SCOPE_2",
+                            "category": "electricity",
+                            "activity_type": "Unknown",
+                            "country_code": "XX",
+                            "dataset": "DEFRA_2024"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    tags=["Emissions"]
+)
+async def calculate_emissions_unified(
+    payload: EmissionCalculationRequest,
+    db: Session = Depends(get_db),
+):
+    """
+    Unified emission calculation endpoint.
+
+    Supports both activity-based (DEFRA/EPA) and spend-based (EXIOBASE) methods.
+    Does NOT create database records - pure calculation only.
+
+    TODO: Add authentication when auth system is finalized.
+    """
+    import logging
+    logger = logging.getLogger(__name__)
+
+    method = payload.method
+    amount = float(payload.amount)
+    country_code = payload.country_code.upper()
+
+    # Resolve dataset
+    if payload.dataset == "AUTO" or payload.dataset == EmissionDatasetPreference.auto:
+        dataset = _resolve_dataset_for_country(country_code, method)
+    else:
+        dataset = payload.dataset if isinstance(payload.dataset, str) else payload.dataset.value
+
+    logger.info(f"Calculation request: method={method}, dataset={dataset}, country={country_code}, amount={amount}")
+
+    # =========================================================================
+    # SPEND-BASED CALCULATION (EXIOBASE)
+    # =========================================================================
+    if method == "spend_based" or method == EmissionCalculationMethod.spend_based:
+        # Validate spend-based specific fields
+        if not payload.sector_label and not payload.exiobase_activity_type:
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail={
+                    "error": "MISSING_SECTOR",
+                    "message": "For spend_based method, provide either 'sector_label' or 'exiobase_activity_type'"
+                }
+            )
+
+        try:
+            result = calculate_spend_based_emissions(
+                db=db,
+                spend_amount_eur=amount,
+                country_code=country_code,
+                exiobase_sector=payload.exiobase_activity_type,
+                sector_label=payload.sector_label,
+                activity_type=payload.activity_type,
+            )
+
+            # Build notes for warnings
+            notes = None
+            if result.factor_outlier_warning:
+                notes = f"Factor outlier warning: {result.factor_value:.2f} kgCO2e/EUR exceeds 100 threshold (potential MRIO artifact)"
+
+            return EmissionCalculationResponse(
+                emissions_kg_co2e=result.emissions_kg_co2e,
+                factor_value=result.factor_value,
+                factor_unit=result.factor_unit,
+                dataset_used=result.dataset,
+                method_used="spend_based",
+                scope=payload.scope,
+                country_code=result.country_code_used,
+                activity_type_used=None,
+                sector_used=result.activity_type_used,
+                notes=notes,
+            )
+
+        except SpendBasedCalculationError as e:
+            logger.warning(f"Spend-based calculation failed: {e}")
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail={
+                    "error": "FACTOR_NOT_FOUND",
+                    "message": str(e),
+                    "lookup_key": {
+                        "method": "spend_based",
+                        "country_code": country_code,
+                        "sector_label": payload.sector_label,
+                        "exiobase_activity_type": payload.exiobase_activity_type,
+                        "dataset": "EXIOBASE_2020"
+                    }
+                }
+            )
+
+    # =========================================================================
+    # ACTIVITY-BASED CALCULATION (DEFRA/EPA)
+    # =========================================================================
+    else:
+        # Validate activity-based specific fields
+        if not payload.category or not payload.activity_type:
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail={
+                    "error": "MISSING_FIELDS",
+                    "message": "For activity_data method, provide both 'category' and 'activity_type'"
+                }
+            )
+
+        # Normalize scope
+        scope_str = normalize_scope(payload.scope)
+
+        # Look up factor from database
+        factor_value = get_factor(
+            db,
+            scope=payload.scope,
+            category=payload.category,
+            activity_type=payload.activity_type,
+            country_code=country_code,
+            year=2024,
+            dataset=dataset if dataset != "AUTO" else None,
+        )
+
+        if factor_value is None:
+            lookup_key = {
+                "scope": scope_str,
+                "category": payload.category,
+                "activity_type": payload.activity_type,
+                "country_code": country_code,
+                "year": 2024,
+                "dataset": dataset
+            }
+            logger.warning(f"No emission factor found: {lookup_key}")
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail={
+                    "error": "FACTOR_NOT_FOUND",
+                    "lookup_key": lookup_key
+                }
+            )
+
+        # Calculate emissions (factor is kgCO2e/unit)
+        emissions_kg_co2e = amount * factor_value
+
+        # Determine factor unit based on user's unit
+        factor_unit = f"kgCO2e/{payload.unit}"
+
+        return EmissionCalculationResponse(
+            emissions_kg_co2e=emissions_kg_co2e,
+            factor_value=factor_value,
+            factor_unit=factor_unit,
+            dataset_used=dataset,
+            method_used="activity_data",
+            scope=payload.scope,
+            country_code=country_code,
+            activity_type_used=payload.activity_type,
+            sector_used=None,
+            notes=None,
+        )
+
+
 # ===== EVIDENCE UPLOAD ENDPOINTS =====
 
 def validate_file(file: UploadFile) -> bool:
@@ -218,29 +461,250 @@ def validate_file(file: UploadFile) -> bool:
     return True
 
 
+# Activity types organized by category (for cascading dropdown)
+ACTIVITY_TYPES_BY_CATEGORY = {
+    # Scope 1 categories
+    "stationary_combustion": [
+        {"activity_type": "Natural Gas", "unit": "m³", "factor_value": 0.18454, "source": "EPA"},
+        {"activity_type": "Fuel Oil", "unit": "L", "factor_value": 2.753, "source": "EPA"},
+        {"activity_type": "Propane", "unit": "L", "factor_value": 1.51, "source": "EPA"},
+        {"activity_type": "Coal", "unit": "kg", "factor_value": 2.42, "source": "EPA"},
+    ],
+    "mobile_combustion": [
+        {"activity_type": "Diesel - Vehicles", "unit": "L", "factor_value": 2.68, "source": "EPA"},
+        {"activity_type": "Gasoline - Vehicles", "unit": "L", "factor_value": 2.31, "source": "EPA"},
+        {"activity_type": "Jet Fuel", "unit": "L", "factor_value": 2.55, "source": "EPA"},
+    ],
+    "process_emissions": [
+        {"activity_type": "CO2 Process Emissions", "unit": "tCO2", "factor_value": 1000.0, "source": "Direct"},
+    ],
+    "refrigerants": [
+        {"activity_type": "R-134a Refrigerant", "unit": "kg", "factor_value": 1430, "source": "IPCC"},
+        {"activity_type": "R-410A Refrigerant", "unit": "kg", "factor_value": 2088, "source": "IPCC"},
+    ],
+    # Scope 2 categories
+    "electricity": [
+        {"activity_type": "Electricity - Grid Average", "unit": "kWh", "factor_value": 0.233, "source": "EPA eGRID"},
+        {"activity_type": "Electricity - Renewable", "unit": "kWh", "factor_value": 0.0, "source": "EPA"},
+    ],
+    "heating_cooling": [
+        {"activity_type": "District Heating", "unit": "kWh", "factor_value": 0.215, "source": "EPA"},
+        {"activity_type": "District Cooling", "unit": "kWh", "factor_value": 0.198, "source": "EPA"},
+    ],
+    "steam": [
+        {"activity_type": "Steam", "unit": "kg", "factor_value": 0.068, "source": "EPA"},
+    ],
+    # Scope 3 categories
+    "purchased_goods_services": [
+        {"activity_type": "Office Paper", "unit": "kg", "factor_value": 0.92, "source": "EPA"},
+        {"activity_type": "Plastic Products", "unit": "kg", "factor_value": 1.89, "source": "EPA"},
+        {"activity_type": "Steel", "unit": "kg", "factor_value": 1.85, "source": "EPA"},
+        {"activity_type": "Aluminum", "unit": "kg", "factor_value": 11.89, "source": "EPA"},
+        {"activity_type": "Concrete", "unit": "m³", "factor_value": 385, "source": "EPA"},
+        {"activity_type": "Electronics", "unit": "USD", "factor_value": 0.42, "source": "EPA"},
+        {"activity_type": "Textiles", "unit": "kg", "factor_value": 8.1, "source": "EPA"},
+        {"activity_type": "Food & Beverages", "unit": "USD", "factor_value": 0.89, "source": "EPA"},
+    ],
+    "capital_goods": [
+        {"activity_type": "IT Equipment", "unit": "USD", "factor_value": 0.65, "source": "EPA"},
+        {"activity_type": "Office Furniture", "unit": "USD", "factor_value": 0.45, "source": "EPA"},
+        {"activity_type": "Vehicles", "unit": "USD", "factor_value": 0.89, "source": "EPA"},
+        {"activity_type": "Buildings", "unit": "m²", "factor_value": 125.0, "source": "EPA"},
+        {"activity_type": "Manufacturing Equipment", "unit": "USD", "factor_value": 0.78, "source": "EPA"},
+    ],
+    "fuel_energy_activities": [
+        {"activity_type": "Upstream Electricity", "unit": "kWh", "factor_value": 0.045, "source": "EPA"},
+        {"activity_type": "T&D Losses", "unit": "kWh", "factor_value": 0.023, "source": "EPA"},
+        {"activity_type": "WTT - Natural Gas", "unit": "m³", "factor_value": 0.031, "source": "EPA"},
+        {"activity_type": "WTT - Gasoline", "unit": "L", "factor_value": 0.62, "source": "EPA"},
+        {"activity_type": "WTT - Diesel", "unit": "L", "factor_value": 0.58, "source": "EPA"},
+    ],
+    "upstream_transportation": [
+        {"activity_type": "Road Freight", "unit": "tonne-km", "factor_value": 0.105, "source": "EPA"},
+        {"activity_type": "Rail Freight", "unit": "tonne-km", "factor_value": 0.027, "source": "EPA"},
+        {"activity_type": "Air Freight", "unit": "tonne-km", "factor_value": 1.13, "source": "EPA"},
+        {"activity_type": "Sea Freight", "unit": "tonne-km", "factor_value": 0.016, "source": "EPA"},
+    ],
+    "waste_operations": [
+        {"activity_type": "Landfill - Mixed Waste", "unit": "tonnes", "factor_value": 467.0, "source": "EPA"},
+        {"activity_type": "Recycling - Paper", "unit": "tonnes", "factor_value": 21.0, "source": "EPA"},
+        {"activity_type": "Recycling - Plastic", "unit": "tonnes", "factor_value": 32.0, "source": "EPA"},
+        {"activity_type": "Composting", "unit": "tonnes", "factor_value": 55.0, "source": "EPA"},
+        {"activity_type": "Incineration", "unit": "tonnes", "factor_value": 895.0, "source": "EPA"},
+    ],
+    "business_travel": [
+        {"activity_type": "Air Travel - Short Haul", "unit": "passenger-km", "factor_value": 0.215, "source": "EPA"},
+        {"activity_type": "Air Travel - Long Haul", "unit": "passenger-km", "factor_value": 0.115, "source": "EPA"},
+        {"activity_type": "Rail Travel", "unit": "passenger-km", "factor_value": 0.041, "source": "EPA"},
+        {"activity_type": "Taxi/Uber", "unit": "km", "factor_value": 0.21, "source": "EPA"},
+        {"activity_type": "Hotel Stay", "unit": "nights", "factor_value": 15.3, "source": "EPA"},
+        {"activity_type": "Rental Car", "unit": "km", "factor_value": 0.171, "source": "EPA"},
+    ],
+    "employee_commuting": [
+        {"activity_type": "Car - Average", "unit": "km", "factor_value": 0.171, "source": "EPA"},
+        {"activity_type": "Bus", "unit": "passenger-km", "factor_value": 0.089, "source": "EPA"},
+        {"activity_type": "Metro/Subway", "unit": "passenger-km", "factor_value": 0.033, "source": "EPA"},
+        {"activity_type": "Motorcycle", "unit": "km", "factor_value": 0.113, "source": "EPA"},
+        {"activity_type": "Bicycle", "unit": "km", "factor_value": 0.0, "source": "EPA"},
+        {"activity_type": "Remote Work", "unit": "days", "factor_value": 2.5, "source": "EPA"},
+    ],
+    "upstream_leased_assets": [
+        {"activity_type": "Leased Buildings", "unit": "m²-year", "factor_value": 45.0, "source": "EPA"},
+        {"activity_type": "Leased Vehicles", "unit": "km", "factor_value": 0.171, "source": "EPA"},
+        {"activity_type": "Leased Equipment", "unit": "USD", "factor_value": 0.32, "source": "EPA"},
+    ],
+    "downstream_transportation": [
+        {"activity_type": "Product Delivery - Road", "unit": "tonne-km", "factor_value": 0.105, "source": "EPA"},
+        {"activity_type": "Product Delivery - Rail", "unit": "tonne-km", "factor_value": 0.027, "source": "EPA"},
+        {"activity_type": "Product Delivery - Air", "unit": "tonne-km", "factor_value": 1.13, "source": "EPA"},
+        {"activity_type": "Product Delivery - Sea", "unit": "tonne-km", "factor_value": 0.016, "source": "EPA"},
+    ],
+    "processing_sold_products": [
+        {"activity_type": "Manufacturing Process", "unit": "kg", "factor_value": 0.85, "source": "EPA"},
+        {"activity_type": "Assembly Process", "unit": "unit", "factor_value": 12.5, "source": "EPA"},
+        {"activity_type": "Packaging Process", "unit": "kg", "factor_value": 0.45, "source": "EPA"},
+    ],
+    "use_of_sold_products": [
+        {"activity_type": "Electronics - Use Phase", "unit": "unit-year", "factor_value": 125.0, "source": "EPA"},
+        {"activity_type": "Appliances - Use Phase", "unit": "unit-year", "factor_value": 450.0, "source": "EPA"},
+        {"activity_type": "Vehicles - Use Phase", "unit": "km", "factor_value": 0.171, "source": "EPA"},
+        {"activity_type": "Software - Use Phase", "unit": "user-year", "factor_value": 8.5, "source": "EPA"},
+    ],
+    "end_of_life_treatment": [
+        {"activity_type": "Landfill Disposal", "unit": "tonnes", "factor_value": 467.0, "source": "EPA"},
+        {"activity_type": "Recycling", "unit": "tonnes", "factor_value": 21.0, "source": "EPA"},
+        {"activity_type": "Incineration", "unit": "tonnes", "factor_value": 895.0, "source": "EPA"},
+        {"activity_type": "E-waste Treatment", "unit": "kg", "factor_value": 2.5, "source": "EPA"},
+    ],
+    "downstream_leased_assets": [
+        {"activity_type": "Leased Real Estate", "unit": "m²-year", "factor_value": 45.0, "source": "EPA"},
+        {"activity_type": "Leased Equipment", "unit": "USD", "factor_value": 0.32, "source": "EPA"},
+        {"activity_type": "Leased Vehicles", "unit": "vehicle-year", "factor_value": 4500.0, "source": "EPA"},
+    ],
+    "franchises": [
+        {"activity_type": "Franchise Operations", "unit": "m²-year", "factor_value": 55.0, "source": "EPA"},
+        {"activity_type": "Franchise Energy Use", "unit": "kWh", "factor_value": 0.233, "source": "EPA"},
+        {"activity_type": "Franchise Waste", "unit": "tonnes", "factor_value": 467.0, "source": "EPA"},
+    ],
+    "investments": [
+        {"activity_type": "Equity Investments", "unit": "USD", "factor_value": 0.00012, "source": "EPA"},
+        {"activity_type": "Debt Investments", "unit": "USD", "factor_value": 0.00008, "source": "EPA"},
+        {"activity_type": "Project Finance", "unit": "USD", "factor_value": 0.00015, "source": "EPA"},
+    ],
+}
+
+def normalize_scope_input(scope_input) -> Optional[int]:
+    """Normalize various scope input formats to integer 1, 2, or 3.
+
+    Handles: 1, "1", "SCOPE_1", "Scope 1", etc.
+    """
+    if scope_input is None:
+        return None
+
+    s_str = str(scope_input).strip().upper()
+    print(f"DEBUG normalize_scope_input: input={scope_input}, type={type(scope_input)}, s_str={s_str}")
+
+    if "1" in s_str:
+        return 1
+    elif "2" in s_str:
+        return 2
+    elif "3" in s_str:
+        return 3
+
+    return None
+
+
+@router.get("/countries")
+async def get_available_countries(
+    db: Session = Depends(get_db)
+) -> List[str]:
+    """Get unique country codes available in the emission factors database.
+
+    Returns a sorted list of country codes (e.g., ["DE", "FR", "GLOBAL", "US"]).
+    GLOBAL appears first, then alphabetically sorted country codes.
+    """
+    # Query distinct country codes from the emission_factors table
+    country_codes = db.query(EmissionFactor.country_code).distinct().all()
+
+    # Extract strings from tuples and filter out None/empty
+    codes = [code[0] for code in country_codes if code[0]]
+
+    # Sort with GLOBAL first, then alphabetically
+    global_codes = [c for c in codes if c.upper() == 'GLOBAL']
+    other_codes = sorted([c for c in codes if c.upper() != 'GLOBAL'])
+
+    return global_codes + other_codes
+
+
 @router.get("/categories")
 async def get_emission_categories(
     scope: Optional[int] = Query(None),
     db: Session = Depends(get_db)
-):
-    """Get emission categories - redirect to emission-factors endpoint"""
-    # For now, return mock data to get the frontend working
-    if scope == 3:
-        return list(SCOPE3_CATEGORIES.keys())
-    return ["Fuel & Energy Activities", "Transportation", "Waste", "Other"]
+) -> List[str]:
+    """Get emission categories for a scope. Returns a flat array of category names."""
+    print(f"DEBUG get_emission_categories: scope={scope}, type={type(scope)}")
+
+    # Categories organized by scope
+    categories_by_scope = {
+        1: ["stationary_combustion", "mobile_combustion", "process_emissions", "refrigerants"],
+        2: ["electricity", "heating_cooling", "steam"],
+        3: list(SCOPE3_CATEGORIES.keys())
+    }
+
+    # Normalize scope input
+    normalized_scope = normalize_scope_input(scope)
+    print(f"DEBUG get_emission_categories: normalized_scope={normalized_scope}")
+
+    if normalized_scope is not None:
+        result = categories_by_scope.get(normalized_scope, [])
+        print(f"DEBUG get_emission_categories: returning {len(result)} categories for scope {normalized_scope}")
+        return result
+
+    # Return all categories flattened
+    all_categories = []
+    for cats in categories_by_scope.values():
+        all_categories.extend(cats)
+    result = list(set(all_categories))
+    print(f"DEBUG get_emission_categories: returning all {len(result)} categories")
+    return result
 
 @router.get("/factors")
-async def get_emission_factors(
+async def get_activity_types_for_category(
     category: Optional[str] = Query(None),
     db: Session = Depends(get_db)
-):
-    """Get emission factors for a category"""
-    # Mock data to get frontend working
-    return [
-        {"id": 1, "name": "Electricity", "unit": "kWh", "factor": 0.233},
-        {"id": 2, "name": "Natural Gas", "unit": "m³", "factor": 2.02},
-        {"id": 3, "name": "Diesel", "unit": "L", "factor": 2.68}
-    ]
+) -> List[Dict[str, Any]]:
+    """Get activity types (emission factors) for a specific category.
+
+    Returns array of objects with: activity_type, unit, factor_value, source
+    """
+    print(f"DEBUG get_activity_types_for_category: category={category}, type={type(category)}")
+
+    if category is None:
+        # Return all activity types across all categories
+        all_factors = []
+        for cat_factors in ACTIVITY_TYPES_BY_CATEGORY.values():
+            all_factors.extend(cat_factors)
+        print(f"DEBUG get_activity_types_for_category: returning all {len(all_factors)} factors")
+        return all_factors
+
+    # Normalize category (strip whitespace, handle case)
+    normalized_category = category.strip().lower().replace(" ", "_").replace("-", "_")
+    print(f"DEBUG get_activity_types_for_category: normalized_category={normalized_category}")
+
+    # Try exact match first
+    if category in ACTIVITY_TYPES_BY_CATEGORY:
+        result = ACTIVITY_TYPES_BY_CATEGORY[category]
+        print(f"DEBUG get_activity_types_for_category: exact match, returning {len(result)} factors")
+        return result
+
+    # Try normalized match
+    if normalized_category in ACTIVITY_TYPES_BY_CATEGORY:
+        result = ACTIVITY_TYPES_BY_CATEGORY[normalized_category]
+        print(f"DEBUG get_activity_types_for_category: normalized match, returning {len(result)} factors")
+        return result
+
+    print(f"DEBUG get_activity_types_for_category: no match found for '{category}'")
+    return []
 
 
 @router.post("/upload-evidence")
@@ -1037,12 +1501,15 @@ async def create_emission(
     # STEP 2: Lookup from centralized emission factor service (Database)
     if factor_value is None:
         scope_str = normalize_scope(emission.scope)
+        # Use new get_factor signature: db is first positional, rest are keyword-only
         factor_value = get_factor(
+            db,
             scope=emission.scope,
             category=emission.category,
             activity_type=emission.activity_type,
             country_code=emission.country_code,
-            db=db  # Pass database session for database lookup
+            year=2024,  # Default year
+            dataset=None,  # No specific dataset (will search all)
         )
 
         if factor_value is not None:
@@ -1052,10 +1519,17 @@ async def create_emission(
                 f"{emission.activity_type}, {emission.country_code}) -> {factor_value}"
             )
 
-    # STEP 3: Error if no factor found
+    # STEP 3: Error if no factor found - include all key fields for debugging
     if factor_value is None:
         scope_str = normalize_scope(emission.scope)
-        missing_key = f"({scope_str}, {emission.category}, {emission.activity_type}, {emission.country_code})"
+        missing_key = {
+            "scope": scope_str,
+            "category": emission.category,
+            "activity_type": emission.activity_type,
+            "country_code": emission.country_code or "GLOBAL",
+            "year": 2024,
+            "dataset": None,
+        }
         logger.error(f"No emission factor found for key: {missing_key}")
         raise HTTPException(
             status_code=422,

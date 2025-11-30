@@ -1,0 +1,16 @@
+# EPA 2024 Emission Factors - PLACEHOLDER
+# ========================================
+# This is a placeholder file. Replace with actual EPA data.
+# Download from: https://www.epa.gov/climateleadership/ghg-emission-factors-hub
+#
+Factor ID,Scope,Category,Subcategory,Activity,Unit,CO2e Factor
+EPA-001,Scope 1,Stationary Combustion,Natural Gas,Gross,mmBtu,53.06
+EPA-002,Scope 1,Stationary Combustion,Distillate Fuel Oil,Gross,gallon,10.21
+EPA-003,Scope 1,Mobile Sources,Gasoline,Average,gallon,8.89
+EPA-004,Scope 1,Mobile Sources,Diesel,Average,gallon,10.21
+EPA-005,Scope 2,Purchased Electricity,eGRID,National Average,kWh,0.371
+EPA-006,Scope 3,Business Travel,Air - Short Haul,Average passenger,mile,0.206
+EPA-007,Scope 3,Business Travel,Air - Long Haul,Average passenger,mile,0.157
+EPA-008,Scope 3,Employee Commuting,Car,Average,mile,0.347
+EPA-009,Scope 3,Upstream Transportation,Truck,Heavy-duty,ton-mile,0.161
+EPA-010,Scope 3,Upstream Transportation,Rail,Average,ton-mile,0.023

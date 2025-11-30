@@ -1,0 +1,198 @@
+# EPA 2024 Emission Factors Mapping Configuration
+# ================================================
+# Maps EPA 2024 GHG Emission Factor Hub - Table 1 Stationary Combustion
+# to EmissionFactor model. Used by scripts/ingest_factors_generic.py
+#
+# Data source: EPA 2024 GHG Emission Factors for Greenhouse Gas Inventories
+# https://www.epa.gov/climateleadership/ghg-emission-factors-hub
+#
+# CSV structure:
+#   - Row 1: Header row (column names with duplicates)
+#   - Row 2: Units row (e.g., "mmBtu per short ton", "kg CO2 per mmBtu")
+#   - Rows 3+: Data with group headers interspersed
+#   - DictReader uses last occurrence of duplicate column names
+#
+# Since CSV has duplicate column names, we use positional column names from DictReader:
+#   Column index 2: "Fuel Type"
+#   Column index 4: "CO2 Factor" (first - per mmBtu)
+#   Column index 7: "CO2 Factor" (second - per unit, overwrites in DictReader)
+#
+# We use CO2 Factor per mmBtu (column index 4) as the primary factor.
+# The mapping handles this via a preprocessor hook in the ingest script.
+
+dataset: "EPA_2024"
+
+# Default values applied to all rows
+defaults:
+  year: 2024
+  country_code: "US"
+  method: "average_data"
+  regulation: "GHG_PROTOCOL"
+  source: "EPA 2024 Emission Factors for Greenhouse Gas Inventories"
+
+# Column mapping: raw CSV column name -> logical field name
+# NOTE: Due to duplicate columns in EPA CSV, raw_factor uses special handling
+columns:
+  raw_scope: ""                              # No scope column - all are Scope 1
+  raw_category: ""                           # No category column - all are stationary combustion
+  raw_subcategory: "Fuel Type"               # e.g., "Anthracite", "Natural Gas"
+  raw_activity: "Fuel Type"                  # Same as subcategory for this dataset
+  raw_factor: "CO2 Factor"                   # kg CO2 per mmBtu (uses epa_factor_parser)
+  raw_unit: ""                               # Unit is always "kg CO2 per mmBtu" for our purposes
+  raw_external_id: ""                        # No external ID in EPA data
+
+# Filters: control which rows to include/exclude
+filters:
+  # No scope filtering - all are Scope 1
+  include_scopes: []
+
+  # No category filtering
+  include_categories: []
+
+  # No include_values filtering
+  include_values: {}
+
+  # Exclude patterns
+  exclude_patterns: []
+
+# Transform rules
+transforms:
+  # All EPA stationary combustion factors are Scope 1
+  scope_map:
+    default: "SCOPE_1"
+
+  # Map fuel types to stationary combustion category
+  # Format: "|Fuel Type" -> {"category": "...", "activity_type": "..."}
+  # Uses empty string before pipe since we don't have a raw_category column
+  category_map:
+    # ============================================
+    # Coal and Coke
+    # ============================================
+    "|Anthracite": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Anthracite"}
+    "|Bituminous": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Bituminous"}
+    "|Sub-bituminous": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Sub-bituminous"}
+    "|Lignite": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Lignite"}
+    "|Mixed (Commercial Sector)": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Mixed Coal (Commercial)"}
+    "|Mixed (Electric Power Sector)": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Mixed Coal (Electric Power)"}
+    "|Mixed (Industrial Coking)": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Mixed Coal (Industrial Coking)"}
+    "|Mixed (Industrial Sector)": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Mixed Coal (Industrial)"}
+    "|Coal Coke": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Coal Coke"}
+
+    # ============================================
+    # Other Fuels - Solid
+    # ============================================
+    "|Municipal Solid Waste": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Municipal Solid Waste"}
+    "|Petroleum Coke (Solid)": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Petroleum Coke (Solid)"}
+    "|Plastics": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Plastics"}
+    "|Tires": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Tires"}
+
+    # ============================================
+    # Biomass Fuels - Solid
+    # ============================================
+    "|Agricultural Byproducts": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Agricultural Byproducts"}
+    "|Peat": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Peat"}
+    "|Solid Byproducts": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Solid Byproducts"}
+    "|Wood and Wood Residuals": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Wood and Wood Residuals"}
+
+    # ============================================
+    # Natural Gas
+    # ============================================
+    "|Natural Gas": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Natural Gas"}
+
+    # ============================================
+    # Other Fuels - Gaseous
+    # ============================================
+    "|Blast Furnace Gas": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Blast Furnace Gas"}
+    "|Coke Oven Gas": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Coke Oven Gas"}
+    "|Fuel Gas": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Fuel Gas"}
+    "|Propane Gas": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Propane Gas"}
+
+    # ============================================
+    # Biomass Fuels - Gaseous
+    # ============================================
+    "|Landfill Gas": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Landfill Gas"}
+    "|Other Biomass Gases": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Other Biomass Gases"}
+
+    # ============================================
+    # Petroleum Products (Liquid)
+    # ============================================
+    "|Asphalt and Road Oil": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Asphalt and Road Oil"}
+    "|Aviation Gasoline": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Aviation Gasoline"}
+    "|Butane": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Butane"}
+    "|Butylene": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Butylene"}
+    "|Crude Oil": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Crude Oil"}
+    "|Distillate Fuel Oil No. 1": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Distillate Fuel Oil No. 1"}
+    "|Distillate Fuel Oil No. 2": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Distillate Fuel Oil No. 2"}
+    "|Distillate Fuel Oil No. 4": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Distillate Fuel Oil No. 4"}
+    "|Ethane": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Ethane"}
+    "|Ethylene": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Ethylene"}
+    "|Heavy Gas Oils": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Heavy Gas Oils"}
+    "|Isobutane": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Isobutane"}
+    "|Isobutylene": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Isobutylene"}
+    "|Kerosene": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Kerosene"}
+    "|Kerosene-Type Jet Fuel": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Kerosene-Type Jet Fuel"}
+    "|Liquefied Petroleum Gases (LPG)": {"category": "stationary_combustion", "activity_type": "Stationary combustion - LPG"}
+    "|Lubricants": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Lubricants"}
+    "|Motor Gasoline": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Motor Gasoline"}
+    "|Naphtha (<401 deg F)": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Naphtha"}
+    "|Natural Gasoline": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Natural Gasoline"}
+    "|Other Oil (>401 deg F)": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Other Oil"}
+    "|Pentanes Plus": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Pentanes Plus"}
+    "|Petrochemical Feedstocks": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Petrochemical Feedstocks"}
+    "|Propane": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Propane"}
+    "|Propylene": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Propylene"}
+    "|Residual Fuel Oil No. 5": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Residual Fuel Oil No. 5"}
+    "|Residual Fuel Oil No. 6": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Residual Fuel Oil No. 6"}
+    "|Special Naphtha": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Special Naphtha"}
+    "|Unfinished Oils": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Unfinished Oils"}
+    "|Used Oil": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Used Oil"}
+
+    # ============================================
+    # Biomass Fuels - Liquid
+    # ============================================
+    "|Biodiesel (100%)": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Biodiesel (100%)"}
+    "|Ethanol (100%)": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Ethanol (100%)"}
+    "|Rendered Animal Fat": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Rendered Animal Fat"}
+    "|Vegetable Oil": {"category": "stationary_combustion", "activity_type": "Stationary combustion - Vegetable Oil"}
+
+  # Activity type rules (not used - all mappings are explicit)
+  activity_type_rules:
+    default: "Stationary combustion - {raw_subcategory}"
+
+# Skip patterns: rows matching these patterns will be skipped entirely
+# Format: "raw_category|raw_subcategory" patterns with wildcards
+# NOTE: Additional skip logic in ingest script handles:
+#   - Units rows (where Heat Content contains "mmBtu per")
+#   - Group headers (where CO2 Factor is empty)
+skip_patterns: []
+
+# EPA-specific configuration
+# These flags tell the ingest script to use EPA-specific parsing
+epa_specific:
+  # Use column index 4 for CO2 factor (per mmBtu) instead of DictReader column name
+  use_factor_column_index: 4
+
+  # Fixed unit for all EPA stationary combustion factors
+  fixed_unit: "kg CO2 per mmBtu"
+
+  # Skip rows where Fuel Type is empty or contains group header patterns
+  skip_empty_fuel_type: true
+  skip_group_headers:
+    - "Coal and Coke"
+    - "Other Fuels - Solid"
+    - "Biomass Fuels - Solid"
+    - "Natural Gas"
+    - "Other Fuels - Gaseous"
+    - "Biomass Fuels - Gaseous"
+    - "Petroleum Products"
+    - "Biomass Fuels - Liquid"
+    - "Biomass Fuels -"
+
+  # Skip rows where Heat Content column contains unit descriptions
+  skip_units_row_pattern: "mmBtu per"
+
+  # Stop processing when we hit these markers (Table 1 only)
+  # This ensures we only process stationary combustion factors from Table 1
+  stop_at_markers:
+    - "Table 2"
+    - "Source:"

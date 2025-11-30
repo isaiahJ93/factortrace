@@ -5,10 +5,41 @@ Pydantic schemas for emissions data - SaaS-Grade API Documentation
 These schemas define the contract between the FactorTrace API and its clients.
 Every field is documented for OpenAPI/Swagger generation.
 """
-from pydantic import BaseModel, Field, ConfigDict
-from typing import Optional, Dict, Literal
+from decimal import Decimal
+from pydantic import BaseModel, Field, ConfigDict, condecimal, constr
+from typing import Optional, Dict, Literal, Union
 from datetime import datetime
-from enum import IntEnum
+from enum import IntEnum, Enum
+
+
+# =============================================================================
+# ENUMS - Calculation Method and Dataset Selection
+# =============================================================================
+
+class EmissionCalculationMethod(str, Enum):
+    """
+    Supported emission calculation methods.
+
+    - activity_data: Uses activity-based factors (kWh, liters, km, etc.)
+    - spend_based: Uses EXIOBASE spend-based factors (kgCO2e per EUR)
+    """
+    activity_data = "activity_data"
+    spend_based = "spend_based"
+
+
+class EmissionDatasetPreference(str, Enum):
+    """
+    Preferred emission factor dataset for calculation.
+
+    - AUTO: Automatically select based on country_code (GB→DEFRA, US→EPA, else DEFRA)
+    - DEFRA_2024: UK Government emission factors 2024
+    - EPA_2024: US EPA emission factors 2024
+    - EXIOBASE_2020: EXIOBASE 3 spend-based factors (for spend_based method)
+    """
+    auto = "AUTO"
+    defra_2024 = "DEFRA_2024"
+    epa_2024 = "EPA_2024"
+    exiobase_2020 = "EXIOBASE_2020"
 
 
 class EmissionScope(IntEnum):
@@ -32,9 +63,27 @@ class EmissionCreate(BaseModel):
     """
     Schema for creating a new emission record.
 
+    Supports two calculation methods:
+
+    **1. Activity-based (default):**
     The API will automatically look up the appropriate emission factor from the
     database based on scope, category, activity_type, and country_code.
     If no matching factor is found, a 422 error is returned.
+
+    **2. Spend-based (EXIOBASE):**
+    Set `calculation_method='spend_based'` and provide `spend_amount_eur` to use
+    EXIOBASE_2020 spend-based emission factors (kgCO2e per EUR).
+
+    For spend-based calculation, provide ONE of:
+    - `exiobase_sector`: Exact EXIOBASE 3 sector name (highest priority)
+    - `sector_label`: User-friendly label (e.g., "IT Services") that maps to EXIOBASE
+    - `activity_type`: Will be used as fallback for sector mapping
+
+    Country fallback chain: country_code -> ROW_region -> GLOBAL
+
+    **Outlier Warning:**
+    EXIOBASE factors >100 kgCO2e/EUR are flagged as potential MRIO artifacts.
+    Check the response metadata for `factor_outlier_warning`.
     """
 
     # Required fields
@@ -117,10 +166,32 @@ class EmissionCreate(BaseModel):
     )
 
     calculation_method: Optional[str] = Field(
-        default=None,
+        default="activity_based",
         max_length=50,
-        description="Method used for calculation. Values: 'activity_based', 'spend_based', 'average_data'.",
+        description="Method used for calculation. Values: 'activity_based', 'spend_based', 'average_data'. When 'spend_based', use spend_amount_eur and exiobase_sector fields.",
         json_schema_extra={"example": "activity_based"}
+    )
+
+    # Spend-based fields (EXIOBASE integration)
+    spend_amount_eur: Optional[float] = Field(
+        default=None,
+        gt=0,
+        description="Spend amount in EUR for spend-based calculation. Required when calculation_method='spend_based'. Uses EXIOBASE 3 emission factors (kgCO2e per EUR).",
+        json_schema_extra={"example": 10000.0}
+    )
+
+    exiobase_sector: Optional[str] = Field(
+        default=None,
+        max_length=200,
+        description="EXIOBASE sector name for spend-based calculation. Must match an EXIOBASE 3 sector (e.g., 'Motor vehicles', 'Computer programming, consultancy'). If not provided, activity_type will be used for mapping lookup.",
+        json_schema_extra={"example": "Computer programming, consultancy and related activities"}
+    )
+
+    sector_label: Optional[str] = Field(
+        default=None,
+        max_length=200,
+        description="User-friendly sector label that will be mapped to an EXIOBASE sector. Examples: 'IT Services', 'Office Supplies', 'Car Manufacturing'.",
+        json_schema_extra={"example": "IT Services"}
     )
 
     data_quality_score: Optional[float] = Field(
@@ -140,18 +211,60 @@ class EmissionCreate(BaseModel):
 
     model_config = ConfigDict(
         json_schema_extra={
-            "example": {
-                "scope": 2,
-                "category": "Purchased Electricity",
-                "activity_type": "Electricity",
-                "activity_data": 10000.0,
-                "unit": "kWh",
-                "country_code": "DE",
-                "description": "Office building electricity consumption Q1 2024",
-                "location": "Berlin HQ - Building A",
-                "data_source": "Utility Invoice",
-                "reporting_period": "2024-Q1"
-            }
+            "examples": [
+                {
+                    "summary": "Activity-based calculation (default)",
+                    "description": "Standard activity-based emission calculation using kWh/liters/kg with database factor lookup",
+                    "value": {
+                        "scope": 2,
+                        "category": "Purchased Electricity",
+                        "activity_type": "Electricity",
+                        "activity_data": 10000.0,
+                        "unit": "kWh",
+                        "country_code": "DE",
+                        "description": "Office building electricity consumption Q1 2024",
+                        "location": "Berlin HQ - Building A",
+                        "data_source": "Utility Invoice",
+                        "reporting_period": "2024-Q1"
+                    }
+                },
+                {
+                    "summary": "Spend-based calculation (EXIOBASE)",
+                    "description": "Spend-based emission calculation using EXIOBASE_2020 factors (kgCO2e per EUR). Use sector_label for user-friendly input or exiobase_sector for exact EXIOBASE sector matching.",
+                    "value": {
+                        "scope": 3,
+                        "category": "Purchased Goods",
+                        "activity_type": "IT Services",
+                        "activity_data": 1.0,
+                        "unit": "EUR",
+                        "country_code": "DE",
+                        "calculation_method": "spend_based",
+                        "spend_amount_eur": 50000.0,
+                        "sector_label": "IT Services",
+                        "description": "Software consulting services Q1 2024",
+                        "location": "External Vendor",
+                        "data_source": "Invoice",
+                        "reporting_period": "2024-Q1"
+                    }
+                },
+                {
+                    "summary": "Spend-based with direct EXIOBASE sector",
+                    "description": "Spend-based calculation using exact EXIOBASE 3 sector name. Use this for precise matching.",
+                    "value": {
+                        "scope": 3,
+                        "category": "Purchased Goods",
+                        "activity_type": "Motor vehicles",
+                        "activity_data": 1.0,
+                        "unit": "EUR",
+                        "country_code": "DE",
+                        "calculation_method": "spend_based",
+                        "spend_amount_eur": 250000.0,
+                        "exiobase_sector": "Motor vehicles",
+                        "description": "Company vehicle fleet purchase 2024",
+                        "data_source": "Purchase Order"
+                    }
+                }
+            ]
         }
     )
 
@@ -479,5 +592,222 @@ class ValidationErrorResponse(BaseModel):
                     "type": "greater_than"
                 }
             ]
+        }
+    )
+
+
+# =============================================================================
+# UNIFIED CALCULATION API SCHEMAS (Production-Grade)
+# =============================================================================
+
+class EmissionCalculationRequest(BaseModel):
+    """
+    Unified request schema for emission calculations.
+
+    Supports both activity-based (DEFRA/EPA) and spend-based (EXIOBASE) methods.
+
+    **Activity-based calculation:**
+    - Set `method="activity_data"`
+    - Provide `amount` (activity quantity), `unit`, `category`, `activity_type`
+    - Optional: `dataset` to specify DEFRA_2024 or EPA_2024 (default: AUTO)
+
+    **Spend-based calculation:**
+    - Set `method="spend_based"`
+    - Provide `amount` (spend in EUR)
+    - Provide `sector_label` (user-friendly) or `exiobase_activity_type` (exact EXIOBASE sector)
+    """
+
+    method: EmissionCalculationMethod = Field(
+        ...,
+        description="Calculation method: 'activity_data' for activity-based or 'spend_based' for EXIOBASE.",
+        json_schema_extra={"example": "activity_data"}
+    )
+
+    dataset: EmissionDatasetPreference = Field(
+        default=EmissionDatasetPreference.auto,
+        description="Preferred emission factor dataset. AUTO selects based on country (GB→DEFRA, US→EPA).",
+        json_schema_extra={"example": "AUTO"}
+    )
+
+    scope: Union[str, int] = Field(
+        ...,
+        description="GHG Protocol scope: 1, 2, or 3 (or 'SCOPE_1', 'SCOPE_2', 'SCOPE_3').",
+        json_schema_extra={"example": 2}
+    )
+
+    country_code: constr(strip_whitespace=True, min_length=2, max_length=10) = Field(
+        ...,
+        description="ISO 3166-1 alpha-2 country code (e.g., 'DE', 'US', 'GB'). Use 'GLOBAL' for generic factors.",
+        json_schema_extra={"example": "DE"}
+    )
+
+    amount: condecimal(gt=Decimal("0")) = Field(
+        ...,
+        description="Activity amount (kWh, liters, etc.) for activity-based, or spend amount in EUR for spend-based.",
+        json_schema_extra={"example": "10000"}
+    )
+
+    unit: constr(strip_whitespace=True, min_length=1) = Field(
+        ...,
+        description="Unit of measurement. For activity-based: 'kWh', 'liters', 'km', etc. For spend-based: 'EUR'.",
+        json_schema_extra={"example": "kWh"}
+    )
+
+    # Activity-based fields
+    category: Optional[str] = Field(
+        default=None,
+        description="Emission category for activity-based calculation (e.g., 'electricity', 'stationary_combustion').",
+        json_schema_extra={"example": "electricity"}
+    )
+
+    activity_type: Optional[str] = Field(
+        default=None,
+        description="Specific activity type within category (e.g., 'Electricity - Grid Average', 'Natural Gas').",
+        json_schema_extra={"example": "Electricity - Grid Average"}
+    )
+
+    # Spend-based fields
+    sector_label: Optional[str] = Field(
+        default=None,
+        description="User-friendly sector label for spend-based (e.g., 'IT Services', 'Car Manufacturing').",
+        json_schema_extra={"example": "IT Services"}
+    )
+
+    exiobase_activity_type: Optional[str] = Field(
+        default=None,
+        description="Exact EXIOBASE sector name. Takes priority over sector_label if both provided.",
+        json_schema_extra={"example": "Computer and related services (72)"}
+    )
+
+    model_config = ConfigDict(
+        use_enum_values=True,
+        json_schema_extra={
+            "examples": [
+                {
+                    "summary": "Activity-based: Electricity in Germany",
+                    "value": {
+                        "method": "activity_data",
+                        "dataset": "AUTO",
+                        "scope": 2,
+                        "country_code": "DE",
+                        "amount": "10000",
+                        "unit": "kWh",
+                        "category": "electricity",
+                        "activity_type": "Electricity - Grid Average"
+                    }
+                },
+                {
+                    "summary": "Spend-based: IT Services in Germany",
+                    "value": {
+                        "method": "spend_based",
+                        "dataset": "EXIOBASE_2020",
+                        "scope": 3,
+                        "country_code": "DE",
+                        "amount": "50000",
+                        "unit": "EUR",
+                        "sector_label": "IT Services"
+                    }
+                }
+            ]
+        }
+    )
+
+
+class FactorNotFoundError(BaseModel):
+    """
+    Structured error response when no emission factor is found.
+    """
+    error: str = Field(
+        default="FACTOR_NOT_FOUND",
+        description="Error code"
+    )
+    lookup_key: Dict = Field(
+        ...,
+        description="The lookup parameters that failed to find a factor"
+    )
+
+
+class EmissionCalculationResponse(BaseModel):
+    """
+    Response schema for unified emission calculations.
+
+    Contains calculated emissions in kgCO2e plus all metadata about the
+    factor used, method applied, and any warnings.
+    """
+
+    emissions_kg_co2e: float = Field(
+        ...,
+        description="Calculated emissions in kilograms of CO2 equivalent (kgCO2e).",
+        json_schema_extra={"example": 3500.0}
+    )
+
+    factor_value: float = Field(
+        ...,
+        description="Emission factor value used for calculation.",
+        json_schema_extra={"example": 0.35}
+    )
+
+    factor_unit: str = Field(
+        ...,
+        description="Unit of the emission factor (e.g., 'kgCO2e/kWh', 'kgCO2e/EUR').",
+        json_schema_extra={"example": "kgCO2e/kWh"}
+    )
+
+    dataset_used: str = Field(
+        ...,
+        description="Emission factor dataset that was actually used.",
+        json_schema_extra={"example": "DEFRA_2024"}
+    )
+
+    method_used: str = Field(
+        ...,
+        description="Calculation method that was applied ('activity_data' or 'spend_based').",
+        json_schema_extra={"example": "activity_data"}
+    )
+
+    scope: Union[str, int] = Field(
+        ...,
+        description="GHG Protocol scope as provided in the request.",
+        json_schema_extra={"example": 2}
+    )
+
+    country_code: str = Field(
+        ...,
+        description="Country code used for factor lookup (may differ from request if fallback applied).",
+        json_schema_extra={"example": "DE"}
+    )
+
+    activity_type_used: Optional[str] = Field(
+        default=None,
+        description="Activity type used in the lookup (for activity-based calculations).",
+        json_schema_extra={"example": "Electricity - Grid Average"}
+    )
+
+    sector_used: Optional[str] = Field(
+        default=None,
+        description="EXIOBASE sector used (for spend-based calculations).",
+        json_schema_extra={"example": "Computer and related services (72)"}
+    )
+
+    notes: Optional[str] = Field(
+        default=None,
+        description="Additional notes or warnings about the calculation.",
+        json_schema_extra={"example": "Factor outlier warning: value exceeds 100 kgCO2e/EUR threshold"}
+    )
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "emissions_kg_co2e": 3500.0,
+                "factor_value": 0.35,
+                "factor_unit": "kgCO2e/kWh",
+                "dataset_used": "DEFRA_2024",
+                "method_used": "activity_data",
+                "scope": 2,
+                "country_code": "DE",
+                "activity_type_used": "Electricity - Grid Average",
+                "sector_used": None,
+                "notes": None
+            }
         }
     )

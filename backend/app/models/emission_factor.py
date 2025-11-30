@@ -26,21 +26,23 @@ class EmissionFactor(Base):
     - Multi-country factors with GLOBAL fallback
     - Activity-based lookups (scope, category, activity_type, country_code)
     - Year versioning for regulatory updates
-    - Method differentiation (location_based, market_based, average_data)
+    - Dataset differentiation (MASTER, DEFRA_2024, EPA_2024, EXIOBASE, etc.)
+    - Method tracking (location_based, market_based, average_data) for future use
     - Regulation compliance tracking
     """
     __tablename__ = "emission_factors"
     __table_args__ = (
-        # Unique constraint for factor lookups (includes method for differentiation)
+        # Unique constraint for factor lookups (includes dataset for source differentiation)
         UniqueConstraint(
-            'scope', 'category', 'activity_type', 'country_code', 'year', 'method',
-            name='uq_emission_factor_lookup'
+            'scope', 'category', 'activity_type', 'country_code', 'year', 'dataset',
+            name='uq_emission_factor_key'
         ),
         # Indexes for common queries
         Index('idx_factor_scope', 'scope'),
         Index('idx_factor_category', 'category'),
         Index('idx_factor_activity_type', 'activity_type'),
         Index('idx_factor_country_code', 'country_code'),
+        Index('idx_factor_dataset', 'dataset'),
         Index('idx_factor_lookup', 'scope', 'category', 'activity_type', 'country_code'),
         {'extend_existing': True}
     )
@@ -54,6 +56,10 @@ class EmissionFactor(Base):
     activity_type = Column(String(100), nullable=False, index=True)
     country_code = Column(String(10), nullable=False, index=True, default='GLOBAL')
     year = Column(Integer, nullable=False, default=2024)
+
+    # Dataset identification (for multi-source ingestion)
+    dataset = Column(String(50), nullable=False, index=True, default='MASTER')  # MASTER, DEFRA_2024, EPA_2024, etc.
+    external_id = Column(String(100), nullable=True)  # Original ID from source dataset
 
     # Factor value and unit
     factor = Column(Float, nullable=False)  # kgCO2e per unit
@@ -79,6 +85,7 @@ class EmissionFactor(Base):
             f"category='{self.category}', "
             f"activity_type='{self.activity_type}', "
             f"country_code='{self.country_code}', "
+            f"dataset='{self.dataset}', "
             f"factor={self.factor})>"
         )
 

@@ -26,3 +26,49 @@ package-lock.json
 yarn.lock
 .env
 .env.*
+
+# ----- Extra optimization (tests, IDE, DB, xhtml) -----
+
+# Test artifacts
+.pytest_cache/
+htmlcov/
+.coverage
+*.cover
+
+# IDE artifacts
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Database artifacts
+*.db
+*.db-shm
+*.db-wal
+
+# XHTML / iXBRL outputs (huge files)
+*.xhtml
+*.ixbrl
+*.html
+
+# Validation logs (huge, repetitive)
+*_validation.log
+validation_*.log
+
+# Python compiled (extra safety)
+*.pyc
+__pycache__/
+
+# Archive directories (very noisy)
+_archive*/
+test_archive/
+
+# Alembic versions (only touched via alembic)
+alembic/versions/*.py
+
+# Debug/test output files
+test_output*.xhtml
+debug_*.xhtml
+fixed_*.xhtml
+*_fixed.xhtml
+complete_*.xhtml

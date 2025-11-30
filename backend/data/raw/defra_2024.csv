@@ -1,0 +1,20 @@
+# DEFRA 2024 Emission Factors - PLACEHOLDER
+# ==========================================
+# This is a placeholder file. Replace with actual DEFRA data.
+# Download from: https://www.gov.uk/government/publications/greenhouse-gas-reporting-conversion-factors-2024
+#
+ID,Scope,Category,Subcategory,Activity,Unit,GHG Conversion Factor 2024
+DEFRA-001,Scope 1,Fuels,Natural Gas,Gross CV,kWh,0.18254
+DEFRA-002,Scope 1,Fuels,Fuel Oil,Gross CV,litres,2.96
+DEFRA-003,Scope 1,Fuels,Diesel,Average biofuel blend,litres,2.55786
+DEFRA-004,Scope 1,Fuels,Petrol,Average biofuel blend,litres,2.16567
+DEFRA-005,Scope 2,UK electricity,Grid electricity,Grid,kWh,0.207074
+DEFRA-006,Scope 3,Business travel- air,Domestic,Average passenger,km,0.24587
+DEFRA-007,Scope 3,Business travel- air,Short-haul,Average passenger,km,0.15298
+DEFRA-008,Scope 3,Business travel- air,Long-haul,Average passenger,km,0.19309
+DEFRA-009,Scope 3,Business travel- land,Car,Average car,km,0.17067
+DEFRA-010,Scope 3,Business travel- land,Rail,National rail,km,0.03549
+DEFRA-011,Scope 3,Freighting goods,Road,HGV all,tonne.km,0.10498
+DEFRA-012,Scope 3,Freighting goods,Rail,Freight train,tonne.km,0.02729
+DEFRA-013,Scope 3,Freighting goods,Air,International,tonne.km,1.12887
+DEFRA-014,Scope 3,Freighting goods,Sea,Container ship,tonne.km,0.01622

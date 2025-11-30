@@ -1,0 +1,110 @@
+# EPA 2024 Emission Factors - Quantity-based Mapping Configuration
+# ================================================================
+# Maps US EPA GHG Emission Factors Hub CSV columns to EmissionFactor model fields
+# Used by scripts/ingest_factors_generic.py
+#
+# Source: https://www.epa.gov/climateleadership/ghg-emission-factors-hub
+# This covers quantity-based factors (kgCO2e per unit of activity)
+
+dataset: "EPA_2024"
+
+# Default values applied to all rows (unless overridden)
+defaults:
+  year: 2024
+  country_code: "US"
+  method: "average_data"
+  regulation: "GHG_PROTOCOL"
+  source: "US EPA GHG Emission Factors Hub 2024"
+
+# Column mapping: raw CSV column name -> logical field name
+# These should match the actual headers in the EPA CSV export
+# Adjust these once you have the real EPA CSV
+columns:
+  raw_scope: "Scope"                    # e.g., "Scope 1", "Scope 2", "Scope 3"
+  raw_category: "Category"              # e.g., "Stationary Combustion", "Mobile Sources"
+  raw_subcategory: "Subcategory"        # e.g., "Natural Gas", "Gasoline"
+  raw_activity: "Activity"              # e.g., "Gross", "Net"
+  raw_factor: "CO2e Factor"             # Numeric factor value (kgCO2e)
+  raw_unit: "Unit"                      # e.g., "mmBtu", "gallon", "kWh"
+  raw_external_id: "Factor ID"          # Original EPA factor ID
+
+# Filters: control which rows to include/exclude
+filters:
+  include_scopes:
+    - "Scope 1"
+    - "Scope 2"
+    - "Scope 3"
+
+  include_categories:
+    - "Stationary Combustion"
+    - "Mobile Sources"
+    - "Purchased Electricity"
+    - "Business Travel"
+    - "Employee Commuting"
+    - "Upstream Transportation"
+
+  exclude_patterns: []
+
+# Transform rules
+transforms:
+  scope_map:
+    "Scope 1": "SCOPE_1"
+    "Scope 2": "SCOPE_2"
+    "Scope 3": "SCOPE_3"
+
+  # Map EPA categories to our canonical category names
+  # Format: "Category|Subcategory" -> {"category": "...", "activity_type": "..."}
+  # Populate these mappings once you have the real EPA CSV structure
+  category_map:
+    # ============================================
+    # Scope 1 - Stationary Combustion
+    # ============================================
+    "Stationary Combustion|Natural Gas": {"category": "stationary_combustion", "activity_type": "Natural Gas"}
+    "Stationary Combustion|Distillate Fuel Oil": {"category": "stationary_combustion", "activity_type": "Fuel Oil"}
+    "Stationary Combustion|Residual Fuel Oil": {"category": "stationary_combustion", "activity_type": "Heavy Fuel Oil"}
+    "Stationary Combustion|LPG": {"category": "stationary_combustion", "activity_type": "LPG"}
+    "Stationary Combustion|Coal": {"category": "stationary_combustion", "activity_type": "Coal"}
+
+    # ============================================
+    # Scope 1 - Mobile Sources
+    # ============================================
+    "Mobile Sources|Gasoline": {"category": "mobile_combustion", "activity_type": "Gasoline"}
+    "Mobile Sources|Diesel": {"category": "mobile_combustion", "activity_type": "Diesel"}
+    "Mobile Sources|Jet Fuel": {"category": "mobile_combustion", "activity_type": "Jet Fuel"}
+
+    # ============================================
+    # Scope 2 - Purchased Electricity
+    # ============================================
+    "Purchased Electricity|eGRID": {"category": "purchased_electricity", "activity_type": "Electricity - Grid Average"}
+    "Purchased Electricity|National Average": {"category": "purchased_electricity", "activity_type": "Electricity - National Average"}
+
+    # ============================================
+    # Scope 3 - Business Travel
+    # ============================================
+    "Business Travel|Air - Short Haul": {"category": "business_travel", "activity_type": "Air - Short Haul"}
+    "Business Travel|Air - Long Haul": {"category": "business_travel", "activity_type": "Air - Long Haul"}
+    "Business Travel|Rental Car": {"category": "business_travel", "activity_type": "Car - Average"}
+    "Business Travel|Rail": {"category": "business_travel", "activity_type": "Rail - Intercity"}
+
+    # ============================================
+    # Scope 3 - Employee Commuting
+    # ============================================
+    "Employee Commuting|Car": {"category": "employee_commuting", "activity_type": "Car - Average"}
+    "Employee Commuting|Public Transit": {"category": "employee_commuting", "activity_type": "Public Transit - Average"}
+
+    # ============================================
+    # Scope 3 - Upstream Transportation
+    # ============================================
+    "Upstream Transportation|Truck": {"category": "upstream_transportation", "activity_type": "Road Freight - Truck"}
+    "Upstream Transportation|Rail": {"category": "upstream_transportation", "activity_type": "Rail Freight"}
+    "Upstream Transportation|Ship": {"category": "upstream_transportation", "activity_type": "Sea Freight - Container"}
+
+  # Activity type rules for fallback generation
+  activity_type_rules:
+    default: "{raw_subcategory}"
+
+# Skip rules: rows matching these patterns will be skipped
+skip_patterns:
+  - "Total|*"
+  - "Average|*"
+  - "*|Biogenic*"  # Skip biogenic emissions (reported separately per GHG Protocol)

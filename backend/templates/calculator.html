@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FactorTrace - Emissions Calculator</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: #f5f7fa;
+            color: #1a202c;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        h1 {
+            font-size: 1.75rem;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+        .subtitle {
+            color: #718096;
+            font-size: 0.9rem;
+        }
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .card-header {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #4a5568;
+            margin-bottom: 0.25rem;
+        }
+        input, select {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            transition: border-color 0.15s;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #4299e1;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+        }
+        .radio-group {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .radio-option:hover {
+            background: #f7fafc;
+        }
+        .radio-option.selected {
+            border-color: #4299e1;
+            background: #ebf8ff;
+        }
+        .radio-option input {
+            width: auto;
+        }
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        .btn {
+            display: inline-block;
+            padding: 0.6rem 1.25rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-align: center;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .btn-primary {
+            background: #4299e1;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #3182ce;
+        }
+        .btn-primary:disabled {
+            background: #a0aec0;
+            cursor: not-allowed;
+        }
+        .hidden {
+            display: none !important;
+        }
+        #result {
+            margin-top: 1.5rem;
+        }
+        .result-success {
+            background: #f0fff4;
+            border: 1px solid #9ae6b4;
+        }
+        .result-error {
+            background: #fff5f5;
+            border: 1px solid #feb2b2;
+        }
+        .result-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2d3748;
+        }
+        .result-unit {
+            font-size: 1rem;
+            color: #718096;
+        }
+        .result-details {
+            margin-top: 1rem;
+            font-size: 0.875rem;
+            color: #4a5568;
+        }
+        .result-details dt {
+            font-weight: 500;
+            color: #2d3748;
+        }
+        .result-details dd {
+            margin-bottom: 0.5rem;
+        }
+        .warning {
+            background: #fffaf0;
+            border: 1px solid #fbd38d;
+            padding: 0.75rem;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            color: #744210;
+            margin-top: 0.75rem;
+        }
+        .error-details {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            background: #fff5f5;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.8rem;
+            overflow-x: auto;
+        }
+        .loading {
+            display: inline-block;
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid #fff;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 0.5rem;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        footer {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #a0aec0;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>FactorTrace Emissions Calculator</h1>
+            <p class="subtitle">Calculate GHG emissions using activity-based or spend-based methods</p>
+        </header>
+
+        <form id="calcForm">
+            <!-- Method Selection -->
+            <div class="card">
+                <div class="card-header">Calculation Method</div>
+                <div class="radio-group">
+                    <label class="radio-option selected" data-method="activity_data">
+                        <input type="radio" name="method" value="activity_data" checked>
+                        Activity-Based
+                    </label>
+                    <label class="radio-option" data-method="spend_based">
+                        <input type="radio" name="method" value="spend_based">
+                        Spend-Based (EXIOBASE)
+                    </label>
+                </div>
+
+                <div class="two-col">
+                    <div class="form-group">
+                        <label for="dataset">Dataset</label>
+                        <select id="dataset" name="dataset">
+                            <option value="AUTO">AUTO (Country-based)</option>
+                            <option value="DEFRA_2024">DEFRA 2024 (UK)</option>
+                            <option value="EPA_2024">EPA 2024 (US)</option>
+                            <option value="EXIOBASE_2020">EXIOBASE 2020</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="scope">Scope</label>
+                        <select id="scope" name="scope">
+                            <option value="1">Scope 1 - Direct</option>
+                            <option value="2" selected>Scope 2 - Indirect (Energy)</option>
+                            <option value="3">Scope 3 - Value Chain</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Location & Amount -->
+            <div class="card">
+                <div class="card-header">Location & Amount</div>
+                <div class="two-col">
+                    <div class="form-group">
+                        <label for="country_code">Country Code</label>
+                        <input type="text" id="country_code" name="country_code" value="DE"
+                               placeholder="e.g., DE, GB, US" maxlength="10" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="unit">Unit</label>
+                        <input type="text" id="unit" name="unit" value="kWh"
+                               placeholder="e.g., kWh, liters, EUR" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="amount">Amount</label>
+                    <input type="number" id="amount" name="amount" value="10000"
+                           step="any" min="0.01" placeholder="Enter quantity" required>
+                </div>
+            </div>
+
+            <!-- Activity-Based Fields -->
+            <div class="card" id="activityFields">
+                <div class="card-header">Activity Details</div>
+                <div class="form-group">
+                    <label for="category">Category</label>
+                    <input type="text" id="category" name="category" value="electricity"
+                           placeholder="e.g., electricity, stationary_combustion">
+                </div>
+                <div class="form-group">
+                    <label for="activity_type">Activity Type</label>
+                    <input type="text" id="activity_type" name="activity_type"
+                           value="Electricity - Grid Average"
+                           placeholder="e.g., Electricity - Grid Average, Natural Gas">
+                </div>
+            </div>
+
+            <!-- Spend-Based Fields -->
+            <div class="card hidden" id="spendFields">
+                <div class="card-header">Sector Information</div>
+                <div class="form-group">
+                    <label for="sector_label">Sector Label (User-Friendly)</label>
+                    <input type="text" id="sector_label" name="sector_label"
+                           placeholder="e.g., IT Services, Car Manufacturing">
+                </div>
+                <div class="form-group">
+                    <label for="exiobase_activity_type">Or: Exact EXIOBASE Sector</label>
+                    <input type="text" id="exiobase_activity_type" name="exiobase_activity_type"
+                           placeholder="e.g., Computer and related services (72)">
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" id="submitBtn">
+                Calculate Emissions
+            </button>
+        </form>
+
+        <!-- Results -->
+        <div id="result" class="card hidden">
+            <div id="resultContent"></div>
+        </div>
+
+        <footer>
+            <p>FactorTrace - CSRD/ESRS Emissions Compliance Platform</p>
+            <p>API: POST /api/v1/emissions/calculate</p>
+        </footer>
+    </div>
+
+    <script>
+        // DOM elements
+        const form = document.getElementById('calcForm');
+        const methodRadios = document.querySelectorAll('input[name="method"]');
+        const radioOptions = document.querySelectorAll('.radio-option');
+        const activityFields = document.getElementById('activityFields');
+        const spendFields = document.getElementById('spendFields');
+        const resultDiv = document.getElementById('result');
+        const resultContent = document.getElementById('resultContent');
+        const submitBtn = document.getElementById('submitBtn');
+        const unitInput = document.getElementById('unit');
+        const scopeSelect = document.getElementById('scope');
+
+        // Toggle visibility based on method
+        function updateMethodFields() {
+            const method = document.querySelector('input[name="method"]:checked').value;
+
+            if (method === 'activity_data') {
+                activityFields.classList.remove('hidden');
+                spendFields.classList.add('hidden');
+                unitInput.value = 'kWh';
+            } else {
+                activityFields.classList.add('hidden');
+                spendFields.classList.remove('hidden');
+                unitInput.value = 'EUR';
+                scopeSelect.value = '3';
+            }
+
+            // Update radio option styling
+            radioOptions.forEach(opt => {
+                const isSelected = opt.dataset.method === method;
+                opt.classList.toggle('selected', isSelected);
+            });
+        }
+
+        // Event listeners for method change
+        methodRadios.forEach(radio => {
+            radio.addEventListener('change', updateMethodFields);
+        });
+
+        radioOptions.forEach(opt => {
+            opt.addEventListener('click', () => {
+                const radio = opt.querySelector('input[type="radio"]');
+                radio.checked = true;
+                updateMethodFields();
+            });
+        });
+
+        // Form submission
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Build payload
+            const method = document.querySelector('input[name="method"]:checked').value;
+            const payload = {
+                method: method,
+                dataset: document.getElementById('dataset').value,
+                scope: parseInt(document.getElementById('scope').value),
+                country_code: document.getElementById('country_code').value.toUpperCase(),
+                amount: document.getElementById('amount').value,
+                unit: document.getElementById('unit').value,
+            };
+
+            if (method === 'activity_data') {
+                payload.category = document.getElementById('category').value;
+                payload.activity_type = document.getElementById('activity_type').value;
+            } else {
+                const sectorLabel = document.getElementById('sector_label').value;
+                const exiobaseType = document.getElementById('exiobase_activity_type').value;
+                if (sectorLabel) payload.sector_label = sectorLabel;
+                if (exiobaseType) payload.exiobase_activity_type = exiobaseType;
+            }
+
+            // Show loading state
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="loading"></span> Calculating...';
+
+            try {
+                const response = await fetch('/api/v1/emissions/calculate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showSuccess(data);
+                } else {
+                    showError(data);
+                }
+            } catch (err) {
+                showError({ detail: { message: err.message } });
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Calculate Emissions';
+            }
+        });
+
+        function showSuccess(data) {
+            resultDiv.classList.remove('hidden', 'result-error');
+            resultDiv.classList.add('result-success');
+
+            let warningHtml = '';
+            if (data.notes) {
+                warningHtml = `<div class="warning">${data.notes}</div>`;
+            }
+
+            resultContent.innerHTML = `
+                <div class="result-value">
+                    ${data.emissions_kg_co2e.toLocaleString('en-US', {maximumFractionDigits: 2})}
+                    <span class="result-unit">kgCO2e</span>
+                </div>
+                ${warningHtml}
+                <dl class="result-details">
+                    <dt>Factor Value</dt>
+                    <dd>${data.factor_value} ${data.factor_unit}</dd>
+                    <dt>Dataset Used</dt>
+                    <dd>${data.dataset_used}</dd>
+                    <dt>Method</dt>
+                    <dd>${data.method_used}</dd>
+                    <dt>Country</dt>
+                    <dd>${data.country_code}</dd>
+                    ${data.activity_type_used ? `<dt>Activity Type</dt><dd>${data.activity_type_used}</dd>` : ''}
+                    ${data.sector_used ? `<dt>Sector</dt><dd>${data.sector_used}</dd>` : ''}
+                </dl>
+            `;
+        }
+
+        function showError(data) {
+            resultDiv.classList.remove('hidden', 'result-success');
+            resultDiv.classList.add('result-error');
+
+            let errorMessage = 'An error occurred';
+            let errorDetails = '';
+
+            if (data.detail) {
+                if (typeof data.detail === 'string') {
+                    errorMessage = data.detail;
+                } else if (data.detail.message) {
+                    errorMessage = data.detail.message;
+                } else if (data.detail.error) {
+                    errorMessage = data.detail.error;
+                }
+
+                if (data.detail.lookup_key) {
+                    errorDetails = `<div class="error-details">
+                        <strong>Lookup Key:</strong>
+                        <pre>${JSON.stringify(data.detail.lookup_key, null, 2)}</pre>
+                    </div>`;
+                }
+            }
+
+            resultContent.innerHTML = `
+                <div style="color: #c53030; font-weight: 600;">Error</div>
+                <p style="margin-top: 0.5rem;">${errorMessage}</p>
+                ${errorDetails}
+            `;
+        }
+
+        // Initialize
+        updateMethodFields();
+    </script>
+</body>
+</html>

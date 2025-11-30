@@ -1,0 +1,53 @@
+# EXIOBASE 2020 Spend-Based Emission Factors Mapping Configuration
+# ================================================================
+# Maps pre-normalized EXIOBASE 3.9.4 spend-based factors CSV to EmissionFactor model.
+# Used by scripts/ingest_factors_generic.py with passthrough mode.
+#
+# Data source: EXIOBASE 3.9.4 IOT_2020_pxp (product-by-product tables)
+# Preprocessed by: scripts/prepare_exiobase_spend_2020.py
+#
+# The CSV is already normalized with EmissionFactor-compatible columns,
+# so we use passthrough mode for direct mapping without category_map.
+#
+# Factors represent kg CO2e per EUR of final demand, computed from:
+# - M matrix (total emissions - direct + indirect - per M.EUR of final demand)
+# - GWP100 values: CO2=1, CH4=28, N2O=265 (AR5)
+
+dataset: "EXIOBASE_2020"
+
+# Enable passthrough mode - CSV columns map directly to EmissionFactor fields
+passthrough: true
+
+# Default values applied to all rows
+defaults:
+  year: 2020
+  method: "spend_based"
+  regulation: "EXIOBASE"
+  source: "EXIOBASE 3.9.4 IOT_2020_pxp"
+  scope: "SCOPE_3"
+  category: "spend_based"
+
+# Column mapping: CSV column name -> logical field name
+# These map directly to CSV columns produced by prepare_exiobase_spend_2020.py
+columns:
+  raw_scope: "scope"                    # "SCOPE_3"
+  raw_category: "category"              # "spend_based"
+  raw_activity_type: "activity_type"    # Sector name (e.g., "Wheat", "Motor vehicles")
+  raw_country: "country_code"           # ISO2 or ROW_* (e.g., "DE", "US", "ROW_ASIA")
+  raw_year: "year"                      # 2020
+  raw_factor: "factor"                  # Numeric factor value
+  raw_unit: "unit"                      # "kgCO2e_per_EUR"
+  raw_external_id: "sector_code"        # Short sector code (e.g., "wheat", "motor_vehicles")
+
+# Filters: control which rows to include/exclude
+# For passthrough mode, we accept all rows since CSV is already filtered
+filters:
+  include_scopes: []       # No filtering - accept all scopes
+  include_categories: []   # No filtering - accept all categories
+  exclude_patterns: []     # No patterns to exclude
+
+# No transforms needed in passthrough mode
+# The CSV values are used directly
+transforms:
+  scope_map: {}
+  category_map: {}

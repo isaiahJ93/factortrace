@@ -1,0 +1,82 @@
+# EXIOBASE3 Spend-based Emission Factors Mapping Configuration
+# ============================================================
+# Maps EXIOBASE3 spend-based factors (kgCO2e per EUR/USD) to EmissionFactor model
+# Used by scripts/ingest_factors_generic.py
+#
+# EXIOBASE is a multi-regional input-output database used for spend-based
+# Scope 3 calculations (particularly for purchased goods and services).
+#
+# Source: https://exiobase.eu/
+
+dataset: "EXIOBASE3_SPEND"
+
+# Default values applied to all rows
+defaults:
+  year: 2024
+  country_code: "GLOBAL"  # EXIOBASE provides global average factors
+  method: "spend_based"
+  regulation: "GHG_PROTOCOL"
+  source: "EXIOBASE3 Multi-Regional Input-Output Database"
+
+# Column mapping: raw CSV column name -> logical field name
+# EXIOBASE structure is different - sector-based rather than activity-based
+# We map sector code to raw_category (used in category_map lookup)
+columns:
+  raw_scope: ""                       # No scope column - use default in scope_map
+  raw_category: "SectorCode"          # e.g., "A01", "C20" - mapped to category_map key
+  raw_subcategory: "SectorName"       # e.g., "Crop and animal production"
+  raw_activity: "SectorName"          # For activity_type_rules template
+  raw_factor: "GHG Factor"            # kgCO2e per EUR or USD
+  raw_unit: "Unit"                    # e.g., "kgCO2e/EUR", "kgCO2e/USD"
+  raw_external_id: "SectorCode"       # Use sector code as external ID
+
+# Filters: EXIOBASE has many sectors, filter to most relevant
+filters:
+  include_scopes: []  # Not filtered by scope (all spend-based = Scope 3)
+  include_categories: []  # Will be filtered by sector codes via category_map
+  exclude_patterns: []
+
+# Transform rules
+transforms:
+  # For spend-based factors, we default to Scope 3
+  scope_map:
+    default: "SCOPE_3"  # Spend-based factors are typically Scope 3
+
+  # Map EXIOBASE sector codes to our canonical categories
+  # Format: "SectorCode|SectorName" -> {"category": "...", "activity_type": "..."}
+  # These mappings align with GHG Protocol Scope 3 categories
+  # Note: The activity_type uses the SectorName from the CSV for clarity
+  category_map:
+    # ============================================
+    # Category 1: Purchased Goods and Services
+    # ============================================
+    "A01|Crop and animal production": {"category": "purchased_goods", "activity_type": "Crop and animal production"}
+    "C10-12|Food products": {"category": "purchased_goods", "activity_type": "Food products"}
+    "C13-15|Textiles and apparel": {"category": "purchased_goods", "activity_type": "Textiles and apparel"}
+    "C20|Chemicals": {"category": "purchased_goods", "activity_type": "Chemicals"}
+    "C26|Electronics and computers": {"category": "purchased_goods", "activity_type": "Electronics and computers"}
+    "C29|Motor vehicles": {"category": "purchased_goods", "activity_type": "Motor vehicles"}
+
+    # ============================================
+    # Professional Services (often purchased services)
+    # ============================================
+    "J62_63|IT Services": {"category": "purchased_services", "activity_type": "IT Services"}
+    "K64|Financial services": {"category": "purchased_services", "activity_type": "Financial services"}
+    "M69_70|Legal and accounting": {"category": "purchased_services", "activity_type": "Legal and accounting"}
+
+    # ============================================
+    # Construction (often capital goods)
+    # ============================================
+    "F|Construction": {"category": "capital_goods", "activity_type": "Construction"}
+
+  # Activity type rules: use sector name (raw_subcategory) as fallback
+  activity_type_rules:
+    default: "{raw_subcategory}"
+    purchased_goods: "{raw_subcategory}"
+    purchased_services: "{raw_subcategory}"
+    capital_goods: "{raw_subcategory}"
+
+# Skip rules
+skip_patterns:
+  - "Total|*"
+  - "Households|*"  # Skip household consumption rows

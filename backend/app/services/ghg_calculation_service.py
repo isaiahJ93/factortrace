@@ -2,8 +2,10 @@
 GHG Protocol Calculation Service - Fixed for SQLite
 Core business logic for Scope 3 calculations
 IMPROVED VERSION - Dr. Chen-Nakamura enhancements
+Now includes EXIOBASE spend-based integration (v0.2)
 """
-from typing import List, Dict, Optional
+import logging
+from typing import List, Dict, Optional, Any
 from uuid import UUID, uuid4
 from datetime import datetime
 import numpy as np
@@ -16,6 +18,12 @@ from app.models.ghg_tables import (
 from app.schemas.ghg_schemas import (
     CalculationRequest, CalculationResponse, ActivityDataInput, Scope3Category
 )
+from app.services.spend_based_calculation import (
+    calculate_spend_based_emissions,
+    SpendBasedCalculationError,
+)
+
+logger = logging.getLogger(__name__)
 
 class GHGCalculationService:
     def __init__(self, db: Session):
@@ -100,15 +108,79 @@ class GHGCalculationService:
         )
     
     async def _calculate_emissions(self, activity: ActivityDataInput) -> Dict:
-        """Calculate emissions for a single activity"""
-        
-        # Get emission factor
+        """Calculate emissions for a single activity.
+
+        Supports two calculation methods:
+        1. activity_based (default): Uses DEFRA/EPA/MASTER factors based on
+           activity category, type, and amount.
+        2. spend_based: Uses EXIOBASE_2020 spend-based factors (kgCO2e per EUR).
+           Requires spend_amount_eur and either exiobase_sector or sector_label.
+
+        EXIOBASE Integration (v0.2):
+        - Dataset: EXIOBASE_2020 (8,361 country-sector factors)
+        - Unit: kgCO2e per EUR
+        - Fallback chain: country -> ROW_region -> GLOBAL
+        - Outlier warning at >100 kgCO2e/EUR (MRIO artifacts)
+        """
+
+        # Check for spend-based calculation method
+        calculation_method = getattr(activity, 'calculation_method', None)
+        spend_amount_eur = getattr(activity, 'spend_amount_eur', None)
+        exiobase_sector = getattr(activity, 'exiobase_sector', None)
+        sector_label = getattr(activity, 'sector_label', None)
+        country_code = getattr(activity, 'country_code', None) or 'GLOBAL'
+
+        # SPEND-BASED CALCULATION (EXIOBASE_2020)
+        if calculation_method == 'spend_based' or (spend_amount_eur and spend_amount_eur > 0):
+            logger.debug(f"Using spend-based calculation for activity: {activity.activity_type}")
+
+            if not spend_amount_eur or spend_amount_eur <= 0:
+                raise ValueError(
+                    "spend_amount_eur is required for spend-based calculation "
+                    f"and must be positive. Got: {spend_amount_eur}"
+                )
+
+            try:
+                result = calculate_spend_based_emissions(
+                    db=self.db,
+                    spend_amount_eur=spend_amount_eur,
+                    country_code=country_code,
+                    exiobase_sector=exiobase_sector,
+                    sector_label=sector_label,
+                    activity_type=activity.activity_type,
+                )
+
+                # Build response with EXIOBASE metadata
+                return {
+                    'co2e': result.emissions_kg_co2e,
+                    'factor_used': result.factor_value,
+                    'factor_unit': result.factor_unit,
+                    'uncertainty': result.uncertainty_percentage,
+                    'uncertainty_range': {
+                        'min': result.emissions_kg_co2e * 0.8,  # 20% uncertainty
+                        'max': result.emissions_kg_co2e * 1.2,
+                    },
+                    'calculation_method': 'spend_based',
+                    'dataset': result.dataset,
+                    'country_code_used': result.country_code_used,
+                    'activity_type_used': result.activity_type_used,
+                    'source': result.source,
+                    'regulation': result.regulation,
+                    'factor_outlier_warning': result.factor_outlier_warning,
+                }
+
+            except SpendBasedCalculationError as e:
+                logger.error(f"Spend-based calculation failed: {e}")
+                raise ValueError(str(e))
+
+        # ACTIVITY-BASED CALCULATION (default - DEFRA/EPA/MASTER)
+        # Get emission factor from GHGEmissionFactor table
         emission_factor = self.db.query(GHGEmissionFactor).filter(
             GHGEmissionFactor.category == activity.category.value
         ).first()
-        
+
         if not emission_factor:
-            # Use default factors
+            # Use default factors when no DB factor found
             default_factors = {
                 Scope3Category.PURCHASED_GOODS: 2.5,  # kg CO2e per USD
                 Scope3Category.BUSINESS_TRAVEL: 0.15,  # kg CO2e per km
@@ -118,13 +190,13 @@ class GHGCalculationService:
             factor_value = default_factors.get(activity.category, 1.0)
         else:
             factor_value = emission_factor.factor_value
-        
+
         # Calculate emissions
         emissions_co2e = activity.amount * factor_value
-        
+
         # Add uncertainty
         uncertainty = 0.1 if emission_factor else 0.2
-        
+
         return {
             'co2e': emissions_co2e,
             'factor_used': factor_value,
@@ -132,7 +204,8 @@ class GHGCalculationService:
             'uncertainty_range': {
                 'min': emissions_co2e * (1 - uncertainty),
                 'max': emissions_co2e * (1 + uncertainty)
-            }
+            },
+            'calculation_method': 'activity_based',
         }
     
     def _generate_uncertainty_analysis(self, results: List[Dict]) -> Dict:
