@@ -183,21 +183,21 @@ export const getCategoryTooltip = (categoryKey: string): string => {
   return category ? `${category.description}\n\nExamples: ${category.examples.join(', ')}` : '';
 };
 
-export const getESRSRequirements = (categoryKey: string): string[] => {
-  return SCOPE3_CATEGORIES[categoryKey as Scope3CategoryKey]?.esrsRequirements || [];
+export const getESRSRequirements = (categoryKey: string): readonly string[] => {
+  return [...(SCOPE3_CATEGORIES[categoryKey as Scope3CategoryKey]?.esrsRequirements || [])];
 };
 
 export const getCDPQuestions = (categoryKey: string): string[] => {
-  return SCOPE3_CATEGORIES[categoryKey as Scope3CategoryKey]?.cdpQuestions || [];
+  return [...(SCOPE3_CATEGORIES[categoryKey as Scope3CategoryKey]?.cdpQuestions || [])];
 };
 
 export const isMaterialForSector = (categoryKey: string, sector: string): boolean => {
   const category = SCOPE3_CATEGORIES[categoryKey as Scope3CategoryKey];
-  return category ? category.materialSectors.includes(sector) || category.materialSectors.includes("All sectors") : false;
+  return category ? ((category.materialSectors || []) as any as string[]).includes(sector) || ((category.materialSectors || []) as any as string[]).includes("All sectors") : false;
 };
 
 export const getCategoryGuidance = (categoryKey: string): string => {
-  return SCOPE3_CATEGORIES[categoryKey as Scope3CategoryKey]?.calculationGuidance || '';
+  return SCOPE3_CATEGORIES[categoryKey as Scope3CategoryKey]?.calculationGuidance || "";
 };
 
 export const getAllCategories = (): Scope3CategoryKey[] => {
@@ -255,7 +255,7 @@ export type CategoryGroup = keyof typeof CATEGORY_GROUPS;
 
 export const getCategoryGroup = (categoryKey: string): CategoryGroup | undefined => {
   for (const [group, categories] of Object.entries(CATEGORY_GROUPS)) {
-    if (categories.includes(categoryKey)) {
+    if ((categories as unknown as string[]).includes(categoryKey)) {
       return group as CategoryGroup;
     }
   }

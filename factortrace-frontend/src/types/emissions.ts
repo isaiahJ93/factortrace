@@ -60,4 +60,12 @@ export interface UploadProgress {
   loaded: number;
   total: number;
   percentage: number;
+}export type EmissionData = Emission;
+
+export interface QualityScores {
+  accuracy: number;
+  completeness: number;
+  timeliness: number;
+  consistency: number;
+  overall: number;
 }

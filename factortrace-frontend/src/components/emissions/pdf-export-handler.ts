@@ -92,6 +92,8 @@ export interface ExportResult {
   success: boolean;
   blob: Blob | null;
   error?: string;
+  size?: number;
+  duration?: number;
 }
 
 /**
@@ -1148,7 +1150,7 @@ export class PDFExportHandler {
     if (data.scope3Categories && data.scope3Categories.length > 0) {
       // Map existing data to standard categories
       categoryData = ghgProtocolCategories.map(catName => {
-        const existingData = data.scope3Categories.find((cat: any) => 
+        const existingData = data.scope3Categories?.find((cat: any) => 
           cat.category.includes(catName.split('. ')[1])
         );
         return {
@@ -1177,7 +1179,7 @@ export class PDFExportHandler {
       };
       
       categoryData = categoryData.map(cat => {
-        const example = exampleCategories[cat.category];
+        const example = (exampleCategories as any)[cat.category];
         if (example) {
           return {
             ...cat,
@@ -1452,3 +1454,14 @@ export const generateBulkPDFReports = async (data: any[]) => {
   console.log('Bulk PDF generation not yet implemented');
   return [];
 };
+
+/**
+ * React hook for PDF export functionality
+ */
+export function usePDFExport() {
+  const exportPDF = async (data: PDFExportData, options?: any) => {
+    return generatePDFReport(data, options);
+  };
+
+  return { exportPDF };
+}

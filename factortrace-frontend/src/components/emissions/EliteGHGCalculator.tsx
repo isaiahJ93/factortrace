@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect } from 'react';
 import { 
   LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, 
@@ -1008,34 +1010,35 @@ const EliteGHGCalculator: React.FC<EliteGHGCalculatorProps> = ({
 
   const exportAsIXBRL = async () => {
     try {
-      // Check if user wants strict validation
-      const validationLevel = 'standard'; // Temporarily disabled validation dialog
+      // Create activity_data object in the format backend expects
+      const activityData: Record<string, number> = {};
+      
+      activities.filter(a => parseFloat(String(a.amount)) > 0).forEach(activity => {
+        // Use the activity ID as the key (e.g., "natural_gas_stationary" -> "natural_gas")
+        const activityKey = activity.optionId.replace('_stationary', '')
+                                          .replace('_fleet', '')
+                                          .replace('_grid', '')
+                                          .replace('electricity_grid', 'electricity');
+        
+        // Sum if the same activity type exists (e.g., multiple natural gas entries)
+        if (activityData[activityKey]) {
+          activityData[activityKey] += parseFloat(String(activity.amount));
+        } else {
+          activityData[activityKey] = parseFloat(String(activity.amount));
+        }
+      });
 
       const exportData = {
-        entity_name: esrsE1Data.organizationName || "Demo Organization",
-        organization: "Test Organization" || "Demo Organization", 
-        lei: "DEMO12345678901234AB" || "DEMO12345678901234",
-        reporting_period: parseInt(new Date().getFullYear().toString()) || new Date().getFullYear(),
-        validation_level: validationLevel,  // Add validation level
-        sector: "Technology" || "Technology",
-        primary_nace_code: "J62.01" || "J62.01",
-        consolidation_scope: "operational_control" || "operational_control",
-        emissions: {
-          scope1: parseFloat((results?.totalEmissions?.scope1 || 1000).toString()) || 100,
-          scope2_location: parseFloat((results?.totalEmissions?.scope2?.locationBased || 500).toString()) || 50,
-          scope2_market: parseFloat((results?.totalEmissions?.scope2?.marketBased || 400).toString()) || 40,
-          scope3: parseFloat((results?.totalEmissions?.scope3?.total || 2000).toString()) || 200,
-          ghg_breakdown: {
-            co2: (parseFloat((results?.totalEmissions?.scope1 || 1000).toString()) || 100) * 0.9,
-            ch4: (parseFloat((results?.totalEmissions?.scope1 || 1000).toString()) || 100) * 0.05,
-            n2o: (parseFloat((results?.totalEmissions?.scope1 || 1000).toString()) || 100) * 0.05
-          }
-        }
+        activity_data: activityData,
+        entity_name: companyName || "Your Organization",
+        organization: companyName || "Your Organization",
+        lei: "DEMO12345678901234AB",
+        reporting_period: new Date().getFullYear()
       };
 
-      console.log("Backend URL:", process.env.REACT_APP_BACKEND_URL);
-      console.log("Full URL:", `${process.env.REACT_APP_BACKEND_URL}/esrs-e1/export-ixbrl`);
-      const response = await fetch("http://localhost:8000/api/v1/esrs-e1/export-ixbrl", {
+      console.log("Sending activity data:", exportData);
+      
+      const response = await fetch("https://api.factortrace.io/api/v1/esrs-e1/export/esrs-e1-world-class", {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -1044,38 +1047,26 @@ const EliteGHGCalculator: React.FC<EliteGHGCalculatorProps> = ({
         body: JSON.stringify(exportData)
       });
 
-      // Check validation results from headers
-      const errors = parseInt(response.headers.get('X-Validation-Errors') || '0');
-      const warnings = parseInt(response.headers.get('X-Validation-Warnings') || '0');
-      const complianceScore = parseFloat(response.headers.get('X-Compliance-Score') || '0');
-
       if (!response.ok) {
         const errorText = await response.text();
-        throw new Error(errorText);
+        console.error('Backend error:', errorText);
+        throw new Error(`Export failed: ${response.status}`);
       }
 
       const blob = await response.blob();
-      const url = URL.createObjectURL(blob);
+      const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `esrs_report_${new Date().toISOString().split('T')[0]}.xhtml`;
+      a.download = `ESRS_E1_${companyName || 'Report'}_${new Date().toISOString().split('T')[0]}.html`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+      window.URL.revokeObjectURL(url);
       
-      // Show validation results
-      const message = `Export successful!\n\n` +
-        `Compliance Score: ${complianceScore}%\n` +
-        (errors > 0 ? `\n⚠️ ${errors} compliance errors - fix before regulatory submission` : "") +
-        (warnings > 0 ? `\n⚡ ${warnings} warnings - recommended improvements` : "") +
-        (errors === 0 && warnings === 0 && complianceScore >= 80 ? "\n✅ Report is fully compliant!" : "");
-      
-      alert(message);
-
-    } catch (error) {
-      console.error('Export failed:', error);
-      alert(`Export failed: ${error.message}`);
+      showToast('iXBRL report generated successfully!', 'success');
+    } catch (error: any) {
+      console.error('iXBRL export error:', error);
+      showToast(`iXBRL export failed: ${error.message}`, 'error');
     }
   };
 
@@ -2310,7 +2301,7 @@ const EliteGHGCalculator: React.FC<EliteGHGCalculatorProps> = ({
                         cx="50%"
                         cy="50%"
                         labelLine={false}
-                        label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                        label={({ name, percent }) => `${name}: ${(percent ? percent * 100 : 0).toFixed(0)}%`}
                         outerRadius={80}
                         fill="#8884d8"
                         dataKey="value"
@@ -2398,11 +2389,11 @@ const EliteGHGCalculator: React.FC<EliteGHGCalculatorProps> = ({
               <h3 className="text-lg font-medium text-gray-100 mb-4">Scope 3 Category Breakdown</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {Object.entries(results.scope3_breakdown)
-                  .filter(([_, value]) => value > 0)
+                  .filter(([_, value]) => (value as number) > 0)
                   .sort((a, b) => (b[1] as number) - (a[1] as number))
                   .map(([category, emissions]) => {
                     const categoryNumber = category.replace('category_', '');
-                    const categoryName = SCOPE3_CATEGORIES[categoryNumber] || category;
+                    const categoryName = (SCOPE3_CATEGORIES as any)[categoryNumber] || category;
                     return (
                       <div key={category} className="bg-gray-900 rounded-lg p-4">
                         <div className="flex justify-between items-center">

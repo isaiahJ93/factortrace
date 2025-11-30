@@ -7,8 +7,20 @@ interface ExportResultsProps {
   emissionsData: any;
   companyInfo?: {
     name: string;
+    companyName?: string;
     lei?: string;
     reportingPeriod: string;
+    sector?: string;
+    primary_nace_code?: string;
+    secondary_nace_codes?: string[];
+    hasTransitionPlan?: boolean;
+    aligned_1_5c?: boolean;
+    netZeroTargetYear?: number;
+    scienceBasedTargets?: boolean;
+    revenue?: number;
+    employees?: number;
+    preparerName?: string;
+    preparerEmail?: string;
   };
 }
 
@@ -79,7 +91,7 @@ const ExportResults: React.FC<ExportResultsProps> = ({
           // Map category name to proper category number
           const categoryNumber = getCategoryNumber(cat.category);
           if (categoryNumber) {
-            scope3Categories[`category_${categoryNumber}`] = {
+            scope3Categories: any[`category_${categoryNumber}`] = {
               emissions_tco2e: cat.emissions || 0,
               calculation_method: cat.calculationMethod || 'spend-based',
               data_quality_tier: cat.dataQualityTier || 'TIER_3',
@@ -107,11 +119,6 @@ const ExportResults: React.FC<ExportResultsProps> = ({
     }
 
     return {
-      // REQUIRED FIELDS
-      lei: companyInfo.lei || "ABCDEFGHIJ1234567890",
-      sector: companyInfo.sector || "Technology",
-      primary_nace_code: "62.01",
-      consolidation_scope: "consolidated",
       organization: companyInfo.name,
       lei: companyInfo.lei,
       reporting_period: parseInt(companyInfo.reportingPeriod),
@@ -124,7 +131,6 @@ const ExportResults: React.FC<ExportResultsProps> = ({
       transition_plan: {
         adopted: true,
         aligned_1_5c: true,
-        net_zero_target_year: 2050,
         net_zero_target_year: 2050
       },
       targets: {
@@ -143,14 +149,6 @@ const ExportResults: React.FC<ExportResultsProps> = ({
         scope1: emissionsData.scope1 || 0,
         scope2_location: emissionsData.scope2 || 0,
         scope2_market: emissionsData.scope2 || 0,
-        scope3_total: emissionsData.scope3 || 0,
-        total_ghg_emissions: emissionsData.total || 0,
-        ghg_breakdown: {
-          co2: (emissionsData.total || 0) * 0.95,
-          ch4: (emissionsData.total || 0) * 0.03,
-          n2o: (emissionsData.total || 0) * 0.02,
-          hfcs: 0, pfcs: 0, sf6: 0, nf3: 0
-        },
         scope3_total: emissionsData.scope3 || 0,
         total_ghg_emissions: emissionsData.total || 0,
         ghg_breakdown: {
@@ -246,54 +244,250 @@ const ExportResults: React.FC<ExportResultsProps> = ({
   };
 
   const exportIXBRL = async () => {
-    alert("exportIXBRL called!");  setExportStatus({ ...exportStatus, ixbrl: 'loading' });
-  
-  try {
-    const ixbrlData = prepareIXBRLData();
+    setExportStatus({ ...exportStatus, ixbrl: 'loading' });
     
-    const response = await fetch(`${API_URL}/api/v1/esrs-e1/export/esrs-e1-world-class`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(ixbrlData)
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Backend error:', errorText);
-      throw new Error(`Export failed: ${response.status}`);
+    try {
+      // Prepare ESRS-compliant data structure
+      const ixbrlData = {
+        // Entity Information (ESRS 2)
+        entity: {
+          name: companyInfo.companyName || companyInfo.name,
+          lei: companyInfo.lei || "PENDING_LEI_REGISTRATION", // ESRS requires LEI
+          identifier_scheme: "http://standards.iso.org/iso/17442",
+          sector: companyInfo.sector || "Unknown",
+          primary_nace_code: companyInfo.primary_nace_code || "XX.XX",
+          secondary_nace_codes: companyInfo.secondary_nace_codes || [],
+          consolidation_scope: "consolidated", // or "parent" based on your needs
+          reporting_boundary: "financial_control", // or "operational_control"
+        },
+        
+        // Reporting Period (ESRS 2)
+        period: {
+          start_date: `${companyInfo.reportingPeriod}-01-01`,
+          end_date: `${companyInfo.reportingPeriod}-12-31`,
+          reporting_year: parseInt(companyInfo.reportingPeriod),
+          comparative_year: parseInt(companyInfo.reportingPeriod) - 1,
+        },
+        
+        // ESRS E1 Climate Change Disclosures
+        climate_change: {
+          // E1-1: Transition plan for climate change mitigation
+          transition_plan: {
+            has_transition_plan: companyInfo.hasTransitionPlan || false,
+            aligned_1_5c: companyInfo.aligned_1_5c !== undefined ? companyInfo.aligned_1_5c : true,
+            net_zero_target_year: companyInfo.netZeroTargetYear || 2050,
+            science_based_targets: companyInfo.scienceBasedTargets || false,
+          },
+          
+          // E1-4: GHG emission reduction targets
+          targets: {
+            absolute_targets: [{
+              base_year: parseInt(companyInfo.reportingPeriod) - 1,
+              target_year: 2030,
+              target_reduction_percent: 50,
+              scopes_covered: ["scope1", "scope2", "scope3"],
+            }],
+            intensity_targets: [],
+          },
+          
+          // E1-6: Gross GHG emissions
+          ghg_emissions: {
+            // Scope 1 emissions
+            scope1_total: emissionsData.scope1 || 0,
+            scope1_breakdown: {
+              stationary_combustion: (emissionsData.scope1 || 0) * 0.6,
+              mobile_combustion: (emissionsData.scope1 || 0) * 0.3,
+              process_emissions: (emissionsData.scope1 || 0) * 0.05,
+              fugitive_emissions: (emissionsData.scope1 || 0) * 0.05,
+            },
+            
+            // Scope 2 emissions
+            scope2_location: emissionsData.scope2 || 0,
+            scope2_market: emissionsData.scope2 || 0,
+            
+            // Scope 3 emissions with all 15 categories
+            scope3_total: emissionsData.scope3 || 0,
+            scope3_categories: {
+              cat1_purchased_goods: (emissionsData.scope3 || 0) * 0.25,
+              cat2_capital_goods: (emissionsData.scope3 || 0) * 0.05,
+              cat3_fuel_energy: (emissionsData.scope3 || 0) * 0.10,
+              cat4_upstream_transport: (emissionsData.scope3 || 0) * 0.08,
+              cat5_waste: (emissionsData.scope3 || 0) * 0.02,
+              cat6_business_travel: (emissionsData.scope3 || 0) * 0.03,
+              cat7_employee_commuting: (emissionsData.scope3 || 0) * 0.02,
+              cat8_upstream_leased: (emissionsData.scope3 || 0) * 0.01,
+              cat9_downstream_transport: (emissionsData.scope3 || 0) * 0.09,
+              cat10_processing_sold: (emissionsData.scope3 || 0) * 0.05,
+              cat11_use_of_sold: (emissionsData.scope3 || 0) * 0.25,
+              cat12_end_of_life: (emissionsData.scope3 || 0) * 0.03,
+              cat13_downstream_leased: (emissionsData.scope3 || 0) * 0.01,
+              cat14_franchises: (emissionsData.scope3 || 0) * 0.00,
+              cat15_investments: (emissionsData.scope3 || 0) * 0.01,
+            },
+            
+            // Total emissions
+            total_ghg_emissions: emissionsData.total || 0,
+            
+            // GHG breakdown by gas type (ESRS E1-6 paragraph 44)
+            ghg_breakdown: {
+              co2_fossil: (emissionsData.total || 0) * 0.92,
+              co2_biogenic: (emissionsData.total || 0) * 0.03,
+              ch4: (emissionsData.total || 0) * 0.03,
+              n2o: (emissionsData.total || 0) * 0.02,
+              hfcs: 0,
+              pfcs: 0,
+              sf6: 0,
+              nf3: 0,
+            },
+            
+            // Emissions intensity metrics
+            intensity_metrics: {
+              per_revenue: (emissionsData.total || 0) / (companyInfo.revenue || 1000000),
+              per_employee: (emissionsData.total || 0) / (companyInfo.employees || 100),
+              per_unit_produced: null, // Optional based on sector
+            },
+          },
+          
+          // E1-7: GHG removals and storage
+          carbon_removals: {
+            total_removals: 0,
+            removal_projects: [],
+          },
+          
+          // E1-9: Carbon pricing
+          carbon_pricing: {
+            exposed_to_ets: false,
+            total_emissions_under_ets: 0,
+            carbon_credits_purchased: 0,
+          },
+        },
+        
+        // ESRS Data Quality Indicators
+        data_quality: {
+          estimation_methods_used: true,
+          third_party_verified: false,
+          verification_standard: null,
+          data_gaps_disclosed: true,
+        },
+        
+        // Metadata for iXBRL generation
+        metadata: {
+          report_type: "ESRS_E1_CLIMATE_CHANGE",
+          taxonomy_version: "EFRAG_ESRS_2023",
+          creation_timestamp: new Date().toISOString(),
+          preparer_name: companyInfo.preparerName || "Sustainability Team",
+          preparer_email: companyInfo.preparerEmail || "sustainability@company.com",
+          language: "en",
+          currency: "EUR",
+        },
+      };
+      
+      // Call the backend endpoint
+      const response = await fetch(`${API_URL}/api/v1/esrs-e1/export/esrs-e1-world-class`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(ixbrlData),
+      });
+      
+      // Handle errors
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Backend error response:', errorText);
+        
+        let errorMessage = `Export failed: ${response.status}`;
+        try {
+          const errorData = JSON.parse(errorText);
+          errorMessage = errorData.detail || errorData.message || errorMessage;
+          
+          // Check for specific XBRL validation errors
+          if (errorData.validation_errors) {
+            console.error('XBRL validation errors:', errorData.validation_errors);
+            errorMessage = `XBRL validation failed: ${errorData.validation_errors.join(', ')}`;
+          }
+        } catch (e) {
+          // If error text is not JSON, use it directly
+          if (errorText.includes('validation') || errorText.includes('XBRL')) {
+            errorMessage = errorText;
+          }
+        }
+        throw new Error(errorMessage);
+      }
+      
+      // Handle response based on Content-Type
+      const contentType = response.headers.get('content-type');
+      
+      if (contentType && contentType.includes('application/json')) {
+        // Backend returns JSON with XHTML content
+        const jsonResult = await response.json();
+        
+        if (!jsonResult.xhtml_content && !jsonResult.content) {
+          throw new Error('No XHTML content in response. Check backend iXBRL generation.');
+        }
+        
+        const xhtmlContent = jsonResult.xhtml_content || jsonResult.content;
+        
+        // Validate that it's proper XHTML
+        if (!xhtmlContent.includes('<!DOCTYPE') && 
+            !xhtmlContent.includes('<html')) {
+          console.error('Invalid XHTML structure received');
+          throw new Error('Invalid XHTML structure. Backend may have encoding issues.');
+        }
+        
+        // Create and download the XHTML file
+        const blob = new Blob([xhtmlContent], { 
+          type: 'application/xhtml+xml; charset=utf-8' 
+        });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = jsonResult.filename || `ESRS-E1-${companyInfo.companyName || companyInfo.name}-${companyInfo.reportingPeriod}.xhtml`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        
+        // Log validation status if provided
+        if (jsonResult.validation_status) {
+          console.log('XBRL validation status:', jsonResult.validation_status);
+        }
+      } else {
+        // Backend returns XHTML directly as blob
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `ESRS-E1-${companyInfo.companyName || companyInfo.name}-${companyInfo.reportingPeriod}.xhtml`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+      
+      setExportStatus({ ...exportStatus, ixbrl: 'success' });
+      setTimeout(() => setExportStatus({ ...exportStatus, ixbrl: 'idle' }), 3000);
+      
+    } catch (error: any) {
+      console.error('iXBRL export failed:', error);
+      setExportStatus({ ...exportStatus, ixbrl: 'error' });
+      
+      // User-friendly error messages
+      const errorMessage = error.message || 'Unknown error occurred';
+      if (errorMessage.includes('validation')) {
+        alert(`XBRL Validation Error: ${errorMessage}\n\nPlease ensure all required ESRS fields are properly filled.`);
+      } else if (errorMessage.includes('LEI')) {
+        alert('LEI (Legal Entity Identifier) is required for ESRS compliance. Please add it in company settings.');
+      } else if (errorMessage.includes('NACE')) {
+        alert('NACE code is required for ESRS reporting. Please specify your primary business activity code.');
+      } else {
+        alert(`Export failed: ${errorMessage}`);
+      }
+      
+      setTimeout(() => setExportStatus({ ...exportStatus, ixbrl: 'idle' }), 5000);
     }
+  };
 
-    // Parse the JSON response
-    const jsonResult = await response.json();
-    alert("Got response: " + Object.keys(jsonResult).join(", "));
-    console.log('Received response:', jsonResult);
-    console.log('xhtml_content exists?', !!jsonResult.xhtml_content);
-    console.log('xhtml_content preview:', jsonResult.xhtml_content?.substring(0, 100));
-    console.log("xhtml_content type:", typeof jsonResult.xhtml_content);
-    console.log("First 50 chars raw:", jsonResult.xhtml_content.substring(0, 50));    
-    // Extract the XHTML content
-    if (!jsonResult.xhtml_content) {
-      throw new Error('No xhtml_content in response');
-    }
-    // Create blob with XHTML content
-    const blob = new Blob([jsonResult.xhtml_content], { type: "application/xhtml+xml" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = jsonResult.filename || `esrs-e1-${companyInfo.reportingPeriod}.xhtml`;
-    a.click();
-    URL.revokeObjectURL(url);
-
-    setExportStatus({ ...exportStatus, ixbrl: "success" });
-    setTimeout(() => setExportStatus({ ...exportStatus, ixbrl: "idle" }), 3000);
-  } catch (error) {
-    console.error('iXBRL export failed:', error);
-    setExportStatus({ ...exportStatus, ixbrl: 'error' });
-    alert(error.message);
-  }
-};
 
   const generateLocalIXBRL = () => {
     const ixbrlContent = `<!DOCTYPE html>
@@ -588,8 +782,7 @@ const ExportResults: React.FC<ExportResultsProps> = ({
       // Save the PDF
       pdf.save(`ghg-emissions-report-${companyInfo.reportingPeriod}.pdf`);
       
-      setExportStatus({ ...expor
-        tStatus, pdf: 'success' });
+      setExportStatus({ ...exportStatus, pdf: 'success' });
       setTimeout(() => setExportStatus({ ...exportStatus, pdf: 'idle' }), 3000);
     } catch (error) {
       console.error('PDF export failed:', error);
@@ -604,17 +797,7 @@ const ExportResults: React.FC<ExportResultsProps> = ({
       // Try to get Excel from iXBRL endpoint first - CORRECT ENDPOINT
       const ixbrlData = prepareIXBRLData();
       const response = await fetch(`${API_URL}/api/v1/esrs-e1/export/esrs-e1-world-class`, {
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("Backend error:", errorText);
-      try {
-        const errorData = JSON.parse(errorText);
-        throw new Error(errorData.detail || `Export failed: ${response.status}`);
-      } catch (e) {
-        throw new Error(`Export failed: ${response.status}`);
-      }
-    }        method: 'POST',
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -762,9 +945,7 @@ const ExportResults: React.FC<ExportResultsProps> = ({
               <p className="mb-1">• Excel: Data workbook for analysis</p>
               <p>• JSON: Raw data for integrations</p>
             </div>
-
-
-
+          </div>
         </div>
       )}
       

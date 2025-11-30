@@ -1,20 +1,22 @@
 'use client';
-'use client';
+
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import { Home, FileText, BarChart3, Settings, LogOut, Shield, Database } from 'lucide-react';
+import { Home, FileText, BarChart3, Settings, LogOut, Shield, Database, List, Plus } from 'lucide-react';
 
 export const Navigation = () => {
   const router = useRouter();
-  
+
   const handleLogout = () => {
     localStorage.removeItem('voucherSession');
+    localStorage.removeItem('companyAccess');
     router.push('/login');
   };
 
   const navItems = [
-    { icon: Home, label: 'Dashboard', path: '/' },
-    { icon: FileText, label: 'Create Entry', path: '/vouchers/create' },
+    { icon: Home, label: 'Dashboard', path: '/dashboard' },
+    { icon: List, label: 'Emissions', path: '/emissions' },
+    { icon: Plus, label: 'Create Entry', path: '/emissions/create' },
     { icon: BarChart3, label: 'Reports', path: '/reports' },
     { icon: Settings, label: 'Settings', path: '/settings' }
   ];
@@ -31,7 +33,7 @@ export const Navigation = () => {
           <div className="flex gap-4">
             {navItems.map((item) => (
               <button
-                key={item.path}
+                key={item.label}
                 onClick={() => router.push(item.path)}
                 className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 hover:text-emerald-600 hover:bg-gray-50 rounded-lg transition-colors"
               >

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { emissionAPI, emissionWS } from '../services/api';
-import type { Emission } from '../services/api.types';
+import type { Emission } from '@/types/emissions';
 
 interface UseEmissionsReturn {
   emissions: Emission[];
