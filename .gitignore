@@ -1,3 +1,26 @@
+# macOS
+.DS_Store
+
+# Node / Next.js
+factortrace-frontend/node_modules/
+factortrace-frontend/.next/
+*.log
+
+# Python
+backend/venv/
+backend/__pycache__/
+factortrace-frontend/venv/
+factortrace-frontend/__pycache__/
+
+# Build artifacts
+*.tar.gz
+factortrace-frontend/build-output.txt
+factortrace-frontend/frontend-deploy.tar.gz
+
+# Backup files
+*.backup
+*.broken
+
 taxonomies/
 taxonomies/
 migration*.log
