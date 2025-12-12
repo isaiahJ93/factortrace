@@ -312,6 +312,16 @@ loader.register_endpoint(
     description="CBAM declarations, products, and embedded emissions calculations"
 )
 
+# EUDR (EU Deforestation Regulation) - Regulation (EU) 2023/1115
+loader.register_endpoint(
+    name="eudr",
+    module_path="eudr",
+    prefix="/eudr",
+    tags=["eudr", "regulatory-regimes"],
+    dependencies=["auth", "emission_factors"],
+    description="EUDR supply chain traceability, geo risk assessment, and due diligence"
+)
+
 # ============= ADMINISTRATIVE ENDPOINTS =============
 # Admin endpoints
 loader.register_endpoint(
@@ -406,7 +416,8 @@ async def api_status():
             "ghg_external_providers": "ghg_emission_factors" in loader.loaded_endpoints,
             "cdp_tcfd_reporting": "ghg_reports" in loader.loaded_endpoints,
             "ghg_analytics": "ghg_analytics" in loader.loaded_endpoints,
-            "cbam_declarations": "cbam" in loader.loaded_endpoints
+            "cbam_declarations": "cbam" in loader.loaded_endpoints,
+            "eudr_due_diligence": "eudr" in loader.loaded_endpoints
         }
     }
 @api_router.get("/endpoints", tags=["api"])
