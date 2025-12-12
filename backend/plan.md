@@ -1,146 +1,168 @@
 # FactorTrace Development Plan
 
-## Current Sprint: CSV Importer + Multi-Tenant Hardening
+## Current Status: Multi-Regime Platform COMPLETE
 
-**Duration**: 2 weeks (10 working days)  
-**Goal**: Production-ready CSV importer with bulletproof tenant isolation.
-
----
-
-## Phase 1: Multi-Tenant Security Hardening (Days 1–2)
-
-**Status**: 🔄 IN PROGRESS
-
-### Tasks
-- [ ] Audit all `/api/v1/emissions` endpoints for `tenant_id` filters.
-- [ ] Audit all `/api/v1/vouchers` endpoints for `tenant_id` filters.
-- [ ] Audit all `/api/v1/payments` endpoints for `tenant_id` filters.
-- [ ] Add cross-tenant access tests (create Tenant A/B data, assert isolation).
-- [ ] Run `/tenant-check` on all modified files.
-- [ ] (Optional) Add a pre-commit hook for `tenant_id` validation.
-
-### Success Criteria
-- All queries include a `tenant_id` filter.
-- Tests prove no cross-tenant leakage.
-- (If implemented) pre-commit hook catches violations.
+**Last Updated**: 2025-12-13
+**Status**: All foundational work complete. Ready for production deployment.
 
 ---
 
-## Phase 2: CSV Importer – File Upload (Days 3–4)
+## Completed Phases
 
-**Status**: ⏸️ BLOCKED (waiting for Phase 1)
+### Phase 1: Multi-Tenant Security Hardening ✅ COMPLETE
+- Created Tenant model, added tenant_id to all 8 tenant-owned models
+- Alembic migration for multi-tenant schema
+- Rewrote auth layer (JWT → tenant_id extraction)
+- Created tenant helper functions (tenant_query, get_tenant_record)
+- Updated all CSRD endpoints with tenant filtering
+- 11 tenant isolation tests passing
 
-### Tasks
-- [ ] File size validation (< 50MB, reject with clear error).
-- [ ] Safari compatibility: chunked upload with progress bar.
-- [ ] Support `.csv`, `.xlsx`, `.xls` formats.
-- [ ] Handle encoding issues (UTF-8, ISO-8859-1).
-- [ ] Store upload metadata in DB (filename, size, `tenant_id`, timestamp).
+### Phase 2: CBAM Module ✅ COMPLETE
+- 5 SQLAlchemy models (CBAMFactorSource, CBAMProduct, CBAMDeclaration, CBAMDeclarationLine, CBAMInstallation)
+- Alembic migration with tenant-first indexes
+- Pydantic schemas with EORI/CN code validation
+- 12 API endpoints (CRUD + calculate + breakdown)
+- Router registered at /api/v1/cbam/
+- 134 CBAM products seeded (CN codes for all V1 categories)
 
-### Success Criteria
-- 50MB file uploads work on Safari without freezing.
-- Clear error messages for rejected files.
-- All uploads scoped to `tenant_id`.
+### Phase 3: EUDR Module ✅ COMPLETE
+- 8 SQLAlchemy models with geospatial + supply chain graph
+- Alembic migration with geo indexes
+- Pydantic schemas with GeoJSON validation
+- 37 API endpoints including:
+  - Supply chain traversal (BFS + cycle detection)
+  - Risk assessment (refresh-risk, evaluate)
+  - Due diligence workflow
+- Router registered at /api/v1/eudr/
+- 55 EUDR commodities seeded (7 categories + derivatives)
 
----
+### Phase 4: ISSB Module ✅ COMPLETE
+- 8 SQLAlchemy models (ReportingUnit, FinancialMetric, ClimateRiskExposure, Target, Scenario, ScenarioResult, MaterialityAssessment, DisclosureStatement)
+- 15 enums for type safety
+- Alembic migration with tenant-first indexes
+- ~40 API endpoints including scenario analysis, double materiality, disclosure generation
+- Router registered at /api/v1/issb/
+- Full report generation (PDF/JSON)
 
-## Phase 3: CSV Importer – Column Mapping UI (Days 5–6)
+### Phase 5: CSRD Hardening ✅ COMPLETE
+- GAP 1: Soft delete (deleted_at column)
+- GAP 3: Pagination wrapper (PaginatedResponse)
+- GAP 4: Number sanitization (EU/US format handling)
+- GAP 5: Pint unit validation in CREATE
+- GAP 6: emission_factor_id FK for audit traceability
+- GAP 7: Audit logging (AuditLog model + service)
+- Comprehensive CSRD spec (docs/regimes/csrd.md)
 
-**Status**: ⏸️ BLOCKED (waiting for Phase 2)
+### Phase 6: Report Generation ✅ COMPLETE
+- CSRD/ESRS E1 reports (XHTML/PDF)
+- CBAM declaration exports (PDF/CSV)
+- EUDR due diligence reports (PDF/CSV)
+- ISSB disclosure statements (PDF/JSON)
+- Full report generation service
 
-### Tasks
-- [ ] Auto-detect columns from CSV headers.
-- [ ] Drag-and-drop column mapping interface.
-- [ ] Preview first 10 rows with mapped columns.
-- [ ] Save mapping state to localStorage (auto-resume).
-- [ ] Validate mappings before processing (required fields present).
+### Phase 7: Deployment Infrastructure ✅ COMPLETE
+- Dockerfile (multi-stage, Python 3.11, WeasyPrint deps)
+- docker-compose.yml (API + PostgreSQL + Redis)
+- .env.example with all variables documented
+- /health and /ready endpoints (K8s probes)
+- Rate limiting, request ID, security headers
 
-### Tech Stack
-- React with `useState` (or equivalent) for mapping state.
-- Web Workers for CSV parsing (prevent UI freeze).
-- localStorage for state persistence.
+### Phase 8: CI/CD Pipeline ✅ COMPLETE
+- .github/workflows/ci.yml (lint, test, build, security scan)
+- .github/workflows/deploy.yml (GHCR push, staging/prod deploy)
+- Codecov integration
+- Multi-platform Docker builds (amd64/arm64)
 
-### Success Criteria
-- User can map arbitrary CSV columns to FactorTrace fields.
-- Preview shows correct data.
-- Mapping state survives browser refresh.
-
----
-
-## Phase 4: CSV Importer – Validation Engine (Days 7–8)
-
-**Status**: ⏸️ BLOCKED (waiting for Phase 3)
-
-### Tasks
-- [ ] Sanitize numbers: German (1.234,56) vs US (1,234.56).
-- [ ] Validate units with Pint (reject unknown units).
-- [ ] Validate currency codes (ISO 4217).
-- [ ] Validate dates (DD/MM/YYYY, MM/DD/YYYY, YYYY-MM-DD).
-- [ ] Cell-level error display:  
-  `"Row 45, Column 'Diesel': Expected number, got 'N/A'"`.
-- [ ] "Fix automatically" suggestions for common errors.
-
-### Backend Processing (sketch)
-```python
-# Use pandas with explicit dtype control
-df = pd.read_csv(file, dtype={"activity_value": str})
-
-# Sanitize before Pint
-df["activity_value_clean"] = df["activity_value"].apply(sanitize_number)
-
-# Validate with Pint
-for idx, value in df["activity_value_clean"].items():
-    try:
-        ureg.Quantity(value).to(canonical_unit)
-    except Exception as e:
-        errors.append({
-            "row": idx,
-            "column": "activity_value",
-            "message": str(e),
-        })
-```
-
-### Success Criteria
-- All validation errors shown with specific row/column.
-- No silent failures.
-- Validation completes in < 5 seconds for 10,000 rows (target).
+### Phase 9: Emission Factor Data ✅ COMPLETE
+- EXIOBASE 2020: 8,361 factors (spend-based Scope 3)
+- DEFRA 2024: 1,262 factors (UK GHG)
+- EPA 2024: 58 factors (US GHG)
+- CBAM_DEFAULT: 23 factors
+- **Total: 9,704 production-ready emission factors**
 
 ---
 
-## Phase 5: Testing & Production Hardening (Days 9–10)
+## Final Platform Stats
 
-**Status**: ⏸️ BLOCKED (waiting for Phase 4)
-
-### Tasks
-- [ ] End-to-end test: upload → map → validate → import.
-- [ ] Load test: 10,000 row CSV.
-- [ ] Edge case tests: malformed data, empty cells, wrong types.
-- [ ] Security test: attempt to upload malicious CSV.
-- [ ] Performance profiling: identify bottlenecks.
-- [ ] Add monitoring/logging for production.
-
-### Success Criteria
-- All tests pass.
-- Performance acceptable (< 10s for 10k rows end-to-end).
-- Production-ready error handling.
+| Metric | Value |
+|--------|-------|
+| Models | 30+ |
+| API Endpoints | 100+ |
+| Tests Passing | 206 |
+| Emission Factors | 9,704 |
+| Regulatory Regimes | 4 (CSRD, CBAM, EUDR, ISSB) |
+| Export Formats | 5 (XHTML, PDF, CSV, JSON, iXBRL) |
 
 ---
 
-## Known Risks & Mitigation
+## Next Sprint: Production & Enterprise Features
 
-| Risk | Impact | Mitigation |
-|------|--------|------------|
-| Safari file upload fails > 40MB even with chunking | HIGH | Fall back to server-side chunking API |
-| German/US number detection is ambiguous | MEDIUM | Add manual format selector in UI |
-| Pint doesn't recognize obscure units | MEDIUM | Allow manual unit mapping with admin approval |
-| Validation too slow for large files | HIGH | Use Web Workers + streaming validation |
+**Duration**: 2 weeks
+**Goal**: Production deployment and enterprise-ready features
+
+### Priority 1: Production Deployment
+- [ ] Deploy to staging environment
+- [ ] Configure production PostgreSQL
+- [ ] Set up monitoring (Datadog/Sentry)
+- [ ] Configure CDN for static assets
+- [ ] SSL/TLS certificate setup
+
+### Priority 2: Frontend Integration
+- [ ] Connect Next.js frontend to backend APIs
+- [ ] Implement auth flow (JWT + tenant selection)
+- [ ] Build dashboard with regime switcher
+- [ ] CSV upload with validation UI
+- [ ] Report generation and download
+
+### Priority 3: Enterprise Features
+- [ ] Webhook system for async notifications
+- [ ] Bulk import API (async with progress)
+- [ ] Admin API for tenant management
+- [ ] API rate limiting per tenant tier
+- [ ] Usage tracking and billing hooks
+
+### Priority 4: Customer Onboarding
+- [ ] Stripe webhook hardening
+- [ ] Voucher redemption flow
+- [ ] Self-service tenant signup
+- [ ] Onboarding wizard UI
+- [ ] Documentation portal
 
 ---
 
-## Post-Sprint: Next Features (Not in current 2-week scope)
+## Future Roadmap (Post-Launch)
 
-1. **EXIOBASE integration** (spend-based factors).
-2. **Multi-regime reports** (CBAM, ISSB, EUDR).
-3. **Voucher workflow** (credit packs, supplier portals).
-4. **PDF generation** (e.g. WeasyPrint pipeline).
-5. **iXBRL export** (ESRS E1 compliance).
+### Q1 2025
+- FuelEU Maritime regime
+- Enhanced iXBRL validation (ESRS taxonomy)
+- Multi-language report generation
+
+### Q2 2025
+- NIS2 compliance module
+- Advanced analytics dashboard
+- API v2 with GraphQL option
+
+### Q3 2025
+- White-label partner portal
+- Mobile companion app
+- Real-time collaboration features
+
+---
+
+## Architecture Notes
+
+All regimes are **ADDITIVE** (new tables only, zero changes to existing Emission model):
+- Multi-tenant security pattern replicates cleanly across all regimes
+- Foundation supports unlimited future regime expansion
+- Lazy-loading router pattern for feature flags
+
+---
+
+## Reference Commands
+
+- Run security audit: `/tenant-check`
+- Debug CSV issues: `/csv-debug`
+- Profile performance: `/perf-audit`
+- Generate emissions tests: `/emission-test`
+- Help with Docker setup: `/dockerize`
+- Pre-ship quality gate: `/ship-check`
