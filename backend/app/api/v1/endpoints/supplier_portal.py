@@ -71,6 +71,8 @@ class ProductInfo(BaseModel):
     description: str
     price_cents: int
     currency: str
+    status: str = "available"
+    available_date: Optional[str] = None
 
 
 class SupplierReportSummary(BaseModel):
@@ -117,6 +119,8 @@ async def list_products():
             description=config["description"],
             price_cents=config["price_cents"],
             currency=config["currency"],
+            status=config.get("status", "available"),
+            available_date=config.get("available_date"),
         )
         for product_id, config in PRODUCTS.items()
     ]
@@ -426,6 +430,86 @@ async def list_my_vouchers(
         }
         for v in vouchers
     ]
+
+
+# =============================================================================
+# WAITLIST ENDPOINTS (PUBLIC)
+# =============================================================================
+
+class WaitlistRequest(BaseModel):
+    """Request to join a product waitlist."""
+    email: EmailStr = Field(..., description="Email address for notifications")
+    company_name: Optional[str] = Field(None, max_length=200, description="Company name")
+    product: str = Field(..., description="Product to join waitlist for")
+
+
+class WaitlistResponse(BaseModel):
+    """Response from waitlist signup."""
+    success: bool
+    message: str
+    product: str
+    available_date: Optional[str] = None
+
+
+# In-memory waitlist store (replace with DB in production)
+_waitlist: dict = {}
+
+
+@router.post("/waitlist", response_model=WaitlistResponse)
+async def join_waitlist(request: WaitlistRequest):
+    """
+    Join the waitlist for an upcoming product.
+
+    Currently supports waitlist for:
+    - dpp: Digital Product Passport (Q1 2026)
+    """
+    product_config = PRODUCTS.get(request.product)
+
+    if not product_config:
+        raise HTTPException(status_code=400, detail=f"Unknown product: {request.product}")
+
+    if product_config.get("status") != "coming_soon":
+        raise HTTPException(
+            status_code=400,
+            detail=f"Product '{request.product}' is already available, no waitlist needed"
+        )
+
+    # Store in waitlist (in production, save to DB)
+    if request.product not in _waitlist:
+        _waitlist[request.product] = []
+
+    _waitlist[request.product].append({
+        "email": request.email,
+        "company_name": request.company_name,
+        "signed_up_at": datetime.utcnow().isoformat(),
+    })
+
+    logger.info(f"Waitlist signup: {request.email} for {request.product}")
+
+    return WaitlistResponse(
+        success=True,
+        message=f"You've been added to the {product_config['name']} waitlist. We'll notify you when it launches!",
+        product=request.product,
+        available_date=product_config.get("available_date"),
+    )
+
+
+@router.get("/waitlist/{product}/count")
+async def get_waitlist_count(product: str):
+    """
+    Get waitlist count for a product.
+
+    Returns the number of people on the waitlist.
+    """
+    if product not in PRODUCTS:
+        raise HTTPException(status_code=404, detail=f"Unknown product: {product}")
+
+    count = len(_waitlist.get(product, []))
+    return {
+        "product": product,
+        "count": count,
+        "status": PRODUCTS[product].get("status", "available"),
+    }
 
 
 # =============================================================================

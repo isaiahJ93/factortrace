@@ -39,12 +39,22 @@ PRODUCTS = {
         "description": "Complete Scope 3 emissions report with CSRD/ESRS alignment",
         "price_cents": 50000,  # €500
         "currency": "eur",
+        "status": "available",
     },
     "csrd_basic": {
         "name": "CSRD Basic Report",
         "description": "Basic emissions calculation and summary report",
         "price_cents": 25000,  # €250
         "currency": "eur",
+        "status": "available",
+    },
+    "dpp": {
+        "name": "Digital Product Passport",
+        "description": "EU ESPR-compliant product passport with QR code and lifecycle data",
+        "price_cents": 20000,  # €200
+        "currency": "eur",
+        "status": "coming_soon",
+        "available_date": "Q1 2026",
     },
 }
 
