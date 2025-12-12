@@ -1617,3 +1617,98 @@ def _score_to_level(score: float) -> EUDRRiskLevel:
         return EUDRRiskLevel.MEDIUM
     else:
         return EUDRRiskLevel.HIGH
+
+
+# =============================================================================
+# EUDR REPORT GENERATION ENDPOINTS
+# =============================================================================
+
+@router.get(
+    "/due-diligence/{dd_id}/report",
+    response_model=Dict,
+    summary="Get Due Diligence Report",
+    description="Generate a comprehensive EUDR due diligence report.",
+)
+async def get_due_diligence_report(
+    dd_id: int,
+    db: Session = Depends(get_db),
+    current_user: CurrentUser = Depends(get_current_user),
+):
+    """
+    Generate a comprehensive EUDR due diligence report.
+
+    Returns structured data including:
+    - Due diligence summary
+    - Commodity breakdown by country/year
+    - Supply chain summary (operators, sites)
+    - Risk assessment by site
+    - Supply chain graph (nodes + edges)
+    - Compliance checklist
+    """
+    from app.services.eudr_report import generate_eudr_due_diligence_report, EUDRReportError
+
+    try:
+        report = generate_eudr_due_diligence_report(
+            db=db,
+            tenant_id=current_user.tenant_id,
+            due_diligence_id=dd_id,
+        )
+        return report
+    except EUDRReportError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+
+@router.post(
+    "/due-diligence/{dd_id}/export",
+    summary="Export Due Diligence Report",
+    description="Export EUDR due diligence report in PDF or CSV format.",
+)
+async def export_due_diligence_report(
+    dd_id: int,
+    format: str = Query("pdf", regex="^(pdf|csv)$", description="Export format: pdf or csv"),
+    db: Session = Depends(get_db),
+    current_user: CurrentUser = Depends(get_current_user),
+):
+    """
+    Export EUDR due diligence report.
+
+    Supported formats:
+    - pdf: Full formatted PDF report
+    - csv: Tabular data export
+    """
+    from fastapi.responses import Response
+    from app.services.eudr_report import (
+        generate_eudr_pdf,
+        export_eudr_report_csv,
+        EUDRReportError,
+    )
+
+    try:
+        if format == "pdf":
+            pdf_bytes = generate_eudr_pdf(
+                db=db,
+                tenant_id=current_user.tenant_id,
+                due_diligence_id=dd_id,
+            )
+            return Response(
+                content=pdf_bytes,
+                media_type="application/pdf",
+                headers={
+                    "Content-Disposition": f"attachment; filename=eudr_due_diligence_{dd_id}.pdf"
+                },
+            )
+        else:  # csv
+            csv_content = export_eudr_report_csv(
+                db=db,
+                tenant_id=current_user.tenant_id,
+                due_diligence_id=dd_id,
+            )
+            return Response(
+                content=csv_content,
+                media_type="text/csv",
+                headers={
+                    "Content-Disposition": f"attachment; filename=eudr_due_diligence_{dd_id}.csv"
+                },
+            )
+    except EUDRReportError as e:
+        raise HTTPException(status_code=404, detail=str(e))

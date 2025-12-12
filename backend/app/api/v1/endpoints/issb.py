@@ -1346,3 +1346,101 @@ async def archive_disclosure(
     db.commit()
     db.refresh(disclosure)
     return disclosure
+
+
+# =============================================================================
+# ISSB REPORT GENERATION ENDPOINTS
+# =============================================================================
+
+from typing import Dict
+
+@router.get(
+    "/disclosures/{disclosure_id}/report",
+    response_model=Dict,
+    summary="Get ISSB Disclosure Report",
+    description="Generate a comprehensive ISSB disclosure report.",
+)
+async def get_disclosure_report(
+    disclosure_id: int,
+    db: Session = Depends(get_db),
+    current_user: CurrentUser = Depends(get_current_user),
+):
+    """
+    Generate a comprehensive ISSB disclosure report.
+
+    Returns structured data including:
+    - Disclosure summary
+    - Reporting unit info
+    - Emissions summary (Scope 1/2/3)
+    - Scenario analysis results (1.5C, 2C, 3C)
+    - Double materiality assessment
+    - Climate risk exposures
+    - Targets and progress
+    """
+    from app.services.issb_report import generate_issb_disclosure, ISSBReportError
+
+    try:
+        report = generate_issb_disclosure(
+            db=db,
+            tenant_id=current_user.tenant_id,
+            disclosure_id=disclosure_id,
+        )
+        return report
+    except ISSBReportError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+
+@router.post(
+    "/disclosures/{disclosure_id}/export",
+    summary="Export ISSB Disclosure Report",
+    description="Export ISSB disclosure report in PDF or JSON format.",
+)
+async def export_disclosure_report(
+    disclosure_id: int,
+    format: str = Query("pdf", regex="^(pdf|json)$", description="Export format: pdf or json"),
+    db: Session = Depends(get_db),
+    current_user: CurrentUser = Depends(get_current_user),
+):
+    """
+    Export ISSB disclosure report.
+
+    Supported formats:
+    - pdf: Full formatted PDF report
+    - json: Structured JSON for investor portals
+    """
+    from fastapi.responses import Response
+    from app.services.issb_report import (
+        generate_issb_pdf,
+        export_issb_report_json,
+        ISSBReportError,
+    )
+
+    try:
+        if format == "pdf":
+            pdf_bytes = generate_issb_pdf(
+                db=db,
+                tenant_id=current_user.tenant_id,
+                disclosure_id=disclosure_id,
+            )
+            return Response(
+                content=pdf_bytes,
+                media_type="application/pdf",
+                headers={
+                    "Content-Disposition": f"attachment; filename=issb_disclosure_{disclosure_id}.pdf"
+                },
+            )
+        else:  # json
+            json_content = export_issb_report_json(
+                db=db,
+                tenant_id=current_user.tenant_id,
+                disclosure_id=disclosure_id,
+            )
+            return Response(
+                content=json_content,
+                media_type="application/json",
+                headers={
+                    "Content-Disposition": f"attachment; filename=issb_disclosure_{disclosure_id}.json"
+                },
+            )
+    except ISSBReportError as e:
+        raise HTTPException(status_code=404, detail=str(e))
