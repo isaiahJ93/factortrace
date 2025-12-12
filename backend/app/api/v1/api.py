@@ -301,6 +301,17 @@ loader.register_endpoint(
     description="CSRD/ESRS compliant report generation with iXBRL tags"
 )
 
+# ============= REGULATORY REGIME ENDPOINTS =============
+# CBAM (Carbon Border Adjustment Mechanism) - EU Regulation 2023/956
+loader.register_endpoint(
+    name="cbam",
+    module_path="cbam",
+    prefix="/cbam",
+    tags=["cbam", "regulatory-regimes"],
+    dependencies=["auth", "emission_factors"],
+    description="CBAM declarations, products, and embedded emissions calculations"
+)
+
 # ============= ADMINISTRATIVE ENDPOINTS =============
 # Admin endpoints
 loader.register_endpoint(
@@ -394,7 +405,8 @@ async def api_status():
             "ghg_uncertainty_analysis": "ghg_calculations" in loader.loaded_endpoints,
             "ghg_external_providers": "ghg_emission_factors" in loader.loaded_endpoints,
             "cdp_tcfd_reporting": "ghg_reports" in loader.loaded_endpoints,
-            "ghg_analytics": "ghg_analytics" in loader.loaded_endpoints
+            "ghg_analytics": "ghg_analytics" in loader.loaded_endpoints,
+            "cbam_declarations": "cbam" in loader.loaded_endpoints
         }
     }
 @api_router.get("/endpoints", tags=["api"])

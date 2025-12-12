@@ -21,6 +21,7 @@ from app.core.config import settings
 def generate_csrd_summary(
     db: Session,
     request: CSRDSummaryRequest,
+    tenant_id: str,
 ) -> CSRDSummaryResponse:
     """
     Generate a CSRD-style summary report with embedded iXBRL tags.
@@ -28,6 +29,7 @@ def generate_csrd_summary(
     Args:
         db: Database session
         request: Report request parameters
+        tenant_id: Tenant ID for multi-tenant filtering (REQUIRED)
 
     Returns:
         CSRDSummaryResponse with structured data and XHTML content
@@ -36,8 +38,8 @@ def generate_csrd_summary(
     period_start = request.reporting_period_start or date(request.reporting_year, 1, 1)
     period_end = request.reporting_period_end or date(request.reporting_year, 12, 31)
 
-    # Query emissions data from database
-    emissions_data = _query_emissions_by_scope(db, period_start, period_end)
+    # Query emissions data from database (MULTI-TENANT: filtered by tenant_id)
+    emissions_data = _query_emissions_by_scope(db, period_start, period_end, tenant_id)
 
     # Calculate totals
     scope_breakdown = ScopeBreakdown(
@@ -85,9 +87,12 @@ def _query_emissions_by_scope(
     db: Session,
     period_start: date,
     period_end: date,
+    tenant_id: str,
 ) -> Dict[str, Any]:
     """
     Query emissions from database grouped by scope.
+
+    MULTI-TENANT: Filters by tenant_id to ensure data isolation.
 
     Returns aggregated totals and metadata.
     """
@@ -101,12 +106,14 @@ def _query_emissions_by_scope(
 
     try:
         # Query aggregated emissions by scope
+        # MULTI-TENANT: Always filter by tenant_id
         scope_totals = (
             db.query(
                 Emission.scope,
                 func.sum(Emission.emissions_kg_co2e).label("total"),
                 func.count(Emission.id).label("count"),
             )
+            .filter(Emission.tenant_id == tenant_id)
             .filter(Emission.created_at >= period_start)
             .filter(Emission.created_at <= period_end)
             .group_by(Emission.scope)
@@ -118,9 +125,10 @@ def _query_emissions_by_scope(
             result[scope_key] = float(row.total or 0)
             result["count"] += row.count or 0
 
-        # Get unique datasets used
+        # Get unique datasets used (tenant-filtered)
         datasets = (
             db.query(Emission.dataset_used)
+            .filter(Emission.tenant_id == tenant_id)
             .filter(Emission.created_at >= period_start)
             .filter(Emission.created_at <= period_end)
             .distinct()

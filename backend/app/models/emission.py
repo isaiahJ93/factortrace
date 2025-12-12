@@ -1,17 +1,15 @@
 # backend/app/models/emission.py
 """
-SQLAlchemy model for emissions
-Clean implementation that works with the API endpoints
+SQLAlchemy model for emissions - Multi-tenant enabled.
+
+Security: All emission queries MUST be filtered by tenant_id.
 """
 from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, Enum as SQLEnum, Text, Index
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
-from sqlalchemy import Integer, String, DateTime, Float, Text, ForeignKey, Enum, JSON
-from sqlalchemy import String, DateTime, Float, Text, ForeignKey, Enum, JSON
+
 from app.core.database import Base
 import enum
-from typing import Optional
-from datetime import datetime
 
 class EmissionScope(enum.IntEnum):
     """GHG Protocol emission scopes"""
@@ -46,19 +44,27 @@ class Scope3Category(str, enum.Enum):
 
 class Emission(Base):
     """
-    Emission model for tracking GHG emissions
-    
+    Emission model for tracking GHG emissions.
+
+    Security: All emission queries MUST be filtered by tenant_id.
     This model stores individual emission entries with support for
     all three scopes as defined by the GHG Protocol.
     """
     __tablename__ = "emissions"
-    
+
     # Primary key
     id = Column(Integer, primary_key=True, index=True)
-    
+
+    # MULTI-TENANT: Required for tenant isolation
+    tenant_id = Column(
+        String(36),
+        ForeignKey("tenants.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True
+    )
+
     # Foreign keys
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=True)  # Optional for now
-    # organization_id = Column(Integer, ForeignKey("organizations.id"), nullable=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=True)
     
     # Core emission data
     scope = Column(SQLEnum(EmissionScope), nullable=False, index=True)
@@ -100,16 +106,17 @@ class Emission(Base):
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
     
     # Relationships
+    tenant = relationship("Tenant", back_populates="emissions")
     data_quality_scores = relationship("DataQualityScore", back_populates="emission")
     evidence_documents = relationship("EvidenceDocument", back_populates="emission", cascade="all, delete-orphan")
     user = relationship("User", back_populates="emissions", foreign_keys=[user_id])
-    # organization = relationship("Organization", back_populates="emissions")  # Keep commented until Organization model exists
-    
-    # Indexes for performance - FIXED: Commented out the organization index
+
+    # Indexes for performance - tenant_id first for multi-tenant queries
     __table_args__ = (
+        Index('idx_emissions_tenant_scope', 'tenant_id', 'scope'),
+        Index('idx_emissions_tenant_category', 'tenant_id', 'category'),
+        Index('idx_emissions_tenant_created', 'tenant_id', 'created_at'),
         Index('idx_emissions_user_scope', 'user_id', 'scope'),
-        # Index('idx_emissions_org_scope', 'organization_id', 'scope'),  # Commented out since organization_id doesn't exist
-        Index('idx_emissions_created_at', 'created_at'),
         Index('idx_emissions_reporting_period', 'reporting_period_start', 'reporting_period_end'),
     )
     

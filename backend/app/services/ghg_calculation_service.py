@@ -13,8 +13,9 @@ from sqlalchemy.orm import Session
 
 from app.models.ghg_tables import (
     GHGCalculationResult, GHGActivityData, GHGCategoryResult,
-    GHGEmissionFactor, GHGOrganization
+    GHGEmissionFactor
 )
+# Note: GHGOrganization removed - using Tenant model instead
 from app.schemas.ghg_schemas import (
     CalculationRequest, CalculationResponse, ActivityDataInput, Scope3Category
 )
@@ -34,9 +35,11 @@ class GHGCalculationService:
         
         # Create calculation record with string ID
         calculation_id = str(uuid4())
+        # Note: Using tenant_id (from request.organization_id for backward compat)
+        tenant_id = str(getattr(request, 'tenant_id', None) or request.organization_id)
         calculation = GHGCalculationResult(
             id=calculation_id,
-            organization_id=str(request.organization_id),
+            tenant_id=tenant_id,
             reporting_period_start=request.reporting_period_start,
             reporting_period_end=request.reporting_period_end,
             calculation_method=request.calculation_method.value,
@@ -53,12 +56,11 @@ class GHGCalculationService:
             # Store activity data with string IDs
             activity_db = GHGActivityData(
                 id=str(uuid4()),
-                organization_id=str(request.organization_id),
+                tenant_id=tenant_id,
                 calculation_id=calculation_id,
                 category=activity.category.value,
                 activity_type=activity.activity_type,
                 amount=activity.amount,
-                unit=activity.unit,
                 data_quality_score=activity.data_quality_score
             )
             self.db.add(activity_db)
@@ -69,11 +71,9 @@ class GHGCalculationService:
             # Store category result with string ID
             category_result = GHGCategoryResult(
                 id=str(uuid4()),
+                tenant_id=tenant_id,
                 calculation_id=calculation_id,
-                category=activity.category.value,
                 emissions_co2e=emissions['co2e'],
-                uncertainty_percentage=emissions.get('uncertainty', 10.0),
-                data_quality_score=activity.data_quality_score or 3.0,
                 calculation_details=emissions
             )
             self.db.add(category_result)

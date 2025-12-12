@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Request
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 import stripe
@@ -7,6 +7,9 @@ from datetime import datetime, timedelta
 
 from app.core.config import settings
 from app.core.database import get_db
+from app.core.auth import get_current_user
+from app.schemas.auth_schemas import CurrentUser
+from app.core.tenant import tenant_query
 from app.models.voucher import Voucher
 from app.models.payment import Payment
 
@@ -123,7 +126,11 @@ async def stripe_webhook(request: Request, db: Session = Depends(get_db)):
     return {"status": "success"}
 
 @router.get("/")
-async def list_vouchers(db: Session = Depends(get_db)):
-    """List all vouchers"""
-    vouchers = db.query(Voucher).all()
+async def list_vouchers(
+    db: Session = Depends(get_db),
+    current_user: CurrentUser = Depends(get_current_user)
+):
+    """List vouchers for the current tenant"""
+    # MULTI-TENANT: Always filter by tenant_id
+    vouchers = tenant_query(db, Voucher, current_user.tenant_id).all()
     return {"vouchers": vouchers}

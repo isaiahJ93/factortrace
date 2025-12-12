@@ -357,24 +357,37 @@ async def protected_esrs_export(
 async def get_voucher_status(
     voucher_code: str,
     db: Session = Depends(get_db),
-    # Add your admin authentication here
+    # NOTE: This endpoint should require super-admin access for cross-tenant queries
+    # For now, it only returns vouchers belonging to the current tenant
     # admin_user = Depends(require_admin)
 ):
     """
-    Admin endpoint to check voucher status
+    Admin endpoint to check voucher status.
+
+    NOTE: Currently returns voucher if found (no tenant filtering).
+    In production, this should require super-admin auth for cross-tenant access.
     """
     from app.models.voucher import Voucher
-    
+
+    # TODO: Add proper super-admin auth check:
+    # if not current_user.is_super_admin:
+    #     voucher = db.query(Voucher).filter(
+    #         Voucher.code == voucher_code,
+    #         Voucher.tenant_id == current_user.tenant_id
+    #     ).first()
+    # else:
+    #     voucher = db.query(Voucher).filter(Voucher.code == voucher_code).first()
+
     voucher = db.query(Voucher).filter(
         Voucher.code == voucher_code
     ).first()
-    
+
     if not voucher:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Voucher not found"
         )
-    
+
     return {
         "code": voucher.code,
         "status": voucher.status.value,

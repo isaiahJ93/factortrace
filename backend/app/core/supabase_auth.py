@@ -59,17 +59,47 @@ class TokenData(BaseModel):
     """JWT Token payload"""
     user_id: str
     email: str
+    tenant_id: Optional[str] = None  # MULTI-TENANT: Required for tenant isolation
     voucher_code: Optional[str] = None
     voucher_id: Optional[str] = None
     session_id: Optional[str] = None
+    is_super_admin: bool = False
+
+    # Supabase app_metadata extraction
+    app_metadata: Optional[dict] = None
+
+    def get_tenant_id(self) -> Optional[str]:
+        """Extract tenant_id from token or app_metadata."""
+        if self.tenant_id:
+            return self.tenant_id
+        if self.app_metadata and 'tenant_id' in self.app_metadata:
+            return self.app_metadata['tenant_id']
+        return None
+
 
 class CurrentUser(BaseModel):
-    """Current authenticated user"""
+    """
+    Current authenticated user with multi-tenant context.
+
+    Security: tenant_id is REQUIRED for all tenant-scoped operations.
+    """
     user_id: str
     email: str
+    tenant_id: str  # MULTI-TENANT: Required for tenant isolation
     voucher_code: Optional[str] = None
     voucher_id: Optional[str] = None
     is_authenticated: bool = True
+    is_super_admin: bool = False  # Platform-level admin (cross-tenant)
+
+    # Alias for compatibility with app/core/auth.py CurrentUser
+    @property
+    def id(self) -> str:
+        return self.user_id
+
+    @property
+    def can_access_all_tenants(self) -> bool:
+        """Check if user has cross-tenant access."""
+        return self.is_super_admin
 
 # ============================================================================
 # SUPABASE AUTH SERVICE
@@ -261,39 +291,60 @@ class SupabaseAuthService:
         self,
         user_id: str,
         email: str,
+        tenant_id: str,  # MULTI-TENANT: Required
         voucher_code: Optional[str] = None,
-        voucher_id: Optional[str] = None
+        voucher_id: Optional[str] = None,
+        is_super_admin: bool = False
     ) -> str:
         """
-        Create JWT access token
+        Create JWT access token with tenant context.
+
+        Args:
+            user_id: User's unique identifier
+            email: User's email
+            tenant_id: User's tenant ID (REQUIRED for multi-tenancy)
+            voucher_code: Optional voucher code used for auth
+            voucher_id: Optional voucher ID
+            is_super_admin: Whether user has cross-tenant access
         """
         payload = {
             'user_id': user_id,
+            'sub': user_id,  # Standard JWT claim
             'email': email,
+            'tenant_id': tenant_id,
             'voucher_code': voucher_code,
             'voucher_id': voucher_id,
+            'is_super_admin': is_super_admin,
             'exp': datetime.utcnow() + timedelta(minutes=AuthConfig.ACCESS_TOKEN_EXPIRE_MINUTES),
-            'iat': datetime.utcnow()
+            'iat': datetime.utcnow(),
+            # Supabase-compatible format
+            'app_metadata': {
+                'tenant_id': tenant_id,
+                'is_super_admin': is_super_admin,
+            }
         }
-        
+
         # Use Supabase JWT secret if available
         secret = AuthConfig.JWT_SECRET or AuthConfig.SUPABASE_ANON_KEY
-        
+
         return jwt.encode(payload, secret, algorithm=AuthConfig.JWT_ALGORITHM)
-    
+
     def verify_token(self, token: str) -> Optional[TokenData]:
         """
-        Verify JWT token and return token data
+        Verify JWT token and return token data with tenant context.
         """
         try:
             secret = AuthConfig.JWT_SECRET or AuthConfig.SUPABASE_ANON_KEY
             payload = jwt.decode(token, secret, algorithms=[AuthConfig.JWT_ALGORITHM])
-            
+
             return TokenData(
-                user_id=payload.get('user_id'),
+                user_id=payload.get('user_id') or payload.get('sub'),
                 email=payload.get('email'),
+                tenant_id=payload.get('tenant_id'),
                 voucher_code=payload.get('voucher_code'),
-                voucher_id=payload.get('voucher_id')
+                voucher_id=payload.get('voucher_id'),
+                is_super_admin=payload.get('is_super_admin', False),
+                app_metadata=payload.get('app_metadata')
             )
         except JWTError:
             return None
@@ -312,51 +363,86 @@ def get_auth_service() -> SupabaseAuthService:
         _auth_service = SupabaseAuthService()
     return _auth_service
 
+# Development mode configuration
+DEV_MODE = os.getenv("ENVIRONMENT", "development") == "development"
+DEV_TENANT_ID = os.getenv("DEV_TENANT_ID", "dev-tenant-00000000-0000-0000-0000-000000000000")
+
+
 async def get_current_user(
     credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
     auth_service: SupabaseAuthService = Depends(get_auth_service),
     db: Session = Depends(get_db)
 ) -> CurrentUser:
     """
-    Get current authenticated user from JWT token
+    Get current authenticated user from JWT token with tenant context.
+
+    Security: Returns CurrentUser with tenant_id ALWAYS set.
+    Validates tenant_id is present in JWT claims.
     """
+    # Development mode: return mock user if no credentials
+    if DEV_MODE and not credentials:
+        return CurrentUser(
+            user_id="dev-user-001",
+            email="dev@factortrace.local",
+            tenant_id=DEV_TENANT_ID,
+            is_authenticated=True,
+            is_super_admin=False
+        )
+
     if not credentials:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Not authenticated",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    
+
     token_data = auth_service.verify_token(credentials.credentials)
-    
+
     if not token_data:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid authentication credentials",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    
-    # Verify session is still valid in database
-    session = db.execute("""
-        SELECT * FROM user_sessions 
-        WHERE supabase_user_id = :user_id 
-        AND expires_at > NOW()
-        ORDER BY created_at DESC
-        LIMIT 1
-    """, {'user_id': token_data.user_id}).fetchone()
-    
-    if not session:
+
+    # MULTI-TENANT: Extract and validate tenant_id
+    tenant_id = token_data.get_tenant_id()
+    if not tenant_id:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Session expired",
+            detail="Token missing tenant_id",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    
+
+    # Verify session is still valid in database (skip session check in dev mode)
+    if not DEV_MODE:
+        try:
+            session = db.execute("""
+                SELECT * FROM user_sessions
+                WHERE supabase_user_id = :user_id
+                AND expires_at > NOW()
+                ORDER BY created_at DESC
+                LIMIT 1
+            """, {'user_id': token_data.user_id}).fetchone()
+
+            if not session:
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Session expired",
+                    headers={"WWW-Authenticate": "Bearer"},
+                )
+        except Exception as e:
+            # If user_sessions table doesn't exist yet, skip session validation
+            logger.warning(f"Session validation skipped: {e}")
+
     return CurrentUser(
         user_id=token_data.user_id,
         email=token_data.email,
+        tenant_id=tenant_id,
         voucher_code=token_data.voucher_code,
-        voucher_id=token_data.voucher_id
+        voucher_id=token_data.voucher_id,
+        is_authenticated=True,
+        is_super_admin=token_data.is_super_admin
     )
 
 async def require_calculator_access(

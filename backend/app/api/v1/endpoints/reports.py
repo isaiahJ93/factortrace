@@ -9,6 +9,8 @@ from fastapi.responses import Response
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
+from app.core.auth import get_current_user
+from app.schemas.auth_schemas import CurrentUser
 from app.schemas.report import (
     CSRDSummaryRequest,
     CSRDSummaryResponse,
@@ -48,15 +50,18 @@ in the `xhtml_content` field.
 async def create_csrd_summary(
     request: CSRDSummaryRequest,
     db: Session = Depends(get_db),
+    current_user: CurrentUser = Depends(get_current_user),
 ) -> CSRDSummaryResponse:
     """
     Generate a CSRD-style summary report.
 
     Aggregates emissions data from the database and generates an XHTML document
     with embedded iXBRL tags conforming to ESRS E1 disclosure requirements.
+
+    MULTI-TENANT: Only includes emissions belonging to the current tenant.
     """
     try:
-        return generate_csrd_summary(db, request)
+        return generate_csrd_summary(db, request, tenant_id=current_user.tenant_id)
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -82,15 +87,18 @@ async def create_csrd_summary(
 async def download_csrd_xhtml(
     request: CSRDSummaryRequest,
     db: Session = Depends(get_db),
+    current_user: CurrentUser = Depends(get_current_user),
 ):
     """
     Generate and return the CSRD report as a downloadable XHTML file.
 
     The file can be opened in any browser and contains valid iXBRL markup
     for regulatory submission.
+
+    MULTI-TENANT: Only includes emissions belonging to the current tenant.
     """
     try:
-        report = generate_csrd_summary(db, request)
+        report = generate_csrd_summary(db, request, tenant_id=current_user.tenant_id)
 
         # Generate filename
         filename = (
