@@ -52,7 +52,9 @@ class TestEmissionsTenantIsolation:
         # Tenant A sees only their emission
         response_a = client_a.get("/api/v1/emissions/")
         assert response_a.status_code == status.HTTP_200_OK
-        emissions_a = response_a.json()
+        emissions_data_a = response_a.json()
+        # Handle both list and paginated responses
+        emissions_a = emissions_data_a if isinstance(emissions_data_a, list) else emissions_data_a.get("items", emissions_data_a)
 
         # Should contain emission_a
         emission_ids_a = [e.get("id") for e in emissions_a]
@@ -62,7 +64,9 @@ class TestEmissionsTenantIsolation:
         # Tenant B sees only their emission
         response_b = client_b.get("/api/v1/emissions/")
         assert response_b.status_code == status.HTTP_200_OK
-        emissions_b = response_b.json()
+        emissions_data_b = response_b.json()
+        # Handle both list and paginated responses
+        emissions_b = emissions_data_b if isinstance(emissions_data_b, list) else emissions_data_b.get("items", emissions_data_b)
 
         emission_ids_b = [e.get("id") for e in emissions_b]
         assert emission_b.id in emission_ids_b, "Tenant B should see their own emission"

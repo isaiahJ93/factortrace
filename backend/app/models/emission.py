@@ -120,7 +120,7 @@ class Emission(Base):
     data_quality_scores = relationship("DataQualityScore", back_populates="emission")
     evidence_documents = relationship("EvidenceDocument", back_populates="emission", cascade="all, delete-orphan")
     user = relationship("User", back_populates="emissions", foreign_keys=[user_id])
-    emission_factor = relationship("EmissionFactor", foreign_keys=[emission_factor_id])
+    emission_factor_ref = relationship("EmissionFactor", foreign_keys=[emission_factor_id])
 
     # Indexes for performance - tenant_id first for multi-tenant queries
     __table_args__ = (
