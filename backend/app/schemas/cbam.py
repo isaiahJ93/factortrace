@@ -26,8 +26,8 @@ from app.models.cbam import (
 # CN code: 8-10 digits
 CN_CODE_PATTERN = re.compile(r"^\d{8,10}$")
 
-# HS code: 6 digits
-HS_CODE_PATTERN = re.compile(r"^\d{6}$")
+# HS code: 4-8 digits (HS system uses 4 for heading, 6 for subheading, 8 for national)
+HS_CODE_PATTERN = re.compile(r"^\d{4,8}$")
 
 # EORI: 2-letter country code + up to 15 chars
 EORI_PATTERN = re.compile(r"^[A-Z]{2}[A-Z0-9]{1,15}$")
@@ -89,7 +89,7 @@ class CBAMProductBase(BaseModel):
     @classmethod
     def validate_hs_code(cls, v: Optional[str]) -> Optional[str]:
         if v is not None and not HS_CODE_PATTERN.match(v):
-            raise ValueError("HS code must be 6 digits")
+            raise ValueError("HS code must be 4-8 digits")
         return v
 
 
