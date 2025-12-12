@@ -46,6 +46,24 @@ from app.models.cbam import (
     CBAMProductSector,
 )
 
+# EUDR regime models
+from app.models.eudr import (
+    EUDRCommodity,
+    EUDROperator,
+    EUDRSupplySite,
+    EUDRBatch,
+    EUDRSupplyChainLink,
+    EUDRGeoRiskSnapshot,
+    EUDRDueDiligence,
+    EUDRDueDiligenceBatchLink,
+    EUDRCommodityType,
+    EUDROperatorRole,
+    EUDRSupplyChainLinkType,
+    EUDRRiskLevel,
+    EUDRDueDiligenceStatus,
+    EUDRGeoRiskSource,
+)
+
 
 __all__ = [
     # Core multi-tenant models
@@ -65,6 +83,21 @@ __all__ = [
     "CBAMDeclarationStatus",
     "CBAMFactorDataset",
     "CBAMProductSector",
+    # EUDR regime models
+    "EUDRCommodity",
+    "EUDROperator",
+    "EUDRSupplySite",
+    "EUDRBatch",
+    "EUDRSupplyChainLink",
+    "EUDRGeoRiskSnapshot",
+    "EUDRDueDiligence",
+    "EUDRDueDiligenceBatchLink",
+    "EUDRCommodityType",
+    "EUDROperatorRole",
+    "EUDRSupplyChainLinkType",
+    "EUDRRiskLevel",
+    "EUDRDueDiligenceStatus",
+    "EUDRGeoRiskSource",
     # Pydantic/domain models
     "EmissionFactor",
     "EmissionsRecord",

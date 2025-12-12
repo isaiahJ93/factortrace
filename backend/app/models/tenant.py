@@ -54,6 +54,14 @@ class Tenant(Base):
     cbam_declarations = relationship("CBAMDeclaration", back_populates="tenant", lazy="dynamic")
     cbam_installations = relationship("CBAMInstallation", back_populates="tenant", lazy="dynamic")
 
+    # EUDR regime relationships
+    eudr_operators = relationship("EUDROperator", back_populates="tenant", lazy="dynamic")
+    eudr_supply_sites = relationship("EUDRSupplySite", back_populates="tenant", lazy="dynamic")
+    eudr_batches = relationship("EUDRBatch", back_populates="tenant", lazy="dynamic")
+    eudr_supply_chain_links = relationship("EUDRSupplyChainLink", back_populates="tenant", lazy="dynamic")
+    eudr_georisk_snapshots = relationship("EUDRGeoRiskSnapshot", back_populates="tenant", lazy="dynamic")
+    eudr_due_diligences = relationship("EUDRDueDiligence", back_populates="tenant", lazy="dynamic")
+
     def __repr__(self):
         return f"<Tenant {self.slug} ({self.id})>"
 
