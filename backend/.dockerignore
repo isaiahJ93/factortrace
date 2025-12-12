@@ -1,0 +1,121 @@
+# ==============================================================================
+# FactorTrace Docker Ignore
+# ==============================================================================
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Python
+__pycache__
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Testing
+.coverage
+htmlcov/
+.tox/
+.nox/
+.pytest_cache/
+.hypothesis/
+coverage.xml
+*.cover
+
+# Documentation
+docs/
+*.md
+!README.md
+
+# Local development files
+*.db
+*.sqlite
+*.sqlite3
+factortrace.db
+*.log
+*.logs
+logs/
+
+# Local config
+.env
+.env.local
+.env.development
+.env.production
+.env.*.local
+
+# Temp files
+temp/
+tmp/
+*.tmp
+*.bak
+*.backup
+
+# Archive folders
+_archive/
+_archive_*/
+
+# Test files and fixtures
+tests/
+test_*.py
+*_test.py
+conftest.py
+
+# Scripts (keep in container but not needed for build context)
+# scripts/
+
+# Large data files (mount instead)
+# data/raw/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Claude/AI files
+.claude/
+.mcp.json
+memory.md
+CLAUDE.md
+DECISIONS.md
+LEARNINGS.md
+plan.md
+
+# Build artifacts
+*.xhtml
+*.xml
+*.json.bak
+openapi.json

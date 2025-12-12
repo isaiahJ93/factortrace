@@ -299,6 +299,31 @@ async def health_check():
         "version": settings.app_version
     }
 
+
+# Kubernetes readiness probe
+@app.get("/ready", tags=["health"])
+async def readiness_check():
+    """
+    Readiness probe for Kubernetes/container orchestrators.
+    Checks database connectivity before marking service as ready.
+    """
+    from app.core.database import check_database_health
+
+    checks = {"database": "unknown", "status": "not_ready"}
+
+    try:
+        db_healthy = check_database_health()
+        checks["database"] = "healthy" if db_healthy else "unhealthy"
+
+        if db_healthy:
+            checks["status"] = "ready"
+            return checks
+        else:
+            return JSONResponse(status_code=503, content=checks)
+    except Exception as e:
+        checks["database"] = f"error: {str(e)}"
+        return JSONResponse(status_code=503, content=checks)
+
 # Detailed health check
 @app.get("/health/detailed", tags=["health"])
 async def detailed_health_check() -> Dict[str, Any]:

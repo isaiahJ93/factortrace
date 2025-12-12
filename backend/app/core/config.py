@@ -93,7 +93,14 @@ class Settings(BaseSettings):
     # External APIs
     epa_api_key: Optional["SecretStr"] = Field(None, env="EPA_API_KEY")
     ecoinvent_api_key: Optional["SecretStr"] = Field(None, env="ECOINVENT_API_KEY")
-    
+
+    # Supabase (optional - for auth/storage)
+    supabase_url: Optional[str] = Field(None, env="SUPABASE_URL")
+    supabase_key: Optional[str] = Field(None, env="SUPABASE_KEY")
+
+    # Email
+    sendgrid_api_key: Optional[str] = Field(None, env="SENDGRID_API_KEY")
+
     # Monitoring
     sentry_dsn: Optional["HttpUrl"] = Field(None, env="SENTRY_DSN")
     prometheus_enabled: bool = Field(True, env="PROMETHEUS_ENABLED")
