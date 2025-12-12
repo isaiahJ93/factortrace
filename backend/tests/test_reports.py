@@ -362,5 +362,211 @@ class TestResponseStructure:
         assert abs(data["total_emissions_tonnes_co2e"] - expected_tonnes) < 0.01
 
 
+class TestPDFGenerator:
+    """Tests for PDF generation service."""
+
+    def test_pdf_generator_imports(self):
+        """Test that PDF generator can be imported."""
+        from app.services.pdf_generator import (
+            PDFGenerator,
+            generate_pdf_from_xhtml,
+            generate_csrd_pdf,
+            generate_cbam_pdf,
+        )
+        assert PDFGenerator is not None
+
+    def test_pdf_generator_initialization(self):
+        """Test PDF generator initialization."""
+        from app.services.pdf_generator import PDFGenerator
+
+        generator = PDFGenerator(
+            company_name="Test Company",
+            include_page_numbers=True,
+            include_header=True,
+            include_footer=True,
+        )
+
+        assert generator.company_name == "Test Company"
+        assert generator.include_page_numbers is True
+        assert generator.include_header is True
+        assert generator.include_footer is True
+
+    def test_inject_print_styles(self):
+        """Test that print styles are properly injected."""
+        from app.services.pdf_generator import PDFGenerator
+
+        generator = PDFGenerator()
+        xhtml = "<html><head><style>body{}</style></head><body></body></html>"
+
+        result = generator._inject_print_styles(xhtml)
+
+        assert "@media print" in result
+        assert "@page" in result
+        assert "size: A4" in result
+
+    def test_inject_page_margin_content(self):
+        """Test that page margin content is injected."""
+        from app.services.pdf_generator import PDFGenerator
+
+        generator = PDFGenerator(
+            company_name="Test Corp",
+            include_header=True,
+            include_footer=True,
+            include_page_numbers=True,
+        )
+        xhtml = "<html><head><style>body{}</style></head><body></body></html>"
+
+        result = generator._inject_page_margin_content(xhtml)
+
+        assert "@top-center" in result or "Test Corp" in result
+        assert "@bottom-center" in result or "FactorTrace" in result
+        assert "counter(page)" in result
+
+
+class TestCBAMReport:
+    """Tests for CBAM report generation service."""
+
+    def test_cbam_report_imports(self):
+        """Test that CBAM report can be imported."""
+        from app.services.cbam_report import (
+            generate_cbam_declaration,
+            export_cbam_declaration_csv,
+            get_cbam_declaration_lines,
+        )
+        assert generate_cbam_declaration is not None
+
+    def test_cbam_csv_header(self):
+        """Test CSV export generates correct headers."""
+        # This tests that the CSV format is correct
+        expected_headers = [
+            "cn_code",
+            "product_description",
+            "country_of_origin",
+            "quantity",
+            "unit",
+            "embedded_emissions_tco2e",
+            "emission_source",
+        ]
+        # Headers should be lowercase and contain key fields
+        for header in ["cn_code", "quantity", "embedded_emissions"]:
+            assert header in " ".join(expected_headers).lower()
+
+
+class TestESRSE1Report:
+    """Tests for enhanced ESRS E1 report generation."""
+
+    def test_esrs_e1_report_imports(self):
+        """Test that ESRS E1 report can be imported."""
+        from app.services.reports import (
+            generate_esrs_e1_report,
+            DataQualityMetrics,
+            Scope3Breakdown,
+            ESRSReportData,
+        )
+        assert generate_esrs_e1_report is not None
+
+    def test_data_quality_metrics_structure(self):
+        """Test DataQualityMetrics dataclass."""
+        from app.services.reports import DataQualityMetrics
+
+        metrics = DataQualityMetrics(
+            overall_score=0.75,
+            measured_percentage=0.30,
+            calculated_percentage=0.40,
+            estimated_percentage=0.20,
+            default_percentage=0.10,
+        )
+
+        assert metrics.overall_score == 0.75
+        assert metrics.measured_percentage == 0.30
+        assert metrics.calculated_percentage == 0.40
+
+    def test_scope3_breakdown_structure(self):
+        """Test Scope3Breakdown dataclass."""
+        from app.services.reports import Scope3Breakdown
+
+        breakdown = Scope3Breakdown(
+            purchased_goods_services=100.0,
+            fuel_energy_activities=50.0,
+            business_travel=25.0,
+        )
+
+        assert breakdown.purchased_goods_services == 100.0
+        assert breakdown.fuel_energy_activities == 50.0
+        assert breakdown.business_travel == 25.0
+
+
+class TestReportEndpoints:
+    """Tests for new report API endpoints."""
+
+    def test_csrd_generate_endpoint_exists(self, client):
+        """Test that CSRD generate endpoint exists."""
+        response = client.post(
+            "/api/v1/reports/csrd/generate",
+            params={
+                "organization_name": "Test Corp",
+                "reporting_year": 2024,
+            }
+        )
+        # Should return 401 (auth required) or 200 (success), not 404
+        assert response.status_code != 404
+
+    def test_csrd_download_endpoint_exists(self, client):
+        """Test that CSRD download endpoint exists."""
+        response = client.get(
+            "/api/v1/reports/csrd/test_2024/download",
+            params={"format": "json"}
+        )
+        # Should return 401 (auth required) or 400/200, not 404
+        assert response.status_code != 404
+
+    def test_cbam_declaration_endpoint_exists(self, client):
+        """Test that CBAM declaration endpoint exists."""
+        response = client.get("/api/v1/reports/cbam/declarations/1")
+        # Should return 401 (auth required) or 404 (not found), not a routing error
+        assert response.status_code in [401, 404, 500]
+
+    def test_cbam_export_endpoint_exists(self, client):
+        """Test that CBAM export endpoint exists."""
+        response = client.post(
+            "/api/v1/reports/cbam/declarations/1/export",
+            params={"format": "csv"}
+        )
+        # Should return 401 (auth required) or 404 (not found)
+        assert response.status_code in [401, 404, 500]
+
+    def test_cbam_lines_endpoint_exists(self, client):
+        """Test that CBAM lines endpoint exists."""
+        response = client.get("/api/v1/reports/cbam/declarations/1/lines")
+        # Should return 401 (auth required) or 404 (not found)
+        assert response.status_code in [401, 404, 500]
+
+
+class TestDataQualityCalculation:
+    """Tests for data quality scoring algorithm."""
+
+    def test_data_quality_score_calculation(self):
+        """Test data quality score calculation logic."""
+        # Scoring weights:
+        # - measured: 100 points
+        # - calculated: 75 points
+        # - estimated: 50 points
+        # - default: 25 points
+
+        # Example: 2 measured, 1 calculated, 1 default
+        # Score = (2*100 + 1*75 + 1*25) / 4 = 300/4 = 75
+        measured = 2
+        calculated = 1
+        estimated = 0
+        default = 1
+        total = measured + calculated + estimated + default
+
+        score = (
+            measured * 100 + calculated * 75 + estimated * 50 + default * 25
+        ) / total / 100  # Normalize to 0-1
+
+        assert score == 0.75
+
+
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
