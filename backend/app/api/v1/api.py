@@ -343,6 +343,17 @@ loader.register_endpoint(
     description="Self-serve compliance wizard - email to report in 10 minutes"
 )
 
+# ============= SUPPLIER PORTAL =============
+# Supplier Portal - Pay, complete wizard, get report, download anytime
+loader.register_endpoint(
+    name="supplier_portal",
+    module_path="supplier_portal",
+    prefix="",  # Portal has its own /portal prefix
+    tags=["supplier-portal", "self-serve"],
+    dependencies=["auth", "wizard"],
+    description="Supplier self-serve portal - checkout, reports, downloads"
+)
+
 # ============= ADMINISTRATIVE ENDPOINTS =============
 # Admin endpoints
 loader.register_endpoint(
@@ -440,7 +451,8 @@ async def api_status():
             "cbam_declarations": "cbam" in loader.loaded_endpoints,
             "eudr_due_diligence": "eudr" in loader.loaded_endpoints,
             "issb_disclosures": "issb" in loader.loaded_endpoints,
-            "compliance_wizard": "wizard" in loader.loaded_endpoints
+            "compliance_wizard": "wizard" in loader.loaded_endpoints,
+            "supplier_portal": "supplier_portal" in loader.loaded_endpoints
         }
     }
 @api_router.get("/endpoints", tags=["api"])
