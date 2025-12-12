@@ -65,7 +65,14 @@ class Emission(Base):
 
     # Foreign keys
     user_id = Column(Integer, ForeignKey("users.id"), nullable=True)
-    
+    emission_factor_id = Column(
+        Integer,
+        ForeignKey("emission_factors.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+        comment="FK to emission_factors table for audit/traceability"
+    )
+
     # Core emission data
     scope = Column(SQLEnum(EmissionScope), nullable=False, index=True)
     category = Column(String(100), nullable=False, index=True)
@@ -104,21 +111,31 @@ class Emission(Base):
     # Timestamps
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+
+    # Soft delete (CSRD spec requirement - no hard deletes in V1)
+    deleted_at = Column(DateTime(timezone=True), nullable=True, index=True)
     
     # Relationships
     tenant = relationship("Tenant", back_populates="emissions")
     data_quality_scores = relationship("DataQualityScore", back_populates="emission")
     evidence_documents = relationship("EvidenceDocument", back_populates="emission", cascade="all, delete-orphan")
     user = relationship("User", back_populates="emissions", foreign_keys=[user_id])
+    emission_factor = relationship("EmissionFactor", foreign_keys=[emission_factor_id])
 
     # Indexes for performance - tenant_id first for multi-tenant queries
     __table_args__ = (
         Index('idx_emissions_tenant_scope', 'tenant_id', 'scope'),
         Index('idx_emissions_tenant_category', 'tenant_id', 'category'),
         Index('idx_emissions_tenant_created', 'tenant_id', 'created_at'),
+        Index('idx_emissions_tenant_deleted', 'tenant_id', 'deleted_at'),
         Index('idx_emissions_user_scope', 'user_id', 'scope'),
         Index('idx_emissions_reporting_period', 'reporting_period_start', 'reporting_period_end'),
     )
+
+    @property
+    def is_deleted(self) -> bool:
+        """Check if this emission has been soft-deleted."""
+        return self.deleted_at is not None
     
     def __repr__(self):
         return f"<Emission(id={self.id}, scope={self.scope.value}, category={self.category}, amount={self.amount})>"

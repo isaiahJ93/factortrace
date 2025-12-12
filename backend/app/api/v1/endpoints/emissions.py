@@ -27,7 +27,9 @@ from app.db.session import get_db
 from app.models.emission import Emission, EmissionScope
 from app.models.emission_factor import EmissionFactor
 from app.models.evidence_document import EvidenceDocument
-from app.core.tenant import tenant_query, get_tenant_record, delete_tenant_record
+from app.core.tenant import tenant_query, get_tenant_record, delete_tenant_record, soft_delete_tenant_record, restore_tenant_record
+from app.core.queries import paginate_query
+from app.schemas.common import PaginationMeta
 from app.schemas.emission import (
     EmissionCreate,
     EmissionResponse,
@@ -48,6 +50,15 @@ from app.services.spend_based_calculation import (
 
 # Import data quality calculation
 from app.api.v1.endpoints.data_quality import calculate_data_quality_score
+
+# Import audit logging service
+from app.services.audit import log_create, log_delete, log_restore
+
+# Import number sanitization for locale handling
+from app.utils.format import sanitize_number, NumberFormatError
+
+# Import unit validation for Pint-based unit checking
+from app.utils.units import validate_unit, UnitError
 
 # Import from emissions calculator
 from app.services.emissions_calculator import (
@@ -812,7 +823,6 @@ async def delete_evidence(
 
 @router.get(
     "/",
-    response_model=List[EmissionResponse],
     summary="List all Emission records",
     description="""
 Retrieve a paginated list of emission records with optional filtering.
@@ -823,13 +833,29 @@ Retrieve a paginated list of emission records with optional filtering.
 - **start_date / end_date**: Filter by creation date range
 
 ## Pagination
-- **skip**: Number of records to skip (default: 0)
-- **limit**: Maximum records to return (default: 100, max: 1000)
+- **page**: Page number (1-indexed, default: 1)
+- **per_page**: Items per page (default: 20, max: 100)
 
 Results are sorted by creation date (newest first).
+
+## Response Format
+Returns paginated response with metadata:
+```json
+{
+    "items": [...],
+    "meta": {
+        "total": 100,
+        "page": 1,
+        "per_page": 20,
+        "pages": 5,
+        "has_next": true,
+        "has_prev": false
+    }
+}
+```
     """,
     responses={
-        200: {"description": "List of emission records"},
+        200: {"description": "Paginated list of emission records"},
         401: {"description": "Not authenticated"}
     },
     tags=["Emissions"]
@@ -839,8 +865,8 @@ async def get_emissions(
     category: Optional[str] = Query(None, description="Filter by emission category (exact match)"),
     start_date: Optional[datetime] = Query(None, description="Filter records created after this date (ISO 8601)"),
     end_date: Optional[datetime] = Query(None, description="Filter records created before this date (ISO 8601)"),
-    skip: int = Query(0, ge=0, description="Number of records to skip for pagination"),
-    limit: int = Query(100, ge=1, le=1000, description="Maximum number of records to return"),
+    page: int = Query(1, ge=1, description="Page number (1-indexed)"),
+    per_page: int = Query(20, ge=1, le=100, description="Items per page (max 100)"),
     db: Session = Depends(get_db),
     current_user: CurrentUser = Depends(get_current_user)
 ):
@@ -860,10 +886,12 @@ async def get_emissions(
         query = query.filter(Emission.created_at <= end_date)
 
     query = query.order_by(Emission.created_at.desc())
-    emissions = query.offset(skip).limit(limit).all()
-    
+
+    # Apply pagination using the standardized helper
+    emissions, meta = paginate_query(query, page=page, per_page=per_page)
+
     # Serialize emissions using actual model attributes
-    results = []
+    items = []
     for emission in emissions:
         emission_dict = {
             "id": emission.id,
@@ -888,9 +916,12 @@ async def get_emissions(
             "created_at": emission.created_at,
             "updated_at": emission.updated_at,
         }
-        results.append(emission_dict)
+        items.append(emission_dict)
 
-    return results
+    return {
+        "items": items,
+        "meta": meta.model_dump()
+    }
 
 @router.get(
     "/summary",
@@ -1496,6 +1527,17 @@ async def create_emission(
     import logging
     logger = logging.getLogger(__name__)
 
+    # STEP 0: Validate unit using Pint (per CLAUDE.md requirements)
+    if emission.unit and not validate_unit(emission.unit):
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail={
+                "error": "INVALID_UNIT",
+                "message": f"Unknown or invalid unit: '{emission.unit}'",
+                "hint": "Use standard units like kWh, kg, L, km, m³, etc."
+            }
+        )
+
     factor_value: float | None = None
     factor_source: str = "Unknown"
 
@@ -1566,6 +1608,16 @@ async def create_emission(
     )
 
     db.add(emission_entry)
+    db.flush()  # Get the ID before commit for audit log
+
+    # Log CREATE action for audit trail (CSRD compliance)
+    log_create(
+        db=db,
+        entity=emission_entry,
+        tenant_id=current_user.tenant_id,
+        user_id=current_user.id if hasattr(current_user, 'id') else None
+    )
+
     db.commit()
     db.refresh(emission_entry)
 
@@ -1640,10 +1692,67 @@ async def delete_emission(
     db: Session = Depends(get_db),
     current_user: CurrentUser = Depends(get_current_user)
 ):
-    """Delete an emission entry"""
-    # MULTI-TENANT: Validate emission belongs to current tenant and delete
-    delete_tenant_record(db, Emission, emission_id, current_user.tenant_id)
-    return {"message": "Emission deleted successfully", "id": emission_id}
+    """
+    Soft delete an emission entry.
+
+    CSRD Compliance: Records are soft-deleted (deleted_at timestamp set) rather
+    than physically removed. This preserves audit trail and allows recovery.
+
+    Use POST /{emission_id}/restore to recover a soft-deleted record.
+    """
+    # MULTI-TENANT: Validate emission belongs to current tenant and soft delete
+    emission = soft_delete_tenant_record(db, Emission, emission_id, current_user.tenant_id)
+
+    # Log DELETE action for audit trail (CSRD compliance)
+    log_delete(
+        db=db,
+        entity=emission,
+        tenant_id=current_user.tenant_id,
+        user_id=current_user.id if hasattr(current_user, 'id') else None
+    )
+
+    db.commit()
+    return {
+        "message": "Emission soft-deleted successfully",
+        "id": emission_id,
+        "deleted_at": emission.deleted_at.isoformat() if emission else None
+    }
+
+
+@router.post("/{emission_id}/restore")
+async def restore_emission(
+    emission_id: int,
+    db: Session = Depends(get_db),
+    current_user: CurrentUser = Depends(get_current_user)
+):
+    """
+    Restore a soft-deleted emission entry.
+
+    Clears the deleted_at timestamp, making the record visible again in queries.
+    """
+    # MULTI-TENANT: Validate emission belongs to current tenant and restore
+    emission = restore_tenant_record(db, Emission, emission_id, current_user.tenant_id)
+
+    if emission:
+        # Log RESTORE action for audit trail (CSRD compliance)
+        log_restore(
+            db=db,
+            entity=emission,
+            tenant_id=current_user.tenant_id,
+            user_id=current_user.id if hasattr(current_user, 'id') else None
+        )
+
+        db.commit()
+        return {
+            "message": "Emission restored successfully",
+            "id": emission_id,
+            "deleted_at": None
+        }
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Emission not found"
+        )
 
 @router.get("/export/csv")
 async def export_emissions_csv(
@@ -1753,7 +1862,13 @@ async def bulk_upload_emissions(
                 errors.append(f"Row {row_num}: Emission factor '{row.get('emission_factor_name')}' not found")
                 continue
 
-            activity_data = float(row.get('activity_data', 0))
+            # Sanitize numeric values (handles EU 1.234,56 vs US 1,234.56 formats)
+            try:
+                activity_data = sanitize_number(row.get('activity_data', 0)) or 0.0
+            except NumberFormatError as e:
+                errors.append(f"Row {row_num}: Invalid activity_data format - {e}")
+                continue
+
             co2e_total = activity_data * float(factor.factor)
 
             # MULTI-TENANT: Set tenant_id from current user

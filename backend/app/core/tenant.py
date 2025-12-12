@@ -8,6 +8,7 @@ Use these functions consistently to prevent cross-tenant data leaks.
 Security: ALWAYS use these helpers instead of raw queries on tenant-owned models.
 """
 from typing import TypeVar, Optional, Any, TYPE_CHECKING
+from datetime import datetime
 from sqlalchemy.orm import Session, Query
 from fastapi import HTTPException, status
 
@@ -16,6 +17,11 @@ if TYPE_CHECKING:
 
 # Generic type for SQLAlchemy models
 T = TypeVar('T')
+
+
+def _has_soft_delete(model: Any) -> bool:
+    """Check if a model supports soft delete (has deleted_at column)."""
+    return hasattr(model, 'deleted_at')
 
 
 def tenant_filter(query: Query, model: Any, tenant_id: str) -> Query:
@@ -43,10 +49,13 @@ def get_tenant_record(
     model: Any,
     record_id: Any,
     tenant_id: str,
-    raise_404: bool = True
+    raise_404: bool = True,
+    include_deleted: bool = False
 ) -> Optional[Any]:
     """
     Get a single record with tenant isolation.
+
+    Automatically excludes soft-deleted records unless include_deleted=True.
 
     Args:
         db: Database session
@@ -54,6 +63,7 @@ def get_tenant_record(
         record_id: Primary key value
         tenant_id: The tenant ID to filter by
         raise_404: If True, raises HTTPException if not found
+        include_deleted: If True, include soft-deleted records (default False)
 
     Returns:
         The record if found and belongs to tenant, else None
@@ -64,10 +74,16 @@ def get_tenant_record(
     Example:
         emission = get_tenant_record(db, Emission, emission_id, current_user.tenant_id)
     """
-    record = db.query(model).filter(
+    query = db.query(model).filter(
         model.id == record_id,
         model.tenant_id == tenant_id
-    ).first()
+    )
+
+    # Exclude soft-deleted records by default
+    if _has_soft_delete(model) and not include_deleted:
+        query = query.filter(model.deleted_at.is_(None))
+
+    record = query.first()
 
     if record is None and raise_404:
         raise HTTPException(
@@ -78,24 +94,39 @@ def get_tenant_record(
     return record
 
 
-def tenant_query(db: Session, model: Any, tenant_id: str) -> Query:
+def tenant_query(
+    db: Session,
+    model: Any,
+    tenant_id: str,
+    include_deleted: bool = False
+) -> Query:
     """
     Create a tenant-scoped query.
 
     Convenience function that combines db.query() with tenant filtering.
+    Automatically excludes soft-deleted records unless include_deleted=True.
 
     Args:
         db: Database session
         model: The model class to query
         tenant_id: The tenant ID to filter by
+        include_deleted: If True, include soft-deleted records (default False)
 
     Returns:
-        Query pre-filtered by tenant_id
+        Query pre-filtered by tenant_id (and deleted_at IS NULL for soft-delete models)
 
     Example:
         emissions = tenant_query(db, Emission, current_user.tenant_id).all()
+        # Include deleted:
+        all_emissions = tenant_query(db, Emission, current_user.tenant_id, include_deleted=True).all()
     """
-    return db.query(model).filter(model.tenant_id == tenant_id)
+    query = db.query(model).filter(model.tenant_id == tenant_id)
+
+    # Automatically exclude soft-deleted records
+    if _has_soft_delete(model) and not include_deleted:
+        query = query.filter(model.deleted_at.is_(None))
+
+    return query
 
 
 def create_tenant_record(
@@ -183,7 +214,10 @@ def delete_tenant_record(
     raise_404: bool = True
 ) -> bool:
     """
-    Delete a record with tenant isolation check.
+    Hard delete a record with tenant isolation check.
+
+    WARNING: Prefer soft_delete_tenant_record() for audit compliance.
+    Use this only for non-auditable data or when required.
 
     Args:
         db: Database session
@@ -214,6 +248,94 @@ def delete_tenant_record(
         )
 
     return result > 0
+
+
+def soft_delete_tenant_record(
+    db: Session,
+    model: Any,
+    record_id: Any,
+    tenant_id: str,
+    raise_404: bool = True
+) -> Optional[Any]:
+    """
+    Soft delete a record by setting deleted_at timestamp.
+
+    This is the preferred delete method for CSRD compliance.
+    Records are excluded from normal queries but remain in database.
+
+    Args:
+        db: Database session
+        model: The model class (must have deleted_at column)
+        record_id: Primary key value
+        tenant_id: The tenant ID to verify
+        raise_404: If True, raises HTTPException if not found
+
+    Returns:
+        The soft-deleted record, or None if not found
+
+    Raises:
+        HTTPException(404) if raise_404=True and record not found
+        ValueError if model doesn't support soft delete
+
+    Example:
+        emission = soft_delete_tenant_record(db, Emission, emission_id, current_user.tenant_id)
+        db.commit()
+    """
+    if not _has_soft_delete(model):
+        raise ValueError(f"{model.__name__} does not support soft delete (missing deleted_at column)")
+
+    record = get_tenant_record(db, model, record_id, tenant_id, raise_404)
+
+    if record is None:
+        return None
+
+    record.deleted_at = datetime.utcnow()
+    return record
+
+
+def restore_tenant_record(
+    db: Session,
+    model: Any,
+    record_id: Any,
+    tenant_id: str,
+    raise_404: bool = True
+) -> Optional[Any]:
+    """
+    Restore a soft-deleted record by clearing deleted_at.
+
+    Args:
+        db: Database session
+        model: The model class (must have deleted_at column)
+        record_id: Primary key value
+        tenant_id: The tenant ID to verify
+        raise_404: If True, raises HTTPException if not found
+
+    Returns:
+        The restored record, or None if not found
+
+    Raises:
+        HTTPException(404) if raise_404=True and record not found
+        ValueError if model doesn't support soft delete
+
+    Example:
+        emission = restore_tenant_record(db, Emission, emission_id, current_user.tenant_id)
+        db.commit()
+    """
+    if not _has_soft_delete(model):
+        raise ValueError(f"{model.__name__} does not support soft delete (missing deleted_at column)")
+
+    # Use include_deleted=True to find soft-deleted records
+    record = get_tenant_record(db, model, record_id, tenant_id, raise_404, include_deleted=True)
+
+    if record is None:
+        return None
+
+    if record.deleted_at is None:
+        # Record is not deleted, nothing to restore
+        return record
+
+    record.deleted_at = None
+    return record
 
 
 def verify_tenant_access(
