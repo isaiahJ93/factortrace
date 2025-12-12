@@ -62,6 +62,11 @@ class Tenant(Base):
     eudr_georisk_snapshots = relationship("EUDRGeoRiskSnapshot", back_populates="tenant", lazy="dynamic")
     eudr_due_diligences = relationship("EUDRDueDiligence", back_populates="tenant", lazy="dynamic")
 
+    # ISSB regime relationships
+    issb_reporting_units = relationship("ISSBReportingUnit", back_populates="tenant", lazy="dynamic")
+    issb_scenarios = relationship("ISSBScenario", back_populates="tenant", lazy="dynamic")
+    issb_disclosure_statements = relationship("ISSBDisclosureStatement", back_populates="tenant", lazy="dynamic")
+
     def __repr__(self):
         return f"<Tenant {self.slug} ({self.id})>"
 

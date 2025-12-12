@@ -64,6 +64,35 @@ from app.models.eudr import (
     EUDRGeoRiskSource,
 )
 
+# ISSB regime models
+from app.models.issb import (
+    ISSBReportingUnit,
+    ISSBFinancialMetric,
+    ISSBClimateRiskExposure,
+    ISSBTarget,
+    ISSBScenario,
+    ISSBScenarioResult,
+    ISSBMaterialityAssessment,
+    ISSBDisclosureStatement,
+    # Enums
+    ISSBConsolidationMethod,
+    ISSBMetricType,
+    ISSBRiskType,
+    ISSBPhysicalRiskSubtype,
+    ISSBTransitionRiskSubtype,
+    ISSBTimeHorizon,
+    ISSBFinancialImpactType,
+    ISSBLikelihood,
+    ISSBEmissionsScope,
+    ISSBTargetType,
+    ISSBTargetStatus,
+    ISSBScenarioResultMetric,
+    ISSBMaterialityTopic,
+    ISSBDisclosureStandard,
+    ISSBDisclosureSection,
+    ISSBDisclosureStatus,
+)
+
 
 __all__ = [
     # Core multi-tenant models
@@ -98,6 +127,32 @@ __all__ = [
     "EUDRRiskLevel",
     "EUDRDueDiligenceStatus",
     "EUDRGeoRiskSource",
+    # ISSB regime models
+    "ISSBReportingUnit",
+    "ISSBFinancialMetric",
+    "ISSBClimateRiskExposure",
+    "ISSBTarget",
+    "ISSBScenario",
+    "ISSBScenarioResult",
+    "ISSBMaterialityAssessment",
+    "ISSBDisclosureStatement",
+    # ISSB enums
+    "ISSBConsolidationMethod",
+    "ISSBMetricType",
+    "ISSBRiskType",
+    "ISSBPhysicalRiskSubtype",
+    "ISSBTransitionRiskSubtype",
+    "ISSBTimeHorizon",
+    "ISSBFinancialImpactType",
+    "ISSBLikelihood",
+    "ISSBEmissionsScope",
+    "ISSBTargetType",
+    "ISSBTargetStatus",
+    "ISSBScenarioResultMetric",
+    "ISSBMaterialityTopic",
+    "ISSBDisclosureStandard",
+    "ISSBDisclosureSection",
+    "ISSBDisclosureStatus",
     # Pydantic/domain models
     "EmissionFactor",
     "EmissionsRecord",

@@ -322,6 +322,16 @@ loader.register_endpoint(
     description="EUDR supply chain traceability, geo risk assessment, and due diligence"
 )
 
+# ISSB (IFRS S1 + S2) - Climate-related financial disclosures
+loader.register_endpoint(
+    name="issb",
+    module_path="issb",
+    prefix="/issb",
+    tags=["issb", "regulatory-regimes"],
+    dependencies=["auth", "emission_factors"],
+    description="ISSB climate-related financial disclosures, scenario analysis, and materiality assessment"
+)
+
 # ============= ADMINISTRATIVE ENDPOINTS =============
 # Admin endpoints
 loader.register_endpoint(
@@ -417,7 +427,8 @@ async def api_status():
             "cdp_tcfd_reporting": "ghg_reports" in loader.loaded_endpoints,
             "ghg_analytics": "ghg_analytics" in loader.loaded_endpoints,
             "cbam_declarations": "cbam" in loader.loaded_endpoints,
-            "eudr_due_diligence": "eudr" in loader.loaded_endpoints
+            "eudr_due_diligence": "eudr" in loader.loaded_endpoints,
+            "issb_disclosures": "issb" in loader.loaded_endpoints
         }
     }
 @api_router.get("/endpoints", tags=["api"])
