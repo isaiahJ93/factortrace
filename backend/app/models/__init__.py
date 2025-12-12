@@ -93,6 +93,13 @@ from app.models.issb import (
     ISSBDisclosureStatus,
 )
 
+# Wizard models
+from app.models.wizard import (
+    ComplianceWizardSession,
+    IndustryTemplate,
+    WizardStatus,
+)
+
 
 __all__ = [
     # Core multi-tenant models
@@ -174,4 +181,8 @@ __all__ = [
     "DataQualityTierEnum",
     "VerificationLevelEnum",
     "TemporalGranularityEnum",
+    # Wizard models
+    "ComplianceWizardSession",
+    "IndustryTemplate",
+    "WizardStatus",
 ]

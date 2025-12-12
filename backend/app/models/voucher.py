@@ -70,6 +70,7 @@ class Voucher(Base):
     tenant = relationship("Tenant", back_populates="vouchers")
     payment = relationship("Payment", back_populates="vouchers")
     user = relationship("User", foreign_keys=[used_by_user_id])
+    wizard_session = relationship("ComplianceWizardSession", back_populates="voucher", uselist=False)
 
     # Indexes for performance - tenant_id first for multi-tenant queries
     __table_args__ = (

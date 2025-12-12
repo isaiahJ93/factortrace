@@ -67,6 +67,9 @@ class Tenant(Base):
     issb_scenarios = relationship("ISSBScenario", back_populates="tenant", lazy="dynamic")
     issb_disclosure_statements = relationship("ISSBDisclosureStatement", back_populates="tenant", lazy="dynamic")
 
+    # Wizard sessions
+    wizard_sessions = relationship("ComplianceWizardSession", back_populates="tenant", lazy="dynamic")
+
     def __repr__(self):
         return f"<Tenant {self.slug} ({self.id})>"
 

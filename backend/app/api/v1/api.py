@@ -332,6 +332,17 @@ loader.register_endpoint(
     description="ISSB climate-related financial disclosures, scenario analysis, and materiality assessment"
 )
 
+# ============= SELF-SERVE WIZARD =============
+# Compliance Wizard - The "€500 magic moment" for Tier 2 suppliers
+loader.register_endpoint(
+    name="wizard",
+    module_path="wizard",
+    prefix="/wizard",
+    tags=["wizard", "self-serve"],
+    dependencies=["auth", "vouchers", "emission_factors"],
+    description="Self-serve compliance wizard - email to report in 10 minutes"
+)
+
 # ============= ADMINISTRATIVE ENDPOINTS =============
 # Admin endpoints
 loader.register_endpoint(
@@ -428,7 +439,8 @@ async def api_status():
             "ghg_analytics": "ghg_analytics" in loader.loaded_endpoints,
             "cbam_declarations": "cbam" in loader.loaded_endpoints,
             "eudr_due_diligence": "eudr" in loader.loaded_endpoints,
-            "issb_disclosures": "issb" in loader.loaded_endpoints
+            "issb_disclosures": "issb" in loader.loaded_endpoints,
+            "compliance_wizard": "wizard" in loader.loaded_endpoints
         }
     }
 @api_router.get("/endpoints", tags=["api"])
