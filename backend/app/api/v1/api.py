@@ -354,6 +354,17 @@ loader.register_endpoint(
     description="Supplier self-serve portal - checkout, reports, downloads"
 )
 
+# ============= COACHING LAYER =============
+# Supplier readiness assessment and improvement coaching (Ethics Charter compliant)
+loader.register_endpoint(
+    name="coaching",
+    module_path="coaching",
+    prefix="/coaching",
+    tags=["coaching", "supplier-enablement"],
+    dependencies=["auth"],
+    description="Supplier readiness assessment - bands not scores, always includes improvement actions"
+)
+
 # ============= REPORT VERIFICATION =============
 # Public verification endpoint - NO AUTH REQUIRED
 # This is where QR codes point to for tamper-evidence verification

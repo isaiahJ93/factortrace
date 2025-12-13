@@ -100,6 +100,18 @@ from app.models.wizard import (
     WizardStatus,
 )
 
+# Coaching layer models
+from app.models.coaching import (
+    SupplierReadiness,
+    CoachingAcknowledgment,
+    ReadinessBand,
+    DimensionType,
+    ActionStatus,
+    ProgressTrend,
+    EffortLevel,
+    ImpactLevel,
+)
+
 
 __all__ = [
     # Core multi-tenant models
@@ -185,4 +197,13 @@ __all__ = [
     "ComplianceWizardSession",
     "IndustryTemplate",
     "WizardStatus",
+    # Coaching layer models
+    "SupplierReadiness",
+    "CoachingAcknowledgment",
+    "ReadinessBand",
+    "DimensionType",
+    "ActionStatus",
+    "ProgressTrend",
+    "EffortLevel",
+    "ImpactLevel",
 ]

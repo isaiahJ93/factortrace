@@ -70,6 +70,10 @@ class Tenant(Base):
     # Wizard sessions
     wizard_sessions = relationship("ComplianceWizardSession", back_populates="tenant", lazy="dynamic")
 
+    # Coaching layer relationships
+    supplier_readiness_assessments = relationship("SupplierReadiness", back_populates="tenant", lazy="dynamic")
+    coaching_acknowledgments = relationship("CoachingAcknowledgment", back_populates="tenant", lazy="dynamic")
+
     def __repr__(self):
         return f"<Tenant {self.slug} ({self.id})>"
 

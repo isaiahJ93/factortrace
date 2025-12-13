@@ -1,0 +1,408 @@
+# configs/coaching/csrd.yaml
+# ============================================================================
+# CSRD Coaching Rules Configuration
+# ============================================================================
+#
+# Defines assessment thresholds and improvement actions for CSRD compliance.
+# Used by CoachingEngine to calculate supplier readiness bands.
+#
+# See docs/features/coaching-layer.md for specification.
+# See docs/product/ethics-incentives.md for language guidelines.
+#
+# Ethics Compliance:
+# - Language uses "Consider" not "You must"
+# - Focus on growth, not judgment
+# - Every action includes clear next steps
+# ============================================================================
+
+regime: csrd
+version: "1.0"
+description: "CSRD/ESRS compliance readiness assessment"
+
+# ============================================================================
+# DIMENSION DEFINITIONS
+# ============================================================================
+
+dimensions:
+  data_coverage:
+    weight: 0.40
+    description: "Coverage of required emission categories"
+    thresholds:
+      foundational: 0.0    # 0-29% coverage
+      emerging: 0.30       # 30-69% coverage
+      advanced: 0.70       # 70-94% coverage
+      leader: 0.95         # 95-100% coverage
+
+    metrics:
+      - name: "scope1_complete"
+        weight: 0.25
+        description: "All Scope 1 categories have data"
+      - name: "scope2_complete"
+        weight: 0.25
+        description: "All Scope 2 categories have data"
+      - name: "scope3_coverage"
+        weight: 0.50
+        description: "Percentage of material Scope 3 categories covered"
+
+  methodology_quality:
+    weight: 0.30
+    description: "Precision of calculation methodology"
+    thresholds:
+      foundational: 0.0
+      emerging: 0.40
+      advanced: 0.70
+      leader: 0.90
+
+    rules:
+      - condition: "all_spend_based"
+        max_band: "emerging"
+        rationale: "Spend-based methodology limits precision. Consider activity-based data for material categories."
+      - condition: "has_activity_data"
+        min_band: "emerging"
+        rationale: "Activity data provides better precision than spend-based estimates."
+      - condition: "majority_activity_based"
+        min_band: "advanced"
+        rationale: "Majority activity-based methodology demonstrates strong data maturity."
+      - condition: "has_supplier_specific"
+        min_band: "leader"
+        rationale: "Supplier-specific factors represent best-in-class methodology."
+
+    metrics:
+      - name: "spend_based_pct"
+        weight: 0.30
+        description: "Percentage of emissions using spend-based factors"
+        invert: true  # Lower is better
+      - name: "activity_based_pct"
+        weight: 0.40
+        description: "Percentage of emissions using activity-based factors"
+      - name: "supplier_specific_pct"
+        weight: 0.30
+        description: "Percentage of emissions using supplier-specific factors"
+
+  governance_maturity:
+    weight: 0.20
+    description: "Process maturity and documentation"
+    thresholds:
+      foundational: 0.0
+      emerging: 0.40
+      advanced: 0.70
+      leader: 0.90
+
+    metrics:
+      - name: "has_assigned_owner"
+        weight: 0.30
+        description: "Sustainability reporting has designated owner"
+      - name: "has_review_process"
+        weight: 0.30
+        description: "Data review process documented"
+      - name: "has_approval_workflow"
+        weight: 0.20
+        description: "Approval workflow for report submission"
+      - name: "has_training_program"
+        weight: 0.20
+        description: "Team trained on ESG reporting requirements"
+
+  audit_trail_strength:
+    weight: 0.10
+    description: "Evidence and lineage documentation"
+    thresholds:
+      foundational: 0.0
+      emerging: 0.50
+      advanced: 0.80
+      leader: 0.95
+
+    metrics:
+      - name: "evidence_attached_pct"
+        weight: 0.50
+        description: "Percentage of emission entries with supporting evidence"
+      - name: "source_documented_pct"
+        weight: 0.30
+        description: "Percentage of factors with source documentation"
+      - name: "lineage_complete_pct"
+        weight: 0.20
+        description: "Percentage of calculations with full audit lineage"
+
+# ============================================================================
+# IMPROVEMENT ACTIONS
+# ============================================================================
+#
+# Actions are triggered based on current band and dimension gaps.
+# Language follows Ethics Charter guidelines (Section 8).
+#
+# Priority order: critical > high > medium > low impact
+# ============================================================================
+
+actions:
+  # ---------------------------------------------------------------------------
+  # DATA COVERAGE ACTIONS
+  # ---------------------------------------------------------------------------
+
+  - id: "csrd_scope1_complete"
+    trigger_band: "foundational"
+    target_band: "emerging"
+    dimension: "data_coverage"
+    title: "Complete Scope 1 Emissions Data"
+    description: >
+      Consider starting with your direct emissions: fuel consumption
+      (natural gas, diesel, petrol), company vehicles, and refrigerants.
+      These typically represent the most controllable portion of your footprint.
+    effort: "medium"
+    impact: "high"
+    suggested_role: "Facility Manager"
+    prerequisites: []
+
+  - id: "csrd_scope2_complete"
+    trigger_band: "foundational"
+    target_band: "emerging"
+    dimension: "data_coverage"
+    title: "Complete Scope 2 Emissions Data"
+    description: >
+      Add your purchased electricity and heat/cooling data. This is often
+      the easiest data to gather from utility bills and creates a solid
+      foundation for your footprint.
+    effort: "low"
+    impact: "high"
+    suggested_role: "Finance"
+    prerequisites: []
+
+  - id: "csrd_add_scope3_categories"
+    trigger_band: "foundational"
+    target_band: "emerging"
+    dimension: "data_coverage"
+    title: "Add Core Scope 3 Categories"
+    description: >
+      Consider starting with Categories 1 (Purchased Goods & Services),
+      4 (Upstream Transportation), and 6 (Business Travel). These are
+      typically material for most companies and have accessible data sources.
+    effort: "medium"
+    impact: "high"
+    suggested_role: "Sustainability Lead"
+    prerequisites: ["csrd_scope1_complete", "csrd_scope2_complete"]
+
+  - id: "csrd_expand_scope3"
+    trigger_band: "emerging"
+    target_band: "advanced"
+    dimension: "data_coverage"
+    title: "Expand Scope 3 Coverage"
+    description: >
+      To reach Advanced coverage, consider adding Categories 3 (Fuel & Energy),
+      5 (Waste), and 7 (Employee Commuting). These categories round out a
+      comprehensive footprint assessment.
+    effort: "high"
+    impact: "high"
+    suggested_role: "Sustainability Lead"
+    prerequisites: ["csrd_add_scope3_categories"]
+
+  - id: "csrd_full_scope3"
+    trigger_band: "advanced"
+    target_band: "leader"
+    dimension: "data_coverage"
+    title: "Complete Full Scope 3 Assessment"
+    description: >
+      For Leader status, assess all 15 GHG Protocol Scope 3 categories for
+      materiality and include all material categories. This demonstrates
+      comprehensive value chain understanding.
+    effort: "high"
+    impact: "medium"
+    suggested_role: "Sustainability Lead"
+    prerequisites: ["csrd_expand_scope3"]
+
+  # ---------------------------------------------------------------------------
+  # METHODOLOGY ACTIONS
+  # ---------------------------------------------------------------------------
+
+  - id: "csrd_upgrade_to_activity"
+    trigger_band: "emerging"
+    target_band: "advanced"
+    dimension: "methodology_quality"
+    title: "Move from Spend to Activity Data"
+    description: >
+      Replace spend-based estimates with activity data (kWh, km, kg) for
+      your top 5 emission categories by value. Activity-based factors
+      typically provide 3-10x better precision than spend-based estimates.
+    effort: "high"
+    impact: "critical"
+    suggested_role: "Data Team"
+    prerequisites: []
+
+  - id: "csrd_primary_data_top_suppliers"
+    trigger_band: "advanced"
+    target_band: "leader"
+    dimension: "methodology_quality"
+    title: "Gather Primary Data from Key Suppliers"
+    description: >
+      Engage your top 10 suppliers (by emission contribution) to provide
+      product-specific or supplier-specific emission factors. This represents
+      best practice in Scope 3 accounting.
+    effort: "high"
+    impact: "high"
+    suggested_role: "Procurement"
+    prerequisites: ["csrd_upgrade_to_activity"]
+
+  - id: "csrd_verify_factors"
+    trigger_band: "emerging"
+    target_band: "advanced"
+    dimension: "methodology_quality"
+    title: "Verify Emission Factor Sources"
+    description: >
+      Document the source and vintage of all emission factors used.
+      Prefer DEFRA 2024 or EPA 2024 for standard factors, and ensure
+      factors are appropriate for your region and activities.
+    effort: "low"
+    impact: "medium"
+    suggested_role: "Sustainability Lead"
+    prerequisites: []
+
+  # ---------------------------------------------------------------------------
+  # GOVERNANCE ACTIONS
+  # ---------------------------------------------------------------------------
+
+  - id: "csrd_assign_owner"
+    trigger_band: "foundational"
+    target_band: "emerging"
+    dimension: "governance_maturity"
+    title: "Assign ESG Reporting Owner"
+    description: >
+      Designate a single accountable owner for ESG data collection and
+      reporting. This creates clarity and ensures consistent progress
+      on your sustainability journey.
+    effort: "low"
+    impact: "high"
+    suggested_role: "Leadership"
+    prerequisites: []
+
+  - id: "csrd_document_governance"
+    trigger_band: "emerging"
+    target_band: "advanced"
+    dimension: "governance_maturity"
+    title: "Document Your Data Process"
+    description: >
+      Create a simple document outlining who collects data, who reviews it,
+      and how often. This doesn't need to be complex - a one-pager is
+      often sufficient to start.
+    effort: "low"
+    impact: "medium"
+    suggested_role: "Sustainability Lead"
+    prerequisites: ["csrd_assign_owner"]
+
+  - id: "csrd_quarterly_reviews"
+    trigger_band: "advanced"
+    target_band: "leader"
+    dimension: "governance_maturity"
+    title: "Implement Quarterly Data Reviews"
+    description: >
+      Establish quarterly data quality reviews with sign-off from a senior
+      leader. This demonstrates robust governance and catches data issues
+      before they become problems.
+    effort: "medium"
+    impact: "medium"
+    suggested_role: "CFO"
+    prerequisites: ["csrd_document_governance"]
+
+  # ---------------------------------------------------------------------------
+  # AUDIT TRAIL ACTIONS
+  # ---------------------------------------------------------------------------
+
+  - id: "csrd_attach_evidence"
+    trigger_band: "foundational"
+    target_band: "emerging"
+    dimension: "audit_trail_strength"
+    title: "Upload Supporting Documents"
+    description: >
+      Attach utility bills, invoices, or supplier statements to your
+      emission entries. Even partial documentation significantly
+      strengthens your audit trail.
+    effort: "medium"
+    impact: "high"
+    suggested_role: "Finance"
+    prerequisites: []
+
+  - id: "csrd_document_assumptions"
+    trigger_band: "emerging"
+    target_band: "advanced"
+    dimension: "audit_trail_strength"
+    title: "Document Key Assumptions"
+    description: >
+      For any estimates or allocations, document the methodology and
+      assumptions used. This creates transparency and makes future
+      audits much smoother.
+    effort: "low"
+    impact: "medium"
+    suggested_role: "Sustainability Lead"
+    prerequisites: []
+
+  - id: "csrd_external_verification"
+    trigger_band: "advanced"
+    target_band: "leader"
+    dimension: "audit_trail_strength"
+    title: "Consider External Verification"
+    description: >
+      For Leader status, consider engaging an external verifier for
+      limited or reasonable assurance. While not yet mandatory for all
+      companies, this demonstrates commitment to accuracy.
+    effort: "high"
+    impact: "medium"
+    suggested_role: "CFO"
+    prerequisites: ["csrd_attach_evidence", "csrd_document_assumptions"]
+
+# ============================================================================
+# RATIONALE TEMPLATES
+# ============================================================================
+#
+# Templates for generating dimension score rationales.
+# {coverage} and similar placeholders are replaced at runtime.
+# ============================================================================
+
+rationale_templates:
+  data_coverage:
+    foundational: >
+      Data coverage is currently at {coverage}%. To reach Emerging,
+      consider completing Scope 1 and 2, then adding core Scope 3 categories.
+    emerging: >
+      Coverage at {coverage}%. You've made solid progress. To reach Advanced,
+      expand Scope 3 coverage to include Categories 3, 5, and 7.
+    advanced: >
+      Excellent coverage at {coverage}%. For Leader status, conduct a full
+      materiality assessment across all 15 Scope 3 categories.
+    leader: >
+      Outstanding coverage at {coverage}%. You're demonstrating comprehensive
+      value chain understanding.
+
+  methodology_quality:
+    foundational: >
+      Currently relying primarily on spend-based estimates. Consider
+      gathering activity data for your top emission categories.
+    emerging: >
+      Good progress on methodology. {activity_pct}% of emissions use
+      activity-based data. Target 70%+ for Advanced.
+    advanced: >
+      Strong methodology maturity. Consider supplier-specific factors
+      for your top 10 suppliers to reach Leader.
+    leader: >
+      Best-in-class methodology with primary data from key suppliers.
+
+  governance_maturity:
+    foundational: >
+      Governance processes are informal. Consider assigning a dedicated
+      ESG reporting owner as a first step.
+    emerging: >
+      Basic governance in place. Document your data collection and review
+      process to reach Advanced.
+    advanced: >
+      Strong governance structure. Quarterly reviews with senior sign-off
+      would demonstrate Leader-level maturity.
+    leader: >
+      Excellent governance with regular reviews and clear accountability.
+
+  audit_trail_strength:
+    foundational: >
+      Limited documentation. Start by attaching utility bills and
+      invoices to your emission entries.
+    emerging: >
+      {evidence_pct}% of entries have supporting evidence. Document
+      key assumptions to strengthen your audit trail.
+    advanced: >
+      Good audit trail. For Leader status, consider external verification
+      to demonstrate commitment to accuracy.
+    leader: >
+      Comprehensive audit trail with external verification ready.
