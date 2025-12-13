@@ -101,6 +101,13 @@ class ComplianceWizardSession(Base):
     # Audit notes / calculation methodology notes
     notes = Column(Text, nullable=True)
 
+    # Report Verification / Signing (Phase 1 + 2 of verification layer)
+    # See docs/features/verification-layer.md
+    report_hash = Column(String(64), nullable=True, index=True)  # SHA-256 content hash
+    signature = Column(String(128), nullable=True)  # Ed25519 signature
+    signed_at = Column(DateTime, nullable=True)  # When signature was created
+    verification_url = Column(String(255), nullable=True)  # URL for QR code
+
     # Timestamps
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

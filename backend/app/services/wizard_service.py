@@ -28,6 +28,7 @@ from app.schemas.wizard import (
     EmissionBreakdownItem,
 )
 from app.services.emission_factors import get_factor
+from app.services.crypto_service import get_crypto_service
 
 logger = logging.getLogger(__name__)
 
@@ -418,9 +419,10 @@ def complete_wizard_session(
     report_id: Optional[int] = None,
 ) -> Optional[ComplianceWizardSession]:
     """
-    Mark wizard session as completed.
+    Mark wizard session as completed and sign the report.
 
     Called after report generation succeeds.
+    Signs the report with Ed25519 for tamper-evidence.
     """
     session = _get_tenant_session(db, session_id, tenant_id)
     if not session:
@@ -431,11 +433,59 @@ def complete_wizard_session(
     if report_id:
         session.report_id = report_id
 
+    # Sign the report (Phase 1 + 2 verification layer)
+    _sign_wizard_report(session)
+
     db.commit()
     db.refresh(session)
 
     logger.info(f"Completed wizard session {session_id} with report {report_id}")
     return session
+
+
+def _sign_wizard_report(session: ComplianceWizardSession) -> None:
+    """
+    Sign the wizard session report with Ed25519.
+
+    Sets report_hash, signature, signed_at, and verification_url on the session.
+    Silently skips signing if crypto service is not configured.
+    """
+    try:
+        crypto = get_crypto_service()
+
+        # Check if signing is configured
+        if not crypto.is_configured():
+            logger.warning(
+                f"Signing skipped for session {session.id}: crypto service not configured"
+            )
+            return
+
+        # Build report data for signing
+        report_data = {
+            "company_profile": session.company_profile,
+            "activity_data": session.activity_data,
+            "calculated_emissions": session.calculated_emissions,
+            "completed_at": session.completed_at.isoformat() if session.completed_at else None,
+        }
+
+        # Sign the report
+        signed = crypto.sign_report(
+            report_id=str(session.id),
+            report_data=report_data,
+            tenant_id=session.tenant_id,
+        )
+
+        # Store signing results
+        session.report_hash = signed.content_hash
+        session.signature = signed.signature
+        session.signed_at = signed.signed_at
+        session.verification_url = signed.verification_url
+
+        logger.info(f"Signed wizard session {session.id} report at {signed.signed_at}")
+
+    except Exception as e:
+        # Don't fail completion if signing fails - log and continue
+        logger.error(f"Failed to sign report for session {session.id}: {e}")
 
 
 # =============================================================================

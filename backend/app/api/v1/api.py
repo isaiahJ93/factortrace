@@ -354,6 +354,18 @@ loader.register_endpoint(
     description="Supplier self-serve portal - checkout, reports, downloads"
 )
 
+# ============= REPORT VERIFICATION =============
+# Public verification endpoint - NO AUTH REQUIRED
+# This is where QR codes point to for tamper-evidence verification
+loader.register_endpoint(
+    name="report_verification",
+    module_path="verify",
+    prefix="/verify",
+    tags=["verification", "public"],
+    dependencies=[],  # No dependencies - fully public
+    description="Public report verification - QR code destination"
+)
+
 # ============= ADMINISTRATIVE ENDPOINTS =============
 # Admin endpoints
 loader.register_endpoint(
@@ -452,7 +464,8 @@ async def api_status():
             "eudr_due_diligence": "eudr" in loader.loaded_endpoints,
             "issb_disclosures": "issb" in loader.loaded_endpoints,
             "compliance_wizard": "wizard" in loader.loaded_endpoints,
-            "supplier_portal": "supplier_portal" in loader.loaded_endpoints
+            "supplier_portal": "supplier_portal" in loader.loaded_endpoints,
+            "report_verification": "report_verification" in loader.loaded_endpoints
         }
     }
 @api_router.get("/endpoints", tags=["api"])
